@@ -1,0 +1,185 @@
+logging:
+    level:
+#        tk.mybatis: DEBUG
+        com.mit.admin: DEBUG
+spring:
+    application:
+        name: ace-admin
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+        default-property-inclusion: non_null
+    datasource:
+      druid:
+        name: test
+        url: jdbc:mysql://localhost:3306/ag_admin_v1?useUnicode=true&characterEncoding=UTF8
+        username: root
+        password: world
+        # 使用druid数据源
+        #type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+#        timeBetweenLogStatsMillis: 60000
+        aop-patterns: "com.mit.admin.rest"
+        web-stat-filter:
+          enabled: true
+          url-pattern: /*
+          exclusions: /druid/*
+          session-stat-enable: true
+          session-stat-max-count: 100
+          principal-session-name: admin-session
+        stat-view-servlet:
+          enabled: true
+          url-pattern: /druid/*
+          reset-enable: true
+          login-username: admin
+          login-password: admin
+          allow: localhost
+        filter:
+          stat:
+            db-type: mysql
+            log-slow-sql: true
+            slow-sql-millis: 10
+          wall:
+            enabled: true
+            db-type: mysql
+            config:
+              drop-table-allow: false
+          slf4j:
+            enabled: true
+            statement-create-after-log-enabled: false
+            statement-close-after-log-enabled: false
+            result-set-open-after-log-enabled: false
+            result-set-close-after-log-enabled: false
+
+#    rabbitmq:
+##        host: ${RABBIT_MQ_HOST:localhost}
+#        host: localhost
+#        port:  5672
+#        username: guest
+#        password: guest
+    sleuth:
+      enabled: true
+      http:
+        legacy:
+          enabled: true
+# 服务跟踪
+sample:
+  zipkin:
+    # When enabled=false, traces log to the console. Comment to send to zipkin
+    enabled: false
+
+mybatis:
+    basepackage: com.mit.admin.mapper
+    xmlLocation: classpath:mapper/**/*.xml
+    mapper-locations: "classpath*:mapper/*.xml"
+
+server:
+    port: 8762
+
+
+eureka:
+    instance:
+        statusPageUrlPath: /actuator/info
+        healthCheckUrlPath: /actuator/health
+        # docker 部署开启
+        prefer-ip-address: true
+        ip-address: localhost
+        instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+        hostname: ${spring.cloud.client.hostname}
+    client:
+        serviceUrl:
+#            defaultZone: http://localhost:8761/eureka/
+                    # docker 部署开启
+            defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+# 必须配置
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+
+ribbon:
+  eureka:
+    enabled: true
+  ReadTimeout: 100000
+  ConnectTimeout: 100000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+  OkToRetryOnAllOperations: false
+
+hystrix:
+  threadpool:
+    default:
+      coreSize: 1000 ##并发执行的最大线程数，默认10
+      maxQueueSize: 1000 ##BlockingQueue的最大队列数
+      queueSizeRejectionThreshold: 500 ##即使maxQueueSize没有达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 110000
+
+
+# 配置swagger
+swagger:
+    enabled: true
+    base-package: com.mit.admin
+    title: ace-admin
+    version: 1.0.0.SNAPSHOT
+    description: 管理后端服务
+    contact:
+        name: admin
+
+auth:
+  serviceId: ace-auth
+  user:
+    token-header: Authorization
+  client:
+    id: ace-admin
+    secret: 123456
+    token-header: x-client-token
+
+#redis-cache 相关
+redis:
+    pool:
+         maxActive: 300
+         maxIdle: 100
+         maxWait: 1000
+    host: ${REDIS_HOST:localhost}
+    port:  ${REDIS_PORT:6379}
+    password:
+    timeout: 2000
+    # 服务或应用名
+    sysName: ace-admin
+    enable: true
+    database: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      security:
+        enabled: false
+#txmanager地址
+#tm:
+#  manager:
+#    url: http://127.0.0.1:8899/tx/manager/
+
+
+
+
+

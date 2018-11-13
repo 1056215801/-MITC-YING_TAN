@@ -1,0 +1,14 @@
+server:
+  #启动端口
+  port: 8761
+
+eureka:
+  client:
+    #false:不作为一个客户端注册到注册中心
+    registerWithEureka: false
+    #为true时，可以启动，但报异常：Cannot execute request on any known server
+    fetchRegistry: false
+    preferIpAddress: true
+spring:
+  application:
+    name: ace-center

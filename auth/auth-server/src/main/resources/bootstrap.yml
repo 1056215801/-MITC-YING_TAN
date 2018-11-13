@@ -1,0 +1,9 @@
+#spring:
+#  cloud:
+#    config:
+#      name: ace-auth-server
+#      profile: dev
+#      label: master
+#      uri: http://localhost:1201
+##
+##

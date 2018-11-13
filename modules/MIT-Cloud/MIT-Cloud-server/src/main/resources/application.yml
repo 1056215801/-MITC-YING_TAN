@@ -1,0 +1,214 @@
+logging:
+    level:
+#        tk.mybatis: DEBUG
+        mit.cloud: DEBUG
+spring:
+    application:
+        name: MIT-Cloud
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+        default-property-inclusion: non_null
+    datasource:
+      druid:
+#        name: test
+#        url: jdbc:mysql://localhost:3306/mit-cloud?useUnicode=true&characterEncoding=UTF8
+#        username: root
+#        password: world
+#        # 使用druid数据源
+##        type: com.alibaba.druid.pool.DruidDataSource
+#        driver-class-name: com.mysql.jdbc.Driver
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+        aop-patterns: "mit.cloud.rest"
+        web-stat-filter:
+          enabled: true
+          url-pattern: /*
+          exclusions: /druid/*
+          session-stat-enable: true
+          session-stat-max-count: 100
+          principal-session-name: mit-session
+        stat-view-servlet:
+          enabled: true
+          url-pattern: /druid/*
+          reset-enable: true
+          login-username: admin
+          login-password: admin
+          allow: 127.0.0.1
+        filter:
+          stat:
+            db-type: mysql
+            log-slow-sql: true
+            slow-sql-millis: 10
+          wall:
+            enabled: true
+            db-type: mysql
+            config:
+              drop-table-allow: false
+          slf4j:
+            enabled: true
+            statement-create-after-log-enabled: false
+            statement-close-after-log-enabled: false
+            result-set-open-after-log-enabled: false
+            result-set-close-after-log-enabled: false
+#    rabbitmq:
+#        host: ${RABBIT_MQ_HOST:localhost}
+#        host: localhost
+#        port:  5672
+#        username: guest
+#        password: guest
+    sleuth:
+      enabled: true
+      http:
+        legacy:
+          enabled: true
+    servlet:
+#文件上传大小配置
+      multipart:
+        enabled: true
+        file-size-threshold: 0
+        max-file-size: 10Mb
+        max-request-size: 10Mb
+
+# 服务跟踪
+sample:
+  zipkin:
+    # When enabled=false, traces log to the console. Comment to send to zipkin
+    enabled: false
+
+mybatis:
+    basepackage: mit.cloud.mapper
+    xmlLocation: classpath:mapper/**/*.xml
+    mapper-locations: "classpath*:mapper/*.xml"
+
+server:
+    port: 8763
+
+
+eureka:
+    instance:
+        statusPageUrlPath: /actuator/info
+        healthCheckUrlPath: /actuator/health
+        # docker 部署开启
+        prefer-ip-address: true
+        ip-address: localhost
+        instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+        hostname: ${spring.cloud.client.hostname}
+    client:
+        serviceUrl:
+#            defaultZone: http://localhost:8761/eureka/
+                    # docker 部署开启
+            defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+# 必须配置
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+
+ribbon:
+  eureka:
+    enabled: true
+  ReadTimeout: 100000
+  ConnectTimeout: 100000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+  OkToRetryOnAllOperations: false
+
+hystrix:
+  threadpool:
+    default:
+      coreSize: 1000 ##并发执行的最大线程数，默认10
+      maxQueueSize: 1000 ##BlockingQueue的最大队列数
+      queueSizeRejectionThreshold: 500 ##即使maxQueueSize没有达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 110000
+
+
+# 配置swagger
+swagger:
+    enabled: true
+    base-package: mit.cloud
+    title: mit.cloud
+    version: 1.0.0.SNAPSHOT
+    description: MIT-Cloud
+    contact:
+        name: admin
+#服务调用的配置。
+#
+auth:
+# 会请求这个服务去验证哪些服务可以调用这个服务
+  serviceId: ace-auth
+# token的key
+  user:
+    token-header: Authorization
+  client:
+# 服务的标识符，必须和数据库一致
+    id: MIT-Cloud
+# 服务的秘钥， 必须和数据库一致
+    secret: 123456
+    token-header: x-client-token
+
+#redis-cache 相关
+redis:
+    pool:
+         maxActive: 300
+         maxIdle: 100
+         maxWait: 1000
+    host: ${REDIS_HOST:localhost}
+    port:  ${REDIS_PORT:6379}
+    password:
+    timeout: 2000
+    # 服务或应用名
+    sysName: MIT-Cloud
+    enable: true
+    database: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      security:
+        enabled: false
+# 更多数据源
+db:
+  datasource:
+    datasouce1:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://192.168.1.222:3306/mit-cloud?useUnicode=true&characterEncoding=UTF8
+      username: root
+      password: 123456
+    datasouce2:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://192.168.1.222:3306/mit-cloud-read?useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password: 123456
+
+mybatis-plus:
+  mapper-locations: classpath*:com/mit/cloud/**/mapping/*.xml
+  typeAliasesPackage: com.mit.cloud.model
+  global-config:
+    id-type: 0  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: false
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用

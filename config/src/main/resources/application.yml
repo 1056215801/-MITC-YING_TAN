@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: ace-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: http://192.168.0.222:8888/root/config-center.git
+#          search-paths: repo
+          username: root
+          password: admin123456
+server:
+  port: 1201
