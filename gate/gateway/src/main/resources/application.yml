@@ -79,12 +79,19 @@ spring:
         filters:
         - StripPrefix=2
       - id: MIT-Cloud
-        uri: lb://MIT-Cloud
-        order: 8002
-        predicates:
-        - Path=/api/mitc/**
-        filters:
-        - StripPrefix=2
+            uri: lb://MIT-Cloud
+            order: 8002
+            predicates:
+            - Path=/api/mitc/**
+            filters:
+            - StripPrefix=2
+      - id: community-yingtan
+          uri: lb://community-yingtan
+          order: 8003
+          predicates:
+          - Path=/api/community/yingtan/**
+          filters:
+          - StripPrefix=2
 
 
 logging:

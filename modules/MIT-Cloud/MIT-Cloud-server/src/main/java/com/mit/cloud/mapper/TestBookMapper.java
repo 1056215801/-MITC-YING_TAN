@@ -1,6 +1,6 @@
 package com.mit.cloud.mapper;
 
-import com.mit.cloud.entity.TestBook;
+import com.mit.community.entity.TestBook;
 import tk.mybatis.mapper.common.Mapper;
 
 /**

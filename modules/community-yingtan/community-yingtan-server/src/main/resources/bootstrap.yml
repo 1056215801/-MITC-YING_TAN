@@ -1,0 +1,7 @@
+#spring:
+#  cloud:
+#    config:
+#      name: mit-cloud
+#      profile: dev
+#      label: master
+#      uri: http://localhost:1201

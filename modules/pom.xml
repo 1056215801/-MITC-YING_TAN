@@ -14,7 +14,7 @@
     <modules>
         <module>admin</module>
         <module>interface</module>
-        <module>generator</module>
         <module>MIT-Cloud</module>
+        <module>community-yingtan</module>
     </modules>
 </project>
