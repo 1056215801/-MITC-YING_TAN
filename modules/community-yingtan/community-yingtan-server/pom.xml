@@ -169,6 +169,11 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.mit</groupId>
+            <artifactId>dnake</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <!-- fastdfs上传依赖 -->
         <dependency>
