@@ -1,5 +1,7 @@
 package com.mit.community.config;
 
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
 import com.mit.auth.client.interceptor.ServiceAuthRestInterceptor;
 import com.mit.auth.client.interceptor.UserAuthRestInterceptor;
 import com.mit.common.handler.GlobalExceptionHandler;
@@ -11,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Properties;
 
 /**
  *
@@ -64,6 +67,27 @@ public class WebConfiguration implements WebMvcConfigurer {
         };
         Collections.addAll(list, urls);
         return list;
+    }
+
+    /**
+     * 验证码生成相关
+     */
+    @Bean
+    public DefaultKaptcha kaptcha() {
+        Properties properties = new Properties();
+        properties.put("kaptcha.border", "no");
+        properties.put("kaptcha.border.color", "105,179,90");
+        properties.put("kaptcha.textproducer.font.color", "blue");
+        properties.put("kaptcha.image.width", "125");
+        properties.put("kaptcha.image.height", "45");
+        properties.put("kaptcha.textproducer.font.size", "45");
+        properties.put("kaptcha.session.key", "code");
+        properties.put("kaptcha.textproducer.char.length", "4");
+        properties.put("kaptcha.textproducer.font.names", "宋体,楷体,微软雅黑");
+        Config config = new Config(properties);
+        DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
+        defaultKaptcha.setConfig(config);
+        return defaultKaptcha;
     }
 
 }
