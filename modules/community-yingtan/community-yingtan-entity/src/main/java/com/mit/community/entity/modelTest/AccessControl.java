@@ -1,4 +1,4 @@
-package com.mit.community.importdata.modelTest;
+package com.mit.community.entity.modelTest;
 
 import lombok.Data;
 

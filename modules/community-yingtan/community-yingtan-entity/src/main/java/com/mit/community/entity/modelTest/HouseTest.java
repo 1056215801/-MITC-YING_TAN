@@ -1,4 +1,4 @@
-package com.mit.community.importdata.modelTest;
+package com.mit.community.entity.modelTest;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import lombok.Data;
  * <p>Company: mitesofor </p>
  */
 @Data
-public class House {
+public class HouseTest {
     private String householdName;
     private String householdType;
     private String buildingName;
@@ -26,4 +26,12 @@ public class House {
     private String residenceTime;
     private String appDeviceGroupIds;
     private String mobile;
+    /**
+     * SIP账号
+     */
+    private String sipAccount;
+    /**
+     * SIP密码
+     */
+    private String sipPassword;
 }

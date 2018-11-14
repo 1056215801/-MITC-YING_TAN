@@ -1,4 +1,4 @@
-package com.mit.community.importdata.modelTest;
+package com.mit.community.entity.modelTest;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import lombok.Data;
  * <p>Company: mitesofor </p>
  */
 @Data
-public class Unit {
+public class UnitTest {
     private String unitStatus;
     private String unitName;
     private String unitId;
