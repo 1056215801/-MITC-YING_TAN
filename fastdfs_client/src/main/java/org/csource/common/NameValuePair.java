@@ -9,7 +9,7 @@
 package org.csource.common;
 
 /**
-* name(key) and value pair model
+* name(key) and value pair modelTest
 * @author Happy Fish / YuQing
 * @version Version 1.0
 */

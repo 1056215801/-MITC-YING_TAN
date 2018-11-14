@@ -201,7 +201,7 @@ db:
 
 mybatis-plus:
   mapper-locations: classpath*:com/mit/cloud/**/mapping/*.xml
-  typeAliasesPackage: com.mit.cloud.model
+  typeAliasesPackage: com.mit.cloud.modelTest
   global-config:
     id-type: 0  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)
     db-column-underline: false
