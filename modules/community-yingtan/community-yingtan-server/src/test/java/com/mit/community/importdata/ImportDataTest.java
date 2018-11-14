@@ -320,4 +320,15 @@ public class ImportDataTest {
         }
     }
 
+    /**
+     * 获取门禁记录
+     */
+    @Test
+    public void getAccessControlList(){
+        String url = "/v1/device/getAccessControlList";
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
+        DnakeWebApiUtil.invoke(url, map);
+    }
+
 }
