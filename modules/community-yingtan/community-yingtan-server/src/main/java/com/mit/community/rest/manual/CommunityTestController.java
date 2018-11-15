@@ -39,9 +39,11 @@ public class CommunityTestController {
 
     private final RoomService roomService;
 
-    private final HouseService houseService;
+    private final HouseHoldService houseService;
 
     private final VisitorService visitorService;
+
+    private final DeviceService deviceService;
 
     @Autowired
     public CommunityTestController(ClusterCommunityService clusterCommunityService,
@@ -49,8 +51,9 @@ public class CommunityTestController {
                                    BuildingService buildingService,
                                    UnitService unitService,
                                    RoomService roomService,
-                                   HouseService houseService,
-                                   VisitorService visitorService) {
+                                   HouseHoldService houseService,
+                                   VisitorService visitorService,
+                                   DeviceService deviceService) {
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.buildingService = buildingService;
@@ -58,6 +61,7 @@ public class CommunityTestController {
         this.roomService = roomService;
         this.houseService = houseService;
         this.visitorService = visitorService;
+        this.deviceService = deviceService;
     }
 
     /**
@@ -262,7 +266,7 @@ public class CommunityTestController {
             JSONArray jsonArray = jsonObject.getJSONArray("householdList");
             List<HouseTest> houses = JSON.parseArray(jsonArray.toString(), HouseTest.class);
             for (HouseTest h : houses) {
-                House house = new House();
+                HouseHold house = new HouseHold();
                 house.setAppDeviceGroupIds(h.getAppDeviceGroupIds());
                 house.setAuthorizeStatus(h.getAuthorizeStatus());
                 house.setBuildingId(r.getBuildingId());
@@ -328,6 +332,49 @@ public class CommunityTestController {
                 visitor.setZoneId(u.getZoneId());
                 visitor.setZoneName(v.getZoneName());
                 visitorService.save(visitor);
+            }
+        }
+        return Result.success("OK");
+    }
+
+    /**
+     * 添加设备信息
+     *
+     * @return
+     * @author Mr.Deng
+     * @date 9:50 2018/11/15
+     */
+    @RequestMapping("getDeviceList")
+    public Result getDeviceList() {
+        List<Unit> unitList = unitService.getUnitList();
+        for (Unit u : unitList) {
+            DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+            String url = "/v1/device/getDeviceList";
+            Map<String, Object> map = new HashMap<>();
+            map.put("communityCode", u.getCommunityCode());
+            map.put("zoneId", u.getZoneId());
+            map.put("buildingId", u.getBuildingId());
+            map.put("unitId", u.getUnitId());
+            String invoke = DnakeWebApiUtil.invoke(url, map);
+            JSONObject jsonObject = JSONObject.fromObject(invoke);
+            JSONArray jsonArray = jsonObject.getJSONArray("deviceList");
+            List<DeviceTest> devices = JSON.parseArray(jsonArray.toString(), DeviceTest.class);
+            for (DeviceTest d : devices) {
+                Device device = new Device();
+                device.setBuildingCode(d.getBuildingCode());
+                device.setBuildingId(u.getBuildingId());
+                device.setCommunityCode(u.getCommunityCode());
+                device.setDeviceCode(d.getDeviceCode());
+                device.setDeviceId(d.getDeviceId());
+                device.setDeviceName(d.getDeviceName());
+                device.setDeviceNum(d.getDeviceNum());
+                device.setDeviceSip(d.getDeviceSip());
+                device.setDeviceStatus(d.getDeviceStatus());
+                device.setDeviceType(d.getDeviceType());
+                device.setUnitCode(d.getUnitCode());
+                device.setUnitId(u.getUnitId());
+                device.setZoneId(u.getZoneId());
+                deviceService.save(device);
             }
         }
         return Result.success("OK");

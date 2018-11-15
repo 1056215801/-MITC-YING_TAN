@@ -18,8 +18,8 @@ import java.io.Serializable;
  * <p>Company: mitesofor </p>
  */
 @Data
-@TableName("house")
-public class House extends Model<House> {
+@TableName("household")
+public class HouseHold extends Model<HouseHold> {
 
     @TableId(type = IdType.AUTO)
     private Integer id;

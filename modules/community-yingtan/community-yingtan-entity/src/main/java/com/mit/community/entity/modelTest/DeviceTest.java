@@ -11,7 +11,7 @@ import lombok.Data;
  * <p>Company: mitesofor </p>
  */
 @Data
-public class Device {
+public class DeviceTest {
     private String deviceNum;
     private String deviceName;
     private String deviceType;

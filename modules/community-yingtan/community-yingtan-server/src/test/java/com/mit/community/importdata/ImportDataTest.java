@@ -202,11 +202,12 @@ public class ImportDataTest {
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         String invoke = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(invoke);
         //"deviceList":[{"deviceNum":"AB900DX8880285879170","deviceName":"凯翔演示-出门","deviceType":"W","deviceCode":"2","deviceStatus":0,"buildingCode":"","deviceSip":"61723086239699","deviceId":2602,"unitCode":""}
         JSONObject jsonObject = JSONObject.fromObject(invoke);
         JSONArray jsonArray = jsonObject.getJSONArray("deviceList");
-        List<Device> devices = JSON.parseArray(jsonArray.toString(), Device.class);
-        for (Device d : devices) {
+        List<DeviceTest> devices = JSON.parseArray(jsonArray.toString(), DeviceTest.class);
+        for (DeviceTest d : devices) {
             System.out.println(d.getDeviceId() + "-》" + d.getDeviceNum());
         }
     }
@@ -232,8 +233,8 @@ public class ImportDataTest {
             System.out.println(jsonObject.get("deviceGroupId") + "->" + jsonObject.get("deviceGroupName") +
                     "->" + jsonObject.get("groupType") + "->" + "deviceList:");
             JSONArray jsonArray = jsonObject.getJSONArray("deviceList");
-            List<Device> devices = JSON.parseArray(jsonArray.toString(), Device.class);
-            for (Device d : devices) {
+            List<DeviceTest> devices = JSON.parseArray(jsonArray.toString(), DeviceTest.class);
+            for (DeviceTest d : devices) {
                 System.out.println(d.getDeviceId() + "-》" + d.getDeviceNum());
             }
         }

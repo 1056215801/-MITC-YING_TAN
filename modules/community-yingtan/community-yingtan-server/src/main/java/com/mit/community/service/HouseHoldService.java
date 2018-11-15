@@ -1,7 +1,7 @@
 package com.mit.community.service;
 
-import com.mit.community.entity.House;
-import com.mit.community.mapper.HouseMapper;
+import com.mit.community.entity.HouseHold;
+import com.mit.community.mapper.HouseHoldMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +16,9 @@ import java.util.List;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class HouseService {
+public class HouseHoldService {
     @Autowired
-    private HouseMapper houseMapper;
+    private HouseHoldMapper houseHoldMapper;
 
     /**
      * 添加住户信息
@@ -27,8 +27,8 @@ public class HouseService {
      * @author Mr.Deng
      * @date 19:34 2018/11/14
      */
-    public void save(House house) {
-        houseMapper.insert(house);
+    public void save(HouseHold house) {
+        houseHoldMapper.insert(house);
     }
 
     /**
@@ -38,8 +38,8 @@ public class HouseService {
      * @author Mr.Deng
      * @date 19:35 2018/11/14
      */
-    public List<House> getHouseList() {
-        return houseMapper.selectList(null);
+    public List<HouseHold> getHouseList() {
+        return houseHoldMapper.selectList(null);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.mit.community.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.mit.community.entity.House;
+import com.mit.community.entity.HouseHold;
 
 /**
  * 住户
@@ -11,5 +11,5 @@ import com.mit.community.entity.House;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
-public interface HouseMapper extends BaseMapper<House> {
+public interface HouseHoldMapper extends BaseMapper<HouseHold> {
 }
