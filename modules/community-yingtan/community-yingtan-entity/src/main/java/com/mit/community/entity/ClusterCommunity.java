@@ -54,11 +54,6 @@ public class ClusterCommunity extends Model<ClusterCommunity> {
     @TableField("city_name")
     private String cityName;
     /**
-     * 第三方唯一标识ID
-     */
-    @TableField("third_party_id")
-    private String thirdPartyId;
-    /**
      * 街道名称
      */
     @TableField("street_name")

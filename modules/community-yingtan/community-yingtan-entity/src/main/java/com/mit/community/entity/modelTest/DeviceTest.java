@@ -21,4 +21,6 @@ public class DeviceTest {
     private String deviceSip;
     private String deviceId;
     private String unitCode;
+    private String unitId;
+    private String buildingId;
 }

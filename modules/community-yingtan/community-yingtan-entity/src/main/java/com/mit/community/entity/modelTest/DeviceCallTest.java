@@ -11,7 +11,7 @@ import lombok.Data;
  * <p>Company: mitesofor </p>
  */
 @Data
-public class DeviceCall {
+public class DeviceCallTest {
 
     private String deviceNum;
     private String callDuration;
@@ -21,4 +21,5 @@ public class DeviceCall {
     private String callTime;
     private String callImgUrl;
     private String callType;
+    private String roomNum;
 }

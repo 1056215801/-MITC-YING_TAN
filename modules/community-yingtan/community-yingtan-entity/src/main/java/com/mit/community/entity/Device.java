@@ -28,20 +28,15 @@ public class Device extends Model<Device> {
     @TableField("community_code")
     private String communityCode;
     /**
-     * 分区ID
-     */
-    @TableField("zone_id")
-    private Integer zoneId;
-    /**
-     * 楼栋ID
+     * 楼栋id
      */
     @TableField("building_id")
-    private Integer buildingId;
+    private String buildingId;
     /**
      * 单元ID
      */
     @TableField("unit_id")
-    private Integer unitId;
+    private String unitId;
     /**
      * 设备名称
      */

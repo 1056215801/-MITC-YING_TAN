@@ -11,7 +11,7 @@ import lombok.Data;
  * <p>Company: mitesofor </p>
  */
 @Data
-public class AccessControl {
+public class AccessControlTest {
     private String id;
     private String householdName;
     private String accessTime;

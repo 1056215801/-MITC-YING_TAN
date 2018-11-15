@@ -275,14 +275,14 @@ public class ImportDataTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/device/getAccessControlList";
         Map<String, Object> map = new HashMap<>();
-        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("communityCode", "2c58fbed7bce49778da3b1717241df25");
         String invoke = DnakeWebApiUtil.invoke(url, map);
         System.out.println(invoke);
         //{"accessControlList":[{"householdName":"严波","accessTime":"2018-11-14 11:17:14","buildingName":"2栋","householdId":22376,"buildingCode":"0002","accessImgUrl":"http://image.ishanghome.com/1542165434.jpg","zoneName":"珉轩智能大厦","householdMobile":"13407901037","id":2464172,"deviceNum":"AB900DX88801e86a7770","deviceName":"凯翔演示-进门","interactiveType":2,"unitName":"一单元","cardNum":"8291","unitCode":"01"}
         JSONObject jsonObject = JSONObject.fromObject(invoke);
         JSONArray jsonArray = jsonObject.getJSONArray("accessControlList");
-        List<AccessControl> accessControls = JSON.parseArray(jsonArray.toString(), AccessControl.class);
-        for (AccessControl a : accessControls) {
+        List<AccessControlTest> accessControls = JSON.parseArray(jsonArray.toString(), AccessControlTest.class);
+        for (AccessControlTest a : accessControls) {
             System.out.println(a.getHouseholdName() + "->" + a.getAccessImgUrl());
         }
     }
@@ -298,13 +298,13 @@ public class ImportDataTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/device/getDeviceCallList";
         Map<String, Object> map = new HashMap<>();
-        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("communityCode", "047cd4ab796a419a80a4d362b9da1c8f");
         String invoke = DnakeWebApiUtil.invoke(url, map);
-        //"deviceCallList":[{"deviceNum":"AB900DX88801e86a7770","callDuration":24,"openDoorType":4,"receiver":"61723128437027","deviceName":"凯翔演示-进门","callTime":"2018-11-14 08:45:45","callImgUrl":"http://image.ishanghome.com/1542156369.jpg","callType":0},{"deviceNum":"AB900DX8880285879170","callDuration":9,"openDoorType":4,"receiver":"61723128437027","deviceName":"凯翔外滩测试","callTime":"2018-11-14 07:17:48","callImgUrl":"http://image.ishanghome.com/1542151078.jpg","callType":6},{"deviceNum":"AB900DX87689f06d7c70","callDuration":10,"openDoorType":0,"receiver":"61723130553520","deviceName":"北京演示","callTime":"2018-11-13 17:59:10","roomNum":"1010102","callImgUrl":"http://image.ishanghome.com/1542103151.jpg","callType":6}
+        System.out.println(invoke);
         JSONObject jsonObject = JSONObject.fromObject(invoke);
         JSONArray jsonArray = jsonObject.getJSONArray("deviceCallList");
-        List<DeviceCall> deviceCalls = JSON.parseArray(jsonArray.toString(), DeviceCall.class);
-        for (DeviceCall d : deviceCalls) {
+        List<DeviceCallTest> deviceCalls = JSON.parseArray(jsonArray.toString(), DeviceCallTest.class);
+        for (DeviceCallTest d : deviceCalls) {
             System.out.println(d.getDeviceName() + "->" + d.getCallImgUrl());
         }
     }

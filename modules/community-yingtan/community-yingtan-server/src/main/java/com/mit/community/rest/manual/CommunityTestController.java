@@ -45,6 +45,10 @@ public class CommunityTestController {
 
     private final DeviceService deviceService;
 
+    private final AccessControlService accessControlService;
+
+    private final DeviceCallService deviceCallService;
+
     @Autowired
     public CommunityTestController(ClusterCommunityService clusterCommunityService,
                                    ZoneService zoneService,
@@ -53,7 +57,9 @@ public class CommunityTestController {
                                    RoomService roomService,
                                    HouseHoldService houseService,
                                    VisitorService visitorService,
-                                   DeviceService deviceService) {
+                                   DeviceService deviceService,
+                                   AccessControlService accessControlService,
+                                   DeviceCallService deviceCallService) {
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.buildingService = buildingService;
@@ -62,6 +68,8 @@ public class CommunityTestController {
         this.houseService = houseService;
         this.visitorService = visitorService;
         this.deviceService = deviceService;
+        this.accessControlService = accessControlService;
+        this.deviceCallService = deviceCallService;
     }
 
     /**
@@ -92,7 +100,6 @@ public class CommunityTestController {
             cc.setCommunityName(c.getCommunityName());
             cc.setProvinceName(c.getProvinceName());
             cc.setStreetName(c.getStreetName());
-            cc.setThirdPartyId(c.getThirdPartyId());
             clusterCommunityService.save(cc);
         }
         return Result.success("OK");
@@ -346,24 +353,21 @@ public class CommunityTestController {
      */
     @RequestMapping("getDeviceList")
     public Result getDeviceList() {
-        List<Unit> unitList = unitService.getUnitList();
-        for (Unit u : unitList) {
+        List<ClusterCommunity> clusterCommunityList = clusterCommunityService.getClusterCommunityList();
+        for (ClusterCommunity c : clusterCommunityList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/device/getDeviceList";
             Map<String, Object> map = new HashMap<>();
-            map.put("communityCode", u.getCommunityCode());
-            map.put("zoneId", u.getZoneId());
-            map.put("buildingId", u.getBuildingId());
-            map.put("unitId", u.getUnitId());
+            map.put("communityCode", c.getCommunityCode());
             String invoke = DnakeWebApiUtil.invoke(url, map);
             JSONObject jsonObject = JSONObject.fromObject(invoke);
             JSONArray jsonArray = jsonObject.getJSONArray("deviceList");
             List<DeviceTest> devices = JSON.parseArray(jsonArray.toString(), DeviceTest.class);
             for (DeviceTest d : devices) {
                 Device device = new Device();
+                device.setBuildingId(d.getBuildingId() != null ? d.getBuildingId() : "");
                 device.setBuildingCode(d.getBuildingCode());
-                device.setBuildingId(u.getBuildingId());
-                device.setCommunityCode(u.getCommunityCode());
+                device.setCommunityCode(c.getCommunityCode());
                 device.setDeviceCode(d.getDeviceCode());
                 device.setDeviceId(d.getDeviceId());
                 device.setDeviceName(d.getDeviceName());
@@ -372,9 +376,95 @@ public class CommunityTestController {
                 device.setDeviceStatus(d.getDeviceStatus());
                 device.setDeviceType(d.getDeviceType());
                 device.setUnitCode(d.getUnitCode());
-                device.setUnitId(u.getUnitId());
-                device.setZoneId(u.getZoneId());
+                device.setUnitId(d.getUnitId() != null ? d.getUnitId() : "");
                 deviceService.save(device);
+            }
+        }
+        return Result.success("OK");
+    }
+
+    /**
+     * 获取门禁记录
+     *
+     * @return
+     * @author Mr.Deng
+     * @date 11:25 2018/11/15
+     */
+    @RequestMapping("getAccessControlList")
+    public Result getAccessControlList() {
+        List<ClusterCommunity> clusterCommunityList = clusterCommunityService.getClusterCommunityList();
+        for (ClusterCommunity c : clusterCommunityList) {
+            DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+            String url = "/v1/device/getAccessControlList";
+            Map<String, Object> map = new HashMap<>();
+            map.put("communityCode", c.getCommunityCode());
+            String invoke = DnakeWebApiUtil.invoke(url, map);
+            System.out.println(invoke);
+            JSONObject jsonObject = JSONObject.fromObject(invoke);
+            JSONArray jsonArray = jsonObject.getJSONArray("accessControlList");
+            List<AccessControlTest> accessControls = JSON.parseArray(jsonArray.toString(), AccessControlTest.class);
+            for (AccessControlTest a : accessControls) {
+                AccessControl accessControl = new AccessControl();
+                accessControl.setAccessControlId(a.getId());
+                accessControl.setAccessImgUrl(a.getAccessImgUrl());
+                accessControl.setAccessTime(a.getAccessTime());
+                accessControl.setBuildingCode(a.getBuildingCode());
+                accessControl.setBuildingName(a.getBuildingName());
+                accessControl.setCardNum(a.getCardNum());
+                accessControl.setCommunityCode(c.getCommunityCode());
+                accessControl.setDeviceName(a.getDeviceName());
+                accessControl.setDeviceNum(a.getDeviceNum());
+                accessControl.setHouseholdId(a.getHouseholdId());
+                accessControl.setHouseholdMobile(a.getHouseholdMobile());
+                accessControl.setHouseholdName(a.getHouseholdName());
+                accessControl.setInteractiveType(a.getInteractiveType());
+                accessControl.setUnitCode(a.getUnitCode());
+                accessControl.setUnitName(a.getUnitName());
+                accessControl.setZoneName(a.getZoneName());
+                accessControlService.save(accessControl);
+            }
+        }
+        return Result.success("OK");
+    }
+
+    /**
+     * 获取呼叫记录
+     *
+     * @return
+     * @author Mr.Deng
+     * @date 12:08 2018/11/15
+     */
+    @RequestMapping("getDeviceCallList")
+    public Result getDeviceCallList() {
+        List<Room> roomList = roomService.getRoomList();
+        for (Room r : roomList) {
+            DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+            String url = "/v1/device/getDeviceCallList";
+            Map<String, Object> map = new HashMap<>();
+            map.put("communityCode", r.getCommunityCode());
+            map.put("zoneId", r.getZoneId());
+            map.put("buildingId", r.getBuildingId());
+            map.put("unitId", r.getUnitId());
+            String invoke = DnakeWebApiUtil.invoke(url, map);
+            JSONObject jsonObject = JSONObject.fromObject(invoke);
+            JSONArray jsonArray = jsonObject.getJSONArray("deviceCallList");
+            List<DeviceCallTest> deviceCalls = JSON.parseArray(jsonArray.toString(), DeviceCallTest.class);
+            for (DeviceCallTest d : deviceCalls) {
+                DeviceCall deviceCall = new DeviceCall();
+                deviceCall.setBuildingId(r.getBuildingId());
+                deviceCall.setCallDuration(d.getCallDuration());
+                deviceCall.setCallImgUrl(d.getCallImgUrl());
+                deviceCall.setCallTime(d.getCallTime());
+                deviceCall.setCallType(d.getCallType());
+                deviceCall.setCommunityCode(r.getCommunityCode());
+                deviceCall.setDeviceName(d.getDeviceName());
+                deviceCall.setDeviceNum(d.getDeviceNum());
+                deviceCall.setOpenDoorType(d.getOpenDoorType());
+                deviceCall.setReceiver(d.getReceiver());
+                deviceCall.setRoomNum(d.getRoomNum());
+                deviceCall.setUnitId(r.getUnitId());
+                deviceCall.setZoneId(r.getZoneId());
+                deviceCallService.save(deviceCall);
             }
         }
         return Result.success("OK");
