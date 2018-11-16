@@ -76,7 +76,8 @@ public class CommunityController {
             String url = "https://api.seniverse.com/v3/weather/now.json?" +
                     "key=adfeskm2upezsis0" +
                     "&location=" + local +
-                    "&language=zh-Hans&unit=c";
+                    "&language=zh-Hans" +
+                    "&unit=c";
             String s = HttpUtil.sendGet(url);
             JSONObject json = JSON.parseObject(s);
             return Result.success(json, "OK");
