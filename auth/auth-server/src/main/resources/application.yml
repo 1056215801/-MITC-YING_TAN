@@ -89,7 +89,7 @@ eureka:
     healthCheckUrlPath: /actuator/health
     # docker 部署开启
     prefer-ip-address: true
-    ip-address: localhost
+    ip-address: 192.168.1.222
     instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
     hostname: ${spring.cloud.client.hostname}
   client:
