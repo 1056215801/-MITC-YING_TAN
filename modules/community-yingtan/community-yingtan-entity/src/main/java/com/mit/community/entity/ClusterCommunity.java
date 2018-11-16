@@ -18,8 +18,8 @@ import java.io.Serializable;
  * <p>Company: mitesofor </p>
  */
 @Data
-@TableName("clustercommunity")
-public class ClusterCommunity extends Model<ClusterCommunity> {
+@TableName("cluster_community")
+public class ClusterCommunity {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -64,8 +64,4 @@ public class ClusterCommunity extends Model<ClusterCommunity> {
     @TableField("province_name")
     private String provinceName;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("building")
-public class Building extends Model<Building> {
+public class Building{
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -54,8 +54,4 @@ public class Building extends Model<Building> {
     @TableField("building_id")
     private Integer buildingId;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

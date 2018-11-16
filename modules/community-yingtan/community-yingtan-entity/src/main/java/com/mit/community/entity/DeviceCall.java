@@ -1,13 +1,10 @@
 package com.mit.community.entity;
 
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * 呼叫记录
@@ -18,8 +15,8 @@ import java.io.Serializable;
  * <p>Company: mitesofor </p>
  */
 @Data
-@TableName("devicecall")
-public class DeviceCall extends Model<DeviceCall> {
+@TableName("device_call")
+public class DeviceCall {
     @TableId(type = IdType.AUTO)
     private Integer id;
     /**
@@ -87,8 +84,4 @@ public class DeviceCall extends Model<DeviceCall> {
     @TableField("device_name")
     private String deviceName;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

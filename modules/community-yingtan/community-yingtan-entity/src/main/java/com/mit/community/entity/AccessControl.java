@@ -1,13 +1,13 @@
 package com.mit.community.entity;
 
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 门禁记录
@@ -18,8 +18,8 @@ import java.io.Serializable;
  * <p>Company: mitesofor </p>
  */
 @Data
-@TableName("accesscontrol")
-public class AccessControl extends Model<AccessControl> {
+@TableName("access_control")
+public class AccessControl {
     @TableId(type = IdType.AUTO)
     private Integer id;
     /**
@@ -31,12 +31,12 @@ public class AccessControl extends Model<AccessControl> {
      * 访问时间（格式yyyy-MM-dd HH:mm:ss）
      */
     @TableField("access_time")
-    private String accessTime;
+    private LocalDateTime accessTime;
     /**
      * 开门方式（1：刷卡开门；2：密码开门；3：APP开门；4：对讲开门；5：二维码开门；6：蓝牙开门；7：按钮开门）
      */
     @TableField("interactive_type")
-    private String interactiveType;
+    private Short interactiveType;
     /**
      * 设备名称
      */
@@ -48,17 +48,17 @@ public class AccessControl extends Model<AccessControl> {
     @TableField("device_num")
     private String deviceNum;
     /**
-     * 分区名称（interactiveType为:刷卡开门;3:APP开门;4:对讲开门;才有值）
+     * 分区名称
      */
     @TableField("zone_name")
     private String zoneName;
     /**
-     * 住户姓名（interactiveType为1:刷卡开门;3:APP开门;4:对讲开门;才有值）
+     * 住户姓名
      */
     @TableField("household_name")
     private String householdName;
     /**
-     * 住户手机号（interactiveType为1:刷卡开门;3:APP开门;4:对讲开门;才有值）
+     * 住户手机号
      */
     @TableField("household_mobile")
     private String householdMobile;
@@ -95,16 +95,11 @@ public class AccessControl extends Model<AccessControl> {
     /**
      * 唯一记录id
      */
-    @TableField("accesscontrol_id")
-    private String accessControlId;
+    @TableField("access_control_id")
+    private Integer accessControlId;
     /**
      * 住户id
      */
     @TableField("household_id")
-    private String householdId;
-
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
+    private Integer householdId;
 }

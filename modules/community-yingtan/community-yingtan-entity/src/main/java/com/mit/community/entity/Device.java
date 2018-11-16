@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("device")
-public class Device extends Model<Device> {
+public class Device {
     @TableId(type = IdType.AUTO)
     private Integer id;
     /**
@@ -83,8 +83,4 @@ public class Device extends Model<Device> {
     @TableField("device_id")
     private String deviceId;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

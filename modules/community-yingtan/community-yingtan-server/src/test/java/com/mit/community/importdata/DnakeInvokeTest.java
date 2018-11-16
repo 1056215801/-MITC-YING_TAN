@@ -16,6 +16,12 @@ import java.util.HashMap;
  */
 public class DnakeInvokeTest {
 
+    /***
+     *  门禁记录
+     * @author shuyy
+     * @date 2018/11/16 15:26
+     * @company mitesofor
+    */
     @Test
     public void getAccessControlList(){
         long startTime = System.currentTimeMillis();

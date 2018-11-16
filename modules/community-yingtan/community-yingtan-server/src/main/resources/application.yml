@@ -171,7 +171,7 @@ redis:
     maxActive: 300
     maxIdle: 100
     maxWait: 1000
-  host: ${REDIS_HOST:localhost}
+  host: ${REDIS_HOST:192.168.1.222}
   port:  ${REDIS_PORT:6379}
   password:
   timeout: 2000
