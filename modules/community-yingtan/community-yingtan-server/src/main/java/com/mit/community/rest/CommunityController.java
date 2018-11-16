@@ -99,6 +99,8 @@ public class CommunityController {
         int roomSize = roomService.getRoomList().size();
         int houseHoldSize = houseHoldService.getHouseList().size();
 
+
+        
         map.put("buildingSize", buildingSize);
         map.put("roomSize", roomSize);
         map.put("houseHoldSize", houseHoldSize);
