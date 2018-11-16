@@ -8,6 +8,7 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,7 +71,7 @@ public class CommunityController {
     @RequestMapping(value = "/getWeatherInfo", method = RequestMethod.POST)
     @ApiOperation(value = "天气", notes = "获取当前地区天气 ;参数：local 地区名拼音 ")
     public Result getWeatherInfo(String local) {
-        if (local.isEmpty()) {
+        if (StringUtils.isBlank(local)) {
             return Result.error("地址不能为空！");
         } else {
             String url = "https://api.seniverse.com/v3/weather/now.json?" +

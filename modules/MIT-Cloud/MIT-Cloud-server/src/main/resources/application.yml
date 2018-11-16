@@ -152,7 +152,7 @@ swagger:
 #
 auth:
 # 会请求这个服务去验证哪些服务可以调用这个服务
-  serviceId: ace-auth
+  serviceId: auth
 # token的key
   user:
     token-header: Authorization
