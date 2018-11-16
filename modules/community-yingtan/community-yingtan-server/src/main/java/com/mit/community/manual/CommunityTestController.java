@@ -1,4 +1,4 @@
-package com.mit.community.rest.manual;
+package com.mit.community.manual;
 
 import com.alibaba.fastjson.JSON;
 import com.dnake.common.DnakeWebApiUtil;

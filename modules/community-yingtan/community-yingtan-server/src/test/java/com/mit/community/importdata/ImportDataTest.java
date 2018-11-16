@@ -275,7 +275,7 @@ public class ImportDataTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/device/getAccessControlList";
         Map<String, Object> map = new HashMap<>();
-        map.put("communityCode", "2c58fbed7bce49778da3b1717241df25");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         String invoke = DnakeWebApiUtil.invoke(url, map);
         System.out.println(invoke);
         //{"accessControlList":[{"householdName":"严波","accessTime":"2018-11-14 11:17:14","buildingName":"2栋","householdId":22376,"buildingCode":"0002","accessImgUrl":"http://image.ishanghome.com/1542165434.jpg","zoneName":"珉轩智能大厦","householdMobile":"13407901037","id":2464172,"deviceNum":"AB900DX88801e86a7770","deviceName":"凯翔演示-进门","interactiveType":2,"unitName":"一单元","cardNum":"8291","unitCode":"01"}
