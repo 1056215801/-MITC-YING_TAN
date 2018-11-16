@@ -1,7 +1,7 @@
 package com.mit.common.msg;
 
 /**
- * list rest response
+ * list controller response
  * @author shuyy
  * @date 2018/11/8 8:40
  * @company mitesofor

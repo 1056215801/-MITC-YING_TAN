@@ -1,7 +1,7 @@
 package com.mit.common.msg;
 
 /**
- * object rest 相应封装类
+ * object controller 相应封装类
  * @author shuyy
  * @date 2018/11/7 16:58
  * @company mitesofor

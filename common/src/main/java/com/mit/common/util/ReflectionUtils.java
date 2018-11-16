@@ -277,7 +277,7 @@ public class ReflectionUtils {
      *
      * @param clazz clazz The class to introspect
      * @param index the Index of the generic ddeclaration,start from 0.
-     * @return the index generic declaration, or Object.class if cannot be determined
+     * @return the system generic declaration, or Object.class if cannot be determined
      */
     public static Class getClassGenricType(final Class clazz, final int index) {
 

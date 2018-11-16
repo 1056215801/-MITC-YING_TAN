@@ -30,7 +30,7 @@ spring:
       testOnReturn: false
       poolPreparedStatements: true
       maxOpenPreparedStatements: 20
-      aop-patterns: "com.mit.community.rest"
+      aop-patterns: "com.mit.community"
       web-stat-filter:
         enabled: true
         url-pattern: /*

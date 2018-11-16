@@ -28,8 +28,8 @@ public class DnakeInvokeTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/device/getAccessControlList";
         HashMap<String, Object> map = new HashMap<>();
-//        map.put("communityCode", "0afe12f3e3b4476689750035f9ee698d");
-        map.put("deviceName", "凯翔演示-进门");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+//        map.put("deviceName", "凯翔演示-进门");
 //        map.put("deviceNum", "AB900DX8880285879170");
         map.put("pageSize", "10");
         map.put("pageNum", "1");

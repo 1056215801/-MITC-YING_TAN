@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 启动类
- *
+ * EnableFeignClients({"com.mit.auth.client.feign"})：uth-client模块，会定时发送查询哪些服务可以访问这个服务，所以需要把client的feign路径包含进来
  * @author shuyy
  * @date 2018年11月9日
  * @company mitesofor
@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableEurekaClient
 @EnableCircuitBreaker
 @SpringBootApplication
-/**auth-client模块，会定时发送查询哪些服务可以访问这个服务，所以需要把client的feign路径包含进来*/
 @EnableFeignClients({"com.mit.auth.client.feign"})
 @EnableScheduling
 @EnableAceAuthClient
