@@ -50,13 +50,14 @@ public class ClusterCommunityService {
 
     /**
      * 通过社区名列表查询所有社区
+     *
      * @param nameList 社区名集合
      * @return java.util.List<com.mit.community.entity.ClusterCommunity>
      * @author shuyy
      * @date 2018/11/16 17:13
      * @company mitesofor
-    */
-    public List<ClusterCommunity> listByNames(List<String> nameList){
+     */
+    public List<ClusterCommunity> listByNames(List<String> nameList) {
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.in("community_name", nameList);
         return clusterCommunityMapper.selectList(wrapper);

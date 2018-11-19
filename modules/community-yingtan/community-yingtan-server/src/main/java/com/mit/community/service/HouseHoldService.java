@@ -1,11 +1,14 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.mapper.HouseHoldMapper;
+import org.omg.PortableInterceptor.HOLDING;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 住户业务层
@@ -38,8 +41,23 @@ public class HouseHoldService {
      * @author Mr.Deng
      * @date 19:35 2018/11/14
      */
-    public List<HouseHold> getHouseList() {
+    public List<HouseHold> listHouses() {
         return houseHoldMapper.selectList(null);
+    }
+
+    /**
+     * 获取小区男女人数
+     *
+     * @return 男女人数
+     * @author Mr.Deng
+     * @date 16:40 2018/11/19
+     */
+    public Map<String, Object> getSex(String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("SUM(CASE gender WHEN '0' THEN 1 else 0 END) boy" +
+                ",SUM(CASE gender WHEN '1' THEN 1 else 0 END) girl");
+        wrapper.where("community_code={0}", communityCode);
+        return houseHoldMapper.selectMaps(wrapper).get(0);
     }
 
 }
