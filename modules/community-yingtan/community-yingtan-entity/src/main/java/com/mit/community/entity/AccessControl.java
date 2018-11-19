@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * 门禁记录
@@ -41,32 +40,32 @@ public class AccessControl {
      * 设备名称
      */
     @TableField("device_name")
-    private String deviceName;
+    private String deviceName = "";
     /**
      * 设备编码
      */
     @TableField("device_num")
-    private String deviceNum;
+    private String deviceNum = "";
     /**
      * 分区名称
      */
     @TableField("zone_name")
-    private String zoneName;
+    private String zoneName = "";
     /**
      * 住户姓名
      */
     @TableField("household_name")
-    private String householdName;
+    private String householdName = "";
     /**
      * 住户手机号
      */
     @TableField("household_mobile")
-    private String householdMobile;
+    private String householdMobile = "";
     /**
      * 卡号（interactiveType为1:刷卡开门;才有值）
      */
-    @TableField("card_num")
-    private String cardNum;
+    @TableField(value = "card_num")
+    private String cardNum = "";
     /**
      * 访客影像图片URL
      */
@@ -76,30 +75,29 @@ public class AccessControl {
      * 楼栋编号
      */
     @TableField("building_code")
-    private String buildingCode;
+    private String buildingCode = "";
     /**
      * 楼栋名称
      */
     @TableField("building_name")
-    private String buildingName;
+    private String buildingName = "";
     /**
      * 单元编号
      */
     @TableField("unit_code")
-    private String unitCode;
+    private String unitCode = "";
     /**
      * 单元名称
      */
     @TableField("unit_name")
-    private String unitName;
-    /**
-     * 唯一记录id
-     */
-    @TableField("access_control_id")
-    private Integer accessControlId;
+    private String unitName = "";
+
     /**
      * 住户id
      */
     @TableField("household_id")
-    private Integer householdId;
+    private Integer householdId = 0;
+
+    @TableField("access_control_id")
+    private Integer accessControlId;
 }

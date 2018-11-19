@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.mapper.ClusterCommunityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,22 @@ public class ClusterCommunityService {
      * @author Mr.Deng
      * @date 15:56 2018/11/14
      */
-    public List<ClusterCommunity> getClusterCommunityList() {
+    public List<ClusterCommunity> list() {
         return clusterCommunityMapper.selectList(null);
+    }
+
+    /**
+     * 通过社区名列表查询所有社区
+     * @param nameList 社区名集合
+     * @return java.util.List<com.mit.community.entity.ClusterCommunity>
+     * @author shuyy
+     * @date 2018/11/16 17:13
+     * @company mitesofor
+    */
+    public List<ClusterCommunity> listByNames(List<String> nameList){
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.in("community_name", nameList);
+        return clusterCommunityMapper.selectList(wrapper);
     }
 
 }

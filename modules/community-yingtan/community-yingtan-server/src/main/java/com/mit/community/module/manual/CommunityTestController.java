@@ -116,7 +116,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getZoneList")
     public Result getZoneList() {
-        List<ClusterCommunity> clusters = clusterCommunityService.getClusterCommunityList();
+        List<ClusterCommunity> clusters = clusterCommunityService.list();
         for (ClusterCommunity c : clusters) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1//zone/getZoneList";
@@ -355,7 +355,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getDeviceList")
     public Result getDeviceList() {
-        List<ClusterCommunity> clusterCommunityList = clusterCommunityService.getClusterCommunityList();
+        List<ClusterCommunity> clusterCommunityList = clusterCommunityService.list();
         for (ClusterCommunity c : clusterCommunityList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/device/getDeviceList";
@@ -394,7 +394,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getAccessControlList")
     public Result getAccessControlList() {
-        List<ClusterCommunity> clusterCommunityList = clusterCommunityService.getClusterCommunityList();
+        List<ClusterCommunity> clusterCommunityList = clusterCommunityService.list();
         for (ClusterCommunity c : clusterCommunityList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/device/getAccessControlList";
@@ -407,7 +407,6 @@ public class CommunityTestController {
             List<AccessControlTest> accessControls = JSON.parseArray(jsonArray.toString(), AccessControlTest.class);
             for (AccessControlTest a : accessControls) {
                 AccessControl accessControl = new AccessControl();
-                accessControl.setAccessControlId(Integer.valueOf(a.getId()));
                 accessControl.setAccessImgUrl(a.getAccessImgUrl());
                 LocalDateTime accessTimeLocal = DateUtils.parseStringToDateTime(a.getAccessTime(), null);
                 accessControl.setAccessTime(accessTimeLocal);
