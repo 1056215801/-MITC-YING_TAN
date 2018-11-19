@@ -31,33 +31,16 @@ import java.util.Map;
 @Api(value = "智慧社区感知平台后台", tags = {"感知平台"})
 public class PerceptionController {
 
-    private final ClusterCommunityService clusterCommunityService;
-    private final ZoneService zoneService;
     private final BuildingService buildingService;
-    private final UnitService unitService;
     private final RoomService roomService;
     private final HouseHoldService houseHoldService;
-    private final VisitorService visitorService;
-    private final DeviceService deviceService;
-    private final AccessControlService accessControlService;
-    private final DeviceCallService deviceCallService;
 
     @Autowired
-    public PerceptionController(ClusterCommunityService clusterCommunityService, ZoneService zoneService,
-                                BuildingService buildingService, UnitService unitService, RoomService roomService,
-                                HouseHoldService houseHoldService, VisitorService visitorService,
-                                DeviceService deviceService, AccessControlService accessControlService,
-                                DeviceCallService deviceCallService) {
-        this.clusterCommunityService = clusterCommunityService;
-        this.zoneService = zoneService;
+    public PerceptionController(BuildingService buildingService, RoomService roomService,
+                                HouseHoldService houseHoldService) {
         this.buildingService = buildingService;
-        this.unitService = unitService;
         this.roomService = roomService;
         this.houseHoldService = houseHoldService;
-        this.visitorService = visitorService;
-        this.deviceService = deviceService;
-        this.accessControlService = accessControlService;
-        this.deviceCallService = deviceCallService;
     }
 
     /**
@@ -68,7 +51,7 @@ public class PerceptionController {
      * @author Mr.Deng
      * @date 16:06 2018/11/13
      */
-    @RequestMapping(value = "/getWeatherInfo", method = RequestMethod.POST)
+    @RequestMapping(value = "/getWeatherInfo", method = RequestMethod.GET)
     @ApiOperation(value = "天气", notes = "获取当前地区天气 ;参数：local 地区名拼音 ")
     public Result getWeatherInfo(String local) {
         if (StringUtils.isBlank(local)) {
@@ -92,18 +75,24 @@ public class PerceptionController {
      * @author Mr.Deng
      * @date 9:10 2018/11/16
      */
-    @RequestMapping(value = "/getSyntheticalStatistics", method = RequestMethod.POST)
-    @ApiOperation(value = "小区综合统计数据", notes = "返回参数：buildingSize 楼栋总数、roomSize 房屋总数、" +
-            "车位总数、社区民警、居委干部、楼长人员、物业人员")
-    public Result getSyntheticalStatistics() {
+    @RequestMapping(value = "/getCommunityStatistics", method = RequestMethod.GET)
+    @ApiOperation(value = "小区综合统计数据->左", notes = "返回参数：buildingSize 楼栋总数、roomSize 房屋总数、" +
+            "ParkingSpace 车位总数、CommunityPolice 社区民警")
+    public Result getCommunityStatistics() {
         Map<String, Object> map = new HashMap<>(8);
         int buildingSize = buildingService.getBuildingList().size();
         int roomSize = roomService.getRoomList().size();
         int houseHoldSize = houseHoldService.getHouseList().size();
+        //楼栋总数
         map.put("buildingSize", buildingSize);
+        //房屋
         map.put("roomSize", roomSize);
+        // 住户
         map.put("houseHoldSize", houseHoldSize);
-
+        // 车位
+        map.put("ParkingSpace", 460);
+        // 社区民警
+        map.put("CommunityPolice", 10);
         return Result.success(map, "OK");
     }
 
