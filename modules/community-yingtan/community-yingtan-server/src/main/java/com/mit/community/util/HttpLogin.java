@@ -87,33 +87,33 @@ public class HttpLogin implements CommandLineRunner {
         return postMethod.getResponseBodyAsString();
     }
 
-//    /**
-//     * 获取图片
-//     *
-//     * @param householdId 房主id
-//     * @return String
-//     * @throws IOException
-//     */
-//    public String post(String householdId, int retryNum) throws IOException {
-//        String url = "http://cmp.ishanghome.com/cmp/household/getStepThreeInfo";
-//        HttpClient httpClient = new HttpClient();
-//        PostMethod postMethod = new PostMethod(url);
-//        NameValuePair[] data = {new NameValuePair("householdId", householdId)};
-//        postMethod.setRequestBody(data);
-//        postMethod.setRequestHeader("cookie", cookie);
-//        // 设置 HttpClient 接收 Cookie,用与浏览器一样的策略
-//        httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-//        int status = httpClient.executeMethod(postMethod);
-//        if (status != 200) {
-//            if (retryNum > 10) {
-//                return null;
-//            }
-//            this.login();
-//            retryNum++;
-//            return this.post(householdId, retryNum);
-//        }
-//        return postMethod.getResponseBodyAsString();
-//    }
+    /**
+     * 获取图片
+     *
+     * @param householdId 房主id
+     * @return String
+     * @throws IOException
+     */
+    public String post(String householdId, int retryNum) throws IOException {
+        String url = "http://cmp.ishanghome.com/cmp/household/getStepThreeInfo";
+        HttpClient httpClient = new HttpClient();
+        PostMethod postMethod = new PostMethod(url);
+        NameValuePair[] data = {new NameValuePair("householdId", householdId)};
+        postMethod.setRequestBody(data);
+        postMethod.setRequestHeader("cookie", cookie);
+        // 设置 HttpClient 接收 Cookie,用与浏览器一样的策略
+        httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+        int status = httpClient.executeMethod(postMethod);
+        if (status != 200) {
+            if (retryNum > 10) {
+                return null;
+            }
+            this.login();
+            retryNum++;
+            return this.post(householdId, retryNum);
+        }
+        return postMethod.getResponseBodyAsString();
+    }
 
     /**
      * 获取图片
@@ -138,17 +138,17 @@ public class HttpLogin implements CommandLineRunner {
         this.login();
     }
 
-//    public static void main(String[] args) {
-//        HttpLogin httpLogin = new HttpLogin();
-//        try {
-//            String post = httpLogin.postOne("43707", 1);
-//            if (post != null) {
-//                JSONObject parse = JSONObject.fromObject(post);
-//                JSONArray houseList = parse.getJSONArray("houseList");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public static void main(String[] args) {
+        HttpLogin httpLogin = new HttpLogin();
+        try {
+            String post = httpLogin.postOne("43707", 1);
+            if (post != null) {
+                JSONObject parse = JSONObject.fromObject(post);
+                JSONArray houseList = parse.getJSONArray("houseList");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
