@@ -119,7 +119,7 @@ public class CommunityTestController {
         List<ClusterCommunity> clusters = clusterCommunityService.list();
         for (ClusterCommunity c : clusters) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1//zone/getZoneList";
+            String url = "/v1//zone/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", c.getCommunityCode());
             map.put("zoneStatus", 1);
@@ -150,10 +150,10 @@ public class CommunityTestController {
      */
     @RequestMapping("getBuildingList")
     public Result getBuildingList() {
-        List<Zone> zoneList = zoneService.getZoneList();
+        List<Zone> zoneList = zoneService.list();
         for (Zone z : zoneList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/building/getBuildingList";
+            String url = "/v1/building/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", z.getCommunityCode());
             map.put("zoneId", z.getZoneId());
@@ -185,10 +185,10 @@ public class CommunityTestController {
      */
     @RequestMapping("getUnitList")
     public Result getUnitList() {
-        List<Building> buildingList = buildingService.getBuildingList();
+        List<Building> buildingList = buildingService.list();
         for (Building b : buildingList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1//unit/getUnitList";
+            String url = "/v1//unit/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", b.getCommunityCode());
             map.put("zoneId", b.getZoneId());
@@ -222,10 +222,10 @@ public class CommunityTestController {
      */
     @RequestMapping("getRoomList")
     public Result getRoomList() {
-        List<Unit> unitList = unitService.getUnitList();
+        List<Unit> unitList = unitService.list();
         for (Unit u : unitList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/room/getRoomList";
+            String url = "/v1/room/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", u.getCommunityCode());
             map.put("zoneId", u.getZoneId());
@@ -260,7 +260,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getHouseholdList")
     public Result getHouseholdList() {
-        List<Room> roomList = roomService.getRoomList();
+        List<Room> roomList = roomService.list();
         for (Room r : roomList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/household/getHouseholdList";
@@ -311,10 +311,10 @@ public class CommunityTestController {
      */
     @RequestMapping("getVisitorList")
     public Result getVisitorList() {
-        List<Unit> unitList = unitService.getUnitList();
+        List<Unit> unitList = unitService.list();
         for (Unit u : unitList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/visitor/getVisitorList";
+            String url = "/v1/visitor/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", u.getCommunityCode());
             map.put("zoneId", u.getZoneId());
@@ -358,7 +358,7 @@ public class CommunityTestController {
         List<ClusterCommunity> clusterCommunityList = clusterCommunityService.list();
         for (ClusterCommunity c : clusterCommunityList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/device/getDeviceList";
+            String url = "/v1/device/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", c.getCommunityCode());
             String invoke = DnakeWebApiUtil.invoke(url, map);
@@ -438,10 +438,10 @@ public class CommunityTestController {
      */
     @RequestMapping("getDeviceCallList")
     public Result getDeviceCallList() {
-        List<Room> roomList = roomService.getRoomList();
+        List<Room> roomList = roomService.list();
         for (Room r : roomList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/device/getDeviceCallList";
+            String url = "/v1/device/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", r.getCommunityCode());
             map.put("zoneId", r.getZoneId());

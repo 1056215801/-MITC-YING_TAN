@@ -52,7 +52,7 @@ public class ImportDataTest {
     @Test
     public void getZoneList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1//zone/getZoneList";
+        String url = "/v1//zone/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneStatus", 1);
@@ -75,7 +75,7 @@ public class ImportDataTest {
     @Test
     public void getBuildingList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/building/getBuildingList";
+        String url = "/v1/building/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneId", 363);
@@ -99,7 +99,7 @@ public class ImportDataTest {
     @Test
     public void getUnitList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1//unit/getUnitList";
+        String url = "/v1//unit/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneId", "363");
@@ -123,7 +123,7 @@ public class ImportDataTest {
     @Test
     public void getRoomList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/room/getRoomList";
+        String url = "/v1/room/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneId", 363);
@@ -175,7 +175,7 @@ public class ImportDataTest {
     @Test
     public void getVisitorList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/visitor/getVisitorList";
+        String url = "/v1/visitor/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         String invoke = DnakeWebApiUtil.invoke(url, map);
@@ -198,7 +198,7 @@ public class ImportDataTest {
     @Test
     public void getDeviceList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/device/getDeviceList";
+        String url = "/v1/device/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         String invoke = DnakeWebApiUtil.invoke(url, map);
@@ -296,7 +296,7 @@ public class ImportDataTest {
     @Test
     public void getDeviceCallList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/device/getDeviceCallList";
+        String url = "/v1/device/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "047cd4ab796a419a80a4d362b9da1c8f");
         String invoke = DnakeWebApiUtil.invoke(url, map);

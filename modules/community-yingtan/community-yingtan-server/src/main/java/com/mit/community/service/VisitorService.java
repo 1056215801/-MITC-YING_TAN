@@ -44,7 +44,7 @@ public class VisitorService {
      * @author Mr.Deng
      * @date 20:21 2018/11/14
      */
-    public List<Visitor> getVisitorList() {
+    public List<Visitor> list() {
         return visitorMapper.selectList(null);
     }
 

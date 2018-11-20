@@ -39,7 +39,7 @@ public class RoomService {
      * @author Mr.Deng
      * @date 18:37 2018/11/14
      */
-    public List<Room> getRoomList() {
+    public List<Room> list() {
         return roomMapper.selectList(null);
     }
 }

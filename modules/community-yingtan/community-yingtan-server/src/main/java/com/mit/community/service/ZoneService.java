@@ -43,7 +43,7 @@ public class ZoneService {
      * @author Mr.Deng
      * @date 16:16 2018/11/14
      */
-    public List<Zone> getZoneList() {
+    public List<Zone> list() {
         return zoneMapper.selectList(null);
     }
 }

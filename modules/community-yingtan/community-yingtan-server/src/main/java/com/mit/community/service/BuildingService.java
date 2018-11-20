@@ -42,8 +42,8 @@ public class BuildingService {
      * @author Mr.Deng
      * @date 16:55 2018/11/14
      */
-    public List<Building> getBuildingList() {
+    public List<Building> list() {
         return buildingMapper.selectList(null);
     }
-    
+
 }

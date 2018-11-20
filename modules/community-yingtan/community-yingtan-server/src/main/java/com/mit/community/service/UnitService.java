@@ -18,8 +18,12 @@ import java.util.List;
  */
 @Service
 public class UnitService {
+    private final UnitMapper unitMapper;
+
     @Autowired
-    private UnitMapper unitMapper;
+    public UnitService(UnitMapper unitMapper) {
+        this.unitMapper = unitMapper;
+    }
 
     /**
      * 保存单元信息
@@ -39,7 +43,7 @@ public class UnitService {
      * @author Mr.Deng
      * @date 17:20 2018/11/14
      */
-    public List<Unit> getUnitList() {
+    public List<Unit> list() {
         return unitMapper.selectList(null);
     }
 }

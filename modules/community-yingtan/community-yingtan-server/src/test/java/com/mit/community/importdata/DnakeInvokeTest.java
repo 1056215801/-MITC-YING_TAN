@@ -84,7 +84,7 @@ public class DnakeInvokeTest {
     public void getVisitorList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/visitor/getVisitorList";
+        String url = "/v1/visitor/list";
         HashMap<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("pageSize", "100");

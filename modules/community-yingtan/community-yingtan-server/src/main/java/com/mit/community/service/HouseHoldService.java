@@ -41,7 +41,7 @@ public class HouseHoldService {
      * @author Mr.Deng
      * @date 19:35 2018/11/14
      */
-    public List<HouseHold> listHouses() {
+    public List<HouseHold> list() {
         return houseHoldMapper.selectList(null);
     }
 
