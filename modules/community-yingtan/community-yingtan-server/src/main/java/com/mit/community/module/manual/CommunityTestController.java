@@ -8,6 +8,7 @@ import com.mit.common.util.DateUtils;
 import com.mit.community.entity.*;
 import com.mit.community.entity.modelTest.*;
 import com.mit.community.service.*;
+import com.mit.community.util.HttpLogin;
 import com.mit.community.util.Result;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -51,6 +52,8 @@ public class CommunityTestController {
 
     private final DeviceCallService deviceCallService;
 
+    private final HttpLogin httpLogin;
+
     @Autowired
     public CommunityTestController(ClusterCommunityService clusterCommunityService,
                                    ZoneService zoneService,
@@ -61,7 +64,7 @@ public class CommunityTestController {
                                    VisitorService visitorService,
                                    DeviceService deviceService,
                                    AccessControlService accessControlService,
-                                   DeviceCallService deviceCallService) {
+                                   DeviceCallService deviceCallService, HttpLogin httpLogin) {
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.buildingService = buildingService;
@@ -72,8 +75,9 @@ public class CommunityTestController {
         this.deviceService = deviceService;
         this.accessControlService = accessControlService;
         this.deviceCallService = deviceCallService;
+        this.httpLogin = httpLogin;
     }
-
+    
     /**
      * 保存小区信息
      *
