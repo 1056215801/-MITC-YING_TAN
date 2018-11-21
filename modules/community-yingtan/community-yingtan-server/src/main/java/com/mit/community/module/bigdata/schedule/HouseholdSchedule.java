@@ -49,7 +49,7 @@ public class HouseholdSchedule {
      * @company mitesofor
     */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void removeAndiImport (){
         List<String> clusterCommunityNameList = new ArrayList<>(4);
         clusterCommunityNameList.add("凯翔外滩小区");

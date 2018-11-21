@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/21
  * @company mitesofor
  */
-@Component
+//@Component
 public class UnitSchedule {
 
     private final BuildingService buildingService;
@@ -51,7 +51,7 @@ public class UnitSchedule {
      * @date 2018/11/21 9:21
      * @company mitesofor
     */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "* * */5 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void remoteAndImport(){
         List<String> clusterCommunityNameList = new ArrayList<>(4);
