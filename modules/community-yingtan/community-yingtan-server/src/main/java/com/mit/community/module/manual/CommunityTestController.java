@@ -320,19 +320,19 @@ public class CommunityTestController {
             List<HouseTest> houses = JSON.parseArray(jsonArray.toString(), HouseTest.class);
             for (HouseTest h : houses) {
                 HouseHold house = new HouseHold();
-                house.setAppDeviceGroupIds(h.getAppDeviceGroupIds());
-                house.setAuthorizeStatus(h.getAuthorizeStatus());
+//                house.setAppDeviceGroupIds(Integer.valueOf(h.getAppDeviceGroupIds()));
+                house.setAuthorizeStatus(Integer.valueOf(h.getAuthorizeStatus()));
                 house.setBuildingId(r.getBuildingId());
                 house.setBuildingName(h.getBuildingName());
                 house.setCommunityCode(r.getCommunityCode());
-                house.setDoorDeviceGroupIds(h.getDoorDeviceGroupIds());
-                house.setGender(h.getGender());
+//                house.setDoorDeviceGroupIds(h.getDoorDeviceGroupIds());
+                house.setGender(Integer.valueOf(h.getGender()));
                 house.setHouseholdId(Integer.parseInt(h.getHouseholdId()));
                 house.setHouseholdName(h.getHouseholdName());
-                house.setHouseholdStatus(h.getHouseholdStatus());
+                house.setHouseholdStatus(Integer.valueOf(h.getHouseholdStatus()));
                 house.setHouseholdType(Integer.parseInt(h.getHouseholdType()));
                 house.setMobile(h.getMobile());
-                house.setResidenceTime(h.getResidenceTime());
+//                house.setResidenceTime(LocalDateTime.parse(h.getResidenceTime()));
                 house.setRoomNum(h.getRoomNum());
                 house.setSipAccount(h.getSipAccount());
                 house.setSipPassword(h.getSipPassword());

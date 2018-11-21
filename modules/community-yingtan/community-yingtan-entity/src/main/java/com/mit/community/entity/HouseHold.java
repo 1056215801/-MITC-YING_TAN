@@ -5,9 +5,13 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 住户表
@@ -19,30 +23,51 @@ import java.io.Serializable;
  */
 @Data
 @TableName("household")
-public class HouseHold extends Model<HouseHold> {
+@AllArgsConstructor
+@NoArgsConstructor
+public class HouseHold extends BaseEntity {
 
-    @TableId(type = IdType.AUTO)
-    private Integer id;
     /**
      * 小区Code
      */
     @TableField("community_code")
     private String communityCode;
+
+    /**小区名*/
+    @TableField("community_name")
+    private String communityName;
+
     /**
      * 分区ID
      */
     @TableField("zone_id")
     private Integer zoneId;
     /**
+     * 分区名称
+     */
+    @TableField("zone_name")
+    private String zoneName;
+
+    /**
      * 楼栋ID
      */
     @TableField("building_id")
     private Integer buildingId;
     /**
+     * 楼栋名称
+     */
+    @TableField("building_name")
+    private String buildingName;
+    /**
      * 单元ID
      */
     @TableField("unit_id")
     private Integer unitId;
+    /**
+     * 单元名称
+     */
+    @TableField("unit_name")
+    private String unitName;
     /**
      * 房间号
      */
@@ -53,6 +78,7 @@ public class HouseHold extends Model<HouseHold> {
      */
     @TableField("household_id")
     private Integer householdId;
+
     /**
      * 业主名称
      */
@@ -67,46 +93,21 @@ public class HouseHold extends Model<HouseHold> {
      * 业主状态（0：注销；1：启用）
      */
     @TableField("household_status")
-    private String householdStatus;
+    private Integer householdStatus;
     /**
-     * 值转成二进制授权状态（未授权：0;卡：1;app：10;人脸：100）；例:人脸和卡授权：101
+     * 值转成二进制授权状态（未授权：0;卡：1;roomNumapp：10;人脸：100）；例:人脸和卡授权：101
      */
     @TableField("authorize_status")
-    private String authorizeStatus;
-    /**
-     * 楼栋名称
-     */
-    @TableField("building_name")
-    private String buildingName;
-    /**
-     * 分区名称
-     */
-    @TableField("zone_name")
-    private String zoneName;
-    /**
-     * 门禁卡授权设备组id “，” 分隔
-     */
-    @TableField("door_devicegroup_ids")
-    private String doorDeviceGroupIds;
-    /**
-     * 单元名称
-     */
-    @TableField("unit_name")
-    private String unitName;
+    private Integer authorizeStatus;
     /**
      * 业主性别(0：男；1：女)
      */
-    private String gender;
+    private Integer gender;
     /**
      * 居住期限
      */
     @TableField("residence_time")
-    private String residenceTime;
-    /**
-     * app授权设备组id “，” 分隔
-     */
-    @TableField("app_devicegroup_ids")
-    private String appDeviceGroupIds;
+    private LocalDateTime residenceTime;
     /**
      * 业主手机号
      */
@@ -122,8 +123,11 @@ public class HouseHold extends Model<HouseHold> {
     @TableField("sip_password")
     private String sipPassword;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
+    @TableField(exist = false)
+    private List<AuthorizeHouseholdDevice> authorizeHouseholdDevices;
+
+    @TableField(exist = false)
+    private List<AuthorizeAppHouseholdDevice> authorizeAppHouseholdDevices;
+
+
 }

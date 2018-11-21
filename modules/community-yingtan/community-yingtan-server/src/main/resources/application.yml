@@ -1,7 +1,7 @@
 logging:
   level:
     #        tk.mybatis: DEBUG
-    mit.cloud: DEBUG
+    com.mit: DEBUG
 spring:
   application:
     name: community-yingtan
@@ -55,6 +55,7 @@ spring:
           db-type: mysql
           config:
             drop-table-allow: false
+            multi-statement-allow: true
         slf4j:
           enabled: true
           statement-create-after-log-enabled: false
@@ -192,12 +193,12 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF8
+      url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF-8
+      url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
 

@@ -19,10 +19,8 @@ import java.io.Serializable;
  */
 @Data
 @TableName("unit")
-public class Unit extends Model<Unit> {
+public class Unit extends BaseEntity {
 
-    @TableId(type = IdType.AUTO)
-    private Integer id;
     /**
      * 小区Code
      */
@@ -59,8 +57,4 @@ public class Unit extends Model<Unit> {
     @TableField("unit_status")
     private Integer unitStatus;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

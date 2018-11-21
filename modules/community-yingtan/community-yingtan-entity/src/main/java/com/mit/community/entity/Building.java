@@ -19,10 +19,8 @@ import java.io.Serializable;
  */
 @Data
 @TableName("building")
-public class Building{
+public class Building extends BaseEntity{
 
-    @TableId(type = IdType.AUTO)
-    private Integer id;
     /**
      * 小区Code
      */

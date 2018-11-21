@@ -52,12 +52,13 @@ public class ImportDataTest {
     @Test
     public void getZoneList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1//zone/list";
+        String url = "/v1/zone/getZoneList";
         Map<String, Object> map = new HashMap<>();
-        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+//        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("communityCode", "0125caffaae1472b996390e869129cc7");
         map.put("zoneStatus", 1);
         String invoke = DnakeWebApiUtil.invoke(url, map);
-
+        System.out.println(invoke);
         JSONObject jsonObject = JSONObject.fromObject(invoke);
         JSONArray jsonArray = jsonObject.getJSONArray("zoneList");
         List<ZoneList> zoneLists = JSON.parseArray(jsonArray.toString(), ZoneList.class);
@@ -75,11 +76,11 @@ public class ImportDataTest {
     @Test
     public void getBuildingList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/building/list";
+        String url = "/v1/building/getBuildingList";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneId", 363);
-        map.put("buildingStatus", "1");
+//        map.put("buildingStatus", "1");
         String invoke = DnakeWebApiUtil.invoke(url, map);
         System.out.println(invoke);
         JSONObject jsonObject = JSONObject.fromObject(invoke);
@@ -99,13 +100,14 @@ public class ImportDataTest {
     @Test
     public void getUnitList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1//unit/list";
+        String url = "/v1//unit/getUnitList";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneId", "363");
-        map.put("buildingId", "423");
-        map.put("unitStatus", 1);
+        map.put("buildingId", "618");
+//        map.put("unitStatus", 1);
         String invoke = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(invoke);
         JSONObject jsonObject = JSONObject.fromObject(invoke);
         JSONArray jsonArray = jsonObject.getJSONArray("unitList");
         List<UnitTest> units = JSON.parseArray(jsonArray.toString(), UnitTest.class);
@@ -123,7 +125,7 @@ public class ImportDataTest {
     @Test
     public void getRoomList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/room/list";
+        String url = "/v1/room/getRoomList";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneId", 363);
@@ -154,7 +156,9 @@ public class ImportDataTest {
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("zoneId", 363);
         map.put("buildingId", 423);
-        map.put("unitId", 565);
+        map.put("pageSize", 100);
+        map.put("pageNum", 5);
+
         String invoke = DnakeWebApiUtil.invoke(url, map);
         System.out.println(invoke);
         //{"householdName":"舒园园","householdType":8,"buildingName":"二号楼","authorizeStatus":6,"householdId":37137,"zoneName":"珉轩智能大厦","doorDeviceGroupIds":"","householdStatus":1,"unitName":"一单元","roomNum":"0101","gender":0,"residenceTime":"2100-01-01 00:00:00","appDeviceGroupIds":"629","mobile":"13064102937"}
@@ -175,7 +179,7 @@ public class ImportDataTest {
     @Test
     public void getVisitorList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/visitor/list";
+        String url = "/v1/visitor/getVisitorList";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         String invoke = DnakeWebApiUtil.invoke(url, map);
@@ -198,7 +202,7 @@ public class ImportDataTest {
     @Test
     public void getDeviceList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/device/list";
+        String url = "/v1/device/getDeviceList";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         String invoke = DnakeWebApiUtil.invoke(url, map);
@@ -296,7 +300,7 @@ public class ImportDataTest {
     @Test
     public void getDeviceCallList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/device/list";
+        String url = "/v1/device/getDeviceCallList";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "047cd4ab796a419a80a4d362b9da1c8f");
         String invoke = DnakeWebApiUtil.invoke(url, map);

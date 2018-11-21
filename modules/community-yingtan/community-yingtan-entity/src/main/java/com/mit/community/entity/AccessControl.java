@@ -1,9 +1,7 @@
 package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -18,14 +16,16 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("access_control")
-public class AccessControl {
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+public class AccessControl extends BaseEntity {
     /**
      * 小区编码
      */
     @TableField("community_code")
     private String communityCode;
+
+    /**小区名*/
+    @TableField("community_name")
+    private String communityName;
     /**
      * 访问时间（格式yyyy-MM-dd HH:mm:ss）
      */
@@ -40,32 +40,36 @@ public class AccessControl {
      * 设备名称
      */
     @TableField("device_name")
-    private String deviceName = "";
+    private String deviceName;
     /**
      * 设备编码
      */
     @TableField("device_num")
-    private String deviceNum = "";
+    private String deviceNum;
+
+    /**分区编码*/
+    @TableField("zone_id")
+    private Integer zoneId;
     /**
      * 分区名称
      */
     @TableField("zone_name")
-    private String zoneName = "";
+    private String zoneName;
     /**
      * 住户姓名
      */
     @TableField("household_name")
-    private String householdName = "";
+    private String householdName;
     /**
      * 住户手机号
      */
     @TableField("household_mobile")
-    private String householdMobile = "";
+    private String householdMobile;
     /**
      * 卡号（interactiveType为1:刷卡开门;才有值）
      */
     @TableField(value = "card_num")
-    private String cardNum = "";
+    private String cardNum;
     /**
      * 访客影像图片URL
      */
@@ -75,29 +79,30 @@ public class AccessControl {
      * 楼栋编号
      */
     @TableField("building_code")
-    private String buildingCode = "";
+    private String buildingCode;
     /**
      * 楼栋名称
      */
     @TableField("building_name")
-    private String buildingName = "";
+    private String buildingName;
     /**
      * 单元编号
      */
     @TableField("unit_code")
-    private String unitCode = "";
+    private String unitCode;
     /**
      * 单元名称
      */
     @TableField("unit_name")
-    private String unitName = "";
+    private String unitName;
 
     /**
      * 住户id
      */
     @TableField("household_id")
-    private Integer householdId = 0;
+    private Integer householdId;
 
     @TableField("access_control_id")
     private Integer accessControlId;
+
 }
