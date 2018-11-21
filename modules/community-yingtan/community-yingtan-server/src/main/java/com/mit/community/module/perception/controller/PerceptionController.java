@@ -80,9 +80,10 @@ public class PerceptionController {
      * @author Mr.Deng
      * @date 9:10 2018/11/16
      */
-    @RequestMapping(value = "/countCommunityStatisticsOne", method = RequestMethod.GET)
-    @ApiOperation(value = "小区综合统计数据->左", notes = "返回参数：buildingSize 楼栋总数、roomSize 房屋总数、" +
-            "ParkingSpace 车位总数、CommunityPolice 社区民警")
+    @RequestMapping(value = "/countCommunityStatistics", method = RequestMethod.GET)
+    @ApiOperation(value = "小区综合统计数据", notes = "返回参数：buildingSize 楼栋总数、roomSize 房屋总数、" +
+            "ParkingSpace 车位总数、CommunityPolice 社区民警、neighborhoodCommittee 居委干部、buildingManager 楼长、" +
+            "property 物业、realTimeVisitor 实时访客、attention 关爱/关注进出")
     public Result countCommunityStatisticsOne() {
         Map<String, Object> map = new HashMap<>(8);
         int buildingSize = buildingService.list().size();
@@ -98,21 +99,6 @@ public class PerceptionController {
         map.put("ParkingSpace", 460);
         // 社区民警
         map.put("CommunityPolice", 10);
-        return Result.success(map, "OK");
-    }
-
-    /**
-     * 小区综合统计数据
-     *
-     * @return result
-     * @author Mr.Deng
-     * @date 9:10 2018/11/16
-     */
-    @RequestMapping(value = "/countCommunityStatisticsTwo", method = RequestMethod.GET)
-    @ApiOperation(value = "小区综合统计数据->右", notes = "返回参数：neighborhoodCommittee 居委干部、buildingManager 楼长、" +
-            "property 物业、realTimeVisitor 实时访客、attention 关爱/关注进出")
-    public Result countCommunityStatisticsTwo() {
-        Map<String, Object> map = Maps.newHashMapWithExpectedSize(8);
         //居委干部
         map.put("neighborhoodCommittee", 2);
         // 楼长
@@ -123,7 +109,7 @@ public class PerceptionController {
         map.put("realTimeVisitor", 450);
         // 关爱/关注进出
         map.put("attention", 320);
-        return Result.success(map, "Ok");
+        return Result.success(map, "OK");
     }
 
     /**

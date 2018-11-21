@@ -9,6 +9,7 @@ import com.mit.community.entity.*;
 import com.mit.community.entity.modelTest.*;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpLogin;
+import com.mit.community.util.IdCardInfoExtractorUtil;
 import com.mit.community.util.Result;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +56,8 @@ public class CommunityTestController {
 
     private final HttpLogin httpLogin;
 
+    private final IdCardInfoExtractorUtil idCardInfoExtractorUtil;
+
     @Autowired
     public CommunityTestController(ClusterCommunityService clusterCommunityService,
                                    ZoneService zoneService,
@@ -64,7 +68,7 @@ public class CommunityTestController {
                                    VisitorService visitorService,
                                    DeviceService deviceService,
                                    AccessControlService accessControlService,
-                                   DeviceCallService deviceCallService, HttpLogin httpLogin) {
+                                   DeviceCallService deviceCallService, HttpLogin httpLogin, IdCardInfoExtractorUtil idCardInfoExtractorUtil) {
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.buildingService = buildingService;
@@ -76,8 +80,44 @@ public class CommunityTestController {
         this.accessControlService = accessControlService;
         this.deviceCallService = deviceCallService;
         this.httpLogin = httpLogin;
+        this.idCardInfoExtractorUtil = idCardInfoExtractorUtil;
     }
-    
+
+    /**
+     * 获取身份证信息
+     *
+     * @return result
+     * @author Mr.Deng
+     * @date 15:34 2018/11/20
+     */
+    public Result getCredentialNum() {
+        try {
+            String post = httpLogin.postOne("43707", 1);
+            if (post != null) {
+                JSONObject parse = JSONObject.fromObject(post);
+                JSONObject o = parse.getJSONObject("stepOneInfo");
+                System.out.println(o.get("credentialNum"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Result.success("OK");
+    }
+
+    /**
+     * 解析身份证信息
+     *
+     * @param idCard 身份证号码
+     * @return
+     * @author Mr.Deng
+     * @date 11:29 2018/11/21
+     */
+    @RequestMapping("getIdCardInfo")
+    public Result getIdCardInfo(String idCard) {
+        IdCardInfo idCardInfo = idCardInfoExtractorUtil.IdCardInfo(idCard);
+        return Result.success(idCardInfo);
+    }
+
     /**
      * 保存小区信息
      *

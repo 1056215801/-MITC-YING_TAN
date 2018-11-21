@@ -1,6 +1,5 @@
 package com.mit.community.util;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
@@ -138,17 +137,6 @@ public class HttpLogin implements CommandLineRunner {
         this.login();
     }
 
-    public static void main(String[] args) {
-        HttpLogin httpLogin = new HttpLogin();
-        try {
-            String post = httpLogin.postOne("43707", 1);
-            if (post != null) {
-                JSONObject parse = JSONObject.fromObject(post);
-                JSONArray houseList = parse.getJSONArray("houseList");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
 }
