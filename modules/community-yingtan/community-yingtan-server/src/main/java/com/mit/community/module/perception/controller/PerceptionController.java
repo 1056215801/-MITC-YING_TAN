@@ -97,7 +97,7 @@ public class PerceptionController {
             "车位总数、社区民警、居委干部、楼长人员、物业人员")
     public Result getSyntheticalStatistics() {
         Map<String, Object> map = new HashMap<>(8);
-        int buildingSize = buildingService.getBuildingList().size();
+        int buildingSize = buildingService.list().size();
         int roomSize = roomService.getRoomList().size();
         int houseHoldSize = houseHoldService.getHouseList().size();
         map.put("buildingSize", buildingSize);

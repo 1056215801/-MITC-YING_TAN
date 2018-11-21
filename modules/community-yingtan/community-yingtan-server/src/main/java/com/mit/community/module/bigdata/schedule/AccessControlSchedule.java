@@ -44,12 +44,17 @@ public class AccessControlSchedule {
         clusterCommunityNameList.add("心家泊小区");
         clusterCommunityNameList.add("南苑小区");
         clusterCommunityNameList.add("鹰王环东花苑小区");
-        /*// 下面的是测试的
-        clusterCommunityNameList.add("珉轩工业园");*/
+        // 下面的是测试的
+        clusterCommunityNameList.add("珉轩工业园");
         List<ClusterCommunity> clusterCommunitiesList = clusterCommunityService.listByNames(clusterCommunityNameList);
         List<AccessControl> allAccessControlsList = accessControlService.listIncrementByCommunityCode(clusterCommunitiesList);
         if(!allAccessControlsList.isEmpty()){
+            /* 测试模式，测试数据是否完成，所以把这里注释掉
+            allAccessControlsList.forEach(item -> accessControlService.save(item));*/
             accessControlService.insertBatch(allAccessControlsList);
+            /* 批量插入会导致一条记录数据出问题，所有的数据都插入失败，所以这里注释掉
+            // 批量插入
+            accessControlService.insertBatch(allAccessControlsList);*/
         }
     }
 

@@ -119,7 +119,7 @@ public class CommunityTestController {
         List<ClusterCommunity> clusters = clusterCommunityService.list();
         for (ClusterCommunity c : clusters) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1//zone/getZoneList";
+            String url = "/v1//zone/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", c.getCommunityCode());
             map.put("zoneStatus", 1);
@@ -150,7 +150,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getBuildingList")
     public Result getBuildingList() {
-        List<Zone> zoneList = zoneService.getZoneList();
+        List<Zone> zoneList = zoneService.list();
         for (Zone z : zoneList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/building/getBuildingList";
@@ -185,10 +185,10 @@ public class CommunityTestController {
      */
     @RequestMapping("getUnitList")
     public Result getUnitList() {
-        List<Building> buildingList = buildingService.getBuildingList();
+        List<Building> buildingList = buildingService.list();
         for (Building b : buildingList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1//unit/getUnitList";
+            String url = "/v1//unit/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", b.getCommunityCode());
             map.put("zoneId", b.getZoneId());
@@ -222,7 +222,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getRoomList")
     public Result getRoomList() {
-        List<Unit> unitList = unitService.getUnitList();
+        List<Unit> unitList = unitService.list();
         for (Unit u : unitList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/room/getRoomList";
@@ -276,19 +276,19 @@ public class CommunityTestController {
             List<HouseTest> houses = JSON.parseArray(jsonArray.toString(), HouseTest.class);
             for (HouseTest h : houses) {
                 HouseHold house = new HouseHold();
-                house.setAppDeviceGroupIds(h.getAppDeviceGroupIds());
-                house.setAuthorizeStatus(h.getAuthorizeStatus());
+//                house.setAppDeviceGroupIds(Integer.valueOf(h.getAppDeviceGroupIds()));
+                house.setAuthorizeStatus(Integer.valueOf(h.getAuthorizeStatus()));
                 house.setBuildingId(r.getBuildingId());
                 house.setBuildingName(h.getBuildingName());
                 house.setCommunityCode(r.getCommunityCode());
-                house.setDoorDeviceGroupIds(h.getDoorDeviceGroupIds());
-                house.setGender(h.getGender());
+//                house.setDoorDeviceGroupIds(h.getDoorDeviceGroupIds());
+                house.setGender(Integer.valueOf(h.getGender()));
                 house.setHouseholdId(Integer.parseInt(h.getHouseholdId()));
                 house.setHouseholdName(h.getHouseholdName());
-                house.setHouseholdStatus(h.getHouseholdStatus());
+                house.setHouseholdStatus(Integer.valueOf(h.getHouseholdStatus()));
                 house.setHouseholdType(Integer.parseInt(h.getHouseholdType()));
                 house.setMobile(h.getMobile());
-                house.setResidenceTime(h.getResidenceTime());
+//                house.setResidenceTime(LocalDateTime.parse(h.getResidenceTime()));
                 house.setRoomNum(h.getRoomNum());
                 house.setSipAccount(h.getSipAccount());
                 house.setSipPassword(h.getSipPassword());
@@ -311,7 +311,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getVisitorList")
     public Result getVisitorList() {
-        List<Unit> unitList = unitService.getUnitList();
+        List<Unit> unitList = unitService.list();
         for (Unit u : unitList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/visitor/getVisitorList";

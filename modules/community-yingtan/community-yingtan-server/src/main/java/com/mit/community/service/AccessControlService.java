@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeWebConstants;
@@ -36,9 +35,16 @@ import java.util.Map;
 public class AccessControlService extends ServiceImpl<AccessControlMapper, AccessControl> {
     private final AccessControlMapper accessControlMapper;
 
+    private final ClusterCommunityService clusterCommunityService;
+
+    private final ZoneService zoneService;
+
+
     @Autowired
-    public AccessControlService(AccessControlMapper accessControlMapper) {
+    public AccessControlService(AccessControlMapper accessControlMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService) {
         this.accessControlMapper = accessControlMapper;
+        this.clusterCommunityService = clusterCommunityService;
+        this.zoneService = zoneService;
     }
 
     /**
@@ -65,7 +71,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     public List<AccessControl> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
                                                                 Integer pageSize, Map<String, Object> param) {
         String url = "/v1/device/getAccessControlList";
-        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(4);
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
         map.put("pageSize", pageSize);
         map.put("pageNum", pageNum);
@@ -102,7 +108,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /***
      * 查询增量门禁数据。（依据是门禁时间）
-     * @param clusterCommunityList 社区列表。里面必须包含communityCode和CommunityName
+     * @param clusterCommunityList 社区列表。里面必须包含communityCode
      * @return List<AccessControl>
      * @author shuyy
      * @date 2018/11/16 17:37
@@ -129,6 +135,10 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                 if (accessControls.size() < 100) {
                     isEnd = true;
                 }
+                String communityName = StringUtils.EMPTY;
+                if(!accessControls.isEmpty()){
+                    communityName = clusterCommunityService.getByCommunityCode(item.getCommunityCode()).getCommunityName();
+                }
                 for (int i = 0; i < accessControls.size(); i++) {
                     AccessControl accessControl = accessControls.get(i);
                     if (StringUtils.isBlank(accessControl.getZoneName())) {
@@ -138,6 +148,14 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                         accessControl.setAccessControlId(accessControl.getId());
                         accessControl.setId(null);
                         accessControl.setCommunityCode(item.getCommunityCode());
+                        accessControl.setCommunityName(communityName);
+                        if(accessControl.getCardNum() == null){
+                            accessControl.setCardNum(StringUtils.EMPTY);
+                        }
+                        Integer zoneId = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item.getCommunityCode()).getZoneId();
+                        accessControl.setZoneId(zoneId);
+                        accessControl.setGmtCreate(LocalDateTime.now());
+                        accessControl.setGmtModified(LocalDateTime.now());
                     }
                     accessControl.setCommunityCode(item.getCommunityCode());
                 }
