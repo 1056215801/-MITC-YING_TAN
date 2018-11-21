@@ -28,13 +28,13 @@ public class IdCardRegionService {
         EntityWrapper<IdCardRegion> wrapper = new EntityWrapper<>();
         int idCardLen = idCardSum6.length();
         if (idCardLen == 2) {
-            wrapper.where("province={0}", idCardSum6);
+            wrapper.eq("province", idCardSum6);
         }
         if (idCardLen == 4) {
-            wrapper.where("city={0}", idCardSum6);
+            wrapper.eq("city", idCardSum6);
         }
         if (idCardLen == 6) {
-            wrapper.where("zone={0}", idCardSum6);
+            wrapper.eq("zone", idCardSum6);
         }
         return idCardRegionMapper.selectList(wrapper).get(0);
     }

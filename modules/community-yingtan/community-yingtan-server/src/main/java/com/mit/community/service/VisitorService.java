@@ -1,5 +1,7 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.Visitor;
 import com.mit.community.mapper.VisitorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import java.util.List;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class VisitorService {
+public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
 
     private final VisitorMapper visitorMapper;
 
@@ -46,6 +48,34 @@ public class VisitorService {
      */
     public List<Visitor> list() {
         return visitorMapper.selectList(null);
+    }
+
+    /**
+     * 通过小区code获取访客信息表
+     *
+     * @param communityCode 小区code
+     * @return 访客记录列表
+     * @author Mr.Deng
+     * @date 15:17 2018/11/21
+     */
+    public List<Visitor> listByCommunityCode(String communityCode) {
+        EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return visitorMapper.selectList(wrapper);
+    }
+
+    /**
+     * 通过一组小区code获取访客记录信息
+     *
+     * @param communityCodes 小区code列表
+     * @return 访客记录列表
+     * @author Mr.Deng
+     * @date 15:19 2018/11/21
+     */
+    public List<Visitor> listByCommunityCodes(List<String> communityCodes) {
+        EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodes);
+        return visitorMapper.selectList(wrapper);
     }
 
 }

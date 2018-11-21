@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
@@ -58,6 +59,34 @@ public class BuildingService extends ServiceImpl<BuildingMapper, Building> {
      */
     public List<Building> list() {
         return buildingMapper.selectList(null);
+    }
+
+    /**
+     * 通过小区code获取楼栋信息
+     *
+     * @param communityCode 小区凑得
+     * @return 楼栋信息列表
+     * @author Mr.Deng
+     * @date 14:59 2018/11/21
+     */
+    public List<Building> listByCommunityCode(String communityCode) {
+        EntityWrapper<Building> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return buildingMapper.selectList(wrapper);
+    }
+
+    /**
+     * 通过小区code获取楼栋信息
+     *
+     * @param communityCodes 小区code列表
+     * @return 楼栋信息列表
+     * @author Mr.Deng
+     * @date 13:54 2018/11/21
+     */
+    public List<Building> listByCommunityCodes(List<String> communityCodes) {
+        EntityWrapper<Building> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodes);
+        return buildingMapper.selectList(wrapper);
     }
 
     /***
@@ -174,7 +203,7 @@ public class BuildingService extends ServiceImpl<BuildingMapper, Building> {
      * @author shuyy
      * @date 2018/11/21 9:17
      * @company mitesofor
-    */
+     */
     public Building getByBuildingId(Integer buildingId) {
         EntityWrapper<Building> wrapper = new EntityWrapper<>();
         wrapper.eq("building_id", buildingId);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 集群小区业务层
@@ -70,15 +71,30 @@ public class ClusterCommunityService {
      * @author shuyy
      * @date 2018/11/19 15:36
      * @company mitesofor
-    */
-    public ClusterCommunity getByCommunityCode(String communityCode){
+     */
+    public ClusterCommunity getByCommunityCode(String communityCode) {
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCode);
         List<ClusterCommunity> clusterCommunities = clusterCommunityMapper.selectList(wrapper);
-        if(!clusterCommunities.isEmpty()){
+        if (!clusterCommunities.isEmpty()) {
             return clusterCommunities.get(0);
         }
         return null;
+    }
+
+    /**
+     * 获取小区凑得，通过城市名称
+     *
+     * @param cityName 城市名
+     * @return 小区信息列表
+     * @author Mr.Deng
+     * @date 11:53 2018/11/21
+     */
+    public List<Map<String, Object>> listByCityName(String cityName) {
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("community_code,community_name,city_name");
+        wrapper.eq("city_name", cityName);
+        return clusterCommunityMapper.selectMaps(wrapper);
     }
 
 }
