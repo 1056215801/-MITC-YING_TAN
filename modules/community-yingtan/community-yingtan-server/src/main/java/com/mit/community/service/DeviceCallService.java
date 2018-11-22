@@ -38,7 +38,7 @@ public class DeviceCallService {
      * @author Mr.Deng
      * @date 15:59 2018/11/15
      */
-    public List<DeviceCall> getDeviceCallList() {
+    public List<DeviceCall> list() {
         return deviceCallMapper.selectList(null);
     }
 }

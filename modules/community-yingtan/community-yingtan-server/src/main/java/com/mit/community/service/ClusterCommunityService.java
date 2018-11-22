@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 集群小区业务层
@@ -50,13 +51,14 @@ public class ClusterCommunityService {
 
     /**
      * 通过社区名列表查询所有社区
+     *
      * @param nameList 社区名集合
      * @return java.util.List<com.mit.community.entity.ClusterCommunity>
      * @author shuyy
      * @date 2018/11/16 17:13
      * @company mitesofor
-    */
-    public List<ClusterCommunity> listByNames(List<String> nameList){
+     */
+    public List<ClusterCommunity> listByNames(List<String> nameList) {
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.in("community_name", nameList);
         return clusterCommunityMapper.selectList(wrapper);
@@ -69,15 +71,30 @@ public class ClusterCommunityService {
      * @author shuyy
      * @date 2018/11/19 15:36
      * @company mitesofor
-    */
-    public ClusterCommunity getByCommunityCode(String communityCode){
+     */
+    public ClusterCommunity getByCommunityCode(String communityCode) {
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCode);
         List<ClusterCommunity> clusterCommunities = clusterCommunityMapper.selectList(wrapper);
-        if(!clusterCommunities.isEmpty()){
+        if (!clusterCommunities.isEmpty()) {
             return clusterCommunities.get(0);
         }
         return null;
+    }
+
+    /**
+     * 获取小区凑得，通过城市名称
+     *
+     * @param cityName 城市名
+     * @return 小区信息列表
+     * @author Mr.Deng
+     * @date 11:53 2018/11/21
+     */
+    public List<Map<String, Object>> listByCityName(String cityName) {
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("community_code,community_name,city_name");
+        wrapper.eq("city_name", cityName);
+        return clusterCommunityMapper.selectMaps(wrapper);
     }
 
 }

@@ -8,6 +8,8 @@ import com.mit.common.util.DateUtils;
 import com.mit.community.entity.*;
 import com.mit.community.entity.modelTest.*;
 import com.mit.community.service.*;
+import com.mit.community.util.HttpLogin;
+import com.mit.community.util.IdCardInfoExtractorUtil;
 import com.mit.community.util.Result;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +54,10 @@ public class CommunityTestController {
 
     private final DeviceCallService deviceCallService;
 
+    private final HttpLogin httpLogin;
+
+    private final IdCardInfoExtractorUtil idCardInfoExtractorUtil;
+
     @Autowired
     public CommunityTestController(ClusterCommunityService clusterCommunityService,
                                    ZoneService zoneService,
@@ -61,7 +68,7 @@ public class CommunityTestController {
                                    VisitorService visitorService,
                                    DeviceService deviceService,
                                    AccessControlService accessControlService,
-                                   DeviceCallService deviceCallService) {
+                                   DeviceCallService deviceCallService, HttpLogin httpLogin, IdCardInfoExtractorUtil idCardInfoExtractorUtil) {
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.buildingService = buildingService;
@@ -72,6 +79,43 @@ public class CommunityTestController {
         this.deviceService = deviceService;
         this.accessControlService = accessControlService;
         this.deviceCallService = deviceCallService;
+        this.httpLogin = httpLogin;
+        this.idCardInfoExtractorUtil = idCardInfoExtractorUtil;
+    }
+
+    /**
+     * 获取身份证信息
+     *
+     * @return result
+     * @author Mr.Deng
+     * @date 15:34 2018/11/20
+     */
+    public Result getCredentialNum() {
+        try {
+            String post = httpLogin.postOne("43707", 1);
+            if (post != null) {
+                JSONObject parse = JSONObject.fromObject(post);
+                JSONObject o = parse.getJSONObject("stepOneInfo");
+                System.out.println(o.get("credentialNum"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Result.success("OK");
+    }
+
+    /**
+     * 解析身份证信息
+     *
+     * @param idCard 身份证号码
+     * @return
+     * @author Mr.Deng
+     * @date 11:29 2018/11/21
+     */
+    @RequestMapping("getIdCardInfo")
+    public Result getIdCardInfo(String idCard) {
+        IdCardInfo idCardInfo = idCardInfoExtractorUtil.IdCardInfo(idCard);
+        return Result.success(idCardInfo);
     }
 
     /**
@@ -153,7 +197,7 @@ public class CommunityTestController {
         List<Zone> zoneList = zoneService.list();
         for (Zone z : zoneList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/building/getBuildingList";
+            String url = "/v1/building/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", z.getCommunityCode());
             map.put("zoneId", z.getZoneId());
@@ -225,7 +269,7 @@ public class CommunityTestController {
         List<Unit> unitList = unitService.list();
         for (Unit u : unitList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/room/getRoomList";
+            String url = "/v1/room/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", u.getCommunityCode());
             map.put("zoneId", u.getZoneId());
@@ -260,7 +304,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getHouseholdList")
     public Result getHouseholdList() {
-        List<Room> roomList = roomService.getRoomList();
+        List<Room> roomList = roomService.list();
         for (Room r : roomList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
             String url = "/v1/household/getHouseholdList";
@@ -358,7 +402,7 @@ public class CommunityTestController {
         List<ClusterCommunity> clusterCommunityList = clusterCommunityService.list();
         for (ClusterCommunity c : clusterCommunityList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/device/getDeviceList";
+            String url = "/v1/device/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", c.getCommunityCode());
             String invoke = DnakeWebApiUtil.invoke(url, map);
@@ -438,10 +482,10 @@ public class CommunityTestController {
      */
     @RequestMapping("getDeviceCallList")
     public Result getDeviceCallList() {
-        List<Room> roomList = roomService.getRoomList();
+        List<Room> roomList = roomService.list();
         for (Room r : roomList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/device/getDeviceCallList";
+            String url = "/v1/device/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", r.getCommunityCode());
             map.put("zoneId", r.getZoneId());

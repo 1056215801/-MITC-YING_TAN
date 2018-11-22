@@ -42,7 +42,7 @@ public class DeviceService {
      * @author Mr.Deng
      * @date 10:10 2018/11/15
      */
-    public List<Device> getDeviceList() {
+    public List<Device> list() {
         return deviceMapper.selectList(null);
     }
 }

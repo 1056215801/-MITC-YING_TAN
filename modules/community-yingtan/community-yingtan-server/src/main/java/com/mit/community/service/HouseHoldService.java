@@ -46,7 +46,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     private final HouseHoldMapper houseHoldMapper;
 
     private final ClusterCommunityService clusterCommunityService;
-
     private final ZoneService zoneService;
 
     private final BuildingService buildingService;
@@ -85,10 +84,68 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 19:35 2018/11/14
      */
-    public List<HouseHold> getHouseList() {
+    public List<HouseHold> list() {
         return houseHoldMapper.selectList(null);
     }
 
+    /**
+     * 通过小区code获取住户信息
+     *
+     * @param communityCode 小区code
+     * @return 住户信息列表
+     * @author Mr.Deng
+     * @date 15:09 2018/11/21
+     */
+    public List<HouseHold> getByCommunityCode(String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return houseHoldMapper.selectList(wrapper);
+    }
+
+    /**
+     * 通过一组小区code获取住户信息
+     *
+     * @param communityCodes 小区code列表
+     * @return 住户信息列表
+     * @author Mr.Deng
+     * @date 15:11 2018/11/21
+     */
+    public List<HouseHold> getByCommunityCodes(List<String> communityCodes) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodes);
+        return houseHoldMapper.selectList(wrapper);
+    }
+
+    /**
+     * 获取小区男女人数
+     *
+     * @return 男女人数
+     * @author Mr.Deng
+     * @date 16:40 2018/11/19
+     */
+    public Map<String, Object> getSexByCommunityCode(String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("SUM(CASE gender WHEN '0' THEN 1 else 0 END) boy" +
+                ",SUM(CASE gender WHEN '1' THEN 1 else 0 END) girl");
+        wrapper.eq("community_code", communityCode);
+        return houseHoldMapper.selectMaps(wrapper).get(0);
+    }
+
+    /**
+     * 通过一组communityCode获取男女人数
+     *
+     * @param communityCodes communityCode列表
+     * @return 男女人数
+     * @author Mr.Deng
+     * @date 14:32 2018/11/21
+     */
+    public Map<String, Object> listSexByCommunityCodes(List<String> communityCodes) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("SUM(CASE gender WHEN '0' THEN 1 else 0 END) boy" +
+                ",SUM(CASE gender WHEN '1' THEN 1 else 0 END) girl");
+        wrapper.in("community_code", communityCodes);
+        return houseHoldMapper.selectMaps(wrapper).get(0);
+    }
 
     /***
      * 查询住户，通过社区编码
@@ -194,7 +251,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                 zoneName = "凯翔外滩国际";
             }
             Zone zone = zoneService.getByNameAndCommunityCode(zoneName, communityCode);
-            if(zone == null){
+            if (zone == null) {
                 householdList.remove(i--);
                 continue;
             }
@@ -203,7 +260,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             houseHold.setZoneName(zoneName);
             String buildingName = jsonObject.getString("buildingName");
             Building building = buildingService.getByNameAndZoneId(buildingName, zoneId);
-            if(building == null){
+            if (building == null) {
                 householdList.remove(i--);
                 continue;
             }
@@ -211,7 +268,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             houseHold.setBuildingId(buildingId);
             String unitName = jsonObject.getString("unitName");
             Unit unit = unitService.getByNameAndBuildingId(unitName, buildingId);
-            if(unit == null){
+            if (unit == null) {
                 householdList.remove(i--);
                 continue;
             }
@@ -219,13 +276,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             houseHold.setUnitId(unitId);
             houseHold.setGmtCreate(LocalDateTime.now());
             houseHold.setGmtModified(LocalDateTime.now());
-            if(houseHold.getSipAccount() == null){
+            if (houseHold.getSipAccount() == null) {
                 houseHold.setSipAccount(StringUtils.EMPTY);
             }
-            if(houseHold.getSipPassword() == null){
+            if (houseHold.getSipPassword() == null) {
                 houseHold.setSipPassword(StringUtils.EMPTY);
             }
-            if(houseHold.getHouseholdType() == null){
+            if (houseHold.getHouseholdType() == null) {
                 houseHold.setHouseholdType(1);
             }
             parseDoorDevice(jsonObject, houseHold);

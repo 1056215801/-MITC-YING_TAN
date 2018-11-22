@@ -40,9 +40,9 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     private final ZoneService zoneService;
 
-
     @Autowired
-    public AccessControlService(AccessControlMapper accessControlMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService) {
+    public AccessControlService(AccessControlMapper accessControlMapper,
+                                ClusterCommunityService clusterCommunityService, ZoneService zoneService) {
         this.accessControlMapper = accessControlMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
@@ -137,7 +137,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                     isEnd = true;
                 }
                 String communityName = StringUtils.EMPTY;
-                if(!accessControls.isEmpty()){
+                if (!accessControls.isEmpty()) {
                     communityName = clusterCommunityService.getByCommunityCode(item.getCommunityCode()).getCommunityName();
                 }
                 for (int i = 0; i < accessControls.size(); i++) {
@@ -150,7 +150,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                         accessControl.setId(null);
                         accessControl.setCommunityCode(item.getCommunityCode());
                         accessControl.setCommunityName(communityName);
-                        if(accessControl.getCardNum() == null){
+                        if (accessControl.getCardNum() == null) {
                             accessControl.setCardNum(StringUtils.EMPTY);
                         }
                         Integer zoneId = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item.getCommunityCode()).getZoneId();
@@ -170,4 +170,33 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         });
         return allAccessControlsList;
     }
+
+    /**
+     * 通过小区code获取门禁记录信息
+     *
+     * @param communityCode 小区code
+     * @return 门禁记录列表
+     * @author Mr.Deng
+     * @date 15:29 2018/11/21
+     */
+    public List<AccessControl> listByCommunityCode(String communityCode) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return accessControlMapper.selectList(wrapper);
+    }
+
+    /**
+     * 通过一组小区code获取门禁记录信息
+     *
+     * @param communityCodes 小区code
+     * @return 门禁记录信息列表
+     * @author Mr.Deng
+     * @date 15:31 2018/11/21
+     */
+    public List<AccessControl> listByCommunityCodes(List<String> communityCodes) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodes);
+        return accessControlMapper.selectList(wrapper);
+    }
+
 }
