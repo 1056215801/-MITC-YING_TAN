@@ -314,7 +314,7 @@ public class CommunityTestController {
         List<Unit> unitList = unitService.list();
         for (Unit u : unitList) {
             DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-            String url = "/v1/visitor/getVisitorList";
+            String url = "/v1/visitor/list";
             Map<String, Object> map = new HashMap<>();
             map.put("communityCode", u.getCommunityCode());
             map.put("zoneId", u.getZoneId());

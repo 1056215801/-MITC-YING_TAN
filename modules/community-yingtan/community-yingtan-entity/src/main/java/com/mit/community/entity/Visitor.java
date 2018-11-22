@@ -19,15 +19,16 @@ import java.io.Serializable;
  */
 @Data
 @TableName("visitor")
-public class Visitor extends Model<Visitor> {
+public class Visitor extends BaseEntity {
 
-    @TableId(type = IdType.AUTO)
-    private Integer id;
     /**
      * 小区Code
      */
     @TableField("community_code")
     private String communityCode;
+    /**小区名*/
+    @TableField("community_name")
+    private String communityName;
     /**
      * 分区ID
      */
@@ -94,8 +95,11 @@ public class Visitor extends Model<Visitor> {
     @TableField("visitor_status")
     private Integer visitorStatus;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
+    /**访客姓名*/
+    @TableField("visitor_name")
+    private String visitorName;
+
+    /**访客电话*/
+    @TableField("visiter_mobile")
+    private String visiterMobile;
 }

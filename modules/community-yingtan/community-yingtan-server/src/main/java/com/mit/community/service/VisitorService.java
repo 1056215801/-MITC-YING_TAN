@@ -1,11 +1,22 @@
 package com.mit.community.service;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.dnake.common.DnakeWebApiUtil;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mit.community.entity.Visitor;
+import com.mit.community.entity.Zone;
 import com.mit.community.mapper.VisitorMapper;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 访客业务层
@@ -16,13 +27,25 @@ import java.util.List;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class VisitorService {
+public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
 
     private final VisitorMapper visitorMapper;
 
+    private final ClusterCommunityService clusterCommunityService;
+
+    private final ZoneService zoneService;
+
+    private final BuildingService buildingService;
+
+    private final UnitService unitService;
+
     @Autowired
-    public VisitorService(VisitorMapper visitorMapper) {
+    public VisitorService(VisitorMapper visitorMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService) {
         this.visitorMapper = visitorMapper;
+        this.clusterCommunityService = clusterCommunityService;
+        this.zoneService = zoneService;
+        this.buildingService = buildingService;
+        this.unitService = unitService;
     }
 
     /**
@@ -44,8 +67,111 @@ public class VisitorService {
      * @author Mr.Deng
      * @date 20:21 2018/11/14
      */
-    public List<Visitor> getVisitorList() {
+    public List<Visitor> list() {
         return visitorMapper.selectList(null);
     }
 
+    /***
+     * 查询所有的访客，从dnake接口，通过小区code列表
+     * @param communityCodeList 小区code列表
+     * @return java.util.List<com.mit.community.entity.Visitor>
+     * @author shuyy
+     * @date 2018/11/21 17:18
+     * @company mitesofor
+    */
+    public List<Visitor> listFromDnakeByCommunityCodeList(List<String> communityCodeList){
+        List<Visitor> allVisitors = Lists.newArrayListWithCapacity(10000);
+        communityCodeList.forEach(item -> {
+            List<Visitor> visitors = this.listFromDnakeByCommunityCode(item);
+            allVisitors.addAll(visitors);
+        });
+        return allVisitors;
+    }
+
+        /***
+         * 查询所有的访客，从dnake接口，通过小区code
+         * @param communityCode 小区code
+         * @return java.util.List<com.mit.community.entity.Visitor>
+         * @author shuyy
+         * @date 2018/11/21 17:15
+         * @company mitesofor
+        */
+    public List<Visitor> listFromDnakeByCommunityCode(String communityCode){
+        List<Visitor> allVisitors = Lists.newArrayListWithCapacity(5000);
+        int index = 1;
+        while (true){
+            List<Visitor> visitors = this.listFromDnakeByCommunityCodePage(communityCode, index, 100, null);
+            boolean isEnd = false;
+            if (visitors.size() < 100) {
+                isEnd = true;
+            }
+            allVisitors.addAll(visitors);
+            if (isEnd) {
+                break;
+            } else {
+                index++;
+            }
+        }
+        return allVisitors;
+    }
+
+
+
+    /***
+     * 从dnake接口获取访客列表
+     * @param communityCode
+     * @return java.util.List<com.mit.community.entity.Visitor>
+     * @throws
+     * @author shuyy
+     * @date 2018/11/21 16:59
+     * @company mitesofor
+    */
+    public List<Visitor> listFromDnakeByCommunityCodePage(String communityCode,Integer pageNum,
+                                                      Integer pageSize, Map<String, Object> param) {
+        String url = "/v1/visitor/getVisitorList";
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(10);
+        map.put("communityCode", communityCode);
+        map.put("pageSize", pageSize);
+        map.put("pageNum", pageNum);
+        if (param != null && !param.isEmpty()) {
+            map.putAll(param);
+        }
+        String invoke = DnakeWebApiUtil.invoke(url, map);
+        JSONObject jsonObject = JSONObject.fromObject(invoke);
+        JSONArray jsonArray = jsonObject.getJSONArray("visitorList");
+        List<Visitor> visitors = JSON.parseArray(jsonArray.toString(), Visitor.class);
+        for (int i = 0; i < visitors.size(); i++) {
+            Visitor item = visitors.get(i);
+            item.setCommunityCode(communityCode);
+            String communityName = clusterCommunityService.getByCommunityCode(communityCode).getCommunityName();
+            item.setCommunityName(communityName);
+            Zone zone = zoneService.getByNameAndCommunityCode(item.getZoneName(), communityCode);
+            if(item.getVisitorName() == null || zone == null){
+                visitors.remove(i--);
+                continue;
+            }
+            if(item.getVisiterMobile() == null){
+                item.setVisiterMobile(StringUtils.EMPTY);
+            }
+            item.setGmtCreate(LocalDateTime.now());
+            item.setGmtModified(LocalDateTime.now());
+            Integer zoneId = zoneService.getByNameAndCommunityCode(item.getZoneName(), communityCode).getZoneId();
+            item.setZoneId(zoneId);
+            Integer buildingId = buildingService.getByNameAndZoneId(item.getBuildingName(), zoneId).getBuildingId();
+            item.setBuildingId(buildingId);
+            Integer unitId = unitService.getByNameAndBuildingId(item.getUnitName(), buildingId).getUnitId();
+            item.setUnitId(unitId);
+        }
+        return visitors;
+    }
+
+    /***
+     * 删除所有记录
+     * @author shuyy
+     * @date 2018/11/21 17:21
+     * @company mitesofor
+    */
+    public void remove(){
+        this.visitorMapper.delete(null);
+    }
 }

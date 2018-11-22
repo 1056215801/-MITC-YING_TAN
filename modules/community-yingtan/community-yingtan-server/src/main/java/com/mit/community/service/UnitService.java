@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.google.common.collect.Maps;
@@ -77,6 +78,20 @@ public class UnitService extends ServiceImpl<UnitMapper, Unit> {
         }else {
             return units.get(0);
         }
+    }
+
+    /***
+     * 查询单元列表，通过楼栋id列表
+     * @param buildingIdList 楼栋id列表
+     * @return java.util.List<com.mit.community.entity.Unit>
+     * @author shuyy
+     * @date 2018/11/22 8:59
+     * @company mitesofor
+    */
+    public List<Unit> listFromBuildingIdList(List<Integer> buildingIdList){
+        EntityWrapper<Unit> wrapper = new EntityWrapper<>();
+        wrapper.in("building_id", buildingIdList);
+        return unitMapper.selectList(wrapper);
     }
 
     /***

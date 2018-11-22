@@ -53,7 +53,7 @@ public class UnitSchedule {
     */
     @Scheduled(cron = "* * */5 * * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void remoteAndImport(){
+    public void removeAndImport(){
         List<String> clusterCommunityNameList = new ArrayList<>(4);
         clusterCommunityNameList.add("凯翔外滩小区");
         clusterCommunityNameList.add("心家泊小区");

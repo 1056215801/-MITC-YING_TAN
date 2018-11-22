@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeWebConstants;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
 import com.mit.community.entity.AccessControl;
@@ -115,7 +116,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @company mitesofor
      */
     public List<AccessControl> listIncrementByCommunityCode(List<ClusterCommunity> clusterCommunityList) {
-        List<AccessControl> allAccessControlsList = new ArrayList<>();
+        List<AccessControl> allAccessControlsList = Lists.newArrayListWithCapacity(500);
         clusterCommunityList.forEach(item -> {
             AccessControl newestAccessControl = this.getNewestAccessControlByCommunityCode(item.getCommunityCode());
             HashMap<String, Object> param = Maps.newHashMapWithExpectedSize(5);
