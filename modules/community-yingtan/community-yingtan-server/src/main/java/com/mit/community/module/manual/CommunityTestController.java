@@ -84,27 +84,6 @@ public class CommunityTestController {
     }
 
     /**
-     * 获取身份证信息
-     *
-     * @return result
-     * @author Mr.Deng
-     * @date 15:34 2018/11/20
-     */
-    public Result getCredentialNum() {
-        try {
-            String post = httpLogin.postOne("43707", 1);
-            if (post != null) {
-                JSONObject parse = JSONObject.fromObject(post);
-                JSONObject o = parse.getJSONObject("stepOneInfo");
-                System.out.println(o.get("credentialNum"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Result.success("OK");
-    }
-
-    /**
      * 解析身份证信息
      *
      * @param idCard 身份证号码

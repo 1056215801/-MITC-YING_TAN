@@ -54,7 +54,6 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
      * 添加访客信息
      *
      * @param visitor 访客信息
-     * @return
      * @author Mr.Deng
      * @date 20:20 2018/11/14
      */
@@ -126,7 +125,7 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
          * @date 2018/11/21 17:15
          * @company mitesofor
         */
-    public List<Visitor> listFromDnakeByCommunityCode(String communityCode){
+        private List<Visitor> listFromDnakeByCommunityCode(String communityCode){
         List<Visitor> allVisitors = Lists.newArrayListWithCapacity(5000);
         int index = 1;
         while (true){
@@ -149,15 +148,14 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
 
     /***
      * 从dnake接口获取访客列表
-     * @param communityCode
+     * @param communityCode 社区code
      * @return java.util.List<com.mit.community.entity.Visitor>
-     * @throws
      * @author shuyy
      * @date 2018/11/21 16:59
      * @company mitesofor
     */
-    public List<Visitor> listFromDnakeByCommunityCodePage(String communityCode,Integer pageNum,
-                                                      Integer pageSize, Map<String, Object> param) {
+    private List<Visitor> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
+                                                           Integer pageSize, Map<String, Object> param) {
         String url = "/v1/visitor/getVisitorList";
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
