@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/20
  * @company mitesofor
  */
-@Component
+//@Component
 public class ZoneSchedule {
 
     private final ZoneService zoneService;
@@ -40,7 +40,7 @@ public class ZoneSchedule {
      * @date 2018/11/20 11:28
      * @company mitesofor
     */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "* * */5 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> clusterCommunityNameList = new ArrayList<>(4);

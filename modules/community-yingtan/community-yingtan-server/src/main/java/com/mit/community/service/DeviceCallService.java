@@ -17,8 +17,12 @@ import java.util.List;
  */
 @Service
 public class DeviceCallService {
+    private final DeviceCallMapper deviceCallMapper;
+
     @Autowired
-    private DeviceCallMapper deviceCallMapper;
+    public DeviceCallService(DeviceCallMapper deviceCallMapper) {
+        this.deviceCallMapper = deviceCallMapper;
+    }
 
     /**
      * 添加呼叫记录信息

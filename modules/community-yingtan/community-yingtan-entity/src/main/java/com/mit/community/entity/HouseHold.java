@@ -123,6 +123,9 @@ public class HouseHold extends BaseEntity {
     @TableField("sip_password")
     private String sipPassword;
 
+    @TableField("credential_num")
+    private String credentialNum;
+
     @TableField(exist = false)
     private List<AuthorizeHouseholdDevice> authorizeHouseholdDevices;
 

@@ -64,7 +64,7 @@ public class IdCardValidatorUtil {
      * @author Mr.Deng
      * @date 17:01 2018/11/20
      */
-    public boolean isValidatedAllIdCard(String idCard) {
+    boolean isValidatedAllIdCard(String idCard) {
         int len = 15;
         if (idCard.length() == len) {
             idCard = this.convertIdCarBy15bit(idCard);
@@ -80,7 +80,7 @@ public class IdCardValidatorUtil {
      * @author Mr.Deng
      * @date 16:57 2018/11/20
      */
-    public boolean isValidate18Idcard(String idCard) {
+    private boolean isValidate18Idcard(String idCard) {
         int len = 18;
         // 非18位为假
         if (idCard.length() != len) {
@@ -210,7 +210,7 @@ public class IdCardValidatorUtil {
      * @author Mr.Deng
      * @date 16:42 2018/11/20
      */
-    public String convertIdCarBy15bit(String idCard) {
+    String convertIdCarBy15bit(String idCard) {
         int len = 15;
         String idCard17;
         // 非15位身份证

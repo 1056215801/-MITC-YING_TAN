@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2018/11/16
  * @company mitesofor
  */
-@Component
+//@Component
 public class AccessControlSchedule {
     
     private final AccessControlService accessControlService;
@@ -37,7 +37,7 @@ public class AccessControlSchedule {
      * @date 2018/11/16 16:55
      * @company mitesofor
     */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "* */1 * * * ?")
     public void importIncrement (){
         List<String> clusterCommunityNameList = new ArrayList<>(4);
         clusterCommunityNameList.add("凯翔外滩小区");
