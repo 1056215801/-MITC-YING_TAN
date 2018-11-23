@@ -131,7 +131,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         return houseHoldMapper.selectList(wrapper);
     }
 
-
     /**
      * 查询住户信息，通过小区code列表
      *

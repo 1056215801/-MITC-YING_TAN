@@ -2,7 +2,10 @@ package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 房屋结构
@@ -13,6 +16,8 @@ import lombok.Data;
  * <p>Company: mitesofor </p>
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("room_type_construction")
 public class RoomTypeConstruction extends BaseEntity {
     /**
@@ -25,60 +30,61 @@ public class RoomTypeConstruction extends BaseEntity {
      * 外来人口房屋数量
      */
     @TableField("foreign_population")
-    private String foreignPopulation;
+    @Value("0")
+    private Integer foreignPopulation;
 
     /**
      * 外来人口其他房屋数量
      */
     @TableField("foreign_other")
-    private String foreignOther;
+    private Integer foreignOther;
 
     /**
      * 外来人口自住房屋数量
      */
     @TableField("foreign_self")
-    private String foreignSelf;
+    private Integer foreignSelf;
 
     /**
      * 外来人口租赁房屋数量
      */
     @TableField("foreign_rent")
-    private String foreignRent;
+    private Integer foreignRent;
 
     /**
      * 外来人口闲置房屋数量
      */
     @TableField("foreign_leisure")
-    private String foreignLeisure;
+    private Integer foreignLeisure;
 
     /**
      * 本市人口房屋数量
      */
     @TableField("inner_population")
-    private String innerPopulation;
+    private Integer innerPopulation;
 
     /**
      * 本市人口其他房屋数量
      */
     @TableField("inner_other")
-    private String innerOther;
+    private Integer innerOther;
 
     /**
      * 本市人口自住房屋数量
      */
     @TableField("inner_self")
-    private String innerSelf;
+    private Integer innerSelf;
 
     /**
      * 本市人口租赁房屋数量
      */
     @TableField("inner_rent")
-    private String innerRent;
+    private Integer innerRent;
 
     /**
      * 本市人口闲置房屋数量
      */
     @TableField("inner_leisure")
-    private String innerLeisure;
+    private Integer innerLeisure;
 
 }

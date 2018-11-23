@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.ClusterCommunity;
+import com.mit.community.entity.RoomTypeConstruction;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
@@ -41,17 +42,20 @@ public class PerceptionController {
     private final ClusterCommunityService clusterCommunityService;
     private final VisitorService visitorService;
     private final AccessControlService accessControlService;
+    private final RoomTypeConstructionService roomTypeConstructionService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
                                 HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
-                                VisitorService visitorService, AccessControlService accessControlService) {
+                                VisitorService visitorService, AccessControlService accessControlService,
+                                RoomTypeConstructionService roomTypeConstructionService) {
         this.buildingService = buildingService;
         this.roomService = roomService;
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.visitorService = visitorService;
         this.accessControlService = accessControlService;
+        this.roomTypeConstructionService = roomTypeConstructionService;
     }
 
     /**
@@ -263,7 +267,8 @@ public class PerceptionController {
      * TODO 这个要修改，房屋本市、外来
      * TODO 自住、出租、闲置
      * TODO 用户表、与户主关系、猪苓：出租。自住：自住，其他：未知，闲置就是用户表里没有的房屋
-     *  household_type:与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)
+     * household_type:与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)
+     *
      * @return result
      * @author Mr.Deng
      * @date 17:22 2018/11/19
@@ -327,6 +332,7 @@ public class PerceptionController {
 
     /**
      * 查询小区code，通过城市名
+     *
      * @param cityName 城市名
      * @return 小区code列表
      * @author Mr.Deng
@@ -337,4 +343,9 @@ public class PerceptionController {
         return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
     }
 
+    @GetMapping("/test")
+    private Result test(String cityName) {
+        RoomTypeConstruction roomTypeConstruction = roomTypeConstructionService.countRoomTypeConstructionByCommunityCode("");
+        return Result.success(roomTypeConstruction);
+    }
 }
