@@ -5,10 +5,10 @@ import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.entity.DnakeAppUser;
 import com.mit.common.util.DateUtils;
+import com.mit.community.common.HttpLogin;
 import com.mit.community.entity.*;
 import com.mit.community.entity.modelTest.*;
 import com.mit.community.service.*;
-import com.mit.community.util.HttpLogin;
 import com.mit.community.util.IdCardInfoExtractorUtil;
 import com.mit.community.util.Result;
 import net.sf.json.JSONArray;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +92,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getIdCardInfo")
     public Result getIdCardInfo(String idCard) {
-        IdCardInfo idCardInfo = idCardInfoExtractorUtil.IdCardInfo(idCard);
+        IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
         return Result.success(idCardInfo);
     }
 
@@ -398,7 +397,7 @@ public class CommunityTestController {
                 device.setDeviceName(d.getDeviceName());
                 device.setDeviceNum(d.getDeviceNum());
                 device.setDeviceSip(d.getDeviceSip());
-                device.setDeviceStatus(d.getDeviceStatus());
+//                device.setDeviceStatus(d.getDeviceStatus());
                 device.setDeviceType(d.getDeviceType());
                 device.setUnitCode(d.getUnitCode());
                 device.setUnitId(d.getUnitId() != null ? d.getUnitId() : "");

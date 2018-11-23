@@ -19,9 +19,8 @@ import java.io.Serializable;
  */
 @Data
 @TableName("room")
-public class Room extends Model<Room> {
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+public class Room extends BaseEntity {
+
     /**
      * 小区Code
      */
@@ -58,8 +57,4 @@ public class Room extends Model<Room> {
     @TableField("room_status")
     private Integer roomStatus;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

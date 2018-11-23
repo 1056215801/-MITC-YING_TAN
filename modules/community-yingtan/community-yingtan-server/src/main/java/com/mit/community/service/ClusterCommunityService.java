@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 集群小区业务层
@@ -83,18 +85,29 @@ public class ClusterCommunityService {
     }
 
     /**
-     * 获取小区凑得，通过城市名称
+     * 查询小区列表，通过城市名称
      *
      * @param cityName 城市名
      * @return 小区信息列表
      * @author Mr.Deng
      * @date 11:53 2018/11/21
      */
-    public List<Map<String, Object>> listByCityName(String cityName) {
+    public List<ClusterCommunity> listByCityName(String cityName) {
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
-        wrapper.setSqlSelect("community_code,community_name,city_name");
         wrapper.eq("city_name", cityName);
-        return clusterCommunityMapper.selectMaps(wrapper);
+        return clusterCommunityMapper.selectList(wrapper);
+    }
+    /**
+     * 查询社区code列表，通过城市名
+     * @param cityName 城市名
+     * @return java.util.List<java.lang.String>
+     * @author shuyy
+     * @date 2018/11/22 15:15
+     * @company mitesofor
+    */
+    public List<String> listCommunityCodeListByCityName(String cityName){
+        List<ClusterCommunity> clusterCommunities = this.listByCityName(cityName);
+        return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
     }
 
 }

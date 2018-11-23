@@ -2,6 +2,8 @@ package com.mit.community.entity;
 
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -28,12 +30,15 @@ public class IdCardInfo {
      */
     private String region;
     /**
-     * 性别
+     * 性别.0男1女
      */
-    private String gender;
+    private Integer gender;
     /**
      * 出生日期
      */
-    private Date birthday;
+    private LocalDate birthday;
+
+    /**年龄*/
+    private Integer age;
 
 }

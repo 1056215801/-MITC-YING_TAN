@@ -19,9 +19,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("device")
-public class Device {
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+public class Device extends BaseEntity{
     /**
      * 小区Code
      */
@@ -56,7 +54,7 @@ public class Device {
      * 设备状态（0：离线；1在线）
      */
     @TableField("device_status")
-    private String deviceStatus;
+    private Integer deviceStatus;
     /**
      * 设备编码
      */

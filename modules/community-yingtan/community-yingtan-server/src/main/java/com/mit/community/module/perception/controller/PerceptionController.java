@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 智慧社区感知平台控制类
@@ -90,8 +92,8 @@ public class PerceptionController {
             " community_name 小区名字 city_name 小区所在城市")
     public Result listByCityName(String cityName) {
         if (StringUtils.isNotBlank(cityName)) {
-            List<Map<String, Object>> list = clusterCommunityService.listByCityName(cityName);
-            return Result.success(list, "ok");
+            List<ClusterCommunity> clusterCommunities = clusterCommunityService.listByCityName(cityName);
+            return Result.success(clusterCommunities);
         } else {
             return Result.error("参数不能为空！");
         }
@@ -135,7 +137,7 @@ public class PerceptionController {
             List<String> list = listCommunityCodes("鹰潭市");
             buildingSize = buildingService.listByCommunityCodes(list).size();
             roomSize = roomService.listByCommunityCodes(list).size();
-            houseHoldSize = houseHoldService.getByCommunityCodes(list).size();
+            houseHoldSize = houseHoldService.listByCommunityCodeList(list).size();
             visitorSize = visitorService.listByCommunityCodes(list).size();
             // 车位
             map.put("ParkingSpace", 460);
@@ -216,39 +218,41 @@ public class PerceptionController {
     }
 
     /**
-     * 统计数据
-     *
      * @return result
      * @author Mr.Deng
      * @date 17:47 2018/11/19
      */
     @GetMapping("/countPerception")
-    @ApiOperation(value = "页头数据统计", notes = "返回参数：totalPopulation 人口总数、totalResident 驻留总数、" +
+    @ApiOperation(value = "人口总数、驻留总数、总通行次数、预警总数", notes = "返回参数：totalPopulation 人口总数、totalResident 驻留总数、" +
             "realTimeAccess 实时进出、totalEarlyWarning 预警总数")
     public Result countPerception(String communityCode) {
-        Map<String, Integer> map = Maps.newHashMapWithExpectedSize(4);
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
         int houseHoldSize;
         int accessControlSize;
+        long remainNum = 0;
         if (StringUtils.isNoneBlank(communityCode)) {
-            houseHoldSize = houseHoldService.getByCommunityCode(communityCode).size();
-            accessControlSize = accessControlService.listByCommunityCode(communityCode).size();
+            houseHoldSize = houseHoldService.countByCommunityCode(communityCode);
+            accessControlSize = accessControlService.countByCommunityCode(communityCode);
             // 驻留
-            map.put("totalResident", 2);
+            remainNum = accessControlService.countRemainPeopleByCommunityCode(communityCode);
             // 预警总数
             map.put("totalEarlyWarning", 4);
         } else {
             List<String> list = listCommunityCodes("鹰潭市");
-            houseHoldSize = houseHoldService.getByCommunityCodes(list).size();
-            accessControlSize = accessControlService.listByCommunityCodes(list).size();
-            map.put("totalResident", 30);
+            houseHoldSize = houseHoldService.countByCommunityCodeList(list);
+            accessControlSize = accessControlService.countByCommunityCodeList(list);
+            // 驻留
+            for (String s : list) {
+                remainNum += accessControlService.countRemainPeopleByCommunityCode(s);
+            }
             map.put("totalEarlyWarning", 50);
         }
+        map.put("totalResident", remainNum);
         // 人口
         map.put("totalPopulation", houseHoldSize);
         // 实时进出
         map.put("realTimeAccess", accessControlSize);
-
-        return Result.success(map, "OK");
+        return Result.success(map);
     }
 
     /**
@@ -315,20 +319,15 @@ public class PerceptionController {
     }
 
     /**
-     * 获取某个城市的所有小区code
-     *
+     * 查询小区code，通过城市名
      * @param cityName 城市名
      * @return 小区code列表
      * @author Mr.Deng
      * @date 14:07 2018/11/21
      */
     private List<String> listCommunityCodes(String cityName) {
-        List<Map<String, Object>> list = clusterCommunityService.listByCityName(cityName);
-        List<String> communityCodes = Lists.newArrayListWithCapacity(list.size());
-        for (Map<String, Object> maps : list) {
-            communityCodes.add(maps.get("community_code").toString());
-        }
-        return communityCodes;
+        List<ClusterCommunity> clusterCommunities = clusterCommunityService.listByCityName(cityName);
+        return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
     }
 
 }

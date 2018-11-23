@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -123,8 +124,21 @@ public class HouseHold extends BaseEntity {
     @TableField("sip_password")
     private String sipPassword;
 
+    /**身份证号码*/
     @TableField("credential_num")
     private String credentialNum;
+
+    /**省份*/
+    private String province;
+
+    /**市*/
+    private String city;
+
+    /**区县*/
+    private String region;
+
+    /**出生日期*/
+    private LocalDate birthday;
 
     @TableField(exist = false)
     private List<AuthorizeHouseholdDevice> authorizeHouseholdDevices;
