@@ -105,9 +105,11 @@ public class PerceptionController {
      * @date 9:10 2018/11/16
      */
     @GetMapping("/countCommunityStatistics")
-    @ApiOperation(value = "小区综合统计数据", notes = "返回参数：buildingSize 楼栋总数、roomSize 房屋总数、" +
-            "ParkingSpace 车位总数、CommunityPolice 社区民警、neighborhoodCommittee 居委干部、buildingManager 楼长、" +
-            "property 物业、realTimeVisitor 实时访客、attention 关爱/关注进出")
+    @ApiOperation(value = "小区综合统计数据(房屋信息统计,人员信息统计)",
+            notes = "房屋信息统计：buildingSize 楼栋总数、roomSize 房屋总数、houseHoldSize 住户总数" +
+                    "ParkingSpace 车位总数、buildingManager 栋长人数、\n" +
+                    "人员信息统计：realTimeVisitor 实时访客、attention 关爱/关注进出" +
+                    "neighborhoodCommittee 居委干部、property 物业人员、CommunityPolice 社区民警")
     public Result countCommunityStatistics(String communityCode) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         int buildingSize;
@@ -183,6 +185,7 @@ public class PerceptionController {
 
     /**
      * 人口数据感知
+     * TODO 这个是要分析出来的，这个圆圆来分析
      *
      * @return result
      * @author Mr.Deng
@@ -253,7 +256,10 @@ public class PerceptionController {
 
     /**
      * 房屋数据感知
-     *
+     * TODO 这个要修改，房屋本市、外来
+     * TODO 自住、出租、闲置
+     * TODO 用户表、与户主关系、猪苓：出租。自住：自住，其他：未知，闲置就是用户表里没有的房屋
+     *  household_type:与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)
      * @return result
      * @author Mr.Deng
      * @date 17:22 2018/11/19
@@ -282,6 +288,7 @@ public class PerceptionController {
 
     /**
      * 人员通行感知
+     * TODO 这个可以搞定
      *
      * @return result
      * @author Mr.Deng

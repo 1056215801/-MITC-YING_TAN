@@ -100,6 +100,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         return houseHoldMapper.selectList(wrapper);
     }
 
+
     /**
      * 获取小区男女人数
      *
