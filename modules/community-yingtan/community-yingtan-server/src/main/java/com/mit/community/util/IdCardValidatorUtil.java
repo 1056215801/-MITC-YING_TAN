@@ -1,6 +1,7 @@
 package com.mit.community.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +44,7 @@ import java.util.regex.Pattern;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
+@Component
 public class IdCardValidatorUtil {
     /**
      * 城市代码
@@ -172,12 +174,6 @@ public class IdCardValidatorUtil {
             // 将该身份证的出生日期赋于对象curDay
             curDay.setTime(birthDate);
             switch (month) {
-                case 1:
-                case 3:
-                case 5:
-                case 7:
-                case 8:
-                case 10:
                 case 12:
                     mFlag = (day >= 1 && day <= 31);
                     break;
@@ -189,12 +185,10 @@ public class IdCardValidatorUtil {
                         mFlag = (day >= 1 && day <= 28);
                     }
                     break;
-                case 4:
-                case 6:
-                case 9:
                 case 11:
                     mFlag = (day >= 1 && day <= 30);
                     break;
+                default:
             }
             return mFlag;
         } else {
@@ -234,7 +228,7 @@ public class IdCardValidatorUtil {
             idCard17 = idCard.substring(0, 6) + year + idCard.substring(8);
             char[] c = idCard17.toCharArray();
             String checkCode;
-            int bit[] = new int[idCard17.length()];
+            int[] bit;
             // 将字符数组转为整型数组
             bit = converCharToInt(c);
             int sum17;
@@ -311,7 +305,7 @@ public class IdCardValidatorUtil {
      * @author Mr.Deng
      * @date 16:26 2018/11/20
      */
-    public boolean isDigital(String str) {
+    private boolean isDigital(String str) {
         if (StringUtils.isBlank(str)) {
             return false;
         } else {
@@ -327,7 +321,7 @@ public class IdCardValidatorUtil {
      * @author Mr.Deng
      * @date 16:21 2018/11/20
      */
-    public int getPowerSum(int[] bit) {
+    private int getPowerSum(int[] bit) {
         int sum = 0;
         if (power.length != bit.length) {
             return sum;
@@ -350,7 +344,7 @@ public class IdCardValidatorUtil {
      * @author Mr.Deng
      * @date 16:15 2018/11/20
      */
-    public String getCheckCodeBySum(int sum17) {
+    private String getCheckCodeBySum(int sum17) {
         String checkCode = null;
         switch (sum17 % 11) {
             case 10:
@@ -386,6 +380,7 @@ public class IdCardValidatorUtil {
             case 0:
                 checkCode = "1";
                 break;
+             default:
         }
         return checkCode;
     }
@@ -395,11 +390,11 @@ public class IdCardValidatorUtil {
      *
      * @param c 字节
      * @return int[]
-     * @throws NumberFormatException
+     * @throws NumberFormatException 数字格式错误
      * @author Mr.Deng
      * @date 16:14 2018/11/20
      */
-    public int[] converCharToInt(char[] c) throws NumberFormatException {
+    private int[] converCharToInt(char[] c) throws NumberFormatException {
         int[] a = new int[c.length];
         int k = 0;
         for (char temp : c) {
@@ -410,7 +405,7 @@ public class IdCardValidatorUtil {
 
     public static void main(String[] args) {
         //15位
-        String idCard15 = "123456789123467899";
+//        String idCard15 = "123456789123467899";
         //18位
         String idCard18 = "360124199812180318";
         IdCardValidatorUtil i = new IdCardValidatorUtil();

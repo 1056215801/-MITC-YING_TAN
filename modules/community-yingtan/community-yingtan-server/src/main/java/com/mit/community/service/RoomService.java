@@ -14,6 +14,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,8 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
             room.setZoneId(zoneId);
             room.setBuildingId(buildingId);
             room.setUnitId(unitId);
+            room.setGmtCreate(LocalDateTime.now());
+            room.setGmtModified(LocalDateTime.now());
         });
         return rooms;
     }

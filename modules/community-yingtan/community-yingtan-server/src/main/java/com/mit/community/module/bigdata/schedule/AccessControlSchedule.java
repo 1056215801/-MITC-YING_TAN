@@ -37,11 +37,10 @@ public class AccessControlSchedule {
      * @date 2018/11/16 16:55
      * @company mitesofor
     */
-    @Scheduled(cron = "* */1 * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void importIncrement (){
         List<String> clusterCommunityNameList = new ArrayList<>(4);
         clusterCommunityNameList.add("凯翔外滩小区");
-        clusterCommunityNameList.add("心家泊小区");
         clusterCommunityNameList.add("南苑小区");
         clusterCommunityNameList.add("鹰王环东花苑小区");
         // 下面的是测试的

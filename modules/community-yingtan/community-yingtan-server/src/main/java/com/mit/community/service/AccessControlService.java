@@ -11,7 +11,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
 import com.mit.community.entity.AccessControl;
+import com.mit.community.entity.ActivePeople;
 import com.mit.community.entity.ClusterCommunity;
+import com.mit.community.entity.Device;
 import com.mit.community.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -19,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 门禁记录业务层
@@ -40,12 +42,18 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     private final ZoneService zoneService;
 
+    private final DeviceService  deviceService;
+
+    private final ActivePeopleService activePeopleService;
+
     @Autowired
     public AccessControlService(AccessControlMapper accessControlMapper,
-                                ClusterCommunityService clusterCommunityService, ZoneService zoneService) {
+                                ClusterCommunityService clusterCommunityService, ZoneService zoneService, DeviceService deviceService, ActivePeopleService activePeopleService) {
         this.accessControlMapper = accessControlMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
+        this.deviceService = deviceService;
+        this.activePeopleService = activePeopleService;
     }
 
     /**
@@ -185,6 +193,20 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return accessControlMapper.selectList(wrapper);
     }
 
+    /***
+     * 统计通行总数，按小区code
+     * @param communityCode 小区code
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/11/22 14:29
+     * @company mitesofor
+    */
+    public Integer countByCommunityCode(String communityCode){
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return accessControlMapper.selectCount(wrapper);
+    }
+
     /**
      * 通过一组小区code获取门禁记录信息
      *
@@ -197,6 +219,82 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         return accessControlMapper.selectList(wrapper);
+    }
+    /***
+     * 统计门禁总数，通过小区code列表
+     * @param communityCodes 小区code列表
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/11/22 14:44
+     * @company mitesofor
+    */
+    public Integer countByCommunityCodeList(List<String> communityCodes) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodes);
+        return accessControlMapper.selectCount(wrapper);
+    }
+
+
+    /***
+     * 统计最近一个月的活跃人数，通过设备名列表
+     * @param deviceNameList 设备名列表
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/11/22 11:22
+     * @company mitesofor
+    */
+    public Long countRecentMonthActivePeopleByDeviceNameList(List<String> deviceNameList){
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.in("device_name", deviceNameList);
+        LocalDateTime lastMonth = LocalDateTime.now().minusMonths(1);
+        wrapper.lt("access_time", LocalDateTime.now()).gt("access_time", lastMonth);
+        wrapper.setSqlSelect("count(distinct household_id) num");
+        return (Long) accessControlMapper.selectMaps(wrapper).get(0).get("num");
+    }
+
+    /***
+     * 查询当前时间到凌晨2点的通行记录数，
+     * @param deviceNameList 设备name列表
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/11/22 14:04
+     * @company mitesofor
+    */
+    public Integer countUntilTwoNumByDeviceNameList(List<String> deviceNameList){
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.in("device_name", deviceNameList);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime standardTime = now.withHour(2);
+        if(now.getHour() < 2){
+            standardTime = standardTime.minusDays(1);
+        }
+        wrapper.lt("access_time", now).gt("access_time", standardTime);
+        return accessControlMapper.selectCount(wrapper);
+    }
+
+    /***
+     * 统计驻留人数，通过小区code
+     * @param communityCode 小区code
+     * @return long
+     * @author shuyy
+     * @date 2018/11/22 14:23
+     * @company mitesofor
+    */
+    public long countRemainPeopleByCommunityCode(String communityCode){
+        // 查出凌晨2点后进的数量、出的数量，然后：活跃人数 - （出-进）
+        List<Device> outDevices = deviceService.listInOrOutByCommunityCode(communityCode, "出");
+        List<String> outDeviceNameList = outDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
+        Integer outNum = this.countUntilTwoNumByDeviceNameList(outDeviceNameList);
+        List<Device> inDevices = deviceService.listInOrOutByCommunityCode(communityCode, "进");
+        List<String> inDeviceNameList = inDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
+        Integer inNum = this.countUntilTwoNumByDeviceNameList(inDeviceNameList);
+        ActivePeople activePeople = activePeopleService.getByCommunityCode(communityCode);
+        int i = outNum - inNum;
+        if(activePeople == null){
+            return 1000 - i;
+        } else{
+            return activePeople.getActivePeopleNum() - i;
+        }
     }
 
 }

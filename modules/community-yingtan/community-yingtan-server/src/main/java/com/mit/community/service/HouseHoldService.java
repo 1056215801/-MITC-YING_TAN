@@ -14,23 +14,22 @@ import com.mit.community.common.ThreadPoolUtil;
 import com.mit.community.constants.CommonConstatn;
 import com.mit.community.entity.*;
 import com.mit.community.mapper.HouseHoldMapper;
-import com.mit.community.util.HttpUtil;
+import com.mit.community.util.IdCardInfoExtractorUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 /**
  * 住户业务层
@@ -54,16 +53,18 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     private final HttpLogin httpLogin;
 
+    private final IdCardInfoExtractorUtil idCardInfoExtractorUtil;
 
 
     @Autowired
-    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService, HttpLogin httpLogin) {
+    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService, HttpLogin httpLogin, IdCardInfoExtractorUtil idCardInfoExtractorUtil) {
         this.houseHoldMapper = houseHoldMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.buildingService = buildingService;
         this.unitService = unitService;
         this.httpLogin = httpLogin;
+        this.idCardInfoExtractorUtil = idCardInfoExtractorUtil;
     }
 
     /**
@@ -102,20 +103,63 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         return houseHoldMapper.selectList(wrapper);
     }
 
+    /***
+     * 统计住户总数，按小区code
+     * @param communityCode 小区code
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/11/22 14:27
+     * @company mitesofor
+     */
+    public Integer countByCommunityCode(String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return houseHoldMapper.selectCount(wrapper);
+    }
+
     /**
-     * 通过一组小区code获取住户信息
+     * 查询住户信息，通过小区code列表
      *
      * @param communityCodes 小区code列表
      * @return 住户信息列表
      * @author Mr.Deng
      * @date 15:11 2018/11/21
      */
-    public List<HouseHold> getByCommunityCodes(List<String> communityCodes) {
+    public List<HouseHold> listByCommunityCodeList(List<String> communityCodes) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         return houseHoldMapper.selectList(wrapper);
     }
 
+
+    /**
+     * 查询住户信息，通过小区code列表
+     *
+     * @param communityCode 小区code
+     * @return 住户信息列表
+     * @author Mr.Deng
+     * @date 15:11 2018/11/21
+     */
+    public List<HouseHold> listByCommunityCode(String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return houseHoldMapper.selectList(wrapper);
+    }
+
+
+    /***
+     * 统计住户总数，通过小区code列表
+     * @param communityCodes 小区code列表
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/11/22 14:41
+     * @company mitesofor
+     */
+    public Integer countByCommunityCodeList(List<String> communityCodes) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodes);
+        return houseHoldMapper.selectCount(wrapper);
+    }
 
     /**
      * 获取小区男女人数
@@ -213,6 +257,27 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                 try {
                     String credentialNum = getCredentialNumFromDnake(item.getHouseholdId());
                     item.setCredentialNum(credentialNum);
+                    // 通过身份证号，分析省、市、区县、出生日期、年龄
+                    if (credentialNum.equals(StringUtils.EMPTY)) {
+                        item.setProvince(StringUtils.EMPTY);
+                        item.setCity(StringUtils.EMPTY);
+                        item.setRegion(StringUtils.EMPTY);
+                        item.setBirthday(LocalDate.of(1990, 1, 1));
+                    } else {
+                        IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(credentialNum);
+                        LocalDate birthday = idCardInfo.getBirthday();
+                        item.setBirthday(birthday == null ? LocalDate.of(1990, 1, 1) : birthday);
+                        String city = idCardInfo.getCity();
+                        item.setCity(city == null ? StringUtils.EMPTY : city);
+                        String province = idCardInfo.getProvince();
+                        item.setProvince(province == null ? StringUtils.EMPTY : province);
+                        String region = idCardInfo.getRegion();
+                        item.setRegion(region == null ? StringUtils.EMPTY : region);
+                        Integer gender = idCardInfo.getGender();
+                        if (gender != null) {
+                            item.setGender(gender);
+                        }
+                    }
                 } catch (IOException e) {
                     item.setCredentialNum(StringUtils.EMPTY);
                     log.error("获取身份证号码错误", e);
@@ -248,7 +313,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             String zoneName = jsonObject.getString("zoneName");
             // dnake接口返回数据有问题，这里进行转换
             String needConvertZoneName = "凯翔国际外滩";
-            if(zoneName.equals(needConvertZoneName)){
+            if (zoneName.equals(needConvertZoneName)) {
                 zoneName = "凯翔外滩国际";
             }
             Zone zone = zoneService.getByNameAndCommunityCode(zoneName, communityCode);
@@ -292,6 +357,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         }
         return householdResultList;
     }
+
     /***
      * 构建授权app设备对象
      * @param jsonObject json对象
@@ -299,7 +365,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/21 14:26
      * @company mitesofor
-    */
+     */
     private void parseAppDevice(JSONObject jsonObject, HouseHold houseHold) {
         String appDeviceGroupIds = jsonObject.getString("appDeviceGroupIds");
         if (StringUtils.isNotBlank(appDeviceGroupIds)) {
@@ -323,7 +389,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/21 14:25
      * @company mitesofor
-    */
+     */
     private void parseDoorDevice(JSONObject jsonObject, HouseHold houseHold) {
         String doorDeviceGroupIds = jsonObject.getString("doorDeviceGroupIds");
         if (StringUtils.isNotBlank(doorDeviceGroupIds)) {
@@ -358,8 +424,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/21 14:14
      * @company mitesofor
-    */
-    public String getCredentialNumFromDnake(Integer householdId) throws IOException{
+     */
+    public String getCredentialNumFromDnake(Integer householdId) throws IOException {
         return this.getCredentialNumFromDnake(householdId, 1);
     }
 
@@ -371,30 +437,80 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/21 14:13
      * @company mitesofor
-    */
+     */
     private String getCredentialNumFromDnake(Integer householdId, int retryNum) throws IOException {
         String url = "http://cmp.ishanghome.com/cmp/household/getStepOneInfo";
         NameValuePair[] data = {new NameValuePair("householdId", householdId.toString())};
         String result = httpLogin.post(url, data, httpLogin.getCookie());
-        if(result.equals(CommonConstatn.ERROR)){
+        if (result == null || result.equals(CommonConstatn.ERROR)) {
             int retryNumMax = 10;
-            if(retryNum > retryNumMax){
-                return null;
+            if (retryNum > retryNumMax) {
+                return StringUtils.EMPTY;
             }
             httpLogin.login();
             retryNum++;
             return this.getCredentialNumFromDnake(householdId, retryNum);
         }
-        JSONObject stepOneInfo = JSON.parseObject(result).getJSONObject("stepOneInfo");
-        if(stepOneInfo == null){
+        JSONObject stepOneInfo = null;
+        JSONObject jsonObject = JSON.parseObject(result);
+        if(jsonObject != null){
+            stepOneInfo = jsonObject.getJSONObject("stepOneInfo");
+        }
+        if (stepOneInfo == null) {
             return StringUtils.EMPTY;
-        }else{
+        } else {
             String credentialNum = stepOneInfo.getString("credentialNum");
-            if(StringUtils.isBlank(credentialNum)){
+            if (StringUtils.isBlank(credentialNum)) {
                 return StringUtils.EMPTY;
-            }else{
+            } else {
                 return credentialNum;
             }
         }
+    }
+
+    /***
+     * 统计年龄结构，通过小区code列表
+     * @param communityCodeList 小区code列表
+     * @return java.util.Map<java.lang.String               ,               java.lang.Integer>
+     * @author shuyy
+     * @date 2018/11/22 16:32
+     * @company mitesofor
+     */
+    public List<AgeConstruction> countAgeConstructionByCommuintyCodeList(List<String> communityCodeList) {
+        List<AgeConstruction> ageConstructions = Lists.newArrayListWithCapacity(30);
+        communityCodeList.forEach(item -> {
+            List<HouseHold> houseHolds = this.listByCommunityCode(item);
+            LocalDate now = LocalDate.now();
+            LocalDate childTime = now.minusYears(10);
+            LocalDate youngTime = now.minusYears(18);
+            LocalDate youthTime = now.minusYears(45);
+            LocalDate middleTime = now.minusYears(60);
+            int childNum = 0;
+            int youngNum = 0;
+            int youthNum = 0;
+            int middleNum = 0;
+            int oldNum = 0;
+            houseHolds = houseHolds.parallelStream().filter(a -> a.getBirthday().getYear() != 1990).collect(Collectors.toList());
+            for (HouseHold houseHold : houseHolds) {
+                LocalDate birthday = houseHold.getBirthday();
+                if (birthday.isAfter(childTime)) {
+                    childNum++;
+                } else if (birthday.isAfter(youngTime)) {
+                    youngNum++;
+                } else if (birthday.isAfter(youthTime)) {
+                    youthNum++;
+                } else if (birthday.isAfter(middleTime)) {
+                    middleNum++;
+                } else {
+                    oldNum++;
+                }
+            }
+            AgeConstruction ageConstruction = new AgeConstruction(item, childNum, youngNum,
+                    youthNum, middleNum, oldNum);
+            ageConstruction.setGmtModified(LocalDateTime.now());
+            ageConstruction.setGmtCreate(LocalDateTime.now());
+            ageConstructions.add(ageConstruction);
+        });
+        return ageConstructions;
     }
 }

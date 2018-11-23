@@ -1,12 +1,14 @@
 package com.mit.community.util;
 
+import com.mit.common.util.DateUtils;
 import com.mit.community.entity.IdCardInfo;
 import com.mit.community.service.IdCardRegionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 身份证数据提取工具类
@@ -16,17 +18,17 @@ import java.util.Date;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
+@Slf4j
 @Component
 public class IdCardInfoExtractorUtil {
 
-    private IdCardValidatorUtil idCardValidatorUtil;
-
-    private IdCardInfo idCardInfo;
+    private final IdCardValidatorUtil idCardValidatorUtil;
 
     private final IdCardRegionService idCardRegionService;
 
     @Autowired
-    public IdCardInfoExtractorUtil(IdCardRegionService idCardRegionService) {
+    public IdCardInfoExtractorUtil(IdCardValidatorUtil idCardValidatorUtil, IdCardRegionService idCardRegionService) {
+        this.idCardValidatorUtil = idCardValidatorUtil;
         this.idCardRegionService = idCardRegionService;
     }
 
@@ -37,11 +39,10 @@ public class IdCardInfoExtractorUtil {
      * @author Mr.Deng
      * @date 16:07 2018/11/20
      */
-    public IdCardInfo IdCardInfo(String idCard) {
+    public IdCardInfo idCardInfo(String idCard) {
         int idCardLen = 15;
-        idCardInfo = new IdCardInfo();
+        IdCardInfo idCardInfo = new IdCardInfo();
         try {
-            idCardValidatorUtil = new IdCardValidatorUtil();
             if (idCardValidatorUtil.isValidatedAllIdCard(idCard)) {
                 if (idCard.length() == idCardLen) {
                     idCard = idCardValidatorUtil.convertIdCarBy15bit(idCard);
@@ -63,19 +64,21 @@ public class IdCardInfoExtractorUtil {
                 idCardInfo.setRegion(zone.substring(provinceSize, zoneSize));
                 // 获取性别
                 String id17 = idCard.substring(16, 17);
-                if (Integer.parseInt(id17) % 2 != 0) {
-                    idCardInfo.setGender("男");
+                int two = 2;
+                if (Integer.parseInt(id17) % two != 0) {
+                    idCardInfo.setGender(0);
                 } else {
-                    idCardInfo.setGender("女");
+                    idCardInfo.setGender(1);
                 }
                 // 获取出生日期
                 String birthday = idCard.substring(6, 14);
-                Date birthDate = new SimpleDateFormat("yyyyMMdd")
-                        .parse(birthday);
+                LocalDate birthDate = DateUtils.parseStringToLocalDate(birthday, "yyyyMMdd");
                 idCardInfo.setBirthday(birthDate);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("身份证号码错误");
+            return idCardInfo;
+
         }
         return idCardInfo;
     }
