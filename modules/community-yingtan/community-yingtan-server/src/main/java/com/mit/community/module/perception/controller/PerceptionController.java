@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.ClusterCommunity;
+import com.mit.community.entity.RoomTypeConstruction;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
@@ -41,17 +42,20 @@ public class PerceptionController {
     private final ClusterCommunityService clusterCommunityService;
     private final VisitorService visitorService;
     private final AccessControlService accessControlService;
+    private final RoomTypeConstructionService roomTypeConstructionService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
                                 HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
-                                VisitorService visitorService, AccessControlService accessControlService) {
+                                VisitorService visitorService, AccessControlService accessControlService,
+                                RoomTypeConstructionService roomTypeConstructionService) {
         this.buildingService = buildingService;
         this.roomService = roomService;
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.visitorService = visitorService;
         this.accessControlService = accessControlService;
+        this.roomTypeConstructionService = roomTypeConstructionService;
     }
 
     /**
@@ -107,9 +111,11 @@ public class PerceptionController {
      * @date 9:10 2018/11/16
      */
     @GetMapping("/countCommunityStatistics")
-    @ApiOperation(value = "小区综合统计数据", notes = "返回参数：buildingSize 楼栋总数、roomSize 房屋总数、" +
-            "ParkingSpace 车位总数、CommunityPolice 社区民警、neighborhoodCommittee 居委干部、buildingManager 楼长、" +
-            "property 物业、realTimeVisitor 实时访客、attention 关爱/关注进出")
+    @ApiOperation(value = "小区综合统计数据(房屋信息统计,人员信息统计)",
+            notes = "房屋信息统计：buildingSize 楼栋总数、roomSize 房屋总数、houseHoldSize 住户总数" +
+                    "ParkingSpace 车位总数、buildingManager 栋长人数、\n" +
+                    "人员信息统计：realTimeVisitor 实时访客、attention 关爱/关注进出" +
+                    "neighborhoodCommittee 居委干部、property 物业人员、CommunityPolice 社区民警")
     public Result countCommunityStatistics(String communityCode) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         int buildingSize;
@@ -195,26 +201,16 @@ public class PerceptionController {
             "overseasPopulation 境外人口、other 其他")
     public Result countPopulationDataPerception(String communityCode) {
         Map<String, Integer> map = Maps.newHashMapWithExpectedSize(4);
-        if (StringUtils.isNoneBlank(communityCode)) {
-            //本地人口
-            map.put("localPopulation", 1847);
-            //外地人口
-            map.put("foreignPopulation", 423);
-            //境外人口
-            map.put("overseasPopulation", 0);
-            //其他
-            map.put("other", 32);
-        } else {
-            //本地人口
-            map.put("localPopulation", 18470);
-            //外地人口
-            map.put("foreignPopulation", 4230);
-            //境外人口
-            map.put("overseasPopulation", 10);
-            //其他
-            map.put("other", 320);
-        }
-        return Result.success(map, "OK");
+        Map<String, Integer> fieldLocalPeople = houseHoldService.getFieldLocalPeople(communityCode);
+        //本地人口
+        map.put("localPopulation", fieldLocalPeople.get("local"));
+        //外地人口
+        map.put("foreignPopulation", fieldLocalPeople.get("field"));
+        //境外人口
+        map.put("overseasPopulation", 0);
+        //其他
+        map.put("other", fieldLocalPeople.get("other"));
+        return Result.success(map);
     }
 
     /**
@@ -256,32 +252,68 @@ public class PerceptionController {
     }
 
     /**
-     * 房屋数据感知
-     *
      * @return result
      * @author Mr.Deng
      * @date 17:22 2018/11/19
      */
     @GetMapping("/countHousingDataPerception")
-    @ApiOperation(value = "房屋数据感知", notes = "房屋数据感知-上面为本市数据，下面的数据为外来数据")
+    @ApiOperation(value = "房屋数据感知", notes = "不传默认返回鹰潭所有小区房屋数据的总和。  \n" +
+            "外来人口房屋数量 foreignPopulation;" +
+            "外来人口其他房屋数量 foreignOther;" +
+            "外来人口自住房屋数量 foreignSelf;" +
+            "外来人口租赁房屋数量 foreignRent;" +
+            "外来人口闲置房屋数量 foreignLeisure;  \n" +
+            "本市人口房屋数量 innerPopulation;" +
+            "本市人口其他房屋数量 innerOther;" +
+            "本市人口自住房屋数量 innerSelf;" +
+            "本市人口租赁房屋数量 innerRent;" +
+            "本市人口闲置房屋数量 innerLeisure;")
     public Result countHousingDataPerception(String communityCode) {
-        List<Map<String, Object>> list = Lists.newArrayListWithCapacity(2);
-        Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
-        Map<String, Object> map1 = Maps.newHashMapWithExpectedSize(3);
-        Integer[] t;
-        Integer[] ts;
+        List<String> communityCodes;
+        RoomTypeConstruction roomTypeConstruction;
         if (StringUtils.isNotBlank(communityCode)) {
-            t = new Integer[]{620, 184, 49};
-            ts = new Integer[]{139, 74, 23};
+            roomTypeConstruction = roomTypeConstructionService.getByCommunityCode(communityCode);
         } else {
-            t = new Integer[]{621, 300, 149};
-            ts = new Integer[]{340, 120, 130};
+            communityCodes = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+            Integer innerPopulation = 0;
+            Integer foreignPopulation = 0;
+            Integer foreignOther = 0;
+            Integer foreignSelf = 0;
+            Integer foreignRent = 0;
+            Integer foreignLeisure = 0;
+            Integer innerOther = 0;
+            Integer innerSelf = 0;
+            Integer innerRent = 0;
+            Integer innerLeisure = 0;
+            if (!communityCodes.isEmpty()) {
+                for (String code : communityCodes) {
+                    RoomTypeConstruction byCommunityCode = roomTypeConstructionService.getByCommunityCode(code);
+                    innerPopulation += byCommunityCode.getInnerPopulation();
+                    foreignPopulation += byCommunityCode.getForeignPopulation();
+                    foreignOther += byCommunityCode.getForeignOther();
+                    foreignSelf += byCommunityCode.getForeignSelf();
+                    foreignRent += byCommunityCode.getForeignRent();
+                    foreignLeisure += byCommunityCode.getForeignLeisure();
+                    innerOther += byCommunityCode.getInnerOther();
+                    innerSelf += byCommunityCode.getInnerSelf();
+                    innerRent += byCommunityCode.getInnerRent();
+                    innerLeisure += byCommunityCode.getInnerLeisure();
+                }
+            }
+            roomTypeConstruction = new RoomTypeConstruction();
+            roomTypeConstruction.setInnerPopulation(innerPopulation);
+            roomTypeConstruction.setForeignPopulation(foreignPopulation);
+            roomTypeConstruction.setForeignOther(foreignOther);
+            roomTypeConstruction.setForeignSelf(foreignSelf);
+            roomTypeConstruction.setForeignRent(foreignRent);
+            roomTypeConstruction.setForeignLeisure(foreignLeisure);
+            roomTypeConstruction.setInnerOther(innerOther);
+            roomTypeConstruction.setInnerSelf(innerSelf);
+            roomTypeConstruction.setInnerRent(innerRent);
+            roomTypeConstruction.setInnerLeisure(innerLeisure);
         }
-        map.put("date", t);
-        map1.put("date", ts);
-        list.add(map);
-        list.add(map1);
-        return Result.success(list, "OK");
+
+        return Result.success(roomTypeConstruction);
     }
 
     /**
@@ -292,34 +324,32 @@ public class PerceptionController {
      * @date 9:00 2018/11/20
      */
     @GetMapping("/countPersonnelAccess")
-    @ApiOperation(value = "人员通行感知", notes = "返回参数：numThisDistrict 本小区通行人数、sizeThisDistrict 本小区通行人次、" +
-            "numStranger 陌生人通行人数、sizeStranger 陌生人通行人次、numFocus 重点关注通行人数、sizeFocus 重点关注通信人次")
+    @ApiOperation(value = "人员通行感知", notes = "返回参数：numThisDistrict 本小区通行人数、sizeThisDistrict 本小区通行人次  \n" +
+            "numStranger 陌生人通行人数、sizeStranger 陌生人通行人次  \n" +
+            "numFocus 重点关注通行人数、sizeFocus 重点关注通信人次")
     public Result countPersonnelAccess(String communityCode) {
         List<Map<String, Integer>> list = Lists.newArrayListWithCapacity(2);
         Map<String, Integer> number = Maps.newHashMapWithExpectedSize(3);
         Map<String, Integer> size = Maps.newHashMapWithExpectedSize(3);
+        number.put("numThisDistrict",accessControlService.getPassNumber(communityCode));
+        size.put("sizeThisDistrict",accessControlService.getPassPersonTime(communityCode));
+        number.put("numStranger",visitorService.getPassNumber(communityCode));
+        size.put("sizeStranger",visitorService.getPassPersonTime(communityCode));
         if (StringUtils.isNotBlank(communityCode)) {
-            number.put("numThisDistrict", 1);
-            number.put("numStranger", 2);
             number.put("numFocus", 3);
-            size.put("sizeThisDistrict", 1);
-            size.put("sizeStranger", 2);
             size.put("sizeFocus", 3);
         } else {
-            number.put("numThisDistrict", 10);
-            number.put("numStranger", 20);
             number.put("numFocus", 30);
-            size.put("sizeThisDistrict", 10);
-            size.put("sizeStranger", 20);
             size.put("sizeFocus", 30);
         }
         list.add(number);
         list.add(size);
-        return Result.success(list, "OK");
+        return Result.success(list);
     }
 
     /**
      * 查询小区code，通过城市名
+     *
      * @param cityName 城市名
      * @return 小区code列表
      * @author Mr.Deng

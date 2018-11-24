@@ -1,19 +1,23 @@
 package com.mit.community.module.bigdata.schedule;
 
-import com.mit.community.entity.ActivePeople;
-import com.mit.community.entity.AgeConstruction;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.Device;
-import com.mit.community.service.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.mit.community.entity.ActivePeople;
+import com.mit.community.entity.AgeConstruction;
+import com.mit.community.entity.Device;
+import com.mit.community.service.AccessControlService;
+import com.mit.community.service.ActivePeopleService;
+import com.mit.community.service.AgeConstructionService;
+import com.mit.community.service.ClusterCommunityService;
+import com.mit.community.service.DeviceService;
+import com.mit.community.service.HouseHoldService;
 
 /**
  * 大数据定时任务

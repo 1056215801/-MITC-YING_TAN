@@ -202,4 +202,46 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
     public void remove(){
         this.visitorMapper.delete(null);
     }
+
+    /***
+     * 查询陌生人通行人数
+     * 不传参数返回所有
+     *
+     * @param communityCode 小区编号 传空参数返回所有
+     * @return java.lang.Integer
+     * @author lw
+     * @date 2018/11/23 14:04
+     * @company mitesofor
+     */
+    public Integer getPassNumber(String communityCode){
+        EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(DISTINCT room_num,visitor_name) as i");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code",communityCode);
+        }
+        Map<String, Object> map = visitorMapper.selectMaps(wrapper).get(0);
+
+        return Integer.parseInt(map.get("i").toString());
+    }
+
+    /***
+     * 查询陌生人通行人次
+     * 不传参数返回所有
+     *
+     * @param communityCode 小区编号 传空参数返回所有
+     * @return java.lang.Integer
+     * @author lw
+     * @date 2018/11/23 14:04
+     * @company mitesofor
+     */
+    public Integer getPassPersonTime(String communityCode){
+        EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as i");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code",communityCode);
+        }
+        Map<String, Object> map = visitorMapper.selectMaps(wrapper).get(0);
+
+        return Integer.parseInt(map.get("i").toString());
+    }
 }

@@ -691,4 +691,51 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         wrapper.setSqlSelect("identity_type, count(*) num");
         return houseHoldMapper.selectMaps(wrapper);
     }
+    
+     /***
+     * 获取外地人口，本地人口,其它人口
+     * 传递参数为空返回所有鹰潭市的小区数据
+     *
+     * @param communityCode 小区code列表
+     * @return java.util.Map<java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Integer> map:{
+     *     field:外地人口,
+     *     local:本地人口,
+     *     other:其他人口
+     * }
+     * @author liuwei
+     * @date 2018/11/22 16:32
+     * @company mitesofor
+     */
+    public Map<String, Integer> getFieldLocalPeople(String communityCode) {
+        Map<String, Integer> map = Maps.newHashMapWithExpectedSize(2);
+        Integer field, local, other;
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as local");
+        wrapper.eq("city", "鹰潭市");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        local = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("local").toString());
+
+        wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as field")
+                .ne("city", "鹰潭市")
+                .ne("city", "");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        field = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("field").toString());
+
+        wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as other")
+                .eq("city", "");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        other = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("other").toString());
+        map.put("field", field);
+        map.put("local", local);
+        map.put("other", other);
+        return map;
+    }
 }

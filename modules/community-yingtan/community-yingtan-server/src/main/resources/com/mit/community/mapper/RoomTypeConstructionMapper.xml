@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.RoomTypeConstructionMapper">
+
+    <resultMap id="foreignRoomTypeConstruction" type="com.mit.community.entity.RoomTypeConstruction">
+        <result column="z1" jdbcType="INTEGER" property="foreignRent"/>
+        <result column="zz" jdbcType="INTEGER" property="foreignSelf"/>
+        <result column="qt" jdbcType="INTEGER" property="foreignOther"/>
+    </resultMap>
+    <resultMap id="innerRoomTypeConstruction" type="com.mit.community.entity.RoomTypeConstruction">
+        <result column="z1" jdbcType="INTEGER"  property="innerRent"/>
+        <result column="zz" jdbcType="INTEGER" property="innerSelf"/>
+        <result column="qt" jdbcType="INTEGER" property="innerOther"/>
+    </resultMap>
+    <resultMap id="foreignInnerPopulation" type="com.mit.community.entity.RoomTypeConstruction">
+        <result column="f" jdbcType="INTEGER" property="foreignPopulation"/>
+        <result column="i" jdbcType="INTEGER" property="innerPopulation"/>
+    </resultMap>
+    <sql id="zl">
+    SUM(CASE
+          WHEN tmp.zl > 0
+          THEN 1
+          ELSE 0
+        END) zl
+    </sql>
+    <sql id="zz">
+    SUM(
+        CASE
+          WHEN tmp.zz > 0
+          THEN 1
+          ELSE 0
+        END) zz
+    </sql>
+    <sql id="qt">
+    SUM(
+        CASE
+        WHEN tmp.qt > 0
+        THEN 1
+        ELSE 0
+        END) qt
+    </sql>
+    <select id="getForeignRoomTypeConstructionByCommunityCode" resultMap="foreignRoomTypeConstruction"
+            parameterType="java.lang.String">
+        SELECT
+        <include refid="zl"/>,
+        <include refid="zz"/>,
+        <include refid="qt"/>
+        FROM
+        (SELECT
+        SUM(
+        CASE
+        WHEN s.`household_type` = 7
+        THEN 1
+        ELSE 0
+        END
+        ) zl,
+        SUM(
+        CASE
+        WHEN s.`household_type` != 7
+        AND s.household_type != 8
+        THEN 1
+        ELSE 0
+        END
+        ) zz,
+        SUM(
+        CASE
+        WHEN s.`household_type` = 8
+        THEN 1
+        ELSE 0
+        END
+        ) qt
+        FROM
+        household s WHERE s.`community_code` = #{0} AND s.`city`!= '鹰潭市'
+        GROUP BY s.`room_num`) tmp ;
+    </select>
+    <select id="getInnerRoomTypeConstructionByCommunityCode" resultMap="innerRoomTypeConstruction"
+            parameterType="java.lang.String">
+        SELECT
+        <include refid="zl"/>,
+        <include refid="zz"/>,
+        <include refid="qt"/>
+        FROM
+        (SELECT
+        SUM(
+        CASE
+        WHEN s.`household_type` = 7
+        THEN 1
+        ELSE 0
+        END
+        ) zl,
+        SUM(
+        CASE
+        WHEN s.`household_type` != 7
+        AND s.household_type != 8
+        THEN 1
+        ELSE 0
+        END
+        ) zz,
+        SUM(
+        CASE
+        WHEN s.`household_type` = 8
+        THEN 1
+        ELSE 0
+        END
+        ) qt
+        FROM
+        household s WHERE s.`community_code` = #{0} AND s.`city`= '鹰潭市'
+        GROUP BY s.`room_num`) tmp;
+    </select>
+    <select id="getForeignInnerPopulationRoomTypeConstrctionByCommunityCode" resultMap="foreignInnerPopulation"
+            parameterType="java.lang.String">
+        SELECT
+            SUM( CASE WHEN tmp.f > 0 THEN 1 ELSE 0 END ) f,
+            SUM( CASE WHEN tmp.i > 0 THEN 1 ELSE 0 END ) i
+        FROM
+            (
+        SELECT
+            SUM( CASE WHEN s.city != '鹰潭市' THEN 1 ELSE 0 END ) f,
+            SUM( CASE WHEN s.city = '鹰潭市' THEN 1 ELSE 0 END ) i
+        FROM
+            household s
+        WHERE
+            s.community_code = #{0}
+        GROUP BY
+            s.room_num
+            ) tmp;
+    </select>
+</mapper>
