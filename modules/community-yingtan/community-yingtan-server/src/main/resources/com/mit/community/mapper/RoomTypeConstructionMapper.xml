@@ -78,8 +78,7 @@
             parameterType="java.lang.String">
         SELECT
         <include refid="zl"/>,
-        <include refid="zz"/>
-        ,
+        <include refid="zz"/>,
         <include refid="qt"/>
         FROM
         (SELECT
@@ -107,7 +106,7 @@
         ) qt
         FROM
         household s WHERE s.`community_code` = #{0} AND s.`city`= '鹰潭市'
-        GROUP BY s.`room_num`) tmp ;
+        GROUP BY s.`room_num`) tmp;
     </select>
     <select id="getForeignInnerPopulationRoomTypeConstrctionByCommunityCode" resultMap="foreignInnerPopulation"
             parameterType="java.lang.String">

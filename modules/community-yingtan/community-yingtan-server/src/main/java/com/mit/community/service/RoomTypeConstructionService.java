@@ -6,6 +6,8 @@ import com.mit.community.mapper.RoomTypeConstructionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 /**
  * @author LW
@@ -28,6 +30,8 @@ public class RoomTypeConstructionService {
      * @date 15:03 2018/11/23
      */
     public void save(RoomTypeConstruction roomTypeConstruction) {
+        roomTypeConstruction.setGmtCreate(LocalDateTime.now());
+        roomTypeConstruction.setGmtModified(LocalDateTime.now());
         roomTypeConstructionMapper.insert(roomTypeConstruction);
     }
 
@@ -57,22 +61,33 @@ public class RoomTypeConstructionService {
 
     /**
      * 获取本市人口和外来人口的自住，闲置，出租，其他的房屋数
-     * TODO 可能需要优化
-     * @param commmunityCode 社区id
+     *
+     * TODO 有时间可以优化
+     * @param communityCode 社区id
      * @return RoomTypeConstruction对象那个
      * @author lw
      */
-    public RoomTypeConstruction countRoomTypeConstructionByCommunityCode(String commmunityCode) {
+    public RoomTypeConstruction countRoomTypeConstructionByCommunityCode(String communityCode) {
+        //如果一个房屋住户有外地的和本地的一块，那即算本地住户，又算外来住户
         RoomTypeConstruction roomTypeConstruction = new RoomTypeConstruction();
         //包含外来房屋自住，出租，其他
-        RoomTypeConstruction foreignRoomTypeConstruction = roomTypeConstructionMapper.getForeignRoomTypeConstructionByCommunityCode(commmunityCode);
+        RoomTypeConstruction foreignRoomTypeConstruction = roomTypeConstructionMapper.getForeignRoomTypeConstructionByCommunityCode(communityCode);
         //包含本市房屋自住，出租，其他
-        RoomTypeConstruction innerRoomTypeConstruction = roomTypeConstructionMapper.getInnerRoomTypeConstructionByCommunityCode(commmunityCode);
+        RoomTypeConstruction innerRoomTypeConstruction = roomTypeConstructionMapper.getInnerRoomTypeConstructionByCommunityCode(communityCode);
         //包含外来房屋和本市房屋人口
-        RoomTypeConstruction populationRoomTypeConstrction = roomTypeConstructionMapper.getForeignInnerPopulationRoomTypeConstrctionByCommunityCode(commmunityCode);
+        RoomTypeConstruction populationRoomTypeConstruction = roomTypeConstructionMapper.getForeignInnerPopulationRoomTypeConstrctionByCommunityCode(communityCode);
+        if (foreignRoomTypeConstruction == null) {
+            foreignRoomTypeConstruction= new RoomTypeConstruction();
+        }
+        if (innerRoomTypeConstruction == null) {
+            innerRoomTypeConstruction= new RoomTypeConstruction();
+        }
+        if (populationRoomTypeConstruction == null) {
+            populationRoomTypeConstruction= new RoomTypeConstruction();
+        }
 
-        Integer innerPopulation = populationRoomTypeConstrction.getInnerPopulation() == null ? 0 : populationRoomTypeConstrction.getInnerPopulation();
-        Integer foreignPopulation = populationRoomTypeConstrction.getForeignPopulation() == null ? 0 : populationRoomTypeConstrction.getForeignPopulation();
+        Integer innerPopulation = populationRoomTypeConstruction.getInnerPopulation() == null ? 0 : populationRoomTypeConstruction.getInnerPopulation();
+        Integer foreignPopulation = populationRoomTypeConstruction.getForeignPopulation() == null ? 0 : populationRoomTypeConstruction.getForeignPopulation();
 
         Integer foreignOther = foreignRoomTypeConstruction.getForeignOther() == null ? 0 : foreignRoomTypeConstruction.getForeignOther();
         Integer foreignSelf = foreignRoomTypeConstruction.getForeignSelf() == null ? 0 : foreignRoomTypeConstruction.getForeignSelf();
@@ -87,12 +102,12 @@ public class RoomTypeConstructionService {
         Integer innerLeisure = innerPopulation - (innerOther + innerSelf + innerRent);
         innerLeisure = innerLeisure < 0 ? 0 : innerLeisure;
 
-        roomTypeConstruction.setCommunityCode(commmunityCode);
+        roomTypeConstruction.setCommunityCode(communityCode);
 
         roomTypeConstruction.setForeignLeisure(foreignLeisure);
         roomTypeConstruction.setForeignOther(foreignOther);
         roomTypeConstruction.setForeignSelf(foreignSelf);
-        roomTypeConstruction.setInnerRent(foreignRent);
+        roomTypeConstruction.setForeignRent(foreignRent);
         roomTypeConstruction.setForeignLeisure(foreignLeisure);
         roomTypeConstruction.setForeignPopulation(foreignPopulation);
 

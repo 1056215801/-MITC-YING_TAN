@@ -6,6 +6,7 @@ import com.mit.community.service.HouseHoldService;
 import com.mit.community.service.RoomTypeConstructionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,34 +16,34 @@ import java.util.List;
  * @creatTime 2018-11-23 11:17
  * @company mitesofor
  */
+@Component
 public class RoomTypeConstructionSchedule {
 
     private final RoomTypeConstructionService roomTypeConstructionService;
-    private final HouseHoldService houseHoldService;
     private final ClusterCommunityService clusterCommunityService;
 
     @Autowired
     public RoomTypeConstructionSchedule(RoomTypeConstructionService roomTypeConstructionService,HouseHoldService houseHoldService,ClusterCommunityService clusterCommunityService){
         this.clusterCommunityService=clusterCommunityService;
-        this.houseHoldService=houseHoldService;
         this.roomTypeConstructionService=roomTypeConstructionService;
     }
     /**
      * 删除然后导入
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "* 0/10 * * * ?")
     public void removeAndiImport(){
         List<String> communityCodes;
         //删除所有
         roomTypeConstructionService.remove();
-//        查找所有的鹰潭的小区id
+        //查找所有的鹰潭的小区id
         communityCodes=clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
-        for (String communityCode:communityCodes){
-            RoomTypeConstruction roomTypeConstruction=new RoomTypeConstruction();
-//            查找外来人口
-
-
+        if (!communityCodes.isEmpty()) {
+            for (String communityCode : communityCodes) {
+                //遍历出人口类型结构数据再保存
+                RoomTypeConstruction roomTypeConstruction = roomTypeConstructionService.countRoomTypeConstructionByCommunityCode(communityCode);
+                roomTypeConstructionService.save(roomTypeConstruction);
+            }
         }
     }
 }
