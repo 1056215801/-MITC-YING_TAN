@@ -128,4 +128,26 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
         wrapper.in("community_code", communityCodes);
         return roomMapper.selectList(wrapper);
     }
+    
+    
+    /**
+     * 	获取房间，通过单元id和房间号
+     * @param roomNum 房间号
+     * @param unitId 单元id
+     * @return 房间信息列表
+     * @author Mr.Deng
+     * @date 15:06 2018/11/21
+     */
+    public Room getByUnitIdAndRoomNum(String roomNum, Integer unitId) {
+        EntityWrapper<Room> wrapper = new EntityWrapper<>();
+        wrapper.eq("unit_id", unitId);
+        wrapper.eq("room_num", roomNum);
+        List<Room> list = roomMapper.selectList(wrapper);
+        if(list.isEmpty()) {
+        	return null;
+        }else {
+        	return list.get(0);
+        }
+        
+    }
 }

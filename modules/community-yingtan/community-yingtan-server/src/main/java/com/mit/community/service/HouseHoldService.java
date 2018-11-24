@@ -54,10 +54,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     private final HttpLogin httpLogin;
 
     private final IdCardInfoExtractorUtil idCardInfoExtractorUtil;
-
+    
+    private final RoomService roomService;
 
     @Autowired
-    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService, HttpLogin httpLogin, IdCardInfoExtractorUtil idCardInfoExtractorUtil) {
+    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService, HttpLogin httpLogin, 
+    		IdCardInfoExtractorUtil idCardInfoExtractorUtil, RoomService roomService) {
         this.houseHoldMapper = houseHoldMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
@@ -65,6 +67,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         this.unitService = unitService;
         this.httpLogin = httpLogin;
         this.idCardInfoExtractorUtil = idCardInfoExtractorUtil;
+        this.roomService = roomService;
     }
 
     /**
@@ -221,47 +224,42 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                 }
             }
         });
-        return result;
-
-    }
-
-    /***
-     * 从dnake接口查询住户
-     * @param communityCode 社区code
-     * @param pageNum 分页num
-     * @param pageSize 分页size
-     * @param param 其他参数
-     * @return java.util.List<com.mit.community.entity.HouseHold>
-     * @author shuyy
-     * @date 2018/11/19 17:39
-     * @company mitesofor
-     */
-    private List<HouseHold> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
-                                                             Integer pageSize, Map<String, Object> param) {
-        String url = "/v1/household/getHouseholdList";
-        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
-        map.put("communityCode", communityCode);
-        map.put("pageNum", pageNum);
-        map.put("pageSize", pageSize);
-        if (param != null && !param.isEmpty()) {
-            map.putAll(param);
+        //过滤掉重复的数据，想哭
+        for(int i = 0; i < result.size(); i++) {
+        	HouseHold houseHold = result.get(i);
+        	String householdName = houseHold.getHouseholdName();
+        	for(int j = i + 1; j < result.size(); j++) {
+        		HouseHold houseHold2 = result.get(j);
+        		if(houseHold2.getHouseholdName().equals(householdName)) {
+        			result.remove(j);
+        			j--;
+        		}
+        	}
         }
-        String result = DnakeWebApiUtil.invoke(url, map);
-        ArrayList<HouseHold> houseHolds = parseJSON(communityCode, result);
-        CountDownLatch countDownLatch = new CountDownLatch(houseHolds.size());
-        houseHolds.forEach(item -> {
+        result.forEach(item -> {
+        	  // 查询roomId
+            Room room = roomService.getByUnitIdAndRoomNum(item.getRoomNum(), item.getUnitId());
+            if(room != null) {
+            	item.setRoomId(room.getRoomId());
+            }else {
+            	item.setRoomId(0);
+            }
+        });
+        CountDownLatch countDownLatch = new CountDownLatch(result.size());
+        result.forEach(item -> {
             ThreadPoolUtil.submit(() -> {
                 // 查询身份证号
                 try {
                     String credentialNum = getCredentialNumFromDnake(item.getHouseholdId());
                     item.setCredentialNum(credentialNum);
+                    item.setIdentityType(HouseHold.NORMAL);
                     // 通过身份证号，分析省、市、区县、出生日期、年龄
                     if (credentialNum.equals(StringUtils.EMPTY)) {
                         item.setProvince(StringUtils.EMPTY);
                         item.setCity(StringUtils.EMPTY);
                         item.setRegion(StringUtils.EMPTY);
                         item.setBirthday(LocalDate.of(1900, 1, 1));
+                        item.setIdentityType((short) 99);
                     } else {
                         IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(credentialNum);
                         LocalDate birthday = idCardInfo.getBirthday();
@@ -290,6 +288,35 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         } catch (InterruptedException e) {
             log.error("countDownLatch.await() 报错了", e);
         }
+        
+        return result;
+
+    }
+
+    /***
+     * 从dnake接口查询住户
+     * @param communityCode 社区code
+     * @param pageNum 分页num
+     * @param pageSize 分页size
+     * @param param 其他参数
+     * @return java.util.List<com.mit.community.entity.HouseHold>
+     * @author shuyy
+     * @date 2018/11/19 17:39
+     * @company mitesofor
+     */
+    private List<HouseHold> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
+                                                             Integer pageSize, Map<String, Object> param) {
+        String url = "/v1/household/getHouseholdList";
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
+        map.put("communityCode", communityCode);
+        map.put("pageNum", pageNum);
+        map.put("pageSize", pageSize);
+        if (param != null && !param.isEmpty()) {
+            map.putAll(param);
+        }
+        String result = DnakeWebApiUtil.invoke(url, map);
+        ArrayList<HouseHold> houseHolds = parseJSON(communityCode, result);
         return houseHolds;
     }
 
@@ -441,7 +468,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         String url = "http://cmp.ishanghome.com/cmp/household/getStepOneInfo";
         NameValuePair[] data = {new NameValuePair("householdId", householdId.toString())};
         String result = httpLogin.post(url, data, httpLogin.getCookie());
-        if (result == null || result.equals(CommonConstatn.ERROR)) {
+        if (StringUtils.isBlank(result) || result.equals(CommonConstatn.ERROR)) {
             int retryNumMax = 10;
             if (retryNum > retryNumMax) {
                 return StringUtils.EMPTY;
@@ -514,7 +541,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     }
 
     /***
-     * 统计人员分布， 通过小区code
+     * 统计人员分布，精确到省， 通过小区code
      * @param communityCode 小区code
      * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
      * @author shuyy
@@ -529,9 +556,28 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
         return result;
     }
+    
+    /***
+     * 统计人员分布，精确到市， 通过小区code
+     * @param communityCode 小区code
+     * @param province 省
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/23 14:08
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeAndProvince(String communityCode, String province){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("province", province);
+        wrapper.groupBy("city");
+        wrapper.setSqlSelect("city, count(*) num");
+        List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
+        return result;
+    }
 
     /***
-     * 统计人员分布， 通过小区code列表
+     * 统计人员分布，精确到省， 通过小区code列表
      * @param communityCodeList
      * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
      * @throws
@@ -544,6 +590,25 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         wrapper.in("community_code", communityCodeList);
         wrapper.groupBy("province");
         wrapper.setSqlSelect("province, count(*) num");
+        List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
+        return result;
+    }
+    
+    /***
+     * 统计人员分布，精确到市， 通过小区code列表
+     * @param communityCodeList 小区code列表
+     * @param province 省
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/23 14:08
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeListAndProvince(List<String> communityCodeList, String province){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodeList);
+        wrapper.eq("province", province);
+        wrapper.groupBy("city");
+        wrapper.setSqlSelect("city, count(*) num");
         List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
         return result;
     }
@@ -565,5 +630,65 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         }else{
             return houseHolds.get(0);
         }
+    }
+
+    /***
+     * 查询有住户的所有房间id
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/24 9:38
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> listActiveRoomId(){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.groupBy("room_id");
+        wrapper.setSqlSelect("room_id");
+        return houseHoldMapper.selectMaps(wrapper);
+    }
+
+    /***
+     * 查询所有住户， 通过房间id
+     * @param roomNum 房间号
+     * @return java.util.List<com.mit.community.entity.HouseHold>
+     * @author shuyy
+     * @date 2018/11/24 9:42
+     * @company mitesofor
+    */
+    public List<HouseHold> listByRoomId(Integer roomId){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("room_id", roomId);
+        return houseHoldMapper.selectList(wrapper);
+    }
+
+    /**
+     * 统计各个身份类型人数、通过小区code
+     * @param communityCode 小区code
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/24 10:49
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> countIdentityTypeByCommunityCode(String communityCode){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.groupBy("identity_type");
+        wrapper.setSqlSelect("identity_type, count(*)");
+        return houseHoldMapper.selectMaps(wrapper);
+    }
+
+    /**
+     * 统计各个身份类型人数、通过小区code列表
+     * @param communityCodeList 小区code列表
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/24 10:49
+     * @company mitesofor
+     */
+    public List<Map<String, Object>> countIdentityTypeByCommunityCodeList(List<String> communityCodeList){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodeList);
+        wrapper.groupBy("identity_type");
+        wrapper.setSqlSelect("identity_type, count(*) num");
+        return houseHoldMapper.selectMaps(wrapper);
     }
 }

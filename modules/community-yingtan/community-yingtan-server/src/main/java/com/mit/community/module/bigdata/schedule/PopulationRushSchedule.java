@@ -30,7 +30,7 @@ public class PopulationRushSchedule {
         this.clusterCommunityService = clusterCommunityService;
     }
 
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "0 0 0 */29 * ?")
     @Transactional(rollbackFor = Exception.class)
     public void  update (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

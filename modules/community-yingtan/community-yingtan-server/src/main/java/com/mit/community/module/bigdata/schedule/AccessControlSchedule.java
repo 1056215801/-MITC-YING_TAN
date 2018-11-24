@@ -1,15 +1,14 @@
 package com.mit.community.module.bigdata.schedule;
 
-import com.mit.community.entity.AccessControl;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.service.AccessControlService;
-import com.mit.community.service.ClusterCommunityService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mit.community.entity.AccessControl;
+import com.mit.community.service.AccessControlService;
+import com.mit.community.service.ClusterCommunityService;
 
 /**
  * 门禁 定时器
@@ -18,7 +17,7 @@ import java.util.List;
  * @date 2018/11/16
  * @company mitesofor
  */
-//@Component
+@Component
 public class AccessControlSchedule {
     
     private final AccessControlService accessControlService;
@@ -37,16 +36,10 @@ public class AccessControlSchedule {
      * @date 2018/11/16 16:55
      * @company mitesofor
     */
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     public void importIncrement (){
-        List<String> clusterCommunityNameList = new ArrayList<>(4);
-        clusterCommunityNameList.add("凯翔外滩小区");
-        clusterCommunityNameList.add("南苑小区");
-        clusterCommunityNameList.add("鹰王环东花苑小区");
-        // 下面的是测试的
-        clusterCommunityNameList.add("珉轩工业园");
-        List<ClusterCommunity> clusterCommunitiesList = clusterCommunityService.listByNames(clusterCommunityNameList);
-        List<AccessControl> allAccessControlsList = accessControlService.listIncrementByCommunityCode(clusterCommunitiesList);
+        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        List<AccessControl> allAccessControlsList = accessControlService.listIncrementByCommunityCodeList(communityCodeList);
         if(!allAccessControlsList.isEmpty()){
             /* 测试模式，测试数据是否完成，所以把这里注释掉
             allAccessControlsList.forEach(item -> accessControlService.save(item));*/

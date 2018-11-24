@@ -54,20 +54,12 @@ public class BigDataSchedule {
      * @date 2018/11/22 11:35
      * @company mitesofor
     */
-//    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "* * * */10 * ?")
     @Transactional(rollbackFor = Exception.class)
     public void countActivePeopleNum (){
-        List<String> clusterCommunityNameList = new ArrayList<>(4);
-        clusterCommunityNameList.add("凯翔外滩小区");
-        clusterCommunityNameList.add("心家泊小区");
-        clusterCommunityNameList.add("南苑小区");
-        clusterCommunityNameList.add("鹰王环东花苑小区");
-        // 下面的是测试的
-        clusterCommunityNameList.add("珉轩工业园");
-        List<ClusterCommunity> clusterCommunitiesList = clusterCommunityService.listByNames(clusterCommunityNameList);
-        List<String> list = clusterCommunitiesList.stream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
+        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         activePeopleService.remove();
-        list.forEach(item -> {
+        communityCodeList.forEach(item -> {
             List<Device> devices = deviceService.listInOrOutByCommunityCode(item, "进");
             List<String> deviceNameList = devices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
             Long num = accessControlService.countRecentMonthActivePeopleByDeviceNameList(deviceNameList);
@@ -84,7 +76,7 @@ public class BigDataSchedule {
      * @date 2018/11/23 11:49
      * @company mitesofor
     */
-//    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "0 0 0 */29 * ?")
     @Transactional(rollbackFor = Exception.class)
     public void  countAgeConstruction (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
