@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -56,7 +57,11 @@ public class RoomTypeConstructionService {
     public RoomTypeConstruction getByCommunityCode(String communityCode) {
         EntityWrapper<RoomTypeConstruction> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        return roomTypeConstructionMapper.selectList(wrapper).get(0);
+        List<RoomTypeConstruction> constructions = roomTypeConstructionMapper.selectList(wrapper);
+        if (constructions.isEmpty()){
+            return null;
+        }
+        return constructions.get(0);
     }
 
     /**

@@ -42,7 +42,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     private final ZoneService zoneService;
 
-    private final DeviceService  deviceService;
+    private final DeviceService deviceService;
 
     private final ActivePeopleService activePeopleService;
 
@@ -200,8 +200,8 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/22 14:29
      * @company mitesofor
-    */
-    public Integer countByCommunityCode(String communityCode){
+     */
+    public Integer countByCommunityCode(String communityCode) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         return accessControlMapper.selectCount(wrapper);
@@ -220,6 +220,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         wrapper.in("community_code", communityCodes);
         return accessControlMapper.selectList(wrapper);
     }
+
     /***
      * 统计门禁总数，通过小区code列表
      * @param communityCodes 小区code列表
@@ -227,7 +228,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/22 14:44
      * @company mitesofor
-    */
+     */
     public Integer countByCommunityCodeList(List<String> communityCodes) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
@@ -242,8 +243,8 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/22 11:22
      * @company mitesofor
-    */
-    public Long countRecentMonthActivePeopleByDeviceNameList(List<String> deviceNameList){
+     */
+    public Long countRecentMonthActivePeopleByDeviceNameList(List<String> deviceNameList) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("device_name", deviceNameList);
         LocalDateTime lastMonth = LocalDateTime.now().minusMonths(1);
@@ -259,13 +260,13 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/22 14:04
      * @company mitesofor
-    */
-    public Integer countUntilTwoNumByDeviceNameList(List<String> deviceNameList){
+     */
+    public Integer countUntilTwoNumByDeviceNameList(List<String> deviceNameList) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("device_name", deviceNameList);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime standardTime = now.withHour(2);
-        if(now.getHour() < 2){
+        if (now.getHour() < 2) {
             standardTime = standardTime.minusDays(1);
         }
         wrapper.lt("access_time", now).gt("access_time", standardTime);
@@ -279,8 +280,8 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/22 14:23
      * @company mitesofor
-    */
-    public long countRemainPeopleByCommunityCode(String communityCode){
+     */
+    public long countRemainPeopleByCommunityCode(String communityCode) {
         // 查出凌晨2点后进的数量、出的数量，然后：活跃人数 - （出-进）
         List<Device> outDevices = deviceService.listInOrOutByCommunityCode(communityCode, "出");
         List<String> outDeviceNameList = outDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
@@ -290,11 +291,52 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         Integer inNum = this.countUntilTwoNumByDeviceNameList(inDeviceNameList);
         ActivePeople activePeople = activePeopleService.getByCommunityCode(communityCode);
         int i = outNum - inNum;
-        if(activePeople == null){
+        if (activePeople == null) {
             return 1000 - i;
-        } else{
+        } else {
             return activePeople.getActivePeopleNum() - i;
         }
     }
 
+    /***
+     * 查询本小区通行人数
+     * 不传参数返回所有
+     *
+     * @param communityCode 小区编号 传空参数返回所有
+     * @return java.lang.Integer
+     * @author lw
+     * @date 2018/11/23 14:04
+     * @company mitesofor
+     */
+    public Integer getPassNumber(String communityCode) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(DISTINCT household_id) as i");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.where("community_code = {0}", communityCode);
+        }
+        Map<String, Object> map = accessControlMapper.selectMaps(wrapper).get(0);
+
+        return Integer.parseInt(map.get("i").toString());
+    }
+
+    /***
+     * 查询本小区通行人次
+     * 不传参数返回所有
+     *
+     * @param communityCode 小区编号 传空参数返回所有
+     * @return java.lang.Integer
+     * @author lw
+     * @date 2018/11/23 14:04
+     * @company mitesofor
+     */
+    public Integer getPassPersonTime(String communityCode) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as i");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.where("community_code = {0}", communityCode);
+        }
+        Map<String, Object> map = accessControlMapper.selectMaps(wrapper).get(0);
+
+        return Integer.parseInt(map.get("i").toString());
+    }
 }

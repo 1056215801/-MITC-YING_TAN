@@ -452,7 +452,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         }
         JSONObject stepOneInfo = null;
         JSONObject jsonObject = JSON.parseObject(result);
-        if(jsonObject != null){
+        if (jsonObject != null) {
             stepOneInfo = jsonObject.getJSONObject("stepOneInfo");
         }
         if (stepOneInfo == null) {
@@ -470,7 +470,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 统计年龄结构，通过小区code列表
      * @param communityCodeList 小区code列表
-     * @return java.util.Map<java.lang.String               ,               java.lang.Integer>
+     * @return java.util.Map<java.lang.String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               java.lang.Integer>
      * @author shuyy
      * @date 2018/11/22 16:32
      * @company mitesofor
@@ -511,5 +511,55 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             ageConstructions.add(ageConstruction);
         });
         return ageConstructions;
+    }
+
+    /***
+     * 获取外地人口，本地人口,其它人口
+     * 传递参数为空返回所有鹰潭市的小区数据
+     *
+     * @param communityCode 小区code列表
+     * @return java.util.Map<java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Integer> map:{
+     *     field:外地人口,
+     *     local:本地人口,
+     *     other:其他人口
+     * }
+     * @author shuyy
+     * @date 2018/11/22 16:32
+     * @company mitesofor
+     */
+    public Map<String, Integer> getFieldLocalPeople(String communityCode) {
+        Map<String, Integer> map = Maps.newHashMapWithExpectedSize(2);
+        Integer field, local, other;
+
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as local");
+        wrapper.where("city = {0}", "鹰潭市");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.and("community_code = {0}", communityCode);
+        }
+        local = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("local").toString());
+
+        wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as field")
+                .where("city !={0}", "鹰潭市")
+                .and()
+                .ne("city", "");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.and("community_code = {0}", communityCode);
+        }
+        field = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("field").toString());
+
+        wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as other")
+                .and()
+                .ne("city", "");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.and("community_code = {0}", communityCode);
+        }
+        other = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("other").toString());
+        map.put("field", field);
+        map.put("local", local);
+        map.put("other", other);
+        return map;
     }
 }

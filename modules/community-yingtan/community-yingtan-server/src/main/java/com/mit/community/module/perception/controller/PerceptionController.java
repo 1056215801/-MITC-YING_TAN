@@ -191,7 +191,6 @@ public class PerceptionController {
 
     /**
      * 人口数据感知
-     * TODO 这个是要分析出来的，这个圆圆来分析
      *
      * @return result
      * @author Mr.Deng
@@ -202,26 +201,16 @@ public class PerceptionController {
             "overseasPopulation 境外人口、other 其他")
     public Result countPopulationDataPerception(String communityCode) {
         Map<String, Integer> map = Maps.newHashMapWithExpectedSize(4);
-        if (StringUtils.isNoneBlank(communityCode)) {
-            //本地人口
-            map.put("localPopulation", 1847);
-            //外地人口
-            map.put("foreignPopulation", 423);
-            //境外人口
-            map.put("overseasPopulation", 0);
-            //其他
-            map.put("other", 32);
-        } else {
-            //本地人口
-            map.put("localPopulation", 18470);
-            //外地人口
-            map.put("foreignPopulation", 4230);
-            //境外人口
-            map.put("overseasPopulation", 10);
-            //其他
-            map.put("other", 320);
-        }
-        return Result.success(map, "OK");
+        Map<String, Integer> fieldLocalPeople = houseHoldService.getFieldLocalPeople(communityCode);
+        //本地人口
+        map.put("localPopulation", fieldLocalPeople.get("local"));
+        //外地人口
+        map.put("foreignPopulation", fieldLocalPeople.get("field"));
+        //境外人口
+        map.put("overseasPopulation", 0);
+        //其他
+        map.put("other", fieldLocalPeople.get("other"));
+        return Result.success(map);
     }
 
     /**
@@ -329,37 +318,33 @@ public class PerceptionController {
 
     /**
      * 人员通行感知
-     * TODO 这个可以搞定
      *
      * @return result
      * @author Mr.Deng
      * @date 9:00 2018/11/20
      */
     @GetMapping("/countPersonnelAccess")
-    @ApiOperation(value = "人员通行感知", notes = "返回参数：numThisDistrict 本小区通行人数、sizeThisDistrict 本小区通行人次、" +
-            "numStranger 陌生人通行人数、sizeStranger 陌生人通行人次、numFocus 重点关注通行人数、sizeFocus 重点关注通信人次")
+    @ApiOperation(value = "人员通行感知", notes = "返回参数：numThisDistrict 本小区通行人数、sizeThisDistrict 本小区通行人次  \n" +
+            "numStranger 陌生人通行人数、sizeStranger 陌生人通行人次  \n" +
+            "numFocus 重点关注通行人数、sizeFocus 重点关注通信人次")
     public Result countPersonnelAccess(String communityCode) {
         List<Map<String, Integer>> list = Lists.newArrayListWithCapacity(2);
         Map<String, Integer> number = Maps.newHashMapWithExpectedSize(3);
         Map<String, Integer> size = Maps.newHashMapWithExpectedSize(3);
+        number.put("numThisDistrict",accessControlService.getPassNumber(communityCode));
+        size.put("sizeThisDistrict",accessControlService.getPassPersonTime(communityCode));
+        number.put("numStranger",visitorService.getPassNumber(communityCode));
+        size.put("sizeStranger",visitorService.getPassPersonTime(communityCode));
         if (StringUtils.isNotBlank(communityCode)) {
-            number.put("numThisDistrict", 1);
-            number.put("numStranger", 2);
             number.put("numFocus", 3);
-            size.put("sizeThisDistrict", 1);
-            size.put("sizeStranger", 2);
             size.put("sizeFocus", 3);
         } else {
-            number.put("numThisDistrict", 10);
-            number.put("numStranger", 20);
             number.put("numFocus", 30);
-            size.put("sizeThisDistrict", 10);
-            size.put("sizeStranger", 20);
             size.put("sizeFocus", 30);
         }
         list.add(number);
         list.add(size);
-        return Result.success(list, "OK");
+        return Result.success(list);
     }
 
     /**

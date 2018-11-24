@@ -31,7 +31,7 @@ public class RoomTypeConstructionSchedule {
      * 删除然后导入
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "* 0/10 * * * ?")
+    @Scheduled(cron = "0 30 * * * ?")
     public void removeAndiImport(){
         List<String> communityCodes;
         //删除所有
