@@ -84,7 +84,7 @@ public class BigDataSchedule {
      * @date 2018/11/23 11:49
      * @company mitesofor
     */
-    @Scheduled(cron = "*/10 * * * * ?")
+//    @Scheduled(cron = "*/10 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void  countAgeConstruction (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

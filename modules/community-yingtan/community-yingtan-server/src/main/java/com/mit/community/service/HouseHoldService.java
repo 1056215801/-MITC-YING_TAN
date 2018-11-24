@@ -261,11 +261,11 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                         item.setProvince(StringUtils.EMPTY);
                         item.setCity(StringUtils.EMPTY);
                         item.setRegion(StringUtils.EMPTY);
-                        item.setBirthday(LocalDate.of(1990, 1, 1));
+                        item.setBirthday(LocalDate.of(1900, 1, 1));
                     } else {
                         IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(credentialNum);
                         LocalDate birthday = idCardInfo.getBirthday();
-                        item.setBirthday(birthday == null ? LocalDate.of(1990, 1, 1) : birthday);
+                        item.setBirthday(birthday == null ? LocalDate.of(1900, 1, 1) : birthday);
                         String city = idCardInfo.getCity();
                         item.setCity(city == null ? StringUtils.EMPTY : city);
                         String province = idCardInfo.getProvince();
@@ -489,7 +489,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             int youthNum = 0;
             int middleNum = 0;
             int oldNum = 0;
-            houseHolds = houseHolds.parallelStream().filter(a -> a.getBirthday().getYear() != 1990).collect(Collectors.toList());
+            houseHolds = houseHolds.parallelStream().filter(a -> a.getBirthday().getYear() != 1900).collect(Collectors.toList());
             for (HouseHold houseHold : houseHolds) {
                 LocalDate birthday = houseHold.getBirthday();
                 if (birthday.isAfter(childTime)) {
@@ -511,5 +511,59 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             ageConstructions.add(ageConstruction);
         });
         return ageConstructions;
+    }
+
+    /***
+     * 统计人员分布， 通过小区code
+     * @param communityCode 小区code
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/23 14:08
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCode(String communityCode){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.groupBy("province");
+        wrapper.setSqlSelect("province, count(*) num");
+        List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
+        return result;
+    }
+
+    /***
+     * 统计人员分布， 通过小区code列表
+     * @param communityCodeList
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @throws
+     * @author shuyy
+     * @date 2018/11/23 14:10
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeList(List<String> communityCodeList){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodeList);
+        wrapper.groupBy("province");
+        wrapper.setSqlSelect("province, count(*) num");
+        List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
+        return result;
+    }
+
+    /***
+     * 查询househod， 通过住户id
+     * @param HouseholdId 住户id
+     * @return com.mit.community.entity.HouseHold
+     * @author shuyy
+     * @date 2018/11/23 14:51
+     * @company mitesofor
+    */
+    public HouseHold getByHouseholdId(Integer HouseholdId){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", HouseholdId);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if(houseHolds.isEmpty()){
+            return null;
+        }else{
+            return houseHolds.get(0);
+        }
     }
 }

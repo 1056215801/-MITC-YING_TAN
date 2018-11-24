@@ -4,22 +4,21 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeWebConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
-import com.mit.community.entity.AccessControl;
-import com.mit.community.entity.ActivePeople;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.Device;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -46,14 +45,17 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     private final ActivePeopleService activePeopleService;
 
+    private final HouseHoldService houseHoldService;
+
     @Autowired
     public AccessControlService(AccessControlMapper accessControlMapper,
-                                ClusterCommunityService clusterCommunityService, ZoneService zoneService, DeviceService deviceService, ActivePeopleService activePeopleService) {
+                                ClusterCommunityService clusterCommunityService, ZoneService zoneService, DeviceService deviceService, ActivePeopleService activePeopleService, HouseHoldService houseHoldService) {
         this.accessControlMapper = accessControlMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.deviceService = deviceService;
         this.activePeopleService = activePeopleService;
+        this.houseHoldService = houseHoldService;
     }
 
     /**
@@ -77,15 +79,15 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/16 16:43
      * @company mitesofor
      */
-    public List<AccessControl> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
-                                                                Integer pageSize, Map<String, Object> param) {
+    private List<AccessControl> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
+                                                                 Integer pageSize, Map<String, Object> param) {
         String url = "/v1/device/getAccessControlList";
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
         map.put("pageSize", pageSize);
         map.put("pageNum", pageNum);
         map.put("accountId", DnakeWebConstants.ACCOUNT_ID);
-        if (param != null || !param.isEmpty()) {
+        if (param != null && !param.isEmpty()) {
             map.putAll(param);
         }
         String result = DnakeWebApiUtil.invoke(url, map);
@@ -102,7 +104,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/16 17:03
      * @company mitesofor
      */
-    public AccessControl getNewestAccessControlByCommunityCode(String communityCode) {
+    private AccessControl getNewestAccessControlByCommunityCode(String communityCode) {
         RowBounds rowBounds = new RowBounds(0, 1);
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.orderBy("access_time", false);
@@ -150,7 +152,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                 }
                 for (int i = 0; i < accessControls.size(); i++) {
                     AccessControl accessControl = accessControls.get(i);
-                    if (StringUtils.isBlank(accessControl.getZoneName())) {
+                    if (StringUtils.isBlank(accessControl.getZoneName()) || StringUtils.isBlank(accessControl.getBuildingName())) {
                         accessControls.remove(i);
                         i--;
                     } else {
@@ -163,6 +165,9 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                         }
                         Integer zoneId = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item.getCommunityCode()).getZoneId();
                         accessControl.setZoneId(zoneId);
+                        // 查询房号
+                        HouseHold household = houseHoldService.getByHouseholdId(accessControl.getHouseholdId());
+                        accessControl.setRoomNum(household == null ? StringUtils.EMPTY : household.getRoomNum());
                         accessControl.setGmtCreate(LocalDateTime.now());
                         accessControl.setGmtModified(LocalDateTime.now());
                     }
@@ -207,19 +212,23 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return accessControlMapper.selectCount(wrapper);
     }
 
-    /**
-     * 通过一组小区code获取门禁记录信息
-     *
-     * @param communityCodes 小区code
-     * @return 门禁记录信息列表
-     * @author Mr.Deng
-     * @date 15:31 2018/11/21
-     */
-    public List<AccessControl> listByCommunityCodes(List<String> communityCodes) {
+    /***
+     * 分页查询门禁记录，通过小区code
+     * @param communityCodeList 小区code列表
+     * @param pageNum 当前页
+     * @param pageSize 分页总数
+     * @return java.util.List<com.mit.community.entity.AccessControl>
+     * @author shuyy
+     * @date 2018/11/23 14:41
+     * @company mitesofor
+    */
+    public List<AccessControl> listByCommunityCodeListPage(List<String> communityCodeList, Integer pageNum, Integer pageSize){
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
-        wrapper.in("community_code", communityCodes);
-        return accessControlMapper.selectList(wrapper);
+        wrapper.in("community_code", communityCodeList);
+        Page<AccessControl> page = new Page<>(pageNum, pageSize);
+        return accessControlMapper.selectPage(page, wrapper);
     }
+
     /***
      * 统计门禁总数，通过小区code列表
      * @param communityCodes 小区code列表
@@ -260,12 +269,13 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/22 14:04
      * @company mitesofor
     */
-    public Integer countUntilTwoNumByDeviceNameList(List<String> deviceNameList){
+    private Integer countUntilTwoNumByDeviceNameList(List<String> deviceNameList){
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("device_name", deviceNameList);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime standardTime = now.withHour(2);
-        if(now.getHour() < 2){
+        int two = 2;
+        if(now.getHour() < two){
             standardTime = standardTime.minusDays(1);
         }
         wrapper.lt("access_time", now).gt("access_time", standardTime);
@@ -297,4 +307,35 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         }
     }
 
+    /***
+     * 统计门禁记录开门方式，通过小区code
+     * @param communityCode 小区code
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/24 8:51
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> countInterActiveTypeByCommunityCode(String communityCode){
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.groupBy("interactive_type");
+        wrapper.setSqlSelect("interactive_type, COUNT(*) num");
+        return accessControlMapper.selectMaps(wrapper);
+    }
+
+    /***
+     * 统计门禁记录开门方式，通过小区code列表
+     * @param communityCodeList 小区code列表
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/11/24 8:51
+     * @company mitesofor
+     */
+    public List<Map<String, Object>> countInterActiveTypeByCommunityCodeList(List<String> communityCodeList){
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodeList);
+        wrapper.groupBy("interactive_type");
+        wrapper.setSqlSelect("interactive_type, COUNT(*) num");
+        return accessControlMapper.selectMaps(wrapper);
+    }
 }
