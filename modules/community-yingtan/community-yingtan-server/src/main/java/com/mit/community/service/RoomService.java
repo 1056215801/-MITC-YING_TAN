@@ -76,4 +76,7 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
         wrapper.in("community_code", communityCodes);
         return roomMapper.selectList(wrapper);
     }
+
+
+
 }

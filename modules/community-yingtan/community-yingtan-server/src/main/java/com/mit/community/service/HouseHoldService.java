@@ -80,7 +80,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 15:09 2018/11/21
      */
-    public List<HouseHold> getByCommunityCode(String communityCode) {
+    public List<HouseHold> listByCommunityCode(String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         return houseHoldMapper.selectList(wrapper);
@@ -94,9 +94,39 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 15:11 2018/11/21
      */
-    public List<HouseHold> getByCommunityCodes(List<String> communityCodes) {
+    public List<HouseHold> listByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
+        return houseHoldMapper.selectList(wrapper);
+    }
+
+    /**
+     * 通过小区code获取获取已住房间信息
+     *
+     * @param communityCode 小区code列表
+     * @return 已住房间信息列表
+     * @author Mr.Deng
+     * @date 17:06 2018/11/21
+     */
+    public List<HouseHold> listRoomsByCommunityCode(String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.groupBy("zone_id,building_id,unit_id,room_num");
+        return houseHoldMapper.selectList(wrapper);
+    }
+
+    /**
+     * 通过一组小区code获取已住房间信息
+     *
+     * @param communityCodes 小区code列表
+     * @return 已住房间信息列表
+     * @author Mr.Deng
+     * @date 17:03 2018/11/21
+     */
+    public List<HouseHold> listRoomsByCommunityCodes(List<String> communityCodes) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCodes);
+        wrapper.groupBy("zone_id,building_id,unit_id,room_num");
         return houseHoldMapper.selectList(wrapper);
     }
 
@@ -107,7 +137,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 16:40 2018/11/19
      */
-    public Map<String, Object> getSexByCommunityCode(String communityCode) {
+    public Map<String, Object> listSexByCommunityCode(String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("SUM(CASE gender WHEN '0' THEN 1 else 0 END) boy" +
                 ",SUM(CASE gender WHEN '1' THEN 1 else 0 END) girl");

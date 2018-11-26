@@ -117,7 +117,7 @@ public class PerceptionController {
         if (StringUtils.isNoneBlank(communityCode)) {
             buildingSize = buildingService.listByCommunityCode(communityCode).size();
             roomSize = roomService.listByCommunityCode(communityCode).size();
-            houseHoldSize = houseHoldService.getByCommunityCode(communityCode).size();
+            houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
             visitorSize = visitorService.listByCommunityCode(communityCode).size();
             // 车位
             map.put("ParkingSpace", 460);
@@ -135,7 +135,7 @@ public class PerceptionController {
             List<String> list = listCommunityCodes("鹰潭市");
             buildingSize = buildingService.listByCommunityCodes(list).size();
             roomSize = roomService.listByCommunityCodes(list).size();
-            houseHoldSize = houseHoldService.getByCommunityCodes(list).size();
+            houseHoldSize = houseHoldService.listByCommunityCodes(list).size();
             visitorSize = visitorService.listByCommunityCodes(list).size();
             // 车位
             map.put("ParkingSpace", 460);
@@ -173,7 +173,7 @@ public class PerceptionController {
     public Result countSex(String communityCode) {
         Map<String, Object> sex;
         if (StringUtils.isNoneBlank(communityCode)) {
-            sex = houseHoldService.getSexByCommunityCode(communityCode);
+            sex = houseHoldService.listSexByCommunityCode(communityCode);
         } else {
             List<String> list = listCommunityCodes("鹰潭市");
             sex = houseHoldService.listSexByCommunityCodes(list);
@@ -230,7 +230,7 @@ public class PerceptionController {
         int houseHoldSize;
         int accessControlSize;
         if (StringUtils.isNoneBlank(communityCode)) {
-            houseHoldSize = houseHoldService.getByCommunityCode(communityCode).size();
+            houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
             accessControlSize = accessControlService.listByCommunityCode(communityCode).size();
             // 驻留
             map.put("totalResident", 2);
@@ -238,7 +238,7 @@ public class PerceptionController {
             map.put("totalEarlyWarning", 4);
         } else {
             List<String> list = listCommunityCodes("鹰潭市");
-            houseHoldSize = houseHoldService.getByCommunityCodes(list).size();
+            houseHoldSize = houseHoldService.listByCommunityCodes(list).size();
             accessControlSize = accessControlService.listByCommunityCodes(list).size();
             map.put("totalResident", 30);
             map.put("totalEarlyWarning", 50);
