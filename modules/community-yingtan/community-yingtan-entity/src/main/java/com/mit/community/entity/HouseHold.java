@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class HouseHold extends BaseEntity {
     @TableField("community_code")
     private String communityCode;
 
-    /**小区名*/
+    /**
+     * 小区名
+     */
     @TableField("community_name")
     private String communityName;
 
@@ -68,6 +71,13 @@ public class HouseHold extends BaseEntity {
      */
     @TableField("unit_name")
     private String unitName;
+    
+    /**
+     * 房间id
+     */
+    @TableField("room_id")
+    private Integer roomId;
+    
     /**
      * 房间号
      */
@@ -123,11 +133,76 @@ public class HouseHold extends BaseEntity {
     @TableField("sip_password")
     private String sipPassword;
 
+    /**
+     * 身份证号码
+     */
+    @TableField("credential_num")
+    private String credentialNum;
+
+    /**
+     * 省份
+     */
+    private String province;
+
+    /**
+     * 市
+     */
+    private String city;
+
+    /**
+     * 区县
+     */
+    private String region;
+
+    /**
+     * 出生日期
+     */
+    private LocalDate birthday;
+
+    /**
+     * 身份类型：1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、6、上方人员、99、其他
+     */
+    @TableField("identity_type")
+    private Short identityType;
+
     @TableField(exist = false)
     private List<AuthorizeHouseholdDevice> authorizeHouseholdDevices;
 
     @TableField(exist = false)
     private List<AuthorizeAppHouseholdDevice> authorizeAppHouseholdDevices;
+
+    /**群众*/
+    @TableField(exist = false)
+    public static final Short NORMAL = 1;
+
+    /**境外人员*/
+    @TableField(exist = false)
+    public static final Short OVERSEAS = 2;
+
+    /**孤寡老人*/
+    @TableField(exist = false)
+    public static final Short LONELY = 3;
+
+    /**信教人员*/
+    @TableField(exist = false)
+    public static final Short RELIGION = 4;
+
+    /**留守儿童*/
+    @TableField(exist = false)
+    public static final Short STAY_AT_HOME = 5;
+
+    /**上访人员*/
+    @TableField(exist = false)
+    public static final Short VISITOR = 6;
+
+    /**其他*/
+    @TableField(exist = false)
+    public static final Short OTHER = 7;
+
+
+
+
+
 
 
 }

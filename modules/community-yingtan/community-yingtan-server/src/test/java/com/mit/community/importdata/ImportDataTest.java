@@ -179,7 +179,7 @@ public class ImportDataTest {
     @Test
     public void getVisitorList() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/visitor/getVisitorList";
+        String url = "/v1/visitor/list";
         Map<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         String invoke = DnakeWebApiUtil.invoke(url, map);

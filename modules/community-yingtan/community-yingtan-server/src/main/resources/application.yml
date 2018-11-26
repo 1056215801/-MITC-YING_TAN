@@ -203,7 +203,7 @@ db:
       password: 123456
 
 mybatis-plus:
-  mapper-locations: classpath*:com/mit/community/**/mapping/*.xml
+  mapper-locations: classpath:com/mit/community/mapper/*.xml
   typeAliasesPackage: com.mit.community.modelTest
   global-config:
     id-type: 0  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)

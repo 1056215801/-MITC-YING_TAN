@@ -125,6 +125,22 @@ public class BuildingService extends ServiceImpl<BuildingMapper, Building> {
         return buildings;
     }
 
+    /***
+     * 查询房间，通过分区列表
+     * @param zoneIdList 分区列表
+     * @return java.util.List<com.mit.community.entity.Building>
+     * @author shuyy
+     * @date 2018/11/22 8:54
+     * @company mitesofor
+    */
+    public List<Building> listByZoneIdList(List<Integer> zoneIdList) {
+        EntityWrapper<Building> wrapper = new EntityWrapper<>();
+        wrapper.in("zone_id", zoneIdList);
+        List<Building> buildings = buildingMapper.selectList(wrapper);
+        return buildings;
+    }
+
+
     /**
      * 查询楼栋列表，通过社区code和分区id
      *

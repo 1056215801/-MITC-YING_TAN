@@ -1,8 +1,13 @@
 package com.mit.community.importdata;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
+
+import springfox.documentation.spring.web.json.Json;
+
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -58,10 +63,12 @@ public class DnakeInvokeTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/getHouseholdList";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("communityCode", "2c58fbed7bce49778da3b1717241df25");
         map.put("pageNum", "1");
-        map.put("pageSize", "100");
+        map.put("pageSize", "10");
         String result = DnakeWebApiUtil.invoke(url, map);
+        JSONArray jsonArray = JSON.parseObject(result).getJSONArray("householdList");
+        System.out.println(jsonArray.size());
         System.out.println(result);
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);

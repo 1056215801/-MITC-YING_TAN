@@ -1,17 +1,15 @@
 package com.mit.community.module.bigdata.schedule;
 
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.Zone;
-import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.ZoneService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.mit.community.entity.Zone;
+import com.mit.community.service.ClusterCommunityService;
+import com.mit.community.service.ZoneService;
 
 /**
  * 分区定时
@@ -40,21 +38,15 @@ public class ZoneSchedule {
      * @date 2018/11/20 11:28
      * @company mitesofor
     */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 0 0 */5 * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
-        List<String> clusterCommunityNameList = new ArrayList<>(4);
-        clusterCommunityNameList.add("凯翔外滩小区");
-        clusterCommunityNameList.add("心家泊小区");
-        clusterCommunityNameList.add("南苑小区");
-        clusterCommunityNameList.add("鹰王环东花苑小区");
-        // 下面的是测试的
-        clusterCommunityNameList.add("珉轩工业园");
-        List<ClusterCommunity> clusterCommunitiesList = clusterCommunityService.listByNames(clusterCommunityNameList);
-        List<String> list = clusterCommunitiesList.stream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
+        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         // 先删除，再添加
         zoneService.remove();
-        List<Zone> zones = zoneService.listFromDnakeByCommunityCodeList(list);
-        zoneService.insertBatch(zones);
+        List<Zone> zones = zoneService.listFromDnakeByCommunityCodeList(communityCodeList);
+        if(!zones.isEmpty()) {
+        	zoneService.insertBatch(zones);
+        }
     }
 }

@@ -105,4 +105,8 @@ public class AccessControl extends BaseEntity {
     @TableField("access_control_id")
     private Integer accessControlId;
 
+    /**房号*/
+    @TableField("room_num")
+    private String roomNum;
+
 }

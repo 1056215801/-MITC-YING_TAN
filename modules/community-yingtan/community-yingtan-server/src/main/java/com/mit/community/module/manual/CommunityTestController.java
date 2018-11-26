@@ -5,10 +5,10 @@ import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.entity.DnakeAppUser;
 import com.mit.common.util.DateUtils;
+import com.mit.community.common.HttpLogin;
 import com.mit.community.entity.*;
 import com.mit.community.entity.modelTest.*;
 import com.mit.community.service.*;
-import com.mit.community.util.HttpLogin;
 import com.mit.community.util.IdCardInfoExtractorUtil;
 import com.mit.community.util.Result;
 import net.sf.json.JSONArray;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -84,27 +83,6 @@ public class CommunityTestController {
     }
 
     /**
-     * 获取身份证信息
-     *
-     * @return result
-     * @author Mr.Deng
-     * @date 15:34 2018/11/20
-     */
-    public Result getCredentialNum() {
-        try {
-            String post = httpLogin.postOne("43707", 1);
-            if (post != null) {
-                JSONObject parse = JSONObject.fromObject(post);
-                JSONObject o = parse.getJSONObject("stepOneInfo");
-                System.out.println(o.get("credentialNum"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Result.success("OK");
-    }
-
-    /**
      * 解析身份证信息
      *
      * @param idCard 身份证号码
@@ -114,7 +92,7 @@ public class CommunityTestController {
      */
     @RequestMapping("getIdCardInfo")
     public Result getIdCardInfo(String idCard) {
-        IdCardInfo idCardInfo = idCardInfoExtractorUtil.IdCardInfo(idCard);
+        IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
         return Result.success(idCardInfo);
     }
 
@@ -419,7 +397,7 @@ public class CommunityTestController {
                 device.setDeviceName(d.getDeviceName());
                 device.setDeviceNum(d.getDeviceNum());
                 device.setDeviceSip(d.getDeviceSip());
-                device.setDeviceStatus(d.getDeviceStatus());
+//                device.setDeviceStatus(d.getDeviceStatus());
                 device.setDeviceType(d.getDeviceType());
                 device.setUnitCode(d.getUnitCode());
                 device.setUnitId(d.getUnitId() != null ? d.getUnitId() : "");
