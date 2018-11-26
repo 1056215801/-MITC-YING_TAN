@@ -1,14 +1,13 @@
 package com.mit.community.module.bigdata.schedule;
 
-import java.util.List;
-
+import com.mit.community.entity.AccessControl;
+import com.mit.community.service.AccessControlService;
+import com.mit.community.service.ClusterCommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.mit.community.entity.AccessControl;
-import com.mit.community.service.AccessControlService;
-import com.mit.community.service.ClusterCommunityService;
+import java.util.List;
 
 /**
  * 门禁 定时器

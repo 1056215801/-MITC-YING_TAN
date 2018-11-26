@@ -2,7 +2,6 @@ package com.mit.community.module.perception.schedule;
 
 import com.mit.community.entity.RoomTypeConstruction;
 import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.HouseHoldService;
 import com.mit.community.service.RoomTypeConstructionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,21 +22,23 @@ public class RoomTypeConstructionSchedule {
     private final ClusterCommunityService clusterCommunityService;
 
     @Autowired
-    public RoomTypeConstructionSchedule(RoomTypeConstructionService roomTypeConstructionService,HouseHoldService houseHoldService,ClusterCommunityService clusterCommunityService){
-        this.clusterCommunityService=clusterCommunityService;
-        this.roomTypeConstructionService=roomTypeConstructionService;
+    public RoomTypeConstructionSchedule(RoomTypeConstructionService roomTypeConstructionService,
+                                        ClusterCommunityService clusterCommunityService) {
+        this.clusterCommunityService = clusterCommunityService;
+        this.roomTypeConstructionService = roomTypeConstructionService;
     }
+
     /**
      * 删除然后导入
      */
     @Transactional(rollbackFor = Exception.class)
     @Scheduled(cron = "0 30 * * * ?")
-    public void removeAndiImport(){
+    public void removeAndiImport() {
         List<String> communityCodes;
         //删除所有
         roomTypeConstructionService.remove();
         //查找所有的鹰潭的小区id
-        communityCodes=clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodes = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         if (!communityCodes.isEmpty()) {
             for (String communityCode : communityCodes) {
                 //遍历出人口类型结构数据再保存

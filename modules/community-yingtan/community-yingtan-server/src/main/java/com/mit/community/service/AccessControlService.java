@@ -237,12 +237,11 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/22 14:44
      * @company mitesofor
      */
-    public Integer countByCommunityCodeList(List<String> communityCodes) {
+    public Integer countByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         return accessControlMapper.selectCount(wrapper);
     }
-
 
     /***
      * 统计最近一个月的活跃人数，通过设备名列表
@@ -310,7 +309,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     /***
      * 统计门禁记录开门方式，通过小区code
      * @param communityCode 小区code
-     * @return java.util.List<java.util.Map < java.lang.String , java.lang.Object>>
+     * @return java.util.List<java.util.Map   <   java.lang.String   ,   java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 8:51
      * @company mitesofor
@@ -326,7 +325,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     /***
      * 统计门禁记录开门方式，通过小区code列表
      * @param communityCodeList 小区code列表
-     * @return java.util.List<java.util.Map < java.lang.String , java.lang.Object>>
+     * @return java.util.List<java.util.Map   <   java.lang.String   ,   java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 8:51
      * @company mitesofor
@@ -346,7 +345,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/24 10:02
      * @company mitesofor
-    */
+     */
     public Integer countHalfYearNumByHouseholdId(Integer householdId) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);
@@ -355,8 +354,8 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         wrapper.ge("access_time", halfYear).le("access_time", now);
         return accessControlMapper.selectCount(wrapper);
     }
-    
-     /***
+
+    /***
      * 查询本小区通行人数
      * 不传参数返回所有
      *

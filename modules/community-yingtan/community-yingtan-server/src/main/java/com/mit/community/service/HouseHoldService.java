@@ -58,8 +58,10 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     private final RoomService roomService;
 
     @Autowired
-    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService, HttpLogin httpLogin,
-    		IdCardInfoExtractorUtil idCardInfoExtractorUtil, RoomService roomService) {
+    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService,
+                            ZoneService zoneService, BuildingService buildingService, UnitService unitService,
+                            HttpLogin httpLogin, IdCardInfoExtractorUtil idCardInfoExtractorUtil,
+                            RoomService roomService) {
         this.houseHoldMapper = houseHoldMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
@@ -128,7 +130,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 15:11 2018/11/21
      */
-    public List<HouseHold> listByCommunityCodeList(List<String> communityCodes) {
+    public List<HouseHold> listByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         return houseHoldMapper.selectList(wrapper);
@@ -148,7 +150,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         return houseHoldMapper.selectList(wrapper);
     }
 
-
     /***
      * 统计住户总数，通过小区code列表
      * @param communityCodes 小区code列表
@@ -157,7 +158,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @date 2018/11/22 14:41
      * @company mitesofor
      */
-    public Integer countByCommunityCodeList(List<String> communityCodes) {
+    public Integer countByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         return houseHoldMapper.selectCount(wrapper);
@@ -209,9 +210,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             int index = 1;
             while (true) {
                 int pageSize = 100;
-                List<HouseHold> houseHolds = this.listFromDnakeByCommunityCodePage(item,
-                        index, pageSize,
-                        param);
+                List<HouseHold> houseHolds = this.listFromDnakeByCommunityCodePage(item, index, pageSize, param);
                 boolean isEnd = false;
                 if (houseHolds.size() < 100) {
                     isEnd = true;
@@ -225,24 +224,24 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             }
         });
         //过滤掉重复的数据，想哭
-        for(int i = 0; i < result.size(); i++) {
-        	HouseHold houseHold = result.get(i);
-        	String householdName = houseHold.getHouseholdName();
-        	for(int j = i + 1; j < result.size(); j++) {
-        		HouseHold houseHold2 = result.get(j);
-        		if(houseHold2.getHouseholdName().equals(householdName)) {
-        			result.remove(j);
-        			j--;
-        		}
-        	}
+        for (int i = 0; i < result.size(); i++) {
+            HouseHold houseHold = result.get(i);
+            String householdName = houseHold.getHouseholdName();
+            for (int j = i + 1; j < result.size(); j++) {
+                HouseHold houseHold2 = result.get(j);
+                if (houseHold2.getHouseholdName().equals(householdName)) {
+                    result.remove(j);
+                    j--;
+                }
+            }
         }
         result.forEach(item -> {
-        	  // 查询roomId
+            // 查询roomId
             Room room = roomService.getByUnitIdAndRoomNum(item.getRoomNum(), item.getUnitId());
-            if(room != null) {
-            	item.setRoomId(room.getRoomId());
-            }else {
-            	item.setRoomId(0);
+            if (room != null) {
+                item.setRoomId(room.getRoomId());
+            } else {
+                item.setRoomId(0);
             }
         });
         CountDownLatch countDownLatch = new CountDownLatch(result.size());
@@ -288,9 +287,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         } catch (InterruptedException e) {
             log.error("countDownLatch.await() 报错了", e);
         }
-
         return result;
-
     }
 
     /***
@@ -479,7 +476,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         }
         JSONObject stepOneInfo = null;
         JSONObject jsonObject = JSON.parseObject(result);
-        if(jsonObject != null){
+        if (jsonObject != null) {
             stepOneInfo = jsonObject.getJSONObject("stepOneInfo");
         }
         if (stepOneInfo == null) {
@@ -497,7 +494,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 统计年龄结构，通过小区code列表
      * @param communityCodeList 小区code列表
-     * @return java.util.Map<java.lang.String               ,               java.lang.Integer>
+     * @return java.util.Map<java.lang.String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               java.lang.Integer>
      * @author shuyy
      * @date 2018/11/22 16:32
      * @company mitesofor
@@ -543,12 +540,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 统计人员分布，精确到省， 通过小区code
      * @param communityCode 小区code
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                                                                                               <                                                                                                                               java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/23 14:08
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCode(String communityCode){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCode(String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.groupBy("province");
@@ -561,12 +558,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * 统计人员分布，精确到市， 通过小区code
      * @param communityCode 小区code
      * @param province 省
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                                                                                               <                                                                                                                               java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/23 14:08
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeAndProvince(String communityCode, String province){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeAndProvince(String communityCode, String province) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.eq("province", province);
@@ -579,13 +576,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 统计人员分布，精确到省， 通过小区code列表
      * @param communityCodeList
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                                                                                               <                                                                                                                               java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Object>>
      * @throws
      * @author shuyy
      * @date 2018/11/23 14:10
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeList(List<String> communityCodeList){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeList(List<String> communityCodeList) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
         wrapper.groupBy("province");
@@ -598,12 +595,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * 统计人员分布，精确到市， 通过小区code列表
      * @param communityCodeList 小区code列表
      * @param province 省
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                                                                                               <                                                                                                                               java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/23 14:08
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeListAndProvince(List<String> communityCodeList, String province){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeListAndProvince(List<String> communityCodeList, String province) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
         wrapper.eq("province", province);
@@ -620,26 +617,26 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/23 14:51
      * @company mitesofor
-    */
-    public HouseHold getByHouseholdId(Integer HouseholdId){
+     */
+    public HouseHold getByHouseholdId(Integer HouseholdId) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", HouseholdId);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
-        if(houseHolds.isEmpty()){
+        if (houseHolds.isEmpty()) {
             return null;
-        }else{
+        } else {
             return houseHolds.get(0);
         }
     }
 
     /***
      * 查询有住户的所有房间id
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                                                                                               <                                                                                                                               java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 9:38
      * @company mitesofor
-    */
-    public List<Map<String, Object>> listActiveRoomId(){
+     */
+    public List<Map<String, Object>> listActiveRoomId() {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.groupBy("room_id");
         wrapper.setSqlSelect("room_id");
@@ -648,13 +645,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /***
      * 查询所有住户， 通过房间id
-     * @param roomNum 房间号
+     * @param roomId 房间号
      * @return java.util.List<com.mit.community.entity.HouseHold>
      * @author shuyy
      * @date 2018/11/24 9:42
      * @company mitesofor
-    */
-    public List<HouseHold> listByRoomId(Integer roomId){
+     */
+    public List<HouseHold> listByRoomId(Integer roomId) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("room_id", roomId);
         return houseHoldMapper.selectList(wrapper);
@@ -662,13 +659,14 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 统计各个身份类型人数、通过小区code
+     *
      * @param communityCode 小区code
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return List<Map       <       String       ,               Object>>
      * @author shuyy
      * @date 2018/11/24 10:49
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countIdentityTypeByCommunityCode(String communityCode){
+     */
+    public List<Map<String, Object>> countIdentityTypeByCommunityCode(String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.groupBy("identity_type");
@@ -678,13 +676,14 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 统计各个身份类型人数、通过小区code列表
+     *
      * @param communityCodeList 小区code列表
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return List<Map       <       String       ,               Object>>
      * @author shuyy
      * @date 2018/11/24 10:49
      * @company mitesofor
      */
-    public List<Map<String, Object>> countIdentityTypeByCommunityCodeList(List<String> communityCodeList){
+    public List<Map<String, Object>> countIdentityTypeByCommunityCodeList(List<String> communityCodeList) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
         wrapper.groupBy("identity_type");
@@ -692,12 +691,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         return houseHoldMapper.selectMaps(wrapper);
     }
 
-     /***
+    /***
      * 获取外地人口，本地人口,其它人口
      * 传递参数为空返回所有鹰潭市的小区数据
      *
      * @param communityCode 小区code列表
-     * @return java.util.Map<java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Integer> map:{
+     * @return java.util.Map<java.lang.String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               java.lang.Integer> map:{
      *     field:外地人口,
      *     local:本地人口,
      *     other:其他人口
