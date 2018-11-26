@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 /**
  * 门禁记录
- *
  * @author Mr.Deng
  * @date 2018/11/15 11:32
  * <p>Copyright: Copyright (c) 2018</p>
@@ -23,7 +22,9 @@ public class AccessControl extends BaseEntity {
     @TableField("community_code")
     private String communityCode;
 
-    /**小区名*/
+    /**
+     * 小区名
+     */
     @TableField("community_name")
     private String communityName;
     /**
@@ -47,7 +48,9 @@ public class AccessControl extends BaseEntity {
     @TableField("device_num")
     private String deviceNum;
 
-    /**分区编码*/
+    /**
+     * 分区编码
+     */
     @TableField("zone_id")
     private Integer zoneId;
     /**
@@ -105,7 +108,9 @@ public class AccessControl extends BaseEntity {
     @TableField("access_control_id")
     private Integer accessControlId;
 
-    /**房号*/
+    /**
+     * 房号
+     */
     @TableField("room_num")
     private String roomNum;
 

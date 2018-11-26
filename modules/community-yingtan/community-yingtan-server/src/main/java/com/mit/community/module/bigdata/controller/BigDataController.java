@@ -151,7 +151,8 @@ public class BigDataController {
      * @company mitesofor
     */
     @GetMapping("/listAccessControlPageByCommunitCode")
-    @ApiOperation(value = "实时通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区， pageNum 当前页，required， pageSize 分页大小 required。" +
+    @ApiOperation(value = "实时通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区， pageNum 当前页，" +
+            "required， pageSize 分页大小 required。" +
             "\n返回参数：householdName 姓名、device_name 卡口和进/出、roomNum 房号、access_time 访问时间" +
             "num 人数")
     public Result listAccessControlPageByCommunitCode(String communityCode, Integer pageNum, Integer pageSize) {

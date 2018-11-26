@@ -2,6 +2,7 @@ package com.mit.community.module.system.controller;
 
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
+import com.google.common.collect.Maps;
 import com.mit.community.entity.SysUser;
 import com.mit.community.service.SysUserService;
 import com.mit.community.util.Result;
@@ -22,11 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * 登录
- *
  * @author shuyy
  * @date 2018/11/14
  * @company mitesofor
@@ -47,10 +48,8 @@ public class LoginController {
 
     /**
      * 生成验证码
-     *
-     * @param request httpRequest
+     * @param request  httpRequest
      * @param response httpResponse
-     * @company mitesofor
      * @author shuyy
      */
     @ApiOperation(value = "生成验证码")
@@ -99,17 +98,20 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    @ApiOperation(value = "数据展示前台项目登录", notes = "数据展示前台项目登录")
+    @ApiOperation(value = "数据展示前台项目登录", notes = "数据展示前台项目登录 返回参数：adminName 管理员姓名、role 账号角色信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "kaptcha", value = "验证码", dataType = "string", paramType = "query")})
     public Result login(String username, String password, String kaptcha, HttpServletRequest request) {
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         String code = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
         if (StringUtils.isBlank(kaptcha) || !kaptcha.equalsIgnoreCase(code)) {
             return Result.error("验证码错误");
         }
         SysUser sysUser = sysUserService.getSysUser(username);
         if (sysUser.getPassword().equals(password)) {
-            return Result.success(null, "登录成功");
+            map.put("adminName", sysUser.getAdminName());
+            map.put("role", sysUser.getRole());
+            return Result.success(map, "登录成功");
         }
         return Result.error("登录失败");
     }
