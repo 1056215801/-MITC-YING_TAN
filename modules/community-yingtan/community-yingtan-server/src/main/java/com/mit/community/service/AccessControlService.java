@@ -18,7 +18,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +76,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @param param 其他参数
      * @author shuyy
      * @date 2018/11/16 16:43
-     * @company mitesofor
      */
     private List<AccessControl> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
                                                                  Integer pageSize, Map<String, Object> param) {
@@ -102,7 +100,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return com.mit.community.entity.AccessControl
      * @author shuyy
      * @date 2018/11/16 17:03
-     * @company mitesofor
      */
     private AccessControl getNewestAccessControlByCommunityCode(String communityCode) {
         RowBounds rowBounds = new RowBounds(0, 1);
@@ -123,7 +120,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return List<AccessControl>
      * @author shuyy
      * @date 2018/11/16 17:37
-     * @company mitesofor
      */
     public List<AccessControl> listIncrementByCommunityCodeList(List<String> communityCodeList) {
         List<AccessControl> allAccessControlsList = Lists.newArrayListWithCapacity(500);
@@ -204,7 +200,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return java.lang.Integer
      * @author shuyy
      * @date 2018/11/22 14:29
-     * @company mitesofor
      */
     public Integer countByCommunityCode(String communityCode) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
@@ -220,7 +215,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return java.util.List<com.mit.community.entity.AccessControl>
      * @author shuyy
      * @date 2018/11/23 14:41
-     * @company mitesofor
      */
     public List<AccessControl> listByCommunityCodeListPage(List<String> communityCodeList, Integer pageNum, Integer pageSize) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
@@ -235,7 +229,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return java.lang.Integer
      * @author shuyy
      * @date 2018/11/22 14:44
-     * @company mitesofor
      */
     public Integer countByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
@@ -249,7 +242,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return java.lang.Integer
      * @author shuyy
      * @date 2018/11/22 11:22
-     * @company mitesofor
      */
     public Long countRecentMonthActivePeopleByDeviceNameList(List<String> deviceNameList) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
@@ -266,7 +258,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return java.lang.Integer
      * @author shuyy
      * @date 2018/11/22 14:04
-     * @company mitesofor
      */
     private Integer countUntilTwoNumByDeviceNameList(List<String> deviceNameList) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
@@ -287,7 +278,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return long
      * @author shuyy
      * @date 2018/11/22 14:23
-     * @company mitesofor
      */
     public long countRemainPeopleByCommunityCode(String communityCode) {
         // 查出凌晨2点后进的数量、出的数量，然后：活跃人数 - （出-进）
@@ -309,10 +299,9 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     /***
      * 统计门禁记录开门方式，通过小区code
      * @param communityCode 小区code
-     * @return java.util.List<java.util.Map   <   java.lang.String   ,   java.lang.Object>>
+     * @return java.util.List<java.util.Map   < java.lang.String   ,   java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 8:51
-     * @company mitesofor
      */
     public List<Map<String, Object>> countInterActiveTypeByCommunityCode(String communityCode) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
@@ -363,7 +352,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return java.lang.Integer
      * @author lw
      * @date 2018/11/23 14:04
-     * @company mitesofor
      */
     public Integer getPassNumber(String communityCode) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
@@ -384,7 +372,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @return java.lang.Integer
      * @author lw
      * @date 2018/11/23 14:04
-     * @company mitesofor
      */
     public Integer getPassPersonTime(String communityCode) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
