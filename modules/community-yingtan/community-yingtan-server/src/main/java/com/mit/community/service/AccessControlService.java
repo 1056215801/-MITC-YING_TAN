@@ -3,6 +3,7 @@ package com.mit.community.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -18,7 +19,9 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +29,6 @@ import java.util.stream.Collectors;
 
 /**
  * 门禁记录业务层
- *
  * @author Mr.Deng
  * @date 2018/11/15 11:55
  * <p>Copyright: Copyright (c) 2018</p>
@@ -59,7 +61,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 添加门禁记录
-     *
      * @param accessControl 门禁记录信息
      * @author Mr.Deng
      * @date 11:57 2018/11/15
@@ -182,7 +183,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 通过小区code获取门禁记录信息
-     *
      * @param communityCode 小区code
      * @return 门禁记录列表
      * @author Mr.Deng
@@ -231,8 +231,11 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/22 14:44
      */
     public Integer countByCommunityCodes(List<String> communityCodes) {
+        Date date = new Date();
+        String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
+        wrapper.like("access_time", dateStr, SqlLike.RIGHT);
         return accessControlMapper.selectCount(wrapper);
     }
 
@@ -284,9 +287,11 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         List<Device> outDevices = deviceService.listInOrOutByCommunityCode(communityCode, "出");
         List<String> outDeviceNameList = outDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
         Integer outNum = this.countUntilTwoNumByDeviceNameList(outDeviceNameList);
+
         List<Device> inDevices = deviceService.listInOrOutByCommunityCode(communityCode, "进");
         List<String> inDeviceNameList = inDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
         Integer inNum = this.countUntilTwoNumByDeviceNameList(inDeviceNameList);
+
         ActivePeople activePeople = activePeopleService.getByCommunityCode(communityCode);
         int i = outNum - inNum;
         if (activePeople == null) {
@@ -296,25 +301,25 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         }
     }
 
-    /***
-     * 统计门禁记录开门方式，通过小区code
-     * @param communityCode 小区code
-     * @return java.util.List<java.util.Map   < java.lang.String   ,   java.lang.Object>>
-     * @author shuyy
-     * @date 2018/11/24 8:51
+    /**
+     * 统计驻留人数，通过小区code列表
+     * @param communityCodes 小区code列表
+     * @return long
+     * @author Mr.Deng
+     * @date 18:43 2018/11/26
      */
-    public List<Map<String, Object>> countInterActiveTypeByCommunityCode(String communityCode) {
-        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
-        wrapper.eq("community_code", communityCode);
-        wrapper.groupBy("interactive_type");
-        wrapper.setSqlSelect("interactive_type, COUNT(*) num");
-        return accessControlMapper.selectMaps(wrapper);
+    public long countRemainPeopleByCommunityCodes(List<String> communityCodes) {
+        long s = 0L;
+        for (String communityCode : communityCodes) {
+            s = s + countRemainPeopleByCommunityCode(communityCode);
+        }
+        return s;
     }
 
     /***
-     * 统计门禁记录开门方式，通过小区code列表
-     * @param communityCodeList 小区code列表
-     * @return java.util.List<java.util.Map   <   java.lang.String   ,   java.lang.Object>>
+     * 统计门禁记录开门方式，通过小区code
+     * @param communityCodeList 小区code
+     * @return 统计记录
      * @author shuyy
      * @date 2018/11/24 8:51
      * @company mitesofor
@@ -322,6 +327,22 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     public List<Map<String, Object>> countInterActiveTypeByCommunityCodeList(List<String> communityCodeList) {
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
+        wrapper.groupBy("interactive_type");
+        wrapper.setSqlSelect("interactive_type, COUNT(*) num");
+        return accessControlMapper.selectMaps(wrapper);
+    }
+
+    /***
+     * 统计门禁记录开门方式，通过小区code
+     * @param communityCode 小区code
+     * @return 统计记录
+     * @author shuyy
+     * @date 2018/11/24 8:51
+     * @company mitesofor
+     */
+    public List<Map<String, Object>> countInterActiveTypeByCommunityCode(String communityCode) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
         wrapper.groupBy("interactive_type");
         wrapper.setSqlSelect("interactive_type, COUNT(*) num");
         return accessControlMapper.selectMaps(wrapper);

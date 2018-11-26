@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 /**
  * 智慧社区感知平台控制类
- *
  * @author Mr.Deng
  * @date 2018/11/16 9:02
  * <p>Copyright: Copyright (c) 2018</p>
@@ -60,7 +59,6 @@ public class PerceptionController {
 
     /**
      * 获取当前地区天气
-     *
      * @param local 地区名拼音
      * @return Result
      * @author Mr.Deng
@@ -85,7 +83,6 @@ public class PerceptionController {
 
     /**
      * 通过城市名获取所有小区code
-     *
      * @param cityName 城市名
      * @return result
      * @author Mr.Deng
@@ -105,7 +102,6 @@ public class PerceptionController {
 
     /**
      * 小区综合统计数据
-     *
      * @return result
      * @author Mr.Deng
      * @date 9:10 2018/11/16
@@ -171,7 +167,6 @@ public class PerceptionController {
 
     /**
      * 获取男女比例
-     *
      * @return result
      * @author Mr.Deng
      * @date 16:18 2018/11/19
@@ -191,7 +186,6 @@ public class PerceptionController {
 
     /**
      * 人口数据感知
-     *
      * @return result
      * @author Mr.Deng
      * @date 17:36 2018/11/19
@@ -225,7 +219,7 @@ public class PerceptionController {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
         Integer houseHoldSize;
         Integer accessControlSize;
-        long remainNum = 0;
+        long remainNum;
         if (StringUtils.isNoneBlank(communityCode)) {
             houseHoldSize = houseHoldService.countByCommunityCode(communityCode);
             accessControlSize = accessControlService.countByCommunityCode(communityCode);
@@ -237,7 +231,7 @@ public class PerceptionController {
             List<String> list = listCommunityCodes("鹰潭市");
             houseHoldSize = houseHoldService.countByCommunityCodes(list);
             accessControlSize = accessControlService.countByCommunityCodes(list);
-            map.put("totalResident", 30);
+            remainNum = accessControlService.countRemainPeopleByCommunityCodes(list);
             map.put("totalEarlyWarning", 50);
         }
         map.put("totalResident", remainNum);
@@ -315,7 +309,6 @@ public class PerceptionController {
 
     /**
      * 人员通行感知
-     *
      * @return result
      * @author Mr.Deng
      * @date 9:00 2018/11/20
@@ -346,7 +339,6 @@ public class PerceptionController {
 
     /**
      * 查询小区code，通过城市名
-     *
      * @param cityName 城市名
      * @return 小区code列表
      * @author Mr.Deng
