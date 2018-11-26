@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
@@ -591,7 +588,28 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         wrapper.groupBy("province");
         wrapper.setSqlSelect("province, count(*) num");
         List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
-        return result;
+        // 对于未知的进行替换
+        for (int i = 0; i < result.size(); i++) {
+            Map<String, Object> m = result.get(i);
+            if(m.get("province").equals(StringUtils.EMPTY)){
+                Object num = m.get("num");
+                m.remove(StringUtils.EMPTY);
+                m.put("未知", num);
+            }
+        }
+        // 排序
+        if(result.isEmpty()){
+            return null;
+        }else{
+            result = result.stream().sorted(Comparator.comparingInt(o -> (Integer) o.get("num"))).collect(Collectors.toList());
+            // 求全国
+            IntSummaryStatistics num = result.stream().collect(Collectors.summarizingInt(value -> (Integer) value.get("num")));
+            Integer sum = Math.toIntExact(num.getSum());
+            HashMap<String, Object> h = Maps.newHashMapWithExpectedSize(1);
+            h.put("全国", sum);
+            result.add(0, h);
+            return result;
+        }
     }
     
     /***
@@ -648,7 +666,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /***
      * 查询所有住户， 通过房间id
-     * @param roomNum 房间号
+     * @param roomId 房间号
      * @return java.util.List<com.mit.community.entity.HouseHold>
      * @author shuyy
      * @date 2018/11/24 9:42
