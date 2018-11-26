@@ -76,4 +76,14 @@ public class SysUser {
      * 备注信息
      */
     private String remark;
+    /**
+     * 所管理小区
+     */
+    @TableField("management_community")
+    private String managementCommunity;
+    /**
+     * 管理单位
+     */
+    @TableField("management_unit")
+    private String managementUnit;
 }
