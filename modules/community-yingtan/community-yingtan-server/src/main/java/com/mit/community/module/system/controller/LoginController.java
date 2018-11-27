@@ -112,11 +112,11 @@ public class LoginController {
             if (sysUser.getPassword().equals(password)) {
                 String menuUser = "小区管理员";
                 String menuAdmin = "集群管理员";
-                String adminName = sysUser.getAdminName();
                 String role = sysUser.getRole();
                 String menu = StringUtils.EMPTY;
-                map.put("adminName", adminName);
+                map.put("adminName", sysUser.getAdminName());
                 map.put("role", role);
+                map.put("communityCode", sysUser.getCommunityCode());
                 if (menuUser.equals(role)) {
                     menu = "menuUser";
                 }
