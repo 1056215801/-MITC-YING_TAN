@@ -117,12 +117,29 @@ public class BigDataController {
             "返回参数：province 省份、num 人数")
     public Result countPopulationDistributionByCommunityCode(String communityCode) {
         List<Map<String, Object>> maps;
+        Map<String, Object> map1 = Maps.newHashMapWithExpectedSize(2);
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
             maps = houseHoldService.countPopulationDistributionByCommunityCodeList(communityCodeList);
         } else {
             maps = houseHoldService.countPopulationDistributionByCommunityCode(communityCode);
         }
+        int num = 0;
+        for (Map<String, Object> map : maps) {
+            if (map.get("province") == "") {
+                map.put("province", "未知");
+            }
+            num += Integer.parseInt(map.get("num").toString());
+        }
+        map1.put("province", "全国");
+        map1.put("num", num);
+        maps.add(map1);
+        //按照num进行降序排序
+        maps.sort((o1, o2) -> {
+            Integer v1 = Integer.valueOf(o1.get("num").toString());
+            Integer v2 = Integer.valueOf(o2.get("num").toString());
+            return v2.compareTo(v1);
+        });
         return Result.success(maps);
     }
 
