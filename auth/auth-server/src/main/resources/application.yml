@@ -7,7 +7,7 @@ spring:
     default-property-inclusion: non_null
   redis:
     database: 2
-    host: ${REDIS_HOST:localhost}
+    host: ${REDIS_HOST:192.168.1.222}
     port: ${REDIS_PORT:6379}
     pool:
     max-active: 20
@@ -96,7 +96,7 @@ eureka:
     serviceUrl:
       #            defaultZone: http://localhost:8761/eureka/
       # docker 部署开启
-      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+      defaultZone: http://${EUREKA_HOST:192.168.1.222}:${EUREKA_PORT:8761}/eureka/
 
 
 
@@ -106,7 +106,7 @@ jwt:
   rsa-secret: xx1WET12^%3^(WE45
 
 client:
-  id: ace-auth
+  id: auth
   secret: 123456
   token-header: x-client-token
   expire: 14400
