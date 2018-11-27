@@ -12,16 +12,18 @@ import com.dnake.constant.DnakeWebConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
-import com.mit.community.entity.*;
+import com.mit.community.entity.AccessControl;
+import com.mit.community.entity.ActivePeople;
+import com.mit.community.entity.Device;
+import com.mit.community.entity.HouseHold;
 import com.mit.community.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,12 +73,12 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         accessControlMapper.insert(accessControl);
     }
 
-    /***
+    /**
      * 从dnake接口，分页查询门禁列表。通过小区编码
      * @param communityCode 小区编码
-     * @param pageSize 分页大小
-     * @param pageNum 当前页
-     * @param param 其他参数
+     * @param pageSize      分页大小
+     * @param pageNum       当前页
+     * @param param         其他参数
      * @author shuyy
      * @date 2018/11/16 16:43
      */
@@ -86,6 +88,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
         map.put("pageSize", pageSize);
+        map.put("pageNum", pageNum);
         map.put("pageNum", pageNum);
         map.put("accountId", DnakeWebConstants.ACCOUNT_ID);
         if (param != null && !param.isEmpty()) {
@@ -98,7 +101,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                 AccessControl.class);
     }
 
-    /***
+    /**
      * 获取最新的门禁记录
      * @return com.mit.community.entity.AccessControl
      * @author shuyy
@@ -117,7 +120,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         }
     }
 
-    /***
+    /**
      * 查询增量门禁数据。（依据是门禁时间）
      * @param communityCodeList 小区code列表
      * @return List<AccessControl>
@@ -196,7 +199,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return accessControlMapper.selectList(wrapper);
     }
 
-    /***
+    /**
      * 统计通行总数，按小区code
      * @param communityCode 小区code
      * @return java.lang.Integer
@@ -209,11 +212,11 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return accessControlMapper.selectCount(wrapper);
     }
 
-    /***
+    /**
      * 分页查询门禁记录，通过小区code
      * @param communityCodeList 小区code列表
-     * @param pageNum 当前页
-     * @param pageSize 分页总数
+     * @param pageNum           当前页
+     * @param pageSize          分页总数
      * @return java.util.List<com.mit.community.entity.AccessControl>
      * @author shuyy
      * @date 2018/11/23 14:41
@@ -225,7 +228,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return accessControlMapper.selectPage(page, wrapper);
     }
 
-    /***
+    /**
      * 统计门禁总数，通过小区code列表
      * @param communityCodes 小区code列表
      * @return java.lang.Integer
@@ -233,15 +236,15 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/22 14:44
      */
     public Integer countByCommunityCodes(List<String> communityCodes) {
-        Date date = new Date();
-        String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = dateTimeFormatter.format(LocalDateTime.now());
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         wrapper.like("access_time", dateStr, SqlLike.RIGHT);
         return accessControlMapper.selectCount(wrapper);
     }
 
-    /***
+    /**
      * 统计最近一个月的活跃人数，通过设备名列表
      * @param deviceNameList 设备名列表
      * @return java.lang.Integer
@@ -257,7 +260,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return (Long) accessControlMapper.selectMaps(wrapper).get(0).get("num");
     }
 
-    /***
+    /**
      * 查询当前时间到凌晨2点的通行记录数，
      * @param deviceNameList 设备name列表
      * @return java.lang.Integer
@@ -277,7 +280,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return accessControlMapper.selectCount(wrapper);
     }
 
-    /***
+    /**
      * 统计驻留人数，通过小区code
      * @param communityCode 小区code
      * @return long
