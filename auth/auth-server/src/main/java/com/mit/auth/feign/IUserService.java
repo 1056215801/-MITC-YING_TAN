@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 * @date: 2018/11/6 17:18
 * @company mitesofor
 */
-@FeignClient(value = "ace-admin",configuration = FeignConfiguration.class)
+@FeignClient(value = "admin",configuration = FeignConfiguration.class)
 public interface IUserService {
 
   /**
