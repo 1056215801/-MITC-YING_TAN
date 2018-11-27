@@ -7,7 +7,6 @@ import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.Device;
-import com.mit.community.entity.modelTest.DeviceTest;
 import com.mit.community.mapper.DeviceMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -16,14 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * 设备业务层
- *
  * @author Mr.Deng
  * @date 2018/11/15 10:08
  * <p>Copyright: Copyright (c) 2018</p>
@@ -40,7 +37,6 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 
     /**
      * 添加设备信息
-     *
      * @param device 设备信息
      * @author Mr.Deng
      * @date 10:09 2018/11/15
@@ -51,7 +47,6 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 
     /**
      * 获取所有设备信息
-     *
      * @return 设备信息列表
      * @author Mr.Deng
      * @date 10:10 2018/11/15
@@ -67,13 +62,13 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
      * @author shuyy
      * @date 2018/11/22 11:10
      * @company mitesofor
-    */
-    public List<Device> listByCommunityCode(String communityCode){
+     */
+    public List<Device> listByCommunityCode(String communityCode) {
         EntityWrapper<Device> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        List<Device> devices = deviceMapper.selectList(wrapper);
-        return devices;
+        return deviceMapper.selectList(wrapper);
     }
+
     /***
      *  查询设备列表，通过小区code列表
      * @param communityCodeList 小区code列表
@@ -81,15 +76,12 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
      * @author shuyy
      * @date 2018/11/22 15:11
      * @company mitesofor
-    */
-    public List<Device> listByCommunityCodeList(List<String> communityCodeList){
+     */
+    public List<Device> listByCommunityCodeList(List<String> communityCodeList) {
         EntityWrapper<Device> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
-        List<Device> devices = deviceMapper.selectList(wrapper);
-        return devices;
+        return deviceMapper.selectList(wrapper);
     }
-
-
 
     /***
      * 查询进口或出口设备，通过小区编码
@@ -99,12 +91,11 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
      * @author shuyy
      * @date 2018/11/22 11:42
      * @company mitesofor
-    */
-    public List<Device> listInOrOutByCommunityCode(String communityCode, String flag){
+     */
+    public List<Device> listInOrOutByCommunityCode(String communityCode, String flag) {
         List<Device> devices = this.listByCommunityCode(communityCode);
         return devices.parallelStream().filter(item -> item.getDeviceName().contains(flag)).collect(Collectors.toList());
     }
-
 
     /***
      * 查询所有设备
@@ -113,7 +104,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
      * @author shuyy
      * @date 2018/11/22 10:10
      * @company mitesofor
-    */
+     */
     public List<Device> listFromDnakeByCommunityCode(String communityCode) {
         String url = "/v1/device/getDeviceList";
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(1);
@@ -126,16 +117,16 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
             device.setCommunityCode(communityCode);
             device.setGmtCreate(LocalDateTime.now());
             device.setGmtModified(LocalDateTime.now());
-            if(device.getBuildingCode() == null){
+            if (device.getBuildingCode() == null) {
                 device.setBuildingCode(StringUtils.EMPTY);
             }
-            if(device.getBuildingId() == null){
+            if (device.getBuildingId() == null) {
                 device.setBuildingId(StringUtils.EMPTY);
             }
-            if(device.getUnitCode() == null){
+            if (device.getUnitCode() == null) {
                 device.setUnitCode(StringUtils.EMPTY);
             }
-            if(device.getUnitId() == null){
+            if (device.getUnitId() == null) {
                 device.setUnitId(StringUtils.EMPTY);
             }
         });
@@ -147,8 +138,8 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
      * @author shuyy
      * @date 2018/11/22 10:15
      * @company mitesofor
-    */
-    public void remove(){
+     */
+    public void remove() {
         deviceMapper.delete(null);
     }
 }

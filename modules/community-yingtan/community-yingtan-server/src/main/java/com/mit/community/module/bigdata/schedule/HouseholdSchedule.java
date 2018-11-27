@@ -1,23 +1,18 @@
 package com.mit.community.module.bigdata.schedule;
 
+import com.mit.community.entity.AuthorizeAppHouseholdDevice;
+import com.mit.community.entity.AuthorizeHouseholdDevice;
+import com.mit.community.entity.HouseHold;
+import com.mit.community.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.mit.community.entity.AuthorizeAppHouseholdDevice;
-import com.mit.community.entity.AuthorizeHouseholdDevice;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.service.AccessControlService;
-import com.mit.community.service.AuthorizeAppHouseholdDeviceService;
-import com.mit.community.service.AuthorizeHouseholdDeviceService;
-import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.HouseHoldService;
 
 /**
  * 住户
@@ -40,7 +35,10 @@ public class HouseholdSchedule {
     private final AccessControlService accessControlService;
 
     @Autowired
-    public HouseholdSchedule(HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService, AuthorizeAppHouseholdDeviceService authorizeAppHouseholdDeviceService, AuthorizeHouseholdDeviceService authorizeHouseholdDeviceService, AccessControlService accessControlService) {
+    public HouseholdSchedule(HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
+                             AuthorizeAppHouseholdDeviceService authorizeAppHouseholdDeviceService,
+                             AuthorizeHouseholdDeviceService authorizeHouseholdDeviceService,
+                             AccessControlService accessControlService) {
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.authorizeAppHouseholdDeviceService = authorizeAppHouseholdDeviceService;
@@ -76,7 +74,6 @@ public class HouseholdSchedule {
                 }
             });
 
-
         }
     }
 
@@ -85,7 +82,7 @@ public class HouseholdSchedule {
      * @author shuyy
      * @date 2018/11/24 10:36
      * @company mitesofor
-    */
+     */
     @Scheduled(cron = "*/10 * * * * ?")
     public void parseIdentityType() {
         List<Map<String, Object>> maps = houseHoldService.listActiveRoomId();
@@ -93,8 +90,9 @@ public class HouseholdSchedule {
             Integer roomId = (Integer) item.get("room_id");
             List<HouseHold> houseHolds = houseHoldService.listByRoomId(roomId);
             // 只要这个房间有一个住户，没有录入身份证信息，就不分析，因为无法知道年龄
-            int noBirthDayNum = houseHolds.parallelStream().filter(a -> a.getBirthday().getYear() < 1901).collect(Collectors.toList()).size();
-            if(noBirthDayNum == 0){
+            int noBirthDayNum = houseHolds.parallelStream().filter(a -> a.getBirthday().getYear() < 1901)
+                    .collect(Collectors.toList()).size();
+            if (noBirthDayNum == 0) {
                 int size = houseHolds.size();
                 //房间住户只有1个
                 if (size == 1) {
@@ -185,7 +183,5 @@ public class HouseholdSchedule {
 
         });
         // 分析身份类型
-
     }
-
 }

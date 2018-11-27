@@ -128,8 +128,8 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
         wrapper.in("community_code", communityCodes);
         return roomMapper.selectList(wrapper);
     }
-    
-    
+
+
     /**
      * 	获取房间，通过单元id和房间号
      * @param roomNum 房间号
@@ -148,6 +148,6 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
         }else {
         	return list.get(0);
         }
-        
+
     }
 }

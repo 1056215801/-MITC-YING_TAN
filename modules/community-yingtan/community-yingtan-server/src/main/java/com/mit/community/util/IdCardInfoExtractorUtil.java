@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * 身份证数据提取工具类
@@ -78,7 +77,6 @@ public class IdCardInfoExtractorUtil {
         } catch (Exception e) {
             log.info("身份证号码错误");
             return idCardInfo;
-
         }
         return idCardInfo;
     }
