@@ -108,10 +108,12 @@ public class LoginController {
             return Result.error("验证码错误");
         }
         SysUser sysUser = sysUserService.getSysUser(username);
-        if (sysUser.getPassword().equals(password)) {
-            map.put("adminName", sysUser.getAdminName());
-            map.put("role", sysUser.getRole());
-            return Result.success(map, "登录成功");
+        if (sysUser != null) {
+            if (sysUser.getPassword().equals(password)) {
+                map.put("adminName", sysUser.getAdminName());
+                map.put("role", sysUser.getRole());
+                return Result.success(map, "登录成功");
+            }
         }
         return Result.error("登录失败");
     }
