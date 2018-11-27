@@ -164,12 +164,12 @@ public class BigDataController {
         }
         int num = 0;
         for (Map<String, Object> map : maps) {
-            if ("".equals(map.get("province"))) {
-                map.put("province", "未知");
+            if ("".equals(map.get("city"))) {
+                map.put("city", "未知");
             }
             num += Integer.parseInt(map.get("num").toString());
         }
-        map1.put("province", province);
+        map1.put("city", province);
         map1.put("num", num);
         maps.add(map1);
         //按照num进行降序排序
