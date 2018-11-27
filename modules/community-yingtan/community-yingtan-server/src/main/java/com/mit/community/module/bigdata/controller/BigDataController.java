@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -90,7 +88,7 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/22 16:40
      * @company mitesofor
-    */
+     */
     @GetMapping("/countAgeConstruction")
     @ApiOperation(value = "人口结构分析", notes = "返回参数：childNum 小孩人数、" +
             "youngNum 少年人数、" +
@@ -111,17 +109,19 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/23 14:13
      * @company mitesofor
-    */
+     */
     @GetMapping("/countPopulationDistributionByCommunityCode")
     @ApiOperation(value = "外来人口分布，按省统计", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区。返回参数：province 省份、" +
             "num 人数")
     public Result countPopulationDistributionByCommunityCode(String communityCode) {
+        List<Map<String, Object>> maps = null;
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
-            return Result.success(houseHoldService.countPopulationDistributionByCommunityCodeList(communityCodeList));
+             maps = houseHoldService.countPopulationDistributionByCommunityCodeList(communityCodeList);
         } else {
-            return Result.success(houseHoldService.countPopulationDistributionByCommunityCode(communityCode));
+            maps = houseHoldService.countPopulationDistributionByCommunityCode(communityCode);
         }
+        return Result.success(maps);
     }
 
     /***
@@ -130,7 +130,7 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/23 14:13
      * @company mitesofor
-    */
+     */
     @GetMapping("/countPopulationDistributionByCommunityCodeAndProvince")
     @ApiOperation(value = "外来人口分布，按市统计", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区。返回参数：city 市、" +
             "num 人数")
@@ -138,7 +138,7 @@ public class BigDataController {
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
             return Result.success(houseHoldService.countPopulationDistributionByCommunityCodeListAndProvince(communityCodeList,
-            		province));
+                    province));
         } else {
             return Result.success(houseHoldService.countPopulationDistributionByCommunityCodeAndProvince(communityCode, province));
         }
@@ -149,10 +149,9 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/23 14:49
      * @company mitesofor
-    */
+     */
     @GetMapping("/listAccessControlPageByCommunitCode")
-    @ApiOperation(value = "实时通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区， pageNum 当前页，" +
-            "required， pageSize 分页大小 required。" +
+    @ApiOperation(value = "实时通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区， pageNum 当前页，required， pageSize 分页大小 required。" +
             "\n返回参数：householdName 姓名、device_name 卡口和进/出、roomNum 房号、access_time 访问时间" +
             "num 人数")
     public Result listAccessControlPageByCommunitCode(String communityCode, Integer pageNum, Integer pageSize) {
@@ -173,7 +172,7 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/24 10:53
      * @company mitesofor
-    */
+     */
     @GetMapping("/listPopulationRushByCommunityCode")
     @ApiOperation(value = "人流高峰分析", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区" +
             "\n返回参数：monday 星期一、tuesday 星期二人数、wednesday 星期三人数、thursday 星期四人数" +
@@ -185,7 +184,8 @@ public class BigDataController {
             return Result.success(populationRush);
         } else {
             PopulationRush populationRush = populationRushService.listByCommunityCode(communityCode);
-            return Result.success(populationRush);        }
+            return Result.success(populationRush);
+        }
     }
 
     /**
@@ -195,7 +195,7 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/24 10:53
      * @company mitesofor
-    */
+     */
     @GetMapping("/countInterActiveTypeByCommunityCode")
     @ApiOperation(value = "通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区" +
             "\n返回参数：interactive_type # 开门方式（0：其他开门；1：刷卡开门；2：密码开门；3：APP开门；4：分机开门；5：二维码开门； 6：蓝牙开门；7：按钮开门；8：手机开门;9：人脸识别；10:固定密码；11：http开门；）、" +
@@ -210,6 +210,7 @@ public class BigDataController {
             return Result.success(maps);
         }
     }
+
     /**
      * @param communityCode
      * @return com.mit.community.util.Result
@@ -217,7 +218,7 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/24 10:53
      * @company mitesofor
-    */
+     */
     @GetMapping("/countIdentityTypeByCommunityCode")
     @ApiOperation(value = "人员分类", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区" +
             "\n返回参数：identity_type  身份类型（身份类型：1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、6、上访人员、99、其他）、" +
@@ -232,7 +233,6 @@ public class BigDataController {
             return Result.success(maps);
         }
     }
-
 
 
 }
