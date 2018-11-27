@@ -55,7 +55,6 @@ public class BigDataSchedule {
     @Scheduled(cron = "*/10 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void countActivePeopleNum (){
-        System.out.print("------------------------------------------------------------------");
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         activePeopleService.remove();
         communityCodeList.forEach(item -> {

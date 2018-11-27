@@ -24,7 +24,6 @@ import java.util.Map;
 
 /**
  * 社区控制器
- *
  * @author Mr.Deng
  * @date 2018/11/14 15:17
  * <p>Copyright: Copyright (c) 2018</p>
@@ -67,7 +66,8 @@ public class CommunityTestController {
                                    VisitorService visitorService,
                                    DeviceService deviceService,
                                    AccessControlService accessControlService,
-                                   DeviceCallService deviceCallService, HttpLogin httpLogin, IdCardInfoExtractorUtil idCardInfoExtractorUtil) {
+                                   DeviceCallService deviceCallService, HttpLogin httpLogin,
+                                   IdCardInfoExtractorUtil idCardInfoExtractorUtil) {
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
         this.buildingService = buildingService;
@@ -84,7 +84,6 @@ public class CommunityTestController {
 
     /**
      * 解析身份证信息
-     *
      * @param idCard 身份证号码
      * @return
      * @author Mr.Deng
@@ -98,7 +97,6 @@ public class CommunityTestController {
 
     /**
      * 保存小区信息
-     *
      * @return
      * @author Mr.Deng
      * @date 15:59 2018/11/14
@@ -131,7 +129,6 @@ public class CommunityTestController {
 
     /**
      * 添加分区信息
-     *
      * @return
      * @author Mr.Deng
      * @date 16:19 2018/11/14
@@ -165,7 +162,6 @@ public class CommunityTestController {
 
     /**
      * 添加楼栋信息
-     *
      * @return result
      * @author Mr.Deng
      * @date 16:41
@@ -200,7 +196,6 @@ public class CommunityTestController {
 
     /**
      * 获取单元
-     *
      * @return
      * @author Mr.Deng
      * @date 16:54 2018/11/14
@@ -237,7 +232,6 @@ public class CommunityTestController {
 
     /**
      * 获取房间信息
-     *
      * @return
      * @author Mr.Deng
      * @date 17:44 2018/11/14
@@ -275,7 +269,6 @@ public class CommunityTestController {
 
     /**
      * 添加住户信息
-     *
      * @return
      * @author Mr.Deng
      * @date 18:57 2018/11/14
@@ -326,7 +319,6 @@ public class CommunityTestController {
 
     /**
      * 添加访客信息
-     *
      * @return
      * @author Mr.Deng
      * @date 19:55 2018/11/14
@@ -370,7 +362,6 @@ public class CommunityTestController {
 
     /**
      * 添加设备信息
-     *
      * @return
      * @author Mr.Deng
      * @date 9:50 2018/11/15
@@ -409,7 +400,6 @@ public class CommunityTestController {
 
     /**
      * 获取门禁记录
-     *
      * @return
      * @author Mr.Deng
      * @date 11:25 2018/11/15
@@ -453,7 +443,6 @@ public class CommunityTestController {
 
     /**
      * 获取呼叫记录
-     *
      * @return
      * @author Mr.Deng
      * @date 12:08 2018/11/15

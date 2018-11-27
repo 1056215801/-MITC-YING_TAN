@@ -110,8 +110,20 @@ public class LoginController {
         SysUser sysUser = sysUserService.getSysUser(username);
         if (sysUser != null) {
             if (sysUser.getPassword().equals(password)) {
-                map.put("adminName", sysUser.getAdminName());
-                map.put("role", sysUser.getRole());
+                String menuUser = "小区管理员";
+                String menuAdmin = "集群管理员";
+                String adminName = sysUser.getAdminName();
+                String role = sysUser.getRole();
+                String menu = StringUtils.EMPTY;
+                map.put("adminName", adminName);
+                map.put("role", role);
+                if (menuUser.equals(role)) {
+                    menu = "menuUser";
+                }
+                if (menuAdmin.equals(role)) {
+                    menu = "menuAdmin";
+                }
+                map.put("menuType", menu);
                 return Result.success(map, "登录成功");
             }
         }

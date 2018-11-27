@@ -187,7 +187,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     }
 
     /**
-     * 通过小区code获取门禁记录信息
+     * 查询门禁记录信息，通过小区code
      * @param communityCode 小区code
      * @return 门禁记录列表
      * @author Mr.Deng

@@ -2,18 +2,13 @@ package com.mit.community.service;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
-import com.dnake.constant.DnakeConstants;
 import com.google.common.collect.Lists;
 import com.mit.community.entity.Building;
-import com.mit.community.entity.Zone;
-import com.mit.community.entity.modelTest.BuildingTest;
 import com.mit.community.mapper.BuildingMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +46,7 @@ public class BuildingService extends ServiceImpl<BuildingMapper, Building> {
     }
 
     /**
-     * 获取所有的楼栋信息
+     * 查询所有的楼栋信息
      *
      * @return 楼栋信息列表
      * @author Mr.Deng
@@ -62,35 +57,35 @@ public class BuildingService extends ServiceImpl<BuildingMapper, Building> {
     }
 
     /**
-     * 通过小区code获取楼栋信息
+     * 统计楼栋总数，通过小区code
      *
      * @param communityCode 小区凑得
      * @return 楼栋信息列表
      * @author Mr.Deng
      * @date 14:59 2018/11/21
      */
-    public List<Building> listByCommunityCode(String communityCode) {
+    public Integer countByCommunityCode(String communityCode) {
         EntityWrapper<Building> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        return buildingMapper.selectList(wrapper);
+        return buildingMapper.selectCount(wrapper);
     }
 
     /**
-     * 通过小区code获取楼栋信息
+     * 统计楼栋数，通过小区code
      *
      * @param communityCodes 小区code列表
      * @return 楼栋信息列表
      * @author Mr.Deng
      * @date 13:54 2018/11/21
      */
-    public List<Building> listByCommunityCodes(List<String> communityCodes) {
+    public Integer countByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<Building> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
-        return buildingMapper.selectList(wrapper);
+        return buildingMapper.selectCount(wrapper);
     }
 
     /***
-     * 获取楼栋通过楼栋名和分区id
+     * 查询楼栋信息，通过楼栋名和分区id
      * @param buildName 楼栋名
      * @param zoneId 分区id
      * @return com.mit.community.entity.Building

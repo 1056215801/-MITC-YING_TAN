@@ -1,23 +1,18 @@
 package com.mit.community.module.bigdata.schedule;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.mit.community.entity.Building;
 import com.mit.community.entity.Room;
 import com.mit.community.entity.Unit;
 import com.mit.community.entity.Zone;
-import com.mit.community.service.BuildingService;
-import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.RoomService;
-import com.mit.community.service.UnitService;
-import com.mit.community.service.ZoneService;
+import com.mit.community.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 房间定时同步
@@ -39,7 +34,8 @@ public class RoomSchedule {
 
     private final UnitService unitService;
     @Autowired
-    public RoomSchedule(RoomService roomService, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService) {
+    public RoomSchedule(RoomService roomService, ClusterCommunityService clusterCommunityService,
+                        ZoneService zoneService, BuildingService buildingService, UnitService unitService) {
         this.roomService = roomService;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
@@ -59,7 +55,8 @@ public class RoomSchedule {
         List<Unit> units = unitService.listFromBuildingIdList(buildingIdList);
         List<Room> roomList = Lists.newArrayListWithCapacity(10000);
         units.forEach(item -> {
-            List<Room> rooms = roomService.listFromDnakeByUnitId(item.getCommunityCode(), item.getZoneId(), item.getBuildingId(), item.getUnitId());
+            List<Room> rooms = roomService.listFromDnakeByUnitId(item.getCommunityCode(), item.getZoneId(),
+                    item.getBuildingId(), item.getUnitId());
             roomList.addAll(rooms);
         });
         if(!roomList.isEmpty()) {

@@ -73,11 +73,11 @@ public class PopulationRushService {
     public PopulationRush countByCommunityCode(String communityCode){
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-       /* 
-        * 下面的代码是统计最近一个月的人流高峰
-        * LocalDateTime now = LocalDateTime.now();
-        LocalDateTime lastMonth = now.minusMonths(1);
-        wrapper.le("access_time", now).ge("access_time", lastMonth);*/
+//
+//        * 下面的代码是统计最近一个月的人流高峰
+//        * LocalDateTime now = LocalDateTime.now();
+//        LocalDateTime lastMonth = now.minusMonths(1);
+//        wrapper.le("access_time", now).ge("access_time", lastMonth);
         List<AccessControl> accessControls = accessControlMapper.selectList(wrapper);
         int mondayNum = 0;
         int tuesdayNum = 0;
