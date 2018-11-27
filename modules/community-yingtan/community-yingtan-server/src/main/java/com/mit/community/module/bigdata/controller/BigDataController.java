@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 /**
  * 大数据平台
- *
  * @author shuyy
  * @date 2018/11/16
  * @company mitesofor
@@ -41,7 +40,9 @@ public class BigDataController {
     private final PopulationRushService populationRushService;
 
     @Autowired
-    public BigDataController(ClusterCommunityService clusterCommunityService, DeviceService deviceService, HouseHoldService houseHoldService, AgeConstructionService ageConstructionService, AccessControlService accessControlService, PopulationRushService populationRushService) {
+    public BigDataController(ClusterCommunityService clusterCommunityService, DeviceService deviceService,
+                             HouseHoldService houseHoldService, AgeConstructionService ageConstructionService,
+                             AccessControlService accessControlService, PopulationRushService populationRushService) {
         this.clusterCommunityService = clusterCommunityService;
         this.deviceService = deviceService;
         this.houseHoldService = houseHoldService;
@@ -56,24 +57,25 @@ public class BigDataController {
      * @author shuyy
      * @date 2018/11/22 16:40
      * @company mitesofor
-    */
+     */
     @GetMapping("/countAlarmPercent")
     @ApiOperation(value = "告警按时完成率、设备正常率、环比", notes = "返回参数：alarmFinishOnTimePercent 告警按时完成率、" +
-            "deviceHealthPercent 设备正常率、" +
-            "alarmFinishOnTimeChain 告警按时完成环比、deviceHealthChain 设备正常环比")
+            "deviceHealthPercent 设备正常率、 alarmFinishOnTimeChain 告警按时完成环比、deviceHealthChain 设备正常环比")
     public Result countAlarmPercent(String communityCode) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityNameList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
             List<Device> devices = deviceService.listByCommunityCodeList(communityNameList);
-            List<Device> healthDevices = devices.parallelStream().filter(item -> item.getDeviceStatus() == 1).collect(Collectors.toList());
+            List<Device> healthDevices = devices.parallelStream().filter(
+                    item -> item.getDeviceStatus() == 1).collect(Collectors.toList());
             map.put("alarmFinishOnTimePercent", 0.96);
             map.put("deviceHealthPercent", (float) healthDevices.size() / (float) devices.size());
             map.put("alarmFinishOnTimeChain", 0.34);
             map.put("deviceHealthChain", 0.2);
         } else {
             List<Device> devices = deviceService.listByCommunityCode(communityCode);
-            List<Device> healthDevices = devices.parallelStream().filter(item -> item.getDeviceStatus() == 1).collect(Collectors.toList());
+            List<Device> healthDevices = devices.parallelStream().filter(
+                    item -> item.getDeviceStatus() == 1).collect(Collectors.toList());
             map.put("alarmFinishOnTimePercent", 0.96);
             map.put("deviceHealthPercent", (float) healthDevices.size() / (float) devices.size());
             map.put("alarmFinishOnTimeChain", 0.34);
@@ -111,13 +113,13 @@ public class BigDataController {
      * @company mitesofor
      */
     @GetMapping("/countPopulationDistributionByCommunityCode")
-    @ApiOperation(value = "外来人口分布，按省统计", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区。返回参数：province 省份、" +
-            "num 人数")
+    @ApiOperation(value = "外来人口分布，按省统计", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区。\n" +
+            "返回参数：province 省份、num 人数")
     public Result countPopulationDistributionByCommunityCode(String communityCode) {
-        List<Map<String, Object>> maps = null;
+        List<Map<String, Object>> maps;
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
-             maps = houseHoldService.countPopulationDistributionByCommunityCodeList(communityCodeList);
+            maps = houseHoldService.countPopulationDistributionByCommunityCodeList(communityCodeList);
         } else {
             maps = houseHoldService.countPopulationDistributionByCommunityCode(communityCode);
         }
@@ -132,15 +134,16 @@ public class BigDataController {
      * @company mitesofor
      */
     @GetMapping("/countPopulationDistributionByCommunityCodeAndProvince")
-    @ApiOperation(value = "外来人口分布，按市统计", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区。返回参数：city 市、" +
-            "num 人数")
+    @ApiOperation(value = "外来人口分布，按市统计", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区。\n" +
+            "返回参数：city 市、num 人数")
     public Result countPopulationDistributionByCommunityCodeAndProvince(String communityCode, String province) {
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
-            return Result.success(houseHoldService.countPopulationDistributionByCommunityCodeListAndProvince(communityCodeList,
-                    province));
+            return Result.success(
+                    houseHoldService.countPopulationDistributionByCommunityCodeListAndProvince(communityCodeList, province));
         } else {
-            return Result.success(houseHoldService.countPopulationDistributionByCommunityCodeAndProvince(communityCode, province));
+            return Result.success(
+                    houseHoldService.countPopulationDistributionByCommunityCodeAndProvince(communityCode, province));
         }
     }
 
@@ -151,10 +154,11 @@ public class BigDataController {
      * @company mitesofor
      */
     @GetMapping("/listAccessControlPageByCommunitCode")
-    @ApiOperation(value = "实时通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区， pageNum 当前页，required， pageSize 分页大小 required。" +
+    @ApiOperation(value = "实时通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区，" +
+            " pageNum 当前页，required， pageSize 分页大小 required。" +
             "\n返回参数：householdName 姓名、device_name 卡口和进/出、roomNum 房号、access_time 访问时间" +
             "num 人数")
-    public Result listAccessControlPageByCommunitCode(String communityCode, Integer pageNum, Integer pageSize) {
+    public Result listAccessControlPageByCommunityCode(String communityCode, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
             return Result.success(accessControlService.listByCommunityCodeListPage(communityCodeList, pageNum, pageSize));
@@ -166,9 +170,9 @@ public class BigDataController {
     }
 
     /**
-     * @param communityCode
+     * 通过小区code获取人流高峰信息
+     * @param communityCode 小区code
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/11/24 10:53
      * @company mitesofor
@@ -189,17 +193,17 @@ public class BigDataController {
     }
 
     /**
-     * @param communityCode
+     * 通过小区code获取小区通信记录
+     * @param communityCode 小区code
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/11/24 10:53
      * @company mitesofor
      */
     @GetMapping("/countInterActiveTypeByCommunityCode")
     @ApiOperation(value = "通行记录", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区" +
-            "\n返回参数：interactive_type # 开门方式（0：其他开门；1：刷卡开门；2：密码开门；3：APP开门；4：分机开门；5：二维码开门； 6：蓝牙开门；7：按钮开门；8：手机开门;9：人脸识别；10:固定密码；11：http开门；）、" +
-            "num 数量")
+            "\n返回参数：interactive_type # 开门方式（0：其他开门；1：刷卡开门；2：密码开门；3：APP开门；4：分机开门；" +
+            "5：二维码开门； 6：蓝牙开门；7：按钮开门；8：手机开门;9：人脸识别；10:固定密码；11：http开门；）、 num 数量")
     public Result countInterActiveTypeByCommunityCode(String communityCode) {
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
@@ -212,17 +216,17 @@ public class BigDataController {
     }
 
     /**
-     * @param communityCode
+     * 通过小区code获取人员分类信息
+     * @param communityCode 小区code
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/11/24 10:53
      * @company mitesofor
      */
     @GetMapping("/countIdentityTypeByCommunityCode")
     @ApiOperation(value = "人员分类", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区" +
-            "\n返回参数：identity_type  身份类型（身份类型：1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、6、上访人员、99、其他）、" +
-            "num 数量")
+            "\n返回参数：identity_type  身份类型（身份类型：1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、" +
+            "6、上访人员、99、其他）、num 数量")
     public Result countIdentityTypeByCommunityCode(String communityCode) {
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
@@ -233,6 +237,5 @@ public class BigDataController {
             return Result.success(maps);
         }
     }
-
 
 }

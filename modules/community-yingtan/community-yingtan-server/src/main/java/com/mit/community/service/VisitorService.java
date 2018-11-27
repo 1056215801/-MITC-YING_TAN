@@ -3,7 +3,6 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,7 +40,8 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
     private final UnitService unitService;
 
     @Autowired
-    public VisitorService(VisitorMapper visitorMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService) {
+    public VisitorService(VisitorMapper visitorMapper, ClusterCommunityService clusterCommunityService,
+                          ZoneService zoneService, BuildingService buildingService, UnitService unitService) {
         this.visitorMapper = visitorMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
@@ -144,6 +144,9 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
     /***
      * 从dnake接口获取访客列表
      * @param communityCode 社区code
+     * @param pageNum 页数
+     * @param pageSize 一页大小
+     * @param param 参数
      * @return java.util.List<com.mit.community.entity.Visitor>
      * @author shuyy
      * @date 2018/11/21 16:59

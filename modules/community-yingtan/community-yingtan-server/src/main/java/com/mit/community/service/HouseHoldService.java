@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 /**
  * 住户业务层
- *
  * @author Mr.Deng
  * @date 2018/11/14 19:33
  * <p>Copyright: Copyright (c) 2018</p>
@@ -51,12 +50,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     private final HttpLogin httpLogin;
 
     private final IdCardInfoExtractorUtil idCardInfoExtractorUtil;
-    
+
     private final RoomService roomService;
 
     @Autowired
-    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService, ZoneService zoneService, BuildingService buildingService, UnitService unitService, HttpLogin httpLogin, 
-    		IdCardInfoExtractorUtil idCardInfoExtractorUtil, RoomService roomService) {
+    public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService,
+                            ZoneService zoneService, BuildingService buildingService, UnitService unitService,
+                            HttpLogin httpLogin, IdCardInfoExtractorUtil idCardInfoExtractorUtil, RoomService roomService) {
         this.houseHoldMapper = houseHoldMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
@@ -69,7 +69,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 添加住户信息
-     *
      * @param house 住户信息
      * @author Mr.Deng
      * @date 19:34 2018/11/14
@@ -80,7 +79,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 获取所有住户信息
-     *
      * @return 住户信息列表
      * @author Mr.Deng
      * @date 19:35 2018/11/14
@@ -91,7 +89,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 通过小区code获取住户信息
-     *
      * @param communityCode 小区code
      * @return 住户信息列表
      * @author Mr.Deng
@@ -119,7 +116,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 查询住户信息，通过小区code列表
-     *
      * @param communityCodes 小区code列表
      * @return 住户信息列表
      * @author Mr.Deng
@@ -133,7 +129,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 查询住户信息，通过小区code列表
-     *
      * @param communityCode 小区code
      * @return 住户信息列表
      * @author Mr.Deng
@@ -144,7 +139,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         wrapper.eq("community_code", communityCode);
         return houseHoldMapper.selectList(wrapper);
     }
-
 
     /***
      * 统计住户总数，通过小区code列表
@@ -162,7 +156,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 获取小区男女人数
-     *
      * @return 男女人数
      * @author Mr.Deng
      * @date 16:40 2018/11/19
@@ -177,13 +170,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 通过一组communityCode获取男女人数
-     *
      * @param communityCodes communityCode列表
      * @return 男女人数
      * @author Mr.Deng
      * @date 14:32 2018/11/21
      */
-    public Map<String, Object> listSexByCommunityCodes(List<String> communityCodes) {
+    public Map<String, Object> listSexByCommunityCodeList(List<String> communityCodes) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("SUM(CASE gender WHEN '0' THEN 1 else 0 END) boy" +
                 ",SUM(CASE gender WHEN '1' THEN 1 else 0 END) girl");
@@ -220,70 +212,68 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             }
         });
         //过滤掉重复的数据，想哭
-        for(int i = 0; i < result.size(); i++) {
-        	HouseHold houseHold = result.get(i);
-        	String householdName = houseHold.getHouseholdName();
-        	for(int j = i + 1; j < result.size(); j++) {
-        		HouseHold houseHold2 = result.get(j);
-        		if(houseHold2.getHouseholdName().equals(householdName)) {
-        			result.remove(j);
-        			j--;
-        		}
-        	}
+        for (int i = 0; i < result.size(); i++) {
+            HouseHold houseHold = result.get(i);
+            String householdName = houseHold.getHouseholdName();
+            for (int j = i + 1; j < result.size(); j++) {
+                HouseHold houseHold2 = result.get(j);
+                if (houseHold2.getHouseholdName().equals(householdName)) {
+                    result.remove(j);
+                    j--;
+                }
+            }
         }
         result.forEach(item -> {
-        	  // 查询roomId
+            // 查询roomId
             Room room = roomService.getByUnitIdAndRoomNum(item.getRoomNum(), item.getUnitId());
-            if(room != null) {
-            	item.setRoomId(room.getRoomId());
-            }else {
-            	item.setRoomId(0);
+            if (room != null) {
+                item.setRoomId(room.getRoomId());
+            } else {
+                item.setRoomId(0);
             }
         });
         CountDownLatch countDownLatch = new CountDownLatch(result.size());
-        result.forEach(item -> {
-            ThreadPoolUtil.submit(() -> {
-                // 查询身份证号
-                try {
-                    String credentialNum = getCredentialNumFromDnake(item.getHouseholdId());
-                    item.setCredentialNum(credentialNum);
-                    item.setIdentityType(HouseHold.NORMAL);
-                    // 通过身份证号，分析省、市、区县、出生日期、年龄
-                    if (credentialNum.equals(StringUtils.EMPTY)) {
-                        item.setProvince(StringUtils.EMPTY);
-                        item.setCity(StringUtils.EMPTY);
-                        item.setRegion(StringUtils.EMPTY);
-                        item.setBirthday(LocalDate.of(1900, 1, 1));
-                        item.setIdentityType((short) 99);
-                    } else {
-                        IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(credentialNum);
-                        LocalDate birthday = idCardInfo.getBirthday();
-                        item.setBirthday(birthday == null ? LocalDate.of(1900, 1, 1) : birthday);
-                        String city = idCardInfo.getCity();
-                        item.setCity(city == null ? StringUtils.EMPTY : city);
-                        String province = idCardInfo.getProvince();
-                        item.setProvince(province == null ? StringUtils.EMPTY : province);
-                        String region = idCardInfo.getRegion();
-                        item.setRegion(region == null ? StringUtils.EMPTY : region);
-                        Integer gender = idCardInfo.getGender();
-                        if (gender != null) {
-                            item.setGender(gender);
-                        }
+        result.forEach(item -> ThreadPoolUtil.submit(() -> {
+            // 查询身份证号
+            try {
+                String credentialNum = getCredentialNumFromDnake(item.getHouseholdId());
+                item.setCredentialNum(credentialNum);
+                item.setIdentityType(HouseHold.NORMAL);
+                // 通过身份证号，分析省、市、区县、出生日期、年龄
+                if (credentialNum.equals(StringUtils.EMPTY)) {
+                    item.setProvince(StringUtils.EMPTY);
+                    item.setCity(StringUtils.EMPTY);
+                    item.setRegion(StringUtils.EMPTY);
+                    item.setBirthday(LocalDate.of(1900, 1, 1));
+                    item.setIdentityType((short) 99);
+                } else {
+                    IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(credentialNum);
+                    LocalDate birthday = idCardInfo.getBirthday();
+                    item.setBirthday(birthday == null ? LocalDate.of(1900, 1, 1) : birthday);
+                    String city = idCardInfo.getCity();
+                    item.setCity(city == null ? StringUtils.EMPTY : city);
+                    String province = idCardInfo.getProvince();
+                    item.setProvince(province == null ? StringUtils.EMPTY : province);
+                    String region = idCardInfo.getRegion();
+                    item.setRegion(region == null ? StringUtils.EMPTY : region);
+                    Integer gender = idCardInfo.getGender();
+                    if (gender != null) {
+                        item.setGender(gender);
                     }
-                } catch (IOException e) {
-                    item.setCredentialNum(StringUtils.EMPTY);
-                    log.error("获取身份证号码错误", e);
-                } finally {
-                    countDownLatch.countDown();
                 }
-            });
-        });
+            } catch (IOException e) {
+                item.setCredentialNum(StringUtils.EMPTY);
+                log.error("获取身份证号码错误", e);
+            } finally {
+                countDownLatch.countDown();
+            }
+        }));
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
             log.error("countDownLatch.await() 报错了", e);
         }
-        
+
         return result;
 
     }
@@ -389,12 +379,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      */
     private void parseAppDevice(JSONObject jsonObject, HouseHold houseHold) {
         String appDeviceGroupIds = jsonObject.getString("appDeviceGroupIds");
+        ArrayList<AuthorizeAppHouseholdDevice> authorizeAppHouseholdDeviceArrayList;
         if (StringUtils.isNotBlank(appDeviceGroupIds)) {
             String[] devices = appDeviceGroupIds.split(",");
-            ArrayList<AuthorizeAppHouseholdDevice> authorizeAppHouseholdDeviceArrayList = Lists.newArrayListWithCapacity(devices.length);
+            authorizeAppHouseholdDeviceArrayList = Lists.newArrayListWithCapacity(devices.length);
             for (String device : devices) {
-                AuthorizeAppHouseholdDevice authorizeAppHouseholdDevice = new AuthorizeAppHouseholdDevice(houseHold.getHouseholdId(),
-                        Integer.parseInt(device));
+                AuthorizeAppHouseholdDevice authorizeAppHouseholdDevice = new AuthorizeAppHouseholdDevice(
+                        houseHold.getHouseholdId(), Integer.parseInt(device));
                 authorizeAppHouseholdDevice.setGmtCreate(LocalDateTime.now());
                 authorizeAppHouseholdDevice.setGmtModified(LocalDateTime.now());
                 authorizeAppHouseholdDeviceArrayList.add(authorizeAppHouseholdDevice);
@@ -417,7 +408,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             String[] devices = doorDeviceGroupIds.split(",");
             ArrayList<AuthorizeHouseholdDevice> authorizeHouseholdDeviceList = Lists.newArrayListWithCapacity(devices.length);
             for (String device : devices) {
-                AuthorizeHouseholdDevice authorizeHouseholdDevice = new AuthorizeHouseholdDevice(houseHold.getHouseholdId(), Integer.parseInt(device));
+                AuthorizeHouseholdDevice authorizeHouseholdDevice = new AuthorizeHouseholdDevice(
+                        houseHold.getHouseholdId(), Integer.parseInt(device));
                 authorizeHouseholdDevice.setGmtCreate(LocalDateTime.now());
                 authorizeHouseholdDevice.setGmtModified(LocalDateTime.now());
                 authorizeHouseholdDeviceList.add(authorizeHouseholdDevice);
@@ -474,7 +466,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         }
         JSONObject stepOneInfo = null;
         JSONObject jsonObject = JSON.parseObject(result);
-        if(jsonObject != null){
+        if (jsonObject != null) {
             stepOneInfo = jsonObject.getJSONObject("stepOneInfo");
         }
         if (stepOneInfo == null) {
@@ -492,7 +484,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 统计年龄结构，通过小区code列表
      * @param communityCodeList 小区code列表
-     * @return java.util.Map<java.lang.String               ,               java.lang.Integer>
+     * @return java.util.Map<java.lang.String                               ,                               java.lang.Integer>
      * @author shuyy
      * @date 2018/11/22 16:32
      * @company mitesofor
@@ -538,12 +530,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 统计人员分布，精确到省， 通过小区code
      * @param communityCode 小区code
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                               <                                                               java.lang.String                                                               ,                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/23 14:08
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCode(String communityCode){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCode(String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.groupBy("province");
@@ -551,17 +543,17 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         List<Map<String, Object>> result = houseHoldMapper.selectMaps(wrapper);
         return result;
     }
-    
+
     /***
      * 统计人员分布，精确到市， 通过小区code
      * @param communityCode 小区code
      * @param province 省
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                               <                                                               java.lang.String                                                               ,                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/23 14:08
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeAndProvince(String communityCode, String province){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeAndProvince(String communityCode, String province) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.eq("province", province);
@@ -574,13 +566,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 统计人员分布，精确到省， 通过小区code列表
      * @param communityCodeList
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                               <                                                               java.lang.String                                                               ,                                                               java.lang.Object>>
      * @throws
      * @author shuyy
      * @date 2018/11/23 14:10
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeList(List<String> communityCodeList){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeList(List<String> communityCodeList) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
         wrapper.groupBy("province");
@@ -589,16 +581,16 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         // 对于未知的进行替换
         for (int i = 0; i < result.size(); i++) {
             Map<String, Object> m = result.get(i);
-            if(m.get("province").equals(StringUtils.EMPTY)){
+            if (m.get("province").equals(StringUtils.EMPTY)) {
                 Object num = m.get("num");
                 m.remove(StringUtils.EMPTY);
                 m.put("未知", num);
             }
         }
         // 排序
-        if(result.isEmpty()){
+        if (result.isEmpty()) {
             return null;
-        }else{
+        } else {
             result = result.stream().sorted(Comparator.comparingInt(o -> (Integer) o.get("num"))).collect(Collectors.toList());
             // 求全国
             IntSummaryStatistics num = result.stream().collect(Collectors.summarizingInt(value -> (Integer) value.get("num")));
@@ -609,17 +601,17 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             return result;
         }
     }
-    
+
     /***
      * 统计人员分布，精确到市， 通过小区code列表
      * @param communityCodeList 小区code列表
      * @param province 省
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                               <                                                               java.lang.String                                                               ,                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/23 14:08
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeListAndProvince(List<String> communityCodeList, String province){
+     */
+    public List<Map<String, Object>> countPopulationDistributionByCommunityCodeListAndProvince(List<String> communityCodeList, String province) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
         wrapper.eq("province", province);
@@ -636,26 +628,26 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/23 14:51
      * @company mitesofor
-    */
-    public HouseHold getByHouseholdId(Integer HouseholdId){
+     */
+    public HouseHold getByHouseholdId(Integer HouseholdId) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", HouseholdId);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
-        if(houseHolds.isEmpty()){
+        if (houseHolds.isEmpty()) {
             return null;
-        }else{
+        } else {
             return houseHolds.get(0);
         }
     }
 
     /***
      * 查询有住户的所有房间id
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                               <                                                               java.lang.String                                                               ,                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 9:38
      * @company mitesofor
-    */
-    public List<Map<String, Object>> listActiveRoomId(){
+     */
+    public List<Map<String, Object>> listActiveRoomId() {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.groupBy("room_id");
         wrapper.setSqlSelect("room_id");
@@ -669,8 +661,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/24 9:42
      * @company mitesofor
-    */
-    public List<HouseHold> listByRoomId(Integer roomId){
+     */
+    public List<HouseHold> listByRoomId(Integer roomId) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("room_id", roomId);
         return houseHoldMapper.selectList(wrapper);
@@ -679,12 +671,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /**
      * 统计各个身份类型人数、通过小区code
      * @param communityCode 小区code
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                                                                                               <                                                                                                                               java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 10:49
      * @company mitesofor
-    */
-    public List<Map<String, Object>> countIdentityTypeByCommunityCode(String communityCode){
+     */
+    public List<Map<String, Object>> countIdentityTypeByCommunityCode(String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.groupBy("identity_type");
@@ -695,25 +687,25 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /**
      * 统计各个身份类型人数、通过小区code列表
      * @param communityCodeList 小区code列表
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @return java.util.List<java.util.Map                                                               <                                                               java.lang.String                                                               ,                                                               java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 10:49
      * @company mitesofor
      */
-    public List<Map<String, Object>> countIdentityTypeByCommunityCodeList(List<String> communityCodeList){
+    public List<Map<String, Object>> countIdentityTypeByCommunityCodeList(List<String> communityCodeList) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
         wrapper.groupBy("identity_type");
         wrapper.setSqlSelect("identity_type, count(*) num");
         return houseHoldMapper.selectMaps(wrapper);
     }
-    
-     /***
+
+    /***
      * 获取外地人口，本地人口,其它人口
      * 传递参数为空返回所有鹰潭市的小区数据
      *
      * @param communityCode 小区code列表
-     * @return java.util.Map<java.lang.String                                                                                                                               ,                                                                                                                               java.lang.Integer> map:{
+     * @return java.util.Map<java.lang.String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               java.lang.Integer> map:{
      *     field:外地人口,
      *     local:本地人口,
      *     other:其他人口

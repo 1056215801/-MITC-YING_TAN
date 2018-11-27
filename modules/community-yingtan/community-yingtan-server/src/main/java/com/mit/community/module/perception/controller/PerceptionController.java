@@ -139,7 +139,7 @@ public class PerceptionController {
             List<String> list = listCommunityCodes("鹰潭市");
             buildingSize = buildingService.listByCommunityCodes(list).size();
             roomSize = roomService.listByCommunityCodes(list).size();
-            houseHoldSize = houseHoldService.listByCommunityCodes(list).size();
+            houseHoldSize = houseHoldService.listByCommunityCodeList(list).size();
             visitorSize = visitorService.listByCommunityCodes(list).size();
             // 车位
             map.put("ParkingSpace", 460);
@@ -179,7 +179,7 @@ public class PerceptionController {
             sex = houseHoldService.getSexByCommunityCode(communityCode);
         } else {
             List<String> list = listCommunityCodes("鹰潭市");
-            sex = houseHoldService.listSexByCommunityCodes(list);
+            sex = houseHoldService.listSexByCommunityCodeList(list);
         }
         return Result.success(sex, "ok");
     }
@@ -229,7 +229,7 @@ public class PerceptionController {
             map.put("totalEarlyWarning", 4);
         } else {
             List<String> list = listCommunityCodes("鹰潭市");
-            houseHoldSize = houseHoldService.countByCommunityCodes(list);
+            houseHoldSize = houseHoldService.countByCommunityCodeList(list);
             accessControlSize = accessControlService.countByCommunityCodes(list);
             remainNum = accessControlService.countRemainPeopleByCommunityCodes(list);
             map.put("totalEarlyWarning", 50);

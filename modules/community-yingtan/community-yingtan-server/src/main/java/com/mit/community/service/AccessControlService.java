@@ -50,7 +50,9 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     @Autowired
     public AccessControlService(AccessControlMapper accessControlMapper,
-                                ClusterCommunityService clusterCommunityService, ZoneService zoneService, DeviceService deviceService, ActivePeopleService activePeopleService, HouseHoldService houseHoldService) {
+                                ClusterCommunityService clusterCommunityService, ZoneService zoneService,
+                                DeviceService deviceService, ActivePeopleService activePeopleService,
+                                HouseHoldService houseHoldService) {
         this.accessControlMapper = accessControlMapper;
         this.clusterCommunityService = clusterCommunityService;
         this.zoneService = zoneService;
