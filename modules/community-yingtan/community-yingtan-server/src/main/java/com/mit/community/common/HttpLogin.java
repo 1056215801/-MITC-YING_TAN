@@ -4,6 +4,7 @@ import com.mit.community.constants.CommonConstatn;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.httpclient.Cookie;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -28,7 +29,7 @@ public class HttpLogin implements CommandLineRunner {
 
     private String userName;
     private String passWord;
-
+    private Header[] headers;
     private String cookie;
 
     public HttpLogin() {
@@ -43,7 +44,12 @@ public class HttpLogin implements CommandLineRunner {
         }
     }
 
-    public void login() {
+    /**
+     * 小区登录
+     * @author Mr.Deng
+     * @date 15:32 2018/11/28
+     */
+    public void loginUser() {
         // 登陆 Url
         String loginUrl = "http://cmp.ishanghome.com/cmp/login";
         // 需登陆后访问的 Url
@@ -52,7 +58,44 @@ public class HttpLogin implements CommandLineRunner {
         PostMethod postMethod = new PostMethod(loginUrl);
         // 设置登陆时要求的信息，用户名和密码
         NameValuePair[] data = {new NameValuePair("username", userName),
-                new NameValuePair("password", passWord)};
+                new NameValuePair("password", passWord),
+                new NameValuePair("remembercb", "remember-me")};
+        postMethod.setRequestBody(data);
+        try {
+            // 设置 HttpClient 接收 Cookie,用与浏览器一样的策略
+            httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+            httpClient.executeMethod(postMethod);
+            // 获得登陆后的 Cookie
+            Cookie[] cookies = httpClient.getState().getCookies();
+            StringBuilder tmpCookies = new StringBuilder();
+            for (Cookie c : cookies) {
+                tmpCookies.append(c.toString())
+                        .append(";");
+                System.out.println("cookies = " + c.toString() + "");
+            }
+            this.cookie = tmpCookies.toString();
+            this.headers = postMethod.getResponseHeaders();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 集群登录
+     * @author Mr.Deng
+     * @date 15:32 2018/11/28
+     */
+    public void loginAdmin() {
+        // 登陆 Url
+        String loginUrl = "http://cmp.ishanghome.com/mp/login";
+        // 需登陆后访问的 Url
+        HttpClient httpClient = new HttpClient();
+        // 模拟登陆，按实际服务器端要求选用 Post 或 Get 请求方式
+        PostMethod postMethod = new PostMethod(loginUrl);
+        // 设置登陆时要求的信息，用户名和密码
+        NameValuePair[] data = {new NameValuePair("username", userName),
+                new NameValuePair("password", passWord),
+                new NameValuePair("remembercb", "remember-me")};
         postMethod.setRequestBody(data);
         try {
             // 设置 HttpClient 接收 Cookie,用与浏览器一样的策略
@@ -67,6 +110,7 @@ public class HttpLogin implements CommandLineRunner {
                 System.out.println("cookies = " + c.toString());
             }
             this.cookie = tmpCookies.toString();
+            this.headers = postMethod.getResponseHeaders();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,6 +160,6 @@ public class HttpLogin implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        this.login();
+        this.loginUser();
     }
 }

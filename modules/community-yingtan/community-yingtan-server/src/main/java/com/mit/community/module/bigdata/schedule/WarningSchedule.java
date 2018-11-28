@@ -47,7 +47,7 @@ public class WarningSchedule {
         if (list1 != null) {
             for (SysUser sysUser : list1) {
                 HttpLogin httpLogin = new HttpLogin(sysUser.getUsername(), sysUser.getPassword());
-                httpLogin.login();
+                httpLogin.loginUser();
                 int s = 2;
                 for (int i = 1; i <= s; i++) {
                     String url = "http://cmp.ishanghome.com/cmp/deviceAlarm/load";

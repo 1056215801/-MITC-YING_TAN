@@ -35,6 +35,28 @@ public class SysUserService {
         return sysUserMapper.selectList(wrapper);
     }
 
+    /**
+     * 修改密码
+     * @param sysUser 修改的数据
+     * @return 改变条数
+     * @author Mr.Deng
+     * @date 15:53 2018/11/28
+     */
+    public Integer update(SysUser sysUser) {
+        return sysUserMapper.updateById(sysUser);
+    }
+
+    /**
+     * 添加用户信息
+     * @param sysUser 用户信息
+     * @return 添加数据
+     * @author Mr.Deng
+     * @date 15:36 2018/11/28
+     */
+    public Integer save(SysUser sysUser) {
+        return sysUserMapper.insert(sysUser);
+    }
+
     /***
      * 通过用户名查询用户
      * @param username 用户名
@@ -46,6 +68,26 @@ public class SysUserService {
     public SysUser getSysUser(String username) {
         EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
         wrapper.eq("username", username);
+        List<SysUser> list = sysUserMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+
+    /**
+     * 查询用户信息，通过用户名密码
+     * @param username 用户名
+     * @param password 密码
+     * @return 用户信息
+     * @author Mr.Deng
+     * @date 13:59 2018/11/28
+     */
+    public SysUser getSysUserByUserNameAndPassword(String username, String password) {
+        EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("username", username);
+        wrapper.eq("password", password);
         List<SysUser> list = sysUserMapper.selectList(wrapper);
         if (list.isEmpty()) {
             return null;

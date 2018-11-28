@@ -440,7 +440,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             if (retryNum > retryNumMax) {
                 return StringUtils.EMPTY;
             }
-            httpLogin.login();
+            httpLogin.loginUser();
             retryNum++;
             return this.getCredentialNumFromDnake(householdId, retryNum);
         }
