@@ -164,13 +164,14 @@ public class LoginController {
                     map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
                     map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
                     map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
+                    map.put("session", httpLogin.getCookie());
                     if (menuUser.equals(role)) {
-                        menu = "menuUser";
+                        menu = "0";
                     }
                     if (menuAdmin.equals(role)) {
-                        menu = "menuAdmin";
+                        menu = "1";
                     }
-                    map.put("menuType", menu);
+                    map.put("isAdmin", menu);
                     return Result.success(map, "登录成功");
                 } else {
                     return Result.error("用户名或密码错误");
