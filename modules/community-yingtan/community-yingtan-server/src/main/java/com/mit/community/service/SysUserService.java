@@ -75,25 +75,4 @@ public class SysUserService {
             return list.get(0);
         }
     }
-
-    /**
-     * 查询用户信息，通过用户名密码
-     * @param username 用户名
-     * @param password 密码
-     * @return 用户信息
-     * @author Mr.Deng
-     * @date 13:59 2018/11/28
-     */
-    public SysUser getSysUserByUserNameAndPassword(String username, String password) {
-        EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
-        wrapper.eq("username", username);
-        wrapper.eq("password", password);
-        List<SysUser> list = sysUserMapper.selectList(wrapper);
-        if (list.isEmpty()) {
-            return null;
-        } else {
-            return list.get(0);
-        }
-    }
-
 }
