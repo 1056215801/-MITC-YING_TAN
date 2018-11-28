@@ -136,6 +136,8 @@ public class LoginController {
                         if (update > 0) {
                             updateOrInsert = true;
                         }
+                    } else {
+                        updateOrInsert = true;
                     }
                 } else {
                     //如果该用户名在本地数据库中不存在，则将数据添加到本地数据库
