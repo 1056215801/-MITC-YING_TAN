@@ -3,7 +3,7 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.Warning;
-import com.mit.community.mapper.WarningMapper;
+import com.mit.community.module.pass.mapper.WarningMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

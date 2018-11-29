@@ -2,7 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.TestBook;
-import com.mit.community.mapper.TestBookMapper;
+import com.mit.community.module.pass.mapper.TestBookMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -2,13 +2,11 @@ package com.mit.community.service;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.google.common.collect.Maps;
-import com.mit.community.entity.Building;
 import com.mit.community.entity.Unit;
-import com.mit.community.mapper.UnitMapper;
+import com.mit.community.module.pass.mapper.UnitMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

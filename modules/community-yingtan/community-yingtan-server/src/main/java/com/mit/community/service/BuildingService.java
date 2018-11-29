@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.google.common.collect.Lists;
 import com.mit.community.entity.Building;
-import com.mit.community.mapper.BuildingMapper;
+import com.mit.community.module.pass.mapper.BuildingMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

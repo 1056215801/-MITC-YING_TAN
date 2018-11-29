@@ -2,7 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.SysUser;
-import com.mit.community.mapper.SysUserMapper;
+import com.mit.community.module.pass.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

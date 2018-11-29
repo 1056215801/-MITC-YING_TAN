@@ -2,11 +2,9 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.ActivePeople;
-import com.mit.community.mapper.ActivePeopleMapper;
+import com.mit.community.module.pass.mapper.ActivePeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 活跃人数

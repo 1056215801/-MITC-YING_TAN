@@ -16,7 +16,7 @@ import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.ActivePeople;
 import com.mit.community.entity.Device;
 import com.mit.community.entity.HouseHold;
-import com.mit.community.mapper.AccessControlMapper;
+import com.mit.community.module.pass.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,8 +207,11 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/22 14:29
      */
     public Integer countByCommunityCode(String communityCode) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String dateStr = dateTimeFormatter.format(LocalDateTime.now());
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
+        wrapper.like("access_time", dateStr, SqlLike.RIGHT);
         return accessControlMapper.selectCount(wrapper);
     }
 

@@ -120,20 +120,14 @@ public class PerceptionController {
         Integer roomSize;
         Integer houseHoldSize;
         Integer visitorSize;
+        List<Map<String, Object>> maps;
         int attention = 0;
         if (StringUtils.isNoneBlank(communityCode)) {
             buildingSize = buildingService.countByCommunityCode(communityCode);
             roomSize = roomService.countByCommunityCode(communityCode);
-            houseHoldSize = houseHoldService.countByCommunityCode(communityCode);
+            houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
             visitorSize = visitorService.countByCommunityCode(communityCode);
-            List<Map<String, Object>> maps = houseHoldService.countIdentityTypeByCommunityCode(communityCode);
-            for (Map<String, Object> map1 : maps) {
-                String identityType = map1.get("identity_type").toString();
-                if ("3".equals(identityType) || "4".equals(identityType) || "5".equals(identityType)) {
-                    int num = Integer.parseInt(map1.get("num").toString());
-                    attention += num;
-                }
-            }
+            maps = houseHoldService.countIdentityTypeByCommunityCode(communityCode);
             // 车位
             map.put("ParkingSpace", 460);
             // 社区民警
@@ -148,16 +142,9 @@ public class PerceptionController {
             List<String> communityCodeList = listCommunityCodes("鹰潭市");
             buildingSize = buildingService.countByCommunityCodes(communityCodeList);
             roomSize = roomService.countByCommunityCodes(communityCodeList);
-            houseHoldSize = houseHoldService.countByCommunityCodeList(communityCodeList);
+            houseHoldSize = houseHoldService.listByCommunityCodeList(communityCodeList).size();
             visitorSize = visitorService.countByCommunityCodes(communityCodeList);
-            List<Map<String, Object>> maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
-            for (Map<String, Object> map1 : maps) {
-                String identityType = map1.get("identity_type").toString();
-                if ("3".equals(identityType) || "4".equals(identityType) || "5".equals(identityType)) {
-                    int num = Integer.parseInt(map1.get("num").toString());
-                    attention += num;
-                }
-            }
+            maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
             // 车位
             map.put("ParkingSpace", 460);
             // 社区民警
@@ -168,6 +155,15 @@ public class PerceptionController {
             map.put("buildingManager", 10);
             // 物业
             map.put("property", 20);
+        }
+        if (!maps.isEmpty()) {
+            for (Map<String, Object> map1 : maps) {
+                String identityType = map1.get("identity_type").toString();
+                if ("3".equals(identityType) || "4".equals(identityType) || "5".equals(identityType)) {
+                    int num = Integer.parseInt(map1.get("num").toString());
+                    attention += num;
+                }
+            }
         }
         //楼栋总数
         map.put("buildingSize", buildingSize);
@@ -241,6 +237,7 @@ public class PerceptionController {
         long remainNum;
         if (StringUtils.isNoneBlank(communityCode)) {
             houseHoldSize = houseHoldService.countByCommunityCode(communityCode);
+            //实时进出
             accessControlSize = accessControlService.countByCommunityCode(communityCode);
             // 驻留
             remainNum = accessControlService.countRemainPeopleByCommunityCode(communityCode);

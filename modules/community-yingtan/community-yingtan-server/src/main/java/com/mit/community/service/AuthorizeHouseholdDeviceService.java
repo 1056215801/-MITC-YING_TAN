@@ -1,10 +1,8 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.AuthorizeHouseholdDevice;
-import com.mit.community.mapper.AccessControlMapper;
-import com.mit.community.mapper.AuthorizeHouseholdDeviceMapper;
+import com.mit.community.module.pass.mapper.AuthorizeHouseholdDeviceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
