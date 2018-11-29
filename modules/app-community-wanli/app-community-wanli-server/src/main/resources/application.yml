@@ -4,7 +4,7 @@ logging:
     com.mit: DEBUG
 spring:
   application:
-    name: community-yingtan
+    name: app-community-wanli
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -93,9 +93,9 @@ mybatis:
   mapper-locations: "classpath*:mapper/*.xml"
 
 server:
-  port: 8764
+  port: 9764
   servlet:
-    context-path: /api/communityyingtan/
+    context-path: /api/app/communitywanli/
 
 
 eureka:
@@ -148,7 +148,7 @@ swagger:
   base-package: com.mit.community
   title: com.mit.community
   version: 1.0.0.SNAPSHOT
-  description: community-yingtan
+  description: app-community-wanli
   contact:
     name: community
 #服务调用的配置。
@@ -161,7 +161,7 @@ auth:
     token-header: Authorization
   client:
     # 服务的标识符，必须和数据库一致
-    id: community-yingtan
+    id: app-community-wanli
     # 服务的秘钥， 必须和数据库一致
     secret: 123456
     token-header: x-client-token
@@ -177,7 +177,7 @@ redis:
   password:
   timeout: 2000
   # 服务或应用名
-  sysName: community-yingtan
+  sysName: app-community-wanli
   enable: true
   database: 0
 
@@ -193,12 +193,12 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
 
