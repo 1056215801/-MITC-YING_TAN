@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @date 2018/11/7 11:33
  * @company mitesofor
  */
-@FeignClient("ace-admin")
+@FeignClient("admin")
 public interface ILogService {
     /**
      * @param info

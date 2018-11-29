@@ -16,7 +16,7 @@ import java.util.List;
  * @date 2018/11/7 11:33
  * @company mitesofor
  */
-@FeignClient(value = "ace-admin", fallback = UserServiceFallback.class)
+@FeignClient(value = "admin", fallback = UserServiceFallback.class)
 public interface IUserService {
     /**
      * @param username

@@ -4,7 +4,7 @@ logging:
         com.mit.admin: DEBUG
 spring:
     application:
-        name: ace-admin
+        name: admin
     jackson:
         date-format: yyyy-MM-dd HH:mm:ss
         time-zone: GMT+8
@@ -12,9 +12,9 @@ spring:
     datasource:
       druid:
         name: test
-        url: jdbc:mysql://localhost:3306/ag_admin_v1?useUnicode=true&characterEncoding=UTF8
+        url: jdbc:mysql://192.168.1.222:3306/ag_admin_v1?useUnicode=true&characterEncoding=UTF8
         username: root
-        password: world
+        password: 123456
         # 使用druid数据源
         #type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.jdbc.Driver
@@ -95,14 +95,14 @@ eureka:
         healthCheckUrlPath: /actuator/health
         # docker 部署开启
         prefer-ip-address: true
-        ip-address: localhost
+        ip-address: 192.168.1.52
         instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
         hostname: ${spring.cloud.client.hostname}
     client:
         serviceUrl:
 #            defaultZone: http://localhost:8761/eureka/
                     # docker 部署开启
-            defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8761}/eureka/
+            defaultZone: http://${EUREKA_HOST:192.168.1.52}:${EUREKA_PORT:8761}/eureka/
 # 必须配置
 feign:
   httpclient:
@@ -137,18 +137,18 @@ hystrix:
 swagger:
     enabled: true
     base-package: com.mit.admin
-    title: ace-admin
+    title: admin
     version: 1.0.0.SNAPSHOT
     description: 管理后端服务
     contact:
         name: admin
 
 auth:
-  serviceId: ace-auth
+  serviceId: auth
   user:
     token-header: Authorization
   client:
-    id: ace-admin
+    id: admin
     secret: 123456
     token-header: x-client-token
 
@@ -158,12 +158,12 @@ redis:
          maxActive: 300
          maxIdle: 100
          maxWait: 1000
-    host: ${REDIS_HOST:localhost}
+    host: ${REDIS_HOST:192.168.1.222}
     port:  ${REDIS_PORT:6379}
     password:
     timeout: 2000
     # 服务或应用名
-    sysName: ace-admin
+    sysName: admin
     enable: true
     database: 0
 
