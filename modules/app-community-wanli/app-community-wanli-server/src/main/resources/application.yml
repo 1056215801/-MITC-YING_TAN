@@ -3,6 +3,12 @@ logging:
     #        tk.mybatis: DEBUG
     com.mit: DEBUG
 spring:
+  redis:
+    database: 2
+    host: ${REDIS_HOST:192.168.1.222}
+    port: ${REDIS_PORT:6379}
+    pool:
+    max-active: 20
   application:
     name: app-community-wanli
   jackson:
