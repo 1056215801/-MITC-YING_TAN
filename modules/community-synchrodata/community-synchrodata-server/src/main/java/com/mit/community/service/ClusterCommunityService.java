@@ -132,7 +132,7 @@ public class ClusterCommunityService {
         map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
         String invoke = DnakeWebApiUtil.invoke(url, map);
         JSONObject jsonObject = JSONObject.fromObject(invoke);
-        JSONArray jsonArray = jsonObject.getJSONArray("zoneList");
+        JSONArray jsonArray = jsonObject.getJSONArray("communityList");
         List<ClusterCommunity> clusterCommunityList = JSON.parseArray(jsonArray.toString(), ClusterCommunity.class);
         clusterCommunityList.forEach(item -> {
             item.setGmtCreate(LocalDateTime.now());

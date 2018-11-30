@@ -89,14 +89,14 @@ eureka:
     healthCheckUrlPath: /actuator/health
     # docker 部署开启
     prefer-ip-address: true
-    ip-address: 192.168.1.52
+    ip-address: 192.168.1.222
     instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
     hostname: ${spring.cloud.client.hostname}
   client:
     serviceUrl:
       #            defaultZone: http://localhost:8761/eureka/
       # docker 部署开启
-      defaultZone: http://${EUREKA_HOST:192.168.1.52}:${EUREKA_PORT:8761}/eureka/
+      defaultZone: http://${EUREKA_HOST:192.168.1.222}:${EUREKA_PORT:8761}/eureka/
 
 
 
