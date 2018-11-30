@@ -3,7 +3,7 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.AgeConstruction;
-import com.mit.community.mapper.AgeConstructionMapper;
+import com.mit.community.module.pass.mapper.AgeConstructionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

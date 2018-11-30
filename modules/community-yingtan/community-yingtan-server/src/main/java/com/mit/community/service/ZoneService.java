@@ -4,21 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
-import com.dnake.constant.DnakeConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mit.community.entity.Building;
 import com.mit.community.entity.Zone;
-import com.mit.community.entity.modelTest.ZoneList;
-import com.mit.community.mapper.ZoneMapper;
+import com.mit.community.module.pass.mapper.ZoneMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

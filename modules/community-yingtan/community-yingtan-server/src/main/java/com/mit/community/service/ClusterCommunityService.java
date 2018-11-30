@@ -2,14 +2,12 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.mapper.ClusterCommunityMapper;
+import com.mit.community.module.pass.mapper.ClusterCommunityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 集群小区业务层

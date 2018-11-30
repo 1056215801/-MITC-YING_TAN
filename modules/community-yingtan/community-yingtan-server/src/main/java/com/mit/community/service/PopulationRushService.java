@@ -3,8 +3,8 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.PopulationRush;
-import com.mit.community.mapper.AccessControlMapper;
-import com.mit.community.mapper.PopulationRushMapper;
+import com.mit.community.module.pass.mapper.AccessControlMapper;
+import com.mit.community.module.pass.mapper.PopulationRushMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.mit.community.entity.Room;
-import com.mit.community.mapper.RoomMapper;
+import com.mit.community.module.pass.mapper.RoomMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +114,7 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
     /**
      * 统计房间总数，通过一组小区code
      * @param communityCodes 小区code列表
-     * @return 房间信息列表
+     * @return 房间总数
      * @author Mr.Deng
      * @date 15:06 2018/11/21
      */
