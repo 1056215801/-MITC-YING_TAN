@@ -2,8 +2,13 @@ package com.mit.community.module.system.controller;
 
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.ClusterCommunity;
+import com.mit.community.entity.Device;
 import com.mit.community.entity.User;
 import com.mit.community.module.system.service.UserService;
+import com.mit.community.service.ClusterCommunityService;
+import com.mit.community.service.DeviceService;
+import com.mit.community.service.HouseHoldService;
 import com.mit.community.service.RedisService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -14,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 注册登陆
@@ -32,10 +39,17 @@ public class LoginController {
 
     private final UserService userService;
 
+    private final DeviceService deviceService;
+
+    private final ClusterCommunityService clusterCommunityService;
+
+
     @Autowired
-    public LoginController(RedisService redisService, UserService userService) {
+    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService, ClusterCommunityService clusterCommunityService) {
         this.redisService = redisService;
         this.userService = userService;
+        this.deviceService = deviceService;
+        this.clusterCommunityService = clusterCommunityService;
     }
 
     /***
@@ -158,5 +172,43 @@ public class LoginController {
         }
         return Result.success("登陆成功");
     }
+
+
+    /**
+     * @param cellphone 手机号
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/11/30 11:48
+     * @company mitesofor
+    */
+    @GetMapping("/listClusterCommunityByUserCellphone")
+    @ApiOperation(value = "查询用户授权的所有小区", notes = "传参;cellphone 手机号")
+    public Result listClusterCommunityByUserCellphone(String cellphone) {
+        List<ClusterCommunity> clusterCommunities = clusterCommunityService.listClusterCommunityByUserCellphone(cellphone);
+        if(clusterCommunities == null){
+            return Result.success("没有关联小区");
+        }
+        return Result.success(clusterCommunities);
+    }
+
+    /**
+     * @param communityCode 小区code
+     * @param cellphone 手机号
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/11/30 11:50
+     * @company mitesofor
+    */
+    @GetMapping("/listDeviceByCommunityCodeAndCellphone")
+    @ApiOperation(value = "全部钥匙", notes = "传参;communityCode 小区code, cellphone 手机号")
+    public Result listDeviceByCommunityCodeAndCellphone(String communityCode, String cellphone) {
+        List<Device> devices = deviceService.listDeviceByCommunityCodeAndCellphone(communityCode,
+                cellphone);
+        if(devices == null){
+            return Result.success("没有钥匙");
+        }
+        return Result.success(devices);
+    }
+
 
 }

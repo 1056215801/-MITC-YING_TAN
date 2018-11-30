@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
  * @company mitesofor
  */
 @Data
-public class BaseEntity {
+public class BaseEntity implements Serializable {
 
     @TableId(type = IdType.AUTO)
     protected Integer id;
