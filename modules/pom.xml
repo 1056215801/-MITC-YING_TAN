@@ -17,5 +17,6 @@
         <module>MIT-Cloud</module>
         <module>community-yingtan</module>
         <module>app-community-wanli</module>
+		<module>community-synchrodata</module>
     </modules>
 </project>
