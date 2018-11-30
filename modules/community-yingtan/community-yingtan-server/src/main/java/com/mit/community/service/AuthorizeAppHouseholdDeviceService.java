@@ -2,8 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.AuthorizeAppHouseholdDevice;
-import com.mit.community.mapper.AuthorizeAppHouseholdDeviceMapper;
-import com.mit.community.mapper.AuthorizeHouseholdDeviceMapper;
+import com.mit.community.module.pass.mapper.AuthorizeAppHouseholdDeviceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

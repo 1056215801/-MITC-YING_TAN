@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.Visitor;
 import com.mit.community.entity.Zone;
-import com.mit.community.mapper.VisitorMapper;
+import com.mit.community.module.pass.mapper.VisitorMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;

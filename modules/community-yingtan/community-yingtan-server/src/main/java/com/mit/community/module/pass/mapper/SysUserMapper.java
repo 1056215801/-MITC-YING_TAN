@@ -1,8 +1,7 @@
-package com.mit.community.mapper;
+package com.mit.community.module.pass.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.mit.community.entity.SysUser;
-import com.mit.community.entity.TestBook;
 
 /**
  * 用户

@@ -1,7 +1,7 @@
 package com.mit.community.service;
 
 import com.mit.community.entity.DeviceCall;
-import com.mit.community.mapper.DeviceCallMapper;
+import com.mit.community.module.pass.mapper.DeviceCallMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

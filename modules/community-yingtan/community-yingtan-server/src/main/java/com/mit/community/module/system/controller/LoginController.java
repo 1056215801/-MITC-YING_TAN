@@ -111,13 +111,13 @@ public class LoginController {
             HttpLogin httpLogin = new HttpLogin(username, password);
             //判断是否是集群管理账户访问不同的登录接口
             //是集群账户
+            boolean loginWhether = false;
             if ("ytyuehu".equals(username)) {
                 httpLogin.loginAdmin();
             } else {
                 //是小区管理账户
                 httpLogin.loginUser();
             }
-            boolean loginWhether = false;
             //判断是否登录成功
             for (Header h : httpLogin.getHeaders()) {
                 if ("Location".equals(h.getName())) {

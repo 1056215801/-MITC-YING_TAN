@@ -88,7 +88,7 @@ sample:
     enabled: false
 
 mybatis:
-  basepackage: com.mit.community.mapper
+  basepackage: com.mit.community.module.pass.mapper
   xmlLocation: classpath:mapper/**/*.xml
   mapper-locations: "classpath*:mapper/*.xml"
 

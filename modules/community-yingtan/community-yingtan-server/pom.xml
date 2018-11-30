@@ -13,7 +13,7 @@
         <!-- MyBatis Generator -->
         <!-- Java接口和实体类 -->
         <targetJavaProject>${basedir}/src/main/java</targetJavaProject>
-        <targetMapperPackage>com.mit.community.mapper</targetMapperPackage>
+        <targetMapperPackage>com.mit.community.module.pass.mapper</targetMapperPackage>
         <targetModelPackage>com.mit.community.entity</targetModelPackage>
         <!-- XML生成路径 -->
         <targetResourcesProject>${basedir}/src/main/resources</targetResourcesProject>

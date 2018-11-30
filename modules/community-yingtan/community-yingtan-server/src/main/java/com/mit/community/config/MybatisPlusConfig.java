@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * MybatisPlus配置
  */
 @Configuration
-@MapperScan(basePackages = {"com.mit.community.mapper", "com.mit.community.*.*.mapper"})
+@MapperScan(basePackages = {"com.mit.community.module.pass.mapper", "com.mit.community.*.*.mapper"})
 public class MybatisPlusConfig {
 
     /**
