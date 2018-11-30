@@ -1,12 +1,17 @@
 package com.mit.community.module.system.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.common.util.DateUtils;
+import com.mit.common.util.UUIDUtils;
 import com.mit.community.entity.User;
+import com.mit.community.entity.UserLabel;
 import com.mit.community.module.system.mapper.UserMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.parser.Entity;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,9 +26,12 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+    private final UserLabelService userLabelService;
+
     @Autowired
-    public UserService(UserMapper userMapper) {
+    public UserService(UserMapper userMapper, UserLabelService userLabelService) {
         this.userMapper = userMapper;
+        this.userLabelService = userLabelService;
     }
 
     /**
@@ -34,6 +42,8 @@ public class UserService {
      * @company mitesofor
     */
     public void save(User user){
+        user.setGmtCreate(LocalDateTime.now());
+        user.setGmtModified(LocalDateTime.now());
         userMapper.insert(user);
     }
 
@@ -95,6 +105,46 @@ public class UserService {
             return null;
         }else{
             return users.get(0);
+        }
+    }
+
+    /**
+     * 注册
+     * @param cellphone 电话号码
+     * @param username 用户名
+     * @param password 密码
+     * @param labelCodes 标签code
+     * @author shuyy
+     * @date 2018/11/30 9:29
+     * @company mitesofor
+    */
+    @Transactional(rollbackFor = Exception.class)
+    public void register(String cellphone, String username, String password, String[] labelCodes){
+        User user = new User(username, password, cellphone, (short) 1, StringUtils.EMPTY,
+                cellphone, StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        this.save(user);
+        for (String labelCode : labelCodes) {
+            UserLabel userLabel = new UserLabel(labelCode, user.getId());
+            userLabelService.save(userLabel);
+        }
+    }
+
+    /**
+     * 选择标签
+     * @param cellphone 电话号码
+     * @param labelList label列表
+     * @author shuyy
+     * @date 2018/11/30 9:41
+     * @company mitesofor
+    */
+    @Transactional(rollbackFor = Exception.class)
+    public void chooseLabelList(String cellphone, String[] labelList){
+        User user = new User(cellphone, UUIDUtils.generateShortUuid(), StringUtils.EMPTY, (short) 1, StringUtils.EMPTY, cellphone,
+                StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        this.save(user);
+        for (String labelCode : labelList) {
+            UserLabel userLabel = new UserLabel(labelCode, user.getId());
+            userLabelService.save(userLabel);
         }
     }
 

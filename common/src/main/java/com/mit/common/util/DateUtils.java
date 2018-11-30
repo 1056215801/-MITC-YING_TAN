@@ -131,4 +131,15 @@ public class DateUtils {
         String strDate = dateTime.format(formatter);
         return strDate;
     }
+    /**
+     * 获取逻辑意义为空，且能存储进数据库的时间
+     * @return java.time.LocalDateTime
+     * @throws
+     * @author shuyy
+     * @date 2018/11/30 9:10
+     * @company mitesofor
+    */
+    public static LocalDateTime getNull(){
+        return LocalDateTime.of(1990, 1, 1, 0, 0, 0);
+    }
 }

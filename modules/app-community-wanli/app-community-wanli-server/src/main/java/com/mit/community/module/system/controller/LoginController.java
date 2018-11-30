@@ -1,7 +1,7 @@
 package com.mit.community.module.system.controller;
 
-import com.mit.common.util.UUIDUtils;
 import com.mit.community.constants.Constants;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.User;
 import com.mit.community.module.system.service.UserService;
 import com.mit.community.service.RedisService;
@@ -9,13 +9,11 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
 
 /**
  * 注册登陆
@@ -27,7 +25,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping(value = "/login")
 @Slf4j
-@Api(value = "注册登录")
+@Api(tags = "注册登录")
 public class LoginController {
 
     private final RedisService redisService;
@@ -51,7 +49,7 @@ public class LoginController {
     @GetMapping("/getMobileVerificationCode")
     @ApiOperation(value = "获取手机验证码")
     public Result getMobileVerificationCode(String cellphone) {
-        redisService.set(Constants.VERIFICATION_CODE + cellphone, "123456", 120L);
+        redisService.set(Constants.VERIFICATION_CODE + cellphone, "123456", RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
         return Result.success("发送成功");
     }
 
@@ -63,7 +61,7 @@ public class LoginController {
      * @date 2018/11/29 11:02
      * @company mitesofor
      */
-    @GetMapping("/cellphoneLogin")
+    @PostMapping("/cellphoneLogin")
     @ApiOperation(value = "手机号登陆", notes = "传参;cellphone 手机号：verificationCode 手机验证码")
     public Result cellphoneLogin(String cellphone, String verificationCode) {
         Object o = redisService.get(Constants.VERIFICATION_CODE + cellphone);
@@ -72,10 +70,31 @@ public class LoginController {
         }
         User user = userService.getByCellphone(cellphone);
         if (user == null) {
-            user = new User(cellphone, UUIDUtils.generateShortUuid(), StringUtils.EMPTY, (short) 1, StringUtils.EMPTY, cellphone, StringUtils.EMPTY, LocalDateTime.MIN, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
-            userService.save(user);
+            redisService.set(Constants.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
+            return Result.success("第一次登陆");
         }
         return Result.success("登陆成功");
+    }
+
+    /**
+     * 选择标签
+     *
+     * @param cellphone 电话号码
+     * @param labelList label列表
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/11/30 9:39
+     * @company mitesofor
+     */
+    @PostMapping("chooseLabelList")
+    @ApiOperation(value = "选择标签", notes = "传参;cellphone 手机号：labelList 多个标签")
+    public Result chooseLabelList(String cellphone, String[] labelList) {
+        Object o = redisService.get(Constants.VERIFICATION_SUCCESS + cellphone);
+        if (o == null) {
+            return Result.error("请先登陆");
+        }
+        userService.chooseLabelList(cellphone, labelList);
+        return Result.success("成功");
     }
 
     /***
@@ -93,7 +112,7 @@ public class LoginController {
         if (o == null || !verificationCode.equals(o.toString())) {
             return Result.error("验证码错误");
         }
-        redisService.set(Constants.VERIFICATION_SUCCESS + cellphone, cellphone, 2L);
+        redisService.set(Constants.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
         return Result.success("验证成功");
     }
 
@@ -106,17 +125,14 @@ public class LoginController {
      * @date 2018/11/29 11:24
      * @company mitesofor
      */
-    @GetMapping("/register")
+    @PostMapping("/register")
     @ApiOperation(value = "注册", notes = "传参;cellphone 手机号：username用户名，password 密码")
-    public Result register(String cellphone, String username, String password, String[] label) {
+    public Result register(String cellphone, String username, String password, String[] labelCodes) {
         Object o = redisService.get(Constants.VERIFICATION_SUCCESS + cellphone);
         if (o == null) {
             return Result.error("请在2分钟内完成注册");
         }
-        User user = new User(username, password, cellphone, (short) 1, StringUtils.EMPTY,
-                cellphone, StringUtils.EMPTY, LocalDateTime.MIN, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
-
-        userService.save(user);
+        userService.register(cellphone, username, password, labelCodes);
         return Result.success("注册成功");
     }
 
@@ -130,7 +146,7 @@ public class LoginController {
      * @date 2018/11/29 11:32
      * @company mitesofor
      */
-    @GetMapping("/")
+    @PostMapping("/")
     @ApiOperation(value = "登陆", notes = "传参;username 用户名或手机号、password 密码")
     public Result login(String username, String password) {
         User user = userService.getByUsernameAndPassword(username, password);
@@ -142,6 +158,5 @@ public class LoginController {
         }
         return Result.success("登陆成功");
     }
-
 
 }

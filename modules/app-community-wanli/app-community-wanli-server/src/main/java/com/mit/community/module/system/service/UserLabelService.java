@@ -5,6 +5,8 @@ import com.mit.community.module.system.mapper.UserLabelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 /**
  * 用户标签
  *
@@ -29,8 +31,9 @@ public class UserLabelService {
      * @company mitesofor
     */
     public void save(UserLabel userLabel){
+        userLabel.setGmtCreate(LocalDateTime.now());
+        userLabel.setGmtModified(LocalDateTime.now());
         userLabelMapper.insert(userLabel);
     }
-
 
 }
