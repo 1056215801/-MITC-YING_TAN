@@ -18,7 +18,7 @@ import com.mit.community.service.VisitorService;
  * @date 2018/11/21
  * @company mitesofor
  */
-//@Component
+@Component
 public class VisitorSchedule {
 
     private final VisitorService visitorService;
@@ -31,7 +31,7 @@ public class VisitorSchedule {
         this.clusterCommunityService = clusterCommunityService;
     }
 
-    @Scheduled(cron = "0 0 0 */1 * ?")
+    @Scheduled(cron = "0 30 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

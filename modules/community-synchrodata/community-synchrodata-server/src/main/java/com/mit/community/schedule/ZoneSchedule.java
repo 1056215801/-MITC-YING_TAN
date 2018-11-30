@@ -18,7 +18,7 @@ import com.mit.community.service.ZoneService;
  * @date 2018/11/20
  * @company mitesofor
  */
-//@Component
+@Component
 public class ZoneSchedule {
 
     private final ZoneService zoneService;
@@ -38,7 +38,7 @@ public class ZoneSchedule {
      * @date 2018/11/20 11:28
      * @company mitesofor
     */
-    @Scheduled(cron = "0 0 0 */5 * ?")
+    @Scheduled(cron = "0 10 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

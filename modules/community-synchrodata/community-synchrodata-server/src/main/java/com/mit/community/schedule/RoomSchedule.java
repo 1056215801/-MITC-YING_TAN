@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/22
  * @company mitesofor
  */
-//@Component
+@Component
 public class RoomSchedule {
 
     private final RoomService roomService;
@@ -43,7 +43,7 @@ public class RoomSchedule {
         this.unitService = unitService;
     }
 
-    @Scheduled(cron = "0 0 0 */5 * ?")
+    @Scheduled(cron = "0 25 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

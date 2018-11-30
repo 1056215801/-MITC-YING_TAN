@@ -6,6 +6,7 @@ import com.mit.community.entity.HouseHold;
 import com.mit.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/19
  * @company mitesofor
  */
-//@Component
+@Component
 public class HouseholdSchedule {
 
     private final HouseHoldService houseHoldService;
@@ -53,7 +54,7 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-//    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "0 40 1 * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         // 先删除本地数据库，再插入
@@ -83,7 +84,7 @@ public class HouseholdSchedule {
      * @date 2018/11/24 10:36
      * @company mitesofor
      */
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "0 40 3 * * ?")
     public void parseIdentityType() {
         List<Map<String, Object>> maps = houseHoldService.listActiveRoomId();
         maps.forEach(item -> {

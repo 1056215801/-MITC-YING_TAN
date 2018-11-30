@@ -17,7 +17,7 @@ import java.util.List;
  * @date 2018/11/23
  * @company mitesofor
  */
-//@Component
+@Component
 public class PopulationRushSchedule {
 
     private final PopulationRushService populationRushService;
@@ -30,7 +30,7 @@ public class PopulationRushSchedule {
         this.clusterCommunityService = clusterCommunityService;
     }
 
-    @Scheduled(cron = "0 0 0 */29 * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void  update (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

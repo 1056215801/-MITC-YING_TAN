@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/22
  * @company mitesofor
  */
-//@Component
+@Component
 public class BigDataSchedule {
 
 
@@ -52,7 +52,7 @@ public class BigDataSchedule {
      * @date 2018/11/22 11:35
      * @company mitesofor
     */
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "0 45 3 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void countActivePeopleNum (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
@@ -74,7 +74,7 @@ public class BigDataSchedule {
      * @date 2018/11/23 11:49
      * @company mitesofor
     */
-    @Scheduled(cron = "0 0 0 */29 * ?")
+    @Scheduled(cron = "0 0 4 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void  countAgeConstruction (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

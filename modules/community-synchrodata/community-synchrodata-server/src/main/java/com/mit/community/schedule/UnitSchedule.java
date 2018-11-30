@@ -1,22 +1,18 @@
 package com.mit.community.schedule;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.mit.community.entity.Building;
-import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.entity.Unit;
 import com.mit.community.entity.Zone;
 import com.mit.community.service.BuildingService;
 import com.mit.community.service.ClusterCommunityService;
 import com.mit.community.service.UnitService;
 import com.mit.community.service.ZoneService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 单元定时同步数据
@@ -25,7 +21,7 @@ import com.mit.community.service.ZoneService;
  * @date 2018/11/21
  * @company mitesofor
  */
-//@Component
+@Component
 public class UnitSchedule {
 
     private final BuildingService buildingService;
@@ -52,7 +48,7 @@ public class UnitSchedule {
      * @date 2018/11/21 9:21
      * @company mitesofor
     */
-    @Scheduled(cron = "0 0 0 */5 * ?")
+    @Scheduled(cron = "0 20 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

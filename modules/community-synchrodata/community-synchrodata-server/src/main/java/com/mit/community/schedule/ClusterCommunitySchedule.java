@@ -27,7 +27,7 @@ public class ClusterCommunitySchedule {
         this.clusterCommunityService = clusterCommunityService;
     }
 
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         clusterCommunityService.remove();

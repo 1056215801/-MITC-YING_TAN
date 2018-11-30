@@ -16,7 +16,7 @@ import java.util.List;
  * @date 2018/11/16
  * @company mitesofor
  */
-//@Component
+@Component
 public class AccessControlSchedule {
     
     private final AccessControlService accessControlService;
@@ -35,7 +35,7 @@ public class AccessControlSchedule {
      * @date 2018/11/16 16:55
      * @company mitesofor
     */
-    @Scheduled(cron = "0 */10 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void importIncrement (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         List<AccessControl> allAccessControlsList = accessControlService.listIncrementByCommunityCodeList(communityCodeList);

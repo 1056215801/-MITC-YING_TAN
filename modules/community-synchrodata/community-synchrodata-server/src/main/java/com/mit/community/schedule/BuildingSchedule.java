@@ -19,7 +19,7 @@ import com.mit.community.service.ZoneService;
  * @date 2018/11/20
  * @company mitesofor
  */
-//@Component
+@Component
 public class BuildingSchedule {
 
     private final BuildingService buildingService;
@@ -34,7 +34,7 @@ public class BuildingSchedule {
         this.zoneService = zoneService;
     }
 
-    @Scheduled(cron = "0 0 0 */5 * ?")
+    @Scheduled(cron = "0 15 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void remoteAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

@@ -1,12 +1,22 @@
 package com.mit.community.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
+import com.mit.community.common.HttpLogin;
+import com.mit.community.entity.SysUser;
 import com.mit.community.entity.Warning;
+import com.mit.community.entity.Zone;
 import com.mit.community.mapper.WarningMapper;
+import org.apache.commons.httpclient.NameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +30,9 @@ import java.util.List;
 public class WarningService extends ServiceImpl<WarningMapper, Warning> {
 
     private final WarningMapper warningMapper;
+
+    @Autowired
+    private SysUserService sysUserService;
 
     @Autowired
     public WarningService(WarningMapper warningMapper) {
@@ -69,6 +82,52 @@ public class WarningService extends ServiceImpl<WarningMapper, Warning> {
         EntityWrapper<Warning> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         return warningMapper.selectCount(wrapper);
+    }
+
+    /**
+     * 从dnake平台查询所有预警
+     * @return java.util.List<com.mit.community.entity.Warning>
+     * @author shuyy
+     * @date 2018/11/30 16:26
+     * @company mitesofor
+    */
+    public List<Warning> listFromDnake(){
+        List<SysUser> sysUsers = sysUserService.list();
+        final ArrayList<Warning> result = Lists.newArrayListWithCapacity(1000);
+        sysUsers.forEach(sysUser -> {
+            this.listFromDnakePage(sysUser, 1, result);
+        });
+        return result;
+    }
+    /**
+     * 从dnake平台分页查询预警
+     * @param sysUser 用户
+     * @param pageNum 当前页
+     * @param result 结果集合
+     * @author shuyy
+     * @date 2018/11/30 16:25
+     * @company mitesofor
+    */
+    private void listFromDnakePage(SysUser sysUser, Integer pageNum, List<Warning> result){
+        HttpLogin httpLogin = new HttpLogin(sysUser.getUsername(), sysUser.getPassword());
+        httpLogin.loginUser();
+        String url = "http://cmp.ishanghome.com/cmp/deviceAlarm/load";
+        NameValuePair[] data = {new NameValuePair("page", pageNum + ""),
+                new NameValuePair("list", "100")};
+        String post = httpLogin.post(url, data, httpLogin.getCookie());
+        JSONObject jsonObject = JSONObject.parseObject(post);
+        JSONArray jsonArray = jsonObject.getJSONArray("list");
+        List<Warning> warningList = JSON.parseArray(jsonArray.toString(), Warning.class);
+        warningList.forEach(warning -> {
+            warning.setGmtCreate(LocalDateTime.now());
+            warning.setGmtModified(LocalDateTime.now());
+            warning.setCommunityCode(sysUser.getCommunityCode());
+        });
+        result.addAll(warningList);
+        int s = jsonObject.getInteger("lastPage");
+        if(s > pageNum){
+            this.listFromDnakePage(sysUser, ++pageNum, result);
+        }
     }
 
 }
