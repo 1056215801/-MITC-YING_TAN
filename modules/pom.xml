@@ -16,5 +16,6 @@
         <module>interface</module>
         <module>MIT-Cloud</module>
         <module>community-yingtan</module>
+        <module>app-community-wanli</module>
     </modules>
 </project>

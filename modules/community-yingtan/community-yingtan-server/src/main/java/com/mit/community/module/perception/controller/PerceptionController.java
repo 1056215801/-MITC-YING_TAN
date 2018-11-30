@@ -42,12 +42,13 @@ public class PerceptionController {
     private final VisitorService visitorService;
     private final AccessControlService accessControlService;
     private final RoomTypeConstructionService roomTypeConstructionService;
+    private final WarningService warningService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
                                 HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
                                 VisitorService visitorService, AccessControlService accessControlService,
-                                RoomTypeConstructionService roomTypeConstructionService) {
+                                RoomTypeConstructionService roomTypeConstructionService, WarningService warningService) {
         this.buildingService = buildingService;
         this.roomService = roomService;
         this.houseHoldService = houseHoldService;
@@ -55,10 +56,11 @@ public class PerceptionController {
         this.visitorService = visitorService;
         this.accessControlService = accessControlService;
         this.roomTypeConstructionService = roomTypeConstructionService;
+        this.warningService = warningService;
     }
 
     /**
-     * 获取当前地区天气
+     * 查询当前地区天气
      * @param local 地区名拼音
      * @return Result
      * @author Mr.Deng
@@ -77,12 +79,12 @@ public class PerceptionController {
                     "&unit=c";
             String s = HttpUtil.sendGet(url);
             JSONObject json = JSON.parseObject(s);
-            return Result.success(json, "OK");
+            return Result.success(json);
         }
     }
 
     /**
-     * 通过城市名获取所有小区code
+     * 查询所有小区code，通过城市名
      * @param cityName 城市名
      * @return result
      * @author Mr.Deng
@@ -114,15 +116,24 @@ public class PerceptionController {
                     "neighborhoodCommittee 居委干部、property 物业人员、CommunityPolice 社区民警")
     public Result countCommunityStatistics(String communityCode) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(10);
-        int buildingSize;
-        int roomSize;
-        int houseHoldSize;
-        int visitorSize;
+        Integer buildingSize;
+        Integer roomSize;
+        Integer houseHoldSize;
+        Integer visitorSize;
+        int attention = 0;
         if (StringUtils.isNoneBlank(communityCode)) {
-            buildingSize = buildingService.listByCommunityCode(communityCode).size();
-            roomSize = roomService.listByCommunityCode(communityCode).size();
-            houseHoldSize = houseHoldService.getByCommunityCode(communityCode).size();
-            visitorSize = visitorService.listByCommunityCode(communityCode).size();
+            buildingSize = buildingService.countByCommunityCode(communityCode);
+            roomSize = roomService.countByCommunityCode(communityCode);
+            houseHoldSize = houseHoldService.countByCommunityCode(communityCode);
+            visitorSize = visitorService.countByCommunityCode(communityCode);
+            List<Map<String, Object>> maps = houseHoldService.countIdentityTypeByCommunityCode(communityCode);
+            for (Map<String, Object> map1 : maps) {
+                String identityType = map1.get("identity_type").toString();
+                if ("3".equals(identityType) || "4".equals(identityType) || "5".equals(identityType)) {
+                    int num = Integer.parseInt(map1.get("num").toString());
+                    attention += num;
+                }
+            }
             // 车位
             map.put("ParkingSpace", 460);
             // 社区民警
@@ -133,14 +144,20 @@ public class PerceptionController {
             map.put("buildingManager", 10);
             // 物业
             map.put("property", 20);
-            // 关爱/关注进出
-            map.put("attention", 320);
         } else {
-            List<String> list = listCommunityCodes("鹰潭市");
-            buildingSize = buildingService.listByCommunityCodes(list).size();
-            roomSize = roomService.listByCommunityCodes(list).size();
-            houseHoldSize = houseHoldService.listByCommunityCodeList(list).size();
-            visitorSize = visitorService.listByCommunityCodes(list).size();
+            List<String> communityCodeList = listCommunityCodes("鹰潭市");
+            buildingSize = buildingService.countByCommunityCodes(communityCodeList);
+            roomSize = roomService.countByCommunityCodes(communityCodeList);
+            houseHoldSize = houseHoldService.countByCommunityCodeList(communityCodeList);
+            visitorSize = visitorService.countByCommunityCodes(communityCodeList);
+            List<Map<String, Object>> maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
+            for (Map<String, Object> map1 : maps) {
+                String identityType = map1.get("identity_type").toString();
+                if ("3".equals(identityType) || "4".equals(identityType) || "5".equals(identityType)) {
+                    int num = Integer.parseInt(map1.get("num").toString());
+                    attention += num;
+                }
+            }
             // 车位
             map.put("ParkingSpace", 460);
             // 社区民警
@@ -151,8 +168,6 @@ public class PerceptionController {
             map.put("buildingManager", 10);
             // 物业
             map.put("property", 20);
-            // 关爱/关注进出
-            map.put("attention", 320);
         }
         //楼栋总数
         map.put("buildingSize", buildingSize);
@@ -162,11 +177,13 @@ public class PerceptionController {
         map.put("houseHoldSize", houseHoldSize);
         // 实时访客
         map.put("realTimeVisitor", visitorSize);
-        return Result.success(map, "OK");
+        // 关爱/关注进出
+        map.put("attention", attention);
+        return Result.success(map);
     }
 
     /**
-     * 获取男女比例
+     * 查询男女比例
      * @return result
      * @author Mr.Deng
      * @date 16:18 2018/11/19
@@ -176,12 +193,12 @@ public class PerceptionController {
     public Result countSex(String communityCode) {
         Map<String, Object> sex;
         if (StringUtils.isNoneBlank(communityCode)) {
-            sex = houseHoldService.getSexByCommunityCode(communityCode);
+            sex = houseHoldService.mapSexByCommunityCode(communityCode);
         } else {
             List<String> list = listCommunityCodes("鹰潭市");
             sex = houseHoldService.listSexByCommunityCodeList(list);
         }
-        return Result.success(sex, "ok");
+        return Result.success(sex);
     }
 
     /**
@@ -204,10 +221,11 @@ public class PerceptionController {
         map.put("overseasPopulation", 0);
         //其他
         map.put("other", fieldLocalPeople.get("other"));
-        return Result.success(map, "OK");
+        return Result.success(map);
     }
 
     /**
+     * 人口总数、驻留总数、总通行次数、预警总数
      * @return result
      * @author Mr.Deng
      * @date 17:47 2018/11/19
@@ -219,6 +237,7 @@ public class PerceptionController {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
         Integer houseHoldSize;
         Integer accessControlSize;
+        Integer totalEarlySize;
         long remainNum;
         if (StringUtils.isNoneBlank(communityCode)) {
             houseHoldSize = houseHoldService.countByCommunityCode(communityCode);
@@ -226,12 +245,13 @@ public class PerceptionController {
             // 驻留
             remainNum = accessControlService.countRemainPeopleByCommunityCode(communityCode);
             // 预警总数
-            map.put("totalEarlyWarning", 4);
+            totalEarlySize = warningService.countByCommunityCode(communityCode);
         } else {
             List<String> list = listCommunityCodes("鹰潭市");
             houseHoldSize = houseHoldService.countByCommunityCodeList(list);
             accessControlSize = accessControlService.countByCommunityCodes(list);
             remainNum = accessControlService.countRemainPeopleByCommunityCodes(list);
+            totalEarlySize = warningService.countByCommunityCodeList(list);
             map.put("totalEarlyWarning", 50);
         }
         map.put("totalResident", remainNum);
@@ -239,16 +259,18 @@ public class PerceptionController {
         map.put("totalPopulation", houseHoldSize);
         // 实时进出
         map.put("realTimeAccess", accessControlSize);
+        map.put("totalEarlyWarning", totalEarlySize);
         return Result.success(map);
     }
 
     /**
+     * 房屋数据感知
      * @return result
      * @author Mr.Deng
      * @date 17:22 2018/11/19
      */
     @GetMapping("/countHousingDataPerception")
-    @ApiOperation(value = "房屋数据感知", notes = "不传默认返回鹰潭所有小区房屋数据的总和。  \n" +
+    @ApiOperation(value = "房屋数据感知", notes = "不传默认返回鹰潭所有小区房屋数据的总和。 \n" +
             "外来人口房屋数量 foreignPopulation;" +
             "外来人口其他房屋数量 foreignOther;" +
             "外来人口自住房屋数量 foreignSelf;" +

@@ -117,12 +117,29 @@ public class BigDataController {
             "返回参数：province 省份、num 人数")
     public Result countPopulationDistributionByCommunityCode(String communityCode) {
         List<Map<String, Object>> maps;
+        Map<String, Object> map1 = Maps.newHashMapWithExpectedSize(2);
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
             maps = houseHoldService.countPopulationDistributionByCommunityCodeList(communityCodeList);
         } else {
             maps = houseHoldService.countPopulationDistributionByCommunityCode(communityCode);
         }
+        int num = 0;
+        for (Map<String, Object> map : maps) {
+            if ("".equals(map.get("province"))) {
+                map.put("province", "未知");
+            }
+            num += Integer.parseInt(map.get("num").toString());
+        }
+        map1.put("province", "全国");
+        map1.put("num", num);
+        maps.add(map1);
+        //按照num进行降序排序
+        maps.sort((o1, o2) -> {
+            Integer v1 = Integer.valueOf(o1.get("num").toString());
+            Integer v2 = Integer.valueOf(o2.get("num").toString());
+            return v2.compareTo(v1);
+        });
         return Result.success(maps);
     }
 
@@ -137,14 +154,31 @@ public class BigDataController {
     @ApiOperation(value = "外来人口分布，按市统计", notes = "传参：communityCode 小区code，不传则查询鹰潭市所有小区。\n" +
             "返回参数：city 市、num 人数")
     public Result countPopulationDistributionByCommunityCodeAndProvince(String communityCode, String province) {
+        List<Map<String, Object>> maps;
+        Map<String, Object> map1 = Maps.newHashMapWithExpectedSize(2);
         if (StringUtils.isBlank(communityCode)) {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭");
-            return Result.success(
-                    houseHoldService.countPopulationDistributionByCommunityCodeListAndProvince(communityCodeList, province));
+            maps = houseHoldService.countPopulationDistributionByCommunityCodeListAndProvince(communityCodeList, province);
         } else {
-            return Result.success(
-                    houseHoldService.countPopulationDistributionByCommunityCodeAndProvince(communityCode, province));
+            maps = houseHoldService.countPopulationDistributionByCommunityCodeAndProvince(communityCode, province);
         }
+        int num = 0;
+        for (Map<String, Object> map : maps) {
+            if ("".equals(map.get("city"))) {
+                map.put("city", "未知");
+            }
+            num += Integer.parseInt(map.get("num").toString());
+        }
+        map1.put("city", province);
+        map1.put("num", num);
+        maps.add(map1);
+        //按照num进行降序排序
+        maps.sort((o1, o2) -> {
+            Integer v1 = Integer.valueOf(o1.get("num").toString());
+            Integer v2 = Integer.valueOf(o2.get("num").toString());
+            return v2.compareTo(v1);
+        });
+        return Result.success(maps);
     }
 
     /***

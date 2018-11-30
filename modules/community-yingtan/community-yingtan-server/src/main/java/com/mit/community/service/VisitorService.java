@@ -70,31 +70,31 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
     }
 
     /**
-     * 通过小区code获取访客信息表
+     * 统计到访访客人数，通过小区code
      * @param communityCode 小区code
-     * @return 访客记录列表
+     * @return 到访访客人数
      * @author Mr.Deng
      * @date 15:17 2018/11/21
      */
-    public List<Visitor> listByCommunityCode(String communityCode) {
+    public Integer countByCommunityCode(String communityCode) {
         EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.eq("visitor_status", 1);
-        return visitorMapper.selectList(wrapper);
+        return visitorMapper.selectCount(wrapper);
     }
 
     /**
-     * 通过一组小区code获取访客记录信息
+     * 统计已到访访客记录总数，通过一组小区code
      * @param communityCodes 小区code列表
-     * @return 访客记录列表
+     * @return 已到访访客记录总数
      * @author Mr.Deng
      * @date 15:19 2018/11/21
      */
-    public List<Visitor> listByCommunityCodes(List<String> communityCodes) {
+    public Integer countByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
         wrapper.eq("visitor_status", 1);
-        return visitorMapper.selectList(wrapper);
+        return visitorMapper.selectCount(wrapper);
     }
 
     /***

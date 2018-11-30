@@ -3,12 +3,14 @@ package com.mit.community.module.system.controller;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import com.google.common.collect.Maps;
+import com.mit.community.common.HttpLogin;
 import com.mit.community.entity.SysUser;
 import com.mit.community.service.SysUserService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +39,6 @@ import java.util.Objects;
 public class LoginController {
 
     private final Producer producer;
-
     private final SysUserService sysUserService;
 
     @Autowired
@@ -106,13 +107,75 @@ public class LoginController {
         String code = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
         if (StringUtils.isBlank(kaptcha) || !kaptcha.equalsIgnoreCase(code)) {
             return Result.error("验证码错误");
-        }
-        SysUser sysUser = sysUserService.getSysUser(username);
-        if (sysUser != null) {
-            if (sysUser.getPassword().equals(password)) {
-                map.put("adminName", sysUser.getAdminName());
-                map.put("role", sysUser.getRole());
-                return Result.success(map, "登录成功");
+        } else {
+            HttpLogin httpLogin = new HttpLogin(username, password);
+            //判断是否是集群管理账户访问不同的登录接口
+            //是集群账户
+            if ("ytyuehu".equals(username)) {
+                httpLogin.loginAdmin();
+            } else {
+                //是小区管理账户
+                httpLogin.loginUser();
+            }
+            boolean loginWhether = false;
+            //判断是否登录成功
+            for (Header h : httpLogin.getHeaders()) {
+                if ("Location".equals(h.getName())) {
+                    loginWhether = true;
+                }
+            }
+            boolean updateOrInsert = false;
+            if (loginWhether) {
+                //登录成功后,判断本地数据库是否有这个用户名
+                SysUser sysUser = sysUserService.getSysUser(username);
+                if (sysUser != null) {
+                    //如果有该用户名，进行用户名密码验证
+                    if (!sysUser.getPassword().equals(password)) {
+                        sysUser.setPassword(password);
+                        Integer update = sysUserService.update(sysUser);
+                        if (update > 0) {
+                            updateOrInsert = true;
+                        }
+                    } else {
+                        updateOrInsert = true;
+                    }
+                } else {
+                    //如果该用户名在本地数据库中不存在，则将数据添加到本地数据库
+                    SysUser sysUser1 = new SysUser();
+                    sysUser1.setPassword(password);
+                    sysUser1.setUsername(username);
+                    sysUser1.setRole("小区管理员");
+                    sysUser1.setCityName("鹰潭市");
+                    sysUser1.setProvinceName("江西省");
+                    sysUser1.setAreaName("月湖区");
+                    Integer save = sysUserService.save(sysUser1);
+                    if (save > 0) {
+                        updateOrInsert = true;
+                    }
+                }
+                //本地数据更新成功后执行显示数据
+                if (updateOrInsert) {
+                    String menuUser = "小区管理员";
+                    String menuAdmin = "集群管理员";
+                    String adminName = sysUser.getAdminName();
+                    String communityCode = sysUser.getCommunityCode();
+                    String role = sysUser.getRole();
+                    String menu = StringUtils.EMPTY;
+                    map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
+                    map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
+                    map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
+                    map.put("session", httpLogin.getCookie());
+                    if (menuUser.equals(role)) {
+                        menu = "0";
+                    }
+                    if (menuAdmin.equals(role)) {
+                        menu = "1";
+                    }
+                    map.put("isAdmin", menu);
+                    return Result.success(map, "登录成功");
+                } else {
+                    return Result.error("用户名或密码错误");
+                }
             }
         }
         return Result.error("登录失败");

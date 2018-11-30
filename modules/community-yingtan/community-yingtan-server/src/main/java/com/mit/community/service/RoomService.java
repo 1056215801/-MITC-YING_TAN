@@ -1,13 +1,11 @@
 package com.mit.community.service;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.Room;
-import com.mit.community.entity.modelTest.RoomTest;
 import com.mit.community.mapper.RoomMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -21,7 +19,6 @@ import java.util.Map;
 
 /**
  * 房间业务表
- *
  * @author Mr.Deng
  * @date 2018/11/14 17:59
  * <p>Copyright: Copyright (c) 2018</p>
@@ -39,7 +36,6 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
 
     /**
      * 添加房间信息
-     *
      * @param room 房间信息
      * @author Mr.Deng
      * @date 18:01 2018/11/14
@@ -49,8 +45,7 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
     }
 
     /**
-     * 获取所有房间信息
-     *
+     * 查询所有房间信息
      * @return 房间信息列表
      * @author Mr.Deng
      * @date 18:37 2018/11/14
@@ -58,6 +53,7 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
     public List<Room> list() {
         return roomMapper.selectList(null);
     }
+
     /***
      * 从dnake接口查询所有房间， 通过社区code， 分区id， 楼栋id， 单元id
      * @param communityCode 社区code
@@ -68,7 +64,7 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
      * @author shuyy
      * @date 2018/11/22 9:06
      * @company mitesofor
-    */
+     */
     public List<Room> listFromDnakeByUnitId(String communityCode, Integer zoneId, Integer buildingId, Integer unitId) {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/room/getRoomList";
@@ -91,6 +87,7 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
         });
         return rooms;
     }
+
     /***
      * 删除所有
      * @author shuyy
@@ -102,38 +99,35 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
     }
 
     /**
-     * 通过小区code获取房间信息
-     *
+     * 统计房间总数，通过小区code
      * @param communityCode 小区code
      * @return 房间信息列表
      * @author Mr.Deng
      * @date 15:03 2018/11/21
      */
-    public List<Room> listByCommunityCode(String communityCode) {
+    public Integer countByCommunityCode(String communityCode) {
         EntityWrapper<Room> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        return roomMapper.selectList(wrapper);
+        return roomMapper.selectCount(wrapper);
     }
 
     /**
-     * 通过一组小区code获取房间信息
-     *
+     * 统计房间总数，通过一组小区code
      * @param communityCodes 小区code列表
      * @return 房间信息列表
      * @author Mr.Deng
      * @date 15:06 2018/11/21
      */
-    public List<Room> listByCommunityCodes(List<String> communityCodes) {
+    public Integer countByCommunityCodes(List<String> communityCodes) {
         EntityWrapper<Room> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
-        return roomMapper.selectList(wrapper);
+        return roomMapper.selectCount(wrapper);
     }
 
-
     /**
-     * 	获取房间，通过单元id和房间号
+     * 获取房间，通过单元id和房间号
      * @param roomNum 房间号
-     * @param unitId 单元id
+     * @param unitId  单元id
      * @return 房间信息列表
      * @author Mr.Deng
      * @date 15:06 2018/11/21
@@ -143,10 +137,10 @@ public class RoomService extends ServiceImpl<RoomMapper, Room> {
         wrapper.eq("unit_id", unitId);
         wrapper.eq("room_num", roomNum);
         List<Room> list = roomMapper.selectList(wrapper);
-        if(list.isEmpty()) {
-        	return null;
-        }else {
-        	return list.get(0);
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
         }
 
     }
