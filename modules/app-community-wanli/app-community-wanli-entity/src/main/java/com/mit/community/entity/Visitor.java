@@ -2,31 +2,27 @@ package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
- * 申请钥匙表
+ * 访客表
  * @author Mr.Deng
- * @date 2018/12/3 14:43
+ * @date 2018/12/3 16:31
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@TableName("apply_key")
+@TableName("visitor")
 @Data
-public class ApplyKey extends BaseEntity {
+public class Visitor extends BaseEntity {
     /**
      * 小区code
      */
     @TableField("community_code")
     private String communityCode;
     /**
-     * 小区名
+     * 小区名称
      */
     @TableField("community_name")
     private String communityName;
@@ -36,7 +32,7 @@ public class ApplyKey extends BaseEntity {
     @TableField("zone_id")
     private Integer zoneId;
     /**
-     * 分区名
+     * 到访分区名称
      */
     @TableField("zone_name")
     private String zoneName;
@@ -46,7 +42,7 @@ public class ApplyKey extends BaseEntity {
     @TableField("building_id")
     private Integer buildingId;
     /**
-     * 楼栋名
+     * 楼栋名称
      */
     @TableField("building_name")
     private String buildingName;
@@ -56,51 +52,54 @@ public class ApplyKey extends BaseEntity {
     @TableField("unit_id")
     private Integer unitId;
     /**
-     * 单元名
+     * 单元名称
      */
     @TableField("unit_name")
     private String unitName;
     /**
-     * 房间id
-     */
-    @TableField("room_id")
-    private Integer roomId;
-    /**
-     * 房间名
+     * 房间号
      */
     @TableField("room_num")
     private String roomNum;
     /**
-     * 联系人
+     * 访客id
      */
-    @TableField("contact_person")
-    private String contactPerson;
+    @TableField("visitor_id")
+    private Integer visitorId;
     /**
-     * 联系电话
+     * 邀请方式（1：APP；2：手动登记）
      */
-    @TableField("contact_cellphone")
-    private String contactCellphone;
+    @TableField("invite_type")
+    private Integer inviteType;
     /**
-     * 申请钥匙状态：1、申请中；2、审批通过
+     * 邀请人
      */
-    private Integer status;
+    @TableField("invite_name")
+    private String inviteName;
     /**
-     * 描述
+     * 邀请人手机号
      */
-    private String content;
+    @TableField("invite_mobile")
+    private String inviteMobile;
     /**
-     * 创建人用户id
+     * 有效期限
      */
-    @TableField("creator_user_id")
-    private Integer creatorUserId;
+    @TableField("expiry_date")
+    private LocalDateTime expiryDate;
     /**
-     * 审核人
+     * 访客状态（1：已到访；2：未到访；3：已离开；4：手动签离；5：已撤销；6：到访超时；7：超时手动签离）
      */
-    @TableField("check_person")
-    private String checkPerson;
+    @TableField("visitor_status")
+    private Integer visitorStatus;
     /**
-     * 审核时间
+     * 访客姓名
      */
-    @TableField("check_time")
-    private LocalDateTime checkTime;
+    @TableField("visitor_name")
+    private String visitorName;
+    /**
+     * 访客手机号
+     */
+    @TableField("visitor_mobile")
+    private String visitorMobile;
+
 }

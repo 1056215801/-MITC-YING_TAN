@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.ApplyKey;
 import com.mit.community.entity.ApplyKeyImg;
 import com.mit.community.mapper.ApplyKeyMapper;
@@ -41,6 +42,42 @@ public class ApplyKeyService {
     }
 
     /**
+     * 修改数据
+     * @param applyKey 申请钥匙数据
+     * @return 修改数据
+     * @author Mr.Deng
+     * @date 15:28 2018/12/3
+     */
+    public Integer update(ApplyKey applyKey) {
+        applyKey.setGmtModified(LocalDateTime.now());
+        return applyKeyMapper.updateById(applyKey);
+    }
+
+    /**
+     * 查询申请钥匙数据，通过申请钥匙id
+     * @param applyKeyId 申请钥匙id
+     * @return 申请钥匙信息
+     * @author Mr.Deng
+     * @date 15:30 2018/12/3
+     */
+    public ApplyKey selectById(Integer applyKeyId) {
+        return applyKeyMapper.selectById(applyKeyId);
+    }
+
+    /**
+     * 查看申请钥匙申请状态
+     * @param status 申请状态
+     * @return 申请钥匙信息
+     * @author Mr.Deng
+     * @date 15:40 2018/12/3
+     */
+    public List<ApplyKey> listByStatus(Integer status) {
+        EntityWrapper<ApplyKey> wrapper = new EntityWrapper<>();
+        wrapper.eq("status", status);
+        return applyKeyMapper.selectList(wrapper);
+    }
+
+    /**
      * 申请钥匙
      * @param communityCode    小区code
      * @param communityName    小区名称
@@ -65,12 +102,12 @@ public class ApplyKeyService {
                                String roomNum, String contactPerson, String contactCellphone, String content,
                                Integer creatorUserId, List<String> images) {
         //初始化审批时间
-        String str = "0000-00-00 00:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String str = "1111-11-11 11:11:11";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
 
         ApplyKey applyKey = new ApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName,
-                unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, 2, content, creatorUserId,
+                unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, 1, content, creatorUserId,
                 StringUtils.EMPTY, dateTime);
         Integer applyKeySave = this.save(applyKey);
         if (applyKeySave > 0) {
@@ -81,6 +118,22 @@ public class ApplyKeyService {
                 }
             }
         }
+    }
+
+    /**
+     * 审批申请钥匙
+     * @param applyKeyId  申请钥匙id
+     * @param checkPerson 审批人
+     * @author Mr.Deng
+     * @date 15:26 2018/12/3
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateByCheckPerson(Integer applyKeyId, String checkPerson) {
+        ApplyKey applyKey = this.selectById(applyKeyId);
+        applyKey.setCheckTime(LocalDateTime.now());
+        applyKey.setStatus(2);
+        applyKey.setCheckPerson(checkPerson);
+        this.update(applyKey);
     }
 
 }
