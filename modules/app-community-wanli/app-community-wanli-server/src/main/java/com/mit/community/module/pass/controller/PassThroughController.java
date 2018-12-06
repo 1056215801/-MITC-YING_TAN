@@ -321,7 +321,7 @@ public class PassThroughController {
      * @author Mr.Deng
      * @date 11:36 2018/12/6
      */
-    public String updateImages(MultipartFile image) {
+    private String updateImages(MultipartFile image) {
         String result = StringUtils.EMPTY;
         if (image != null) {
             try {

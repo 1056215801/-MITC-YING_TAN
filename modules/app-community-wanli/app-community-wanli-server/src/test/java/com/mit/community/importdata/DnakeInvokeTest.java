@@ -28,6 +28,19 @@ import java.util.Map;
 public class DnakeInvokeTest {
 
     @Test
+    public void getConfig() {
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        DnakeAppUser.loginName = "15770732701";
+        DnakeAppUser.password = "654321";
+        String url = "/auth/api/device/getConfig";
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("deviceNum", "AB900DX87689ef7f9270");
+        String invoke = DnakeAppApiUtil.invoke(url, map);
+        System.out.println(invoke);
+    }
+
+    @Test
     public void callForwarding() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         DnakeAppUser.loginName = "18779158391";
@@ -48,7 +61,7 @@ public class DnakeInvokeTest {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/common/inviteCode/highGrade";
-        String[] times = {"2018/12/5 8:15:33,2018/12/5 19:15:33"};
+        String[] times = {"2018/12/7 8:15:33,2018/12/7 19:15:33"};
 
         DnakeAppUser.loginName = "15770732701";
         DnakeAppUser.password = "654321";
@@ -65,13 +78,13 @@ public class DnakeInvokeTest {
         JSONArray jsonArray = JSONArray.parseArray(JSON.toJSONString(list));
         System.out.println(jsonArray);
 
-        Map<String, Object> map1 = Maps.newHashMapWithExpectedSize(5);
+        Map<String, Object> map1 = Maps.newHashMapWithExpectedSize(7);
         map1.put("time", jsonArray);
         map1.put("appUserId", DnakeAppUser.appUserId);
-        map1.put("room", "0101");
+//        map1.put("room", "0101");
         map1.put("deviceGroupId", "735");
         map1.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
-        map1.put("householdId", "52763");
+//        map1.put("householdId", "52763");
         System.out.println(map1);
 
         String invoke = DnakeAppApiUtil.invoke(url, map1);
@@ -88,7 +101,7 @@ public class DnakeInvokeTest {
     public static String DateToTimeStamp(String dateStr) {
         String result = StringUtils.EMPTY;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             result = String.valueOf(sdf.parse(dateStr).getTime() / 1000);
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,11 +114,11 @@ public class DnakeInvokeTest {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/device/getDeviceGroup";
+        DnakeAppUser.loginName = "15770732701";
+        DnakeAppUser.password = "654321";
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
-//        map.put("loginName", "15770732701");
-//        map.put("password", "654321");
-//        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
-        map.put("communityCode", "0125caffaae1472b996390e869129cc7");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+//        map.put("communityCode", "0125caffaae1472b996390e869129cc7");
         String invoke = DnakeAppApiUtil.invoke(url, map);
         System.out.println(invoke);
         long endTime = System.currentTimeMillis();
@@ -143,13 +156,13 @@ public class DnakeInvokeTest {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/user/myKey";
-//        DnakeAppUser.loginName = "15770732701";
-//        DnakeAppUser.password = "654321";
+        DnakeAppUser.loginName = "15770732701";
+        DnakeAppUser.password = "654321";
         DnakeAppApiUtil.apiLogin();
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
         map.put("appUserId", DnakeAppUser.appUserId);
-//        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
-        map.put("communityCode", "0125caffaae1472b996390e869129cc7");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+//        map.put("communityCode", "0125caffaae1472b996390e869129cc7");
         String invoke = DnakeAppApiUtil.invoke(url, map);
         JSONObject jsonObject = JSON.parseObject(invoke);
         JSONArray devices = jsonObject.getJSONArray("devices");

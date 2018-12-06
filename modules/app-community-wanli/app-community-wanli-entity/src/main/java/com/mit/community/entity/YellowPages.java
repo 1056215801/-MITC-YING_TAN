@@ -19,10 +19,11 @@ import lombok.NoArgsConstructor;
 @TableName("yellow_pages")
 public class YellowPages extends BaseEntity {
     /**
-     * 生活黄页类别表id，关联yellow_pages_type表id
+     * 黄页类型id，关联yellow_pages_type表id
      */
     @TableField("yellow_pages_type_id")
     private Integer yellowPagesTypeId;
+
     /**
      * 电话备注名称
      */
@@ -31,8 +32,5 @@ public class YellowPages extends BaseEntity {
      * 电话号码
      */
     private String phone;
-    /**
-     * 图片地址
-     */
-    private String image;
+
 }

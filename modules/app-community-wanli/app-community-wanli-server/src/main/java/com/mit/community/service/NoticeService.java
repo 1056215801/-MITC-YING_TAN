@@ -40,8 +40,8 @@ public class NoticeService {
 
     /**
      * 修改通知通告数据
-     * @param notice
-     * @return
+     * @param notice 通知通告数据
+     * @return 修改数据数量
      * @author Mr.Deng
      * @date 16:24 2018/12/3
      */
@@ -52,7 +52,7 @@ public class NoticeService {
 
     /**
      * 查询所有的通知通告信息
-     * @return
+     * @return 通知通告信息列表
      * @author Mr.Deng
      * @date 16:26 2018/12/3
      */
@@ -64,6 +64,7 @@ public class NoticeService {
      * 发布通知通告
      * @param title     标题
      * @param type      类型
+     * @param typeName  类型名
      * @param synopsis  简介
      * @param publisher 发布人
      * @param creator   创建人
@@ -81,7 +82,5 @@ public class NoticeService {
             noticeContentService.save(noticeContent);
         }
     }
-
-
 
 }

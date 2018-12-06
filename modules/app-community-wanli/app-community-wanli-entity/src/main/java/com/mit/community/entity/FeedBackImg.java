@@ -7,29 +7,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 黄页菜单类型表
+ * 反馈图片表
  * @author Mr.Deng
- * @date 2018/12/6 20:20
+ * @date 2018/12/6 18:01
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("yellow_pages_type")
-public class YellowPagesType extends BaseEntity {
+@TableName("feedback_img")
+public class FeedBackImg extends BaseEntity {
     /**
-     * 父级菜单名称
+     * 反馈id。关联feedback表id。
      */
-    @TableField("parent_name")
-    private String parentName;
+    @TableField("feedback_id")
+    private Integer feedbackId;
     /**
-     * 子菜单图片地址
+     * 图片url
      */
-    private String image;
-    /**
-     * 子菜单名称
-     */
-    @TableField("submenu_name")
-    private String submenuName;
+    @TableField("img_url")
+    private String imgUrl;
 }

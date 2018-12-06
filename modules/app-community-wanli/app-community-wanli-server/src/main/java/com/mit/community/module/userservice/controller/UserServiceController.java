@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 住户-服务控制类
@@ -41,10 +42,10 @@ public class UserServiceController {
     private CommunityPhoneService communityPhoneService;
 
     @Autowired
-    private YellowPagesTypeService yellowPagesTypeService;
+    private YellowPagesService yellowPagesService;
 
     @Autowired
-    private YellowPagesService yellowPagesService;
+    private FeedBackService feedBackService;
 
     /**
      * 申请报事报修
@@ -275,9 +276,9 @@ public class UserServiceController {
      * @date 9:18 2018/12/6
      */
     @GetMapping("/listAllYellowPages")
-    @ApiOperation(value = "查询所有的黄页菜单", notes = "返回参数：listSubmenuName 子菜单列表，parent_name 父菜单")
+    @ApiOperation(value = "查询所有的黄页菜单", notes = "返回参数：submenuNames 子菜单列表，parent_name 父菜单")
     public Result listAllYellowPages() {
-        List<Object> allYellowPages = yellowPagesTypeService.listAllYellowPages();
+        List<Object> allYellowPages = yellowPagesService.listAllYellowPages();
         return Result.success(allYellowPages);
     }
 
@@ -289,10 +290,43 @@ public class UserServiceController {
      * @date 9:23 2018/12/6
      */
     @GetMapping("/listByYellowPagesTypeId")
-    @ApiOperation(value = "查询生活黄页信息，通过黄页类型id", notes = "输入参数：yellowPagesTypeId 黄页类型id")
+    @ApiOperation(value = "查询生活黄页信息，通过黄页类型id", notes = "输入参数：yellowPagesTypeId 黄页类型id" +
+            "(传入参数查询某一个子菜单的号码，不传入查询所有菜单号码)")
     public Result listByYellowPagesTypeId(Integer yellowPagesTypeId) {
-        List<YellowPages> yellowPages = yellowPagesService.listByYellowPagesTypeId(yellowPagesTypeId);
-        return Result.success(yellowPages);
+        if (null != yellowPagesTypeId) {
+            Map<String, Object> map = yellowPagesService.mapToPhoneByYellowPagesTypeId(yellowPagesTypeId);
+            return Result.success(map);
+        } else {
+            List<Map<String, Object>> list = yellowPagesService.listToPhone();
+            return Result.success(list);
+        }
+    }
+
+    /**
+     * 提交反馈意见
+     * @param title   标题
+     * @param content 反馈内容
+     * @param type    类型。关联数据字典。code为feedback_type。1、APP功能反馈。2、物业/小区问题
+     * @param userId  用户id。关联user表id
+     * @param image   图片列表
+     * @return result
+     * @author Mr.Deng
+     * @date 18:29 2018/12/6
+     */
+    @PostMapping(value = "/submitFeedBack", produces = {"application/json"})
+    @ApiOperation(value = "提交反馈意见", notes = "输入参数：title 标题；content 反馈内容；" +
+            "type 类型。关联数据字典。code为feedback_type。1、APP功能反馈。2、物业/小区问题;userId 用户id；image 图片列表")
+    public Result submitFeedBack(String title, String content, Integer type, Integer userId, MultipartFile image) {
+        if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(content) && type != null && userId != null) {
+            List<String> imageUrls = Lists.newArrayListWithCapacity(5);
+            if (null != image) {
+                String imageUrl = updateImage(image);
+                imageUrls.add(imageUrl);
+            }
+            feedBackService.submitFeedBack(title, content, type, userId, imageUrls);
+            return Result.success("提交成功");
+        }
+        return Result.error("参数不能为空");
     }
 
     /**
