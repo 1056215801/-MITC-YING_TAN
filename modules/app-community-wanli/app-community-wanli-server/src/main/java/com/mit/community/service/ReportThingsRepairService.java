@@ -5,9 +5,11 @@ import com.mit.community.entity.ReportThingRepairImg;
 import com.mit.community.entity.ReportThingsRepair;
 import com.mit.community.mapper.ReportThingsRepairMapper;
 import com.mit.community.util.MakeOrderNumUtil;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +40,29 @@ public class ReportThingsRepairService {
         reportThingsRepair.setGmtCreate(LocalDateTime.now());
         reportThingsRepair.setGmtModified(LocalDateTime.now());
         return reportThingsRepairMapper.insert(reportThingsRepair);
+    }
+
+    /**
+     * 查询报事报修信息，通过报事报修id
+     * @param id 报事报修id
+     * @return 报事报修信息
+     * @author Mr.Deng
+     * @date 11:00 2018/12/5
+     */
+    public ReportThingsRepair getById(Integer id) {
+        return reportThingsRepairMapper.selectById(id);
+    }
+
+    /**
+     * 更新报事报修数据
+     * @param reportThingsRepair 更新的数据
+     * @return 更新条数
+     * @author Mr.Deng
+     * @date 11:03 2018/12/5
+     */
+    public Integer update(ReportThingsRepair reportThingsRepair) {
+        reportThingsRepair.setGmtModified(LocalDateTime.now());
+        return reportThingsRepairMapper.updateById(reportThingsRepair);
     }
 
     /**
@@ -84,6 +109,7 @@ public class ReportThingsRepairService {
      * @author Mr.Deng
      * @date 20:02 2018/12/3
      */
+    @Transactional(rollbackFor = Exception.class)
     public void applyReportThingsRepair(String communityCode, String communityName, Integer zoneId, String zoneName,
                                         Integer buildingId, String buildingName, Integer unitId, String unitName,
                                         Integer roomId, String roomNum, Integer householdId, String content,
@@ -104,6 +130,30 @@ public class ReportThingsRepairService {
                 }
             }
         }
+    }
+
+    /**
+     * 报事报修评价
+     * @param applyReportId             报事报修id
+     * @param evaluateResponseSpeed     响应速度评价
+     * @param evaluateResponseAttitude  响应态度评价
+     * @param evaluateTotal             总体评价
+     * @param evaluateServiceProfession 服务专业度评价
+     * @param evaluateContent           评价内容
+     * @author Mr.Deng
+     * @date 10:57 2018/12/5
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void evaluateReportThingsRepair(Integer applyReportId, Integer evaluateResponseSpeed, Integer evaluateResponseAttitude,
+                                           Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
+        ReportThingsRepair reportThingsRepair = this.getById(applyReportId);
+        reportThingsRepair.setEvaluateContent(evaluateContent);
+        reportThingsRepair.setEvaluateResponseAttitude(evaluateResponseAttitude);
+        reportThingsRepair.setEvaluateResponseSpeed(evaluateResponseSpeed);
+        reportThingsRepair.setEvaluateServiceProfession(evaluateServiceProfession);
+        reportThingsRepair.setEvaluateTotal(evaluateTotal);
+        reportThingsRepair.setStatus(5);
+        this.update(reportThingsRepair);
     }
 
 }
