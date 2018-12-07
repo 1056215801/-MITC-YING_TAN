@@ -1,5 +1,7 @@
 package com.mit.community.constants;
 
+import java.time.LocalDateTime;
+
 /**
  * 常量
  *
@@ -16,6 +18,10 @@ public class Constants {
 
     /**手机号验证码验证成功*/
     public static final String VERIFICATION_SUCCESS = "VERIFICATION_SUCCESS";
+
+    /**逻辑为空的LocalDateTime*/
+    public static final LocalDateTime NULL_LOCAL_DATE_TIME = LocalDateTime.of(1900, 01,
+            01, 0, 0, 0);
 
 
 
