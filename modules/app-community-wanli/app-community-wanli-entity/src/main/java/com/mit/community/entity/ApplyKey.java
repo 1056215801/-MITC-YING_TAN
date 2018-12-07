@@ -103,4 +103,8 @@ public class ApplyKey extends BaseEntity {
      */
     @TableField("check_time")
     private LocalDateTime checkTime;
+    /**
+     * 身份证号
+     */
+    private String IdCard;
 }
