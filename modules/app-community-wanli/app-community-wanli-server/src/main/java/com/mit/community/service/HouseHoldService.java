@@ -50,4 +50,22 @@ public class HouseHoldService {
         wrapper.in("household_id", householdIdList);
         return houseHoldMapper.selectList(wrapper);
     }
+
+    /**
+     * 获取住户，通过手机号
+     * @param tellphone 手机号
+     * @return com.mit.community.entity.HouseHold
+     * @author shuyy
+     * @date 2018/12/7 10:54
+     * @company mitesofor
+    */
+    public HouseHold getByMobile(String tellphone){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("mobile", tellphone);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if(houseHolds.isEmpty()){
+            return null;
+        }
+        return houseHolds.get(0);
+    }
 }

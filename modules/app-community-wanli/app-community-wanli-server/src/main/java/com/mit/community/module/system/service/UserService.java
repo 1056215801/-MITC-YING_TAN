@@ -120,8 +120,7 @@ public class UserService {
     */
     @Transactional(rollbackFor = Exception.class)
     public void register(String cellphone, String username, String password, String[] labelCodes){
-        User user = new User(username, password, cellphone, (short) 1, StringUtils.EMPTY,
-                cellphone, StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        User user = new User(cellphone, password, cellphone, (short) 1, StringUtils.EMPTY, StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         this.save(user);
         for (String labelCode : labelCodes) {
             UserLabel userLabel = new UserLabel(labelCode, user.getId());
@@ -139,13 +138,13 @@ public class UserService {
     */
     @Transactional(rollbackFor = Exception.class)
     public void chooseLabelList(String cellphone, String[] labelList){
-        User user = new User(cellphone, UUIDUtils.generateShortUuid(), StringUtils.EMPTY, (short) 1, StringUtils.EMPTY, cellphone,
+        /*User user = new User(cellphone, UUIDUtils.generateShortUuid(), StringUtils.EMPTY, (short) 1, StringUtils.EMPTY, cellphone,
                 StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         this.save(user);
         for (String labelCode : labelList) {
             UserLabel userLabel = new UserLabel(labelCode, user.getId());
             userLabelService.save(userLabel);
-        }
+        }*/
     }
 
 }

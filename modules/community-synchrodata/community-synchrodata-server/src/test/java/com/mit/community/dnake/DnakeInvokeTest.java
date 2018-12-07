@@ -1,4 +1,4 @@
-package com.mit.community.importdata;
+package com.mit.community.dnake;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -6,7 +6,7 @@ import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
 
-import springfox.documentation.spring.web.json.Json;
+import com.dnake.entity.DnakeAppUser;
 
 import org.junit.Test;
 
@@ -116,6 +116,16 @@ public class DnakeInvokeTest {
         System.out.println(result);
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
+    }
+
+    @Test
+    public void queryClusterCommunity(){
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/v1/community/queryClusterCommunity";
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
+        String invoke = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(invoke);
     }
 
    

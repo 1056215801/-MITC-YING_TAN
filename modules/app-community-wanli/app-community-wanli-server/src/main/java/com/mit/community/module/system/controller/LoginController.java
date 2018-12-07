@@ -4,7 +4,9 @@ import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.entity.Device;
+import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.User;
+import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.module.system.service.UserService;
 import com.mit.community.service.ClusterCommunityService;
 import com.mit.community.service.DeviceService;
@@ -43,13 +45,19 @@ public class LoginController {
 
     private final ClusterCommunityService clusterCommunityService;
 
+    private final DnakeAppApiService dnakeAppApiService;
+
+    private final HouseHoldService houseHoldService;
+
 
     @Autowired
-    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService, ClusterCommunityService clusterCommunityService) {
+    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService, ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService) {
         this.redisService = redisService;
         this.userService = userService;
         this.deviceService = deviceService;
         this.clusterCommunityService = clusterCommunityService;
+        this.dnakeAppApiService = dnakeAppApiService;
+        this.houseHoldService = houseHoldService;
     }
 
     /***
@@ -63,7 +71,8 @@ public class LoginController {
     @GetMapping("/getMobileVerificationCode")
     @ApiOperation(value = "获取手机验证码")
     public Result getMobileVerificationCode(String cellphone) {
-        redisService.set(Constants.VERIFICATION_CODE + cellphone, "123456", RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
+        String registerSmsCode = dnakeAppApiService.getRegisterSmsCode(cellphone);
+        redisService.set(Constants.VERIFICATION_CODE + cellphone, registerSmsCode, RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
         return Result.success("发送成功");
     }
 
@@ -86,6 +95,19 @@ public class LoginController {
         if (user == null) {
             redisService.set(Constants.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
             return Result.success("第一次登陆");
+        }
+        HouseHold houseHold = houseHoldService.getByMobile(user.getCellphone());
+        if(houseHold == null){
+            return Result.success("登陆成功");
+        }
+        Integer authorizeStatus = houseHold.getAuthorizeStatus();
+        String s = Integer.toBinaryString(authorizeStatus);
+        if(s.indexOf(1) == 1){
+            // 开启了app
+            dnakeAppApiService.login(cellphone, user.getPassword());
+
+        }else{
+
         }
         return Result.success("登陆成功");
     }
@@ -169,6 +191,10 @@ public class LoginController {
             if (user == null) {
                 return Result.success("用户名或密码错误");
             }
+        }
+        HouseHold houseHold = houseHoldService.getByMobile(user.getCellphone());
+        if(houseHold == null){
+
         }
         return Result.success("登陆成功");
     }

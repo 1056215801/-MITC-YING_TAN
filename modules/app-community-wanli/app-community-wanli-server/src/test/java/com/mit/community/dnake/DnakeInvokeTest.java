@@ -1,4 +1,4 @@
-package com.mit.community.importdata;
+package com.mit.community.dnake;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -6,14 +6,9 @@ import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
 
-import com.dnake.entity.DnakeAppUser;
-import net.sf.json.JSONObject;
-import springfox.documentation.spring.web.json.Json;
-
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * dnake 调用测试
@@ -122,15 +117,32 @@ public class DnakeInvokeTest {
     }
 
     @Test
-    public void queryClusterCommunity(){
+    public void register(){
+        long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/community/queryClusterCommunity";
+        String url = "/auth/base/register";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
-        String invoke = DnakeWebApiUtil.invoke(url, map);
-        System.out.println(invoke);
+        map.put("loginName", "1307212680");
+        map.put("password", "123456");
+        String result = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(result);
+        long end = System.currentTimeMillis();
+        System.out.println(end - startTime);
     }
 
-   
+    @Test
+    public void getRegisterSmsCode(){
+        long startTime = System.currentTimeMillis();
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/auth/base/getRegisterSmsCode";
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("telNum", "1307212680");
+        map.put("clusterAccountId", "pMXYTG6tXMzPHpErs0VYBjmiHBatkWEs");
+        String result = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(result);
+        long end = System.currentTimeMillis();
+        System.out.println(end - startTime);
+    }
+
 
 }
