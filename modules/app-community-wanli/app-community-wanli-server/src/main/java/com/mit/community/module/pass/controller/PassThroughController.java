@@ -3,6 +3,7 @@ package com.mit.community.module.pass.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.mit.community.entity.ApplyKey;
+import com.mit.community.entity.DnakeLoginResponse;
 import com.mit.community.entity.Region;
 import com.mit.community.entity.Visitor;
 import com.mit.community.service.*;
@@ -47,6 +48,9 @@ public class PassThroughController {
 
     @Autowired
     private OpenDoorService openDoorService;
+
+    @Autowired
+    private DnakeAppApiService dnakeAppApiService;
 
     /**
      * 查询当地当前天气信息，通过城市英文名
@@ -174,10 +178,10 @@ public class PassThroughController {
     @PostMapping("/httpOpenDoor")
     @ApiOperation(value = "http开门", notes = "输入参数：communityCode 小区code。username 用户名。" +
             "password 密码。deviceNum 设备编号")
-    public Result httpOpenDoor(String communityCode, String username, String password, String deviceNum) {
+    public Result httpOpenDoor(String cellphone, String communityCode, String username, String password, String deviceNum) {
         if (StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)
                 && StringUtils.isNotBlank(deviceNum)) {
-            openDoorService.httpOpenDoor(communityCode, username, password, deviceNum);
+            dnakeAppApiService.httpOpenDoor(cellphone, communityCode, username, password, deviceNum);
             return Result.success("开锁成功");
         }
         return Result.error("参数不能为空");
@@ -195,9 +199,9 @@ public class PassThroughController {
     @PostMapping("/getMyKey")
     @ApiOperation(value = "获取我的钥匙", notes = "输入参数：username 用户名。password 密码。communityCode 小区code \n" +
             "返回参数: unitKeys 单元钥匙、 CommunityKeys 小区钥匙 ")
-    public Result getMyKey(String username, String password, String communityCode) {
+    public Result getMyKey(String cellphone, String username, String password, String communityCode) {
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(communityCode)) {
-            Map<String, Object> myKey = openDoorService.getMyKey(username, password, communityCode);
+            Map<String, Object> myKey = dnakeAppApiService.getMyKey(cellphone, username, password, communityCode);
             return Result.success(myKey);
         }
         return Result.error("参数不能为空");
@@ -215,12 +219,12 @@ public class PassThroughController {
     @GetMapping("/getDeviceGroup")
     @ApiOperation(value = "查询小区设备组信息,通过小区code", notes = "输入参数：username 用户名；password 密码；" +
             "communityCode 小区编号")
-    public Result getDeviceGroup(String username, String password, String communityCode) {
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(communityCode)) {
+    public Result getDeviceGroup(String cellphone, String username, String password, String communityCode) {
+    /*    if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(communityCode)) {
             String deviceGroup = openDoorService.getDeviceGroup(username, password, communityCode);
             JSONObject json = JSONObject.parseObject(deviceGroup);
             return Result.success(json);
-        }
+        }*/
         return Result.error("参数不能为空");
     }
 
@@ -240,11 +244,11 @@ public class PassThroughController {
     @ApiOperation(value = "申请访客邀请码", notes = "返回参数：dateTag 日期标志：今天:0；明天：1; " +
             "times 开锁次数：无限次：0；一次：1；deviceGroupId 设备分组id，默认只传公共权限组；communityCode 社区编号；" +
             "username 用户名；password  密码")
-    public Result getInviteCode(String dateTag, String times, String deviceGroupId, String communityCode, String username,
+    public Result getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode, String username,
                                 String password) {
         if (StringUtils.isNotBlank(dateTag) && StringUtils.isNotBlank(times) && StringUtils.isNotBlank(deviceGroupId) &&
                 StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            String inviteCode = openDoorService.getInviteCode(dateTag, times, deviceGroupId, communityCode, username, password);
+            String inviteCode = dnakeAppApiService.getInviteCode(cellphone, dateTag, times, deviceGroupId, communityCode, username, password);
             JSONObject json = JSONObject.parseObject(inviteCode);
             return Result.success(json);
         }
@@ -293,7 +297,7 @@ public class PassThroughController {
 
     /**
      * 设置呼叫转移号码
-     * @param username  用户名
+     * @param cellphone  手机号
      * @param password  密码
      * @param sipMobile 转移号码
      * @return result
@@ -302,9 +306,9 @@ public class PassThroughController {
      */
     @PostMapping("/callForwarding")
     @ApiOperation(value = "设置呼叫转移号码", notes = "输入参数：username 用户名；password 密码；sipMobile 转移号码")
-    public Result callForwarding(String username, String password, String sipMobile) {
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(sipMobile)) {
-            String str = openDoorService.callForwarding(username, password, sipMobile);
+    public Result callForwarding(String cellphone, String password, String sipMobile) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(sipMobile)) {
+            String str = dnakeAppApiService.callForwarding(cellphone, sipMobile);
             if (StringUtils.isNotBlank(str)) {
                 JSONObject jsonObject = JSONObject.parseObject(str);
                 return Result.success(jsonObject);

@@ -129,7 +129,7 @@ public class ClusterCommunityService {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/community/queryClusterCommunity";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
+        map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
         String invoke = DnakeWebApiUtil.invoke(url, map);
         JSONObject jsonObject = JSONObject.fromObject(invoke);
         JSONArray jsonArray = jsonObject.getJSONArray("communityList");

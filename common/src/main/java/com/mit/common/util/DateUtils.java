@@ -1,7 +1,13 @@
 package com.mit.common.util;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -131,15 +137,17 @@ public class DateUtils {
         String strDate = dateTime.format(formatter);
         return strDate;
     }
+
     /**
-     * 获取逻辑意义为空，且能存储进数据库的时间
-     * @return java.time.LocalDateTime
-     * @throws
+     * 将字符串转换成时间戳
+     * @param time 时间字符串
+     * @return java.lang.Long 时间戳
      * @author shuyy
-     * @date 2018/11/30 9:10
+     * @date 2018/12/7 18:55
      * @company mitesofor
     */
-    public static LocalDateTime getNull(){
-        return LocalDateTime.of(1990, 1, 1, 0, 0, 0);
+    public static Long parseStringToTimeStamp(String time) {
+        LocalDateTime localDateTime = DateUtils.parseStringToDateTime(time, null);
+        return Timestamp.valueOf(localDateTime).getTime();
     }
 }

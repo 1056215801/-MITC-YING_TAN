@@ -1,4 +1,4 @@
-package com.mit.community.importdata;
+package com.mit.community.dnake;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -7,13 +7,10 @@ import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
 
 import com.dnake.entity.DnakeAppUser;
-import net.sf.json.JSONObject;
-import springfox.documentation.spring.web.json.Json;
 
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * dnake 调用测试

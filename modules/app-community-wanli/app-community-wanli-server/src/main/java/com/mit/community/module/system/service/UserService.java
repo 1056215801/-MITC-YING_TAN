@@ -25,8 +25,17 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     @Autowired
+    private UserLabelService userLabelService;
+
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    public UserService(UserMapper userMapper) {
+        this.userMapper = userMapper;
     private UserLabelService userLabelService;
 
     /**
@@ -61,27 +70,6 @@ public class UserService {
         user.setGmtCreate(LocalDateTime.now());
         user.setGmtModified(LocalDateTime.now());
         userMapper.insert(user);
-    }
-
-    /**
-     * 获取User，通过username和密码
-     * @param username username
-     * @param password 密码
-     * @return com.mit.community.entity.User
-     * @author shuyy
-     * @date 2018/11/29 11:28
-     * @company mitesofor
-     */
-    public User getByUsernameAndPassword(String username, String password) {
-        EntityWrapper<User> wrapper = new EntityWrapper<>();
-        wrapper.eq("username", username);
-        wrapper.eq("password", password);
-        List<User> users = userMapper.selectList(wrapper);
-        if (users.isEmpty()) {
-            return null;
-        } else {
-            return users.get(0);
-        }
     }
 
     /**
@@ -127,22 +115,19 @@ public class UserService {
     /**
      * 注册
      * @param cellphone  电话号码
-     * @param username   用户名
      * @param password   密码
-     * @param labelCodes 标签code
      * @author shuyy
-     * @date 2018/11/30 9:29
+     * @date 2018/12/07 16:52
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void register(String cellphone, String username, String password, String[] labelCodes) {
-        User user = new User(username, password, cellphone, (short) 1, StringUtils.EMPTY,
-                cellphone, StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+    public void register(String cellphone, String password){
+        User user = new User(cellphone, password, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         this.save(user);
-        for (String labelCode : labelCodes) {
-            UserLabel userLabel = new UserLabel(labelCode, user.getId());
-            userLabelService.save(userLabel);
-        }
+//        for (String labelCode : labelCodes) {
+//            UserLabel userLabel = new UserLabel(labelCode, user.getId());
+//            userLabelService.save(userLabel);
+//        }
     }
 
     /**
@@ -152,12 +137,10 @@ public class UserService {
      * @author shuyy
      * @date 2018/11/30 9:41
      * @company mitesofor
-     */
+    */
     @Transactional(rollbackFor = Exception.class)
-    public void chooseLabelList(String cellphone, String[] labelList) {
-        User user = new User(cellphone, UUIDUtils.generateShortUuid(), StringUtils.EMPTY, (short) 1, StringUtils.EMPTY, cellphone,
-                StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
-        this.save(user);
+    public void chooseLabelList(String cellphone, String[] labelList){
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
         for (String labelCode : labelList) {
             UserLabel userLabel = new UserLabel(labelCode, user.getId());
             userLabelService.save(userLabel);

@@ -24,10 +24,9 @@ import java.time.LocalDateTime;
 public class User extends BaseEntity implements Serializable {
 
     /**
-     * 用户名
+     * 手机号
      */
-    private String username;
-
+    private String cellphone;
     /**
      * 密码
      */
@@ -37,17 +36,14 @@ public class User extends BaseEntity implements Serializable {
      */
     private String nickname;
     /**
-     * 性别。1、男。0、女。
+     * 性别。0、未知。1、男。2、女。
      */
     private Short gender;
     /**
      * 邮箱
      */
     private String email;
-    /**
-     * 手机号
-     */
-    private String cellphone;
+
     /**
      * 头像
      */

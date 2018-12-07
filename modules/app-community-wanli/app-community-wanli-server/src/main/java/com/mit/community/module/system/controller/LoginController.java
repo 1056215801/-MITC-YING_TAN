@@ -2,9 +2,8 @@ package com.mit.community.module.system.controller;
 
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.Device;
-import com.mit.community.entity.User;
+import com.mit.community.entity.*;
+import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.module.system.service.UserService;
 import com.mit.community.service.ClusterCommunityService;
 import com.mit.community.service.DeviceService;
@@ -14,6 +13,7 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,13 +43,19 @@ public class LoginController {
 
     private final ClusterCommunityService clusterCommunityService;
 
+    private final DnakeAppApiService dnakeAppApiService;
+
+    private final HouseHoldService houseHoldService;
+
 
     @Autowired
-    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService, ClusterCommunityService clusterCommunityService) {
+    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService, ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService) {
         this.redisService = redisService;
         this.userService = userService;
         this.deviceService = deviceService;
         this.clusterCommunityService = clusterCommunityService;
+        this.dnakeAppApiService = dnakeAppApiService;
+        this.houseHoldService = houseHoldService;
     }
 
     /***
@@ -63,31 +69,65 @@ public class LoginController {
     @GetMapping("/getMobileVerificationCode")
     @ApiOperation(value = "获取手机验证码")
     public Result getMobileVerificationCode(String cellphone) {
-        redisService.set(Constants.VERIFICATION_CODE + cellphone, "123456", RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
+        String registerSmsCode = dnakeAppApiService.getRegisterSmsCode(cellphone);
+        redisService.set(RedisConstant.VERIFICATION_CODE + cellphone, registerSmsCode, RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
         return Result.success("发送成功");
     }
 
     /***
      * @param cellphone 手机号
      * @param verificationCode 手机号验证码
+     * @param password 密码
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/11/29 11:02
      * @company mitesofor
      */
-    @PostMapping("/cellphoneLogin")
-    @ApiOperation(value = "手机号登陆", notes = "传参;cellphone 手机号：verificationCode 手机验证码")
-    public Result cellphoneLogin(String cellphone, String verificationCode) {
-        Object o = redisService.get(Constants.VERIFICATION_CODE + cellphone);
-        if (o == null || !verificationCode.equals(o.toString())) {
-            return Result.error("验证码错误");
+    @PostMapping("/login")
+    @ApiOperation(value = "快捷登录或密码登录", notes = "密码登陆则传参verificationCode不传password。密码登录则相反。\n " +
+            "传参;cellphone 手机号：verificationCode 手机验证码。password：密码\n " +
+            "返回：1、resultStatus:false, message: 验证码错误。\n" +
+            "2、resultStatus:false, message: 用户不存在。\n" +
+            "3、resultStatus: true, message: 没有关联住户, object:user。\n" +
+            "4、resultStatus: true, message: 没有授权app, object:user。\n" +
+            "5、resultStatus: true, message: 已授权app, object:user。")
+    public Result login(String cellphone, String verificationCode, String password) {
+        User user = null;
+        if(verificationCode != null){
+            // 验证码登陆
+            Object o = redisService.get(RedisConstant.VERIFICATION_CODE + cellphone);
+            if (o == null || !verificationCode.equals(o.toString())) {
+                return Result.error("验证码错误");
+            }
+            user = userService.getByCellphone(cellphone);
+            if (user == null) {
+                return Result.error("用户不存在");
+            }
+        }else{
+            // 密码登陆
+            user = userService.getByCellphoneAndPassword(cellphone, password);
+            if (user == null) {
+                return Result.success("用户名或密码错误");
+            }
         }
-        User user = userService.getByCellphone(cellphone);
-        if (user == null) {
-            redisService.set(Constants.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
-            return Result.success("第一次登陆");
+        // redis中保存用户
+        redisService.set(RedisConstant.USER + user.getCellphone(), user, RedisConstant.LOGIN_EXPIRE_TIME);
+        List<HouseHold> houseHolds = houseHoldService.listByUserId(user.getId());
+        if (houseHolds == null) {
+            return Result.success(user, "没有关联住户");
         }
-        return Result.success("登陆成功");
+        user.setPassword(StringUtils.EMPTY);
+        List<HouseHold> filterAppHouseholds = houseHoldService.filterAuthorizedApp(houseHolds);
+        if (filterAppHouseholds.isEmpty()) {
+            // 没有授权app
+            return Result.success(user, "没有授权app");
+        } else {
+            // 已经授权app
+            DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, user.getPassword());
+            redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
+                    dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
+            return Result.success(user, "已授权app");
+        }
     }
 
     /**
@@ -103,11 +143,26 @@ public class LoginController {
     @PostMapping("chooseLabelList")
     @ApiOperation(value = "选择标签", notes = "传参;cellphone 手机号：labelList 多个标签")
     public Result chooseLabelList(String cellphone, String[] labelList) {
-        Object o = redisService.get(Constants.VERIFICATION_SUCCESS + cellphone);
-        if (o == null) {
-            return Result.error("请先登陆");
-        }
         userService.chooseLabelList(cellphone, labelList);
+        return Result.success("成功");
+    }
+
+    /**
+     *
+     * @param cellphone
+     * @param gender
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/7 18:22
+     * @company mitesofor
+    */
+    @PostMapping("updateGender")
+    @ApiOperation(value = "选择性别", notes = "传参;cellphone 手机号：gender 性别，1、男。2、女")
+    public Result updateGender(String cellphone, Short gender) {
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        user.setGender(gender);
+        userService.update(user);
         return Result.success("成功");
     }
 
@@ -120,59 +175,34 @@ public class LoginController {
      * @company mitesofor
      */
     @GetMapping("/cellphoneVerification")
-    @ApiOperation(value = "注册-手机验证码验证", notes = "传参;cellphone 手机号：verificationCode 手机验证码")
+    @ApiOperation(value = "手机验证码验证", notes = "传参;cellphone 手机号：verificationCode 手机验证码")
     public Result cellphoneVerification(String cellphone, String verificationCode) {
-        Object o = redisService.get(Constants.VERIFICATION_CODE + cellphone);
+        Object o = redisService.get(RedisConstant.VERIFICATION_CODE + cellphone);
         if (o == null || !verificationCode.equals(o.toString())) {
             return Result.error("验证码错误");
         }
-        redisService.set(Constants.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
+        redisService.set(RedisConstant.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
         return Result.success("验证成功");
     }
 
     /**
      * @param cellphone 手机号
-     * @param username  用户名
      * @param password  密码
      * @return com.mit.community.util.Result
      * @author shuyy
-     * @date 2018/11/29 11:24
+     * @date 2018/12/07 16:53
      * @company mitesofor
      */
     @PostMapping("/register")
     @ApiOperation(value = "注册", notes = "传参;cellphone 手机号：username用户名，password 密码")
-    public Result register(String cellphone, String username, String password, String[] labelCodes) {
-        Object o = redisService.get(Constants.VERIFICATION_SUCCESS + cellphone);
+    public Result register(String cellphone, String password) {
+        Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + cellphone);
         if (o == null) {
             return Result.error("请在2分钟内完成注册");
         }
-        userService.register(cellphone, username, password, labelCodes);
+        userService.register(cellphone, password);
         return Result.success("注册成功");
     }
-
-    /**
-     * 登陆
-     *
-     * @param username 用户名或手机号
-     * @param password 密码
-     * @return com.mit.community.util.Result
-     * @author shuyy
-     * @date 2018/11/29 11:32
-     * @company mitesofor
-     */
-    @PostMapping("/")
-    @ApiOperation(value = "登陆", notes = "传参;username 用户名或手机号、password 密码")
-    public Result login(String username, String password) {
-        User user = userService.getByUsernameAndPassword(username, password);
-        if (user == null) {
-            user = userService.getByCellphoneAndPassword(username, password);
-            if (user == null) {
-                return Result.success("用户名或密码错误");
-            }
-        }
-        return Result.success("登陆成功");
-    }
-
 
     /**
      * @param cellphone 手机号
@@ -180,12 +210,12 @@ public class LoginController {
      * @author shuyy
      * @date 2018/11/30 11:48
      * @company mitesofor
-    */
+     */
     @GetMapping("/listClusterCommunityByUserCellphone")
     @ApiOperation(value = "查询用户授权的所有小区", notes = "传参;cellphone 手机号")
     public Result listClusterCommunityByUserCellphone(String cellphone) {
         List<ClusterCommunity> clusterCommunities = clusterCommunityService.listClusterCommunityByUserCellphone(cellphone);
-        if(clusterCommunities == null){
+        if (clusterCommunities == null) {
             return Result.success("没有关联小区");
         }
         return Result.success(clusterCommunities);
@@ -193,18 +223,18 @@ public class LoginController {
 
     /**
      * @param communityCode 小区code
-     * @param cellphone 手机号
+     * @param cellphone     手机号
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/11/30 11:50
      * @company mitesofor
-    */
+     */
     @GetMapping("/listDeviceByCommunityCodeAndCellphone")
     @ApiOperation(value = "全部钥匙", notes = "传参;communityCode 小区code, cellphone 手机号")
     public Result listDeviceByCommunityCodeAndCellphone(String communityCode, String cellphone) {
         List<Device> devices = deviceService.listDeviceByCommunityCodeAndCellphone(communityCode,
                 cellphone);
-        if(devices == null){
+        if (devices == null) {
             return Result.success("没有钥匙");
         }
         return Result.success(devices);
