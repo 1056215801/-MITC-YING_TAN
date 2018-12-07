@@ -23,14 +23,21 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private final UserMapper userMapper;
-
-    private final UserLabelService userLabelService;
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
-    public UserService(UserMapper userMapper, UserLabelService userLabelService) {
-        this.userMapper = userMapper;
-        this.userLabelService = userLabelService;
+    private UserLabelService userLabelService;
+
+    /**
+     * 查询用户信息，通过用户id
+     * @param id 用户id
+     * @return 用户信息
+     * @author Mr.Deng
+     * @date 14:28 2018/12/7
+     */
+    public User getById(Integer id) {
+        return userMapper.selectById(id);
     }
 
     /**
@@ -154,6 +161,41 @@ public class UserService {
         for (String labelCode : labelList) {
             UserLabel userLabel = new UserLabel(labelCode, user.getId());
             userLabelService.save(userLabel);
+        }
+    }
+
+    /**
+     * 修改用户信息
+     * @param id         用户id
+     * @param nickname   昵称
+     * @param gender     性别1、男。0、女。
+     * @param email      邮件
+     * @param cellphone  电话
+     * @param icon_url   头像地址
+     * @param birthday   生日 yyyy-MM-dd HH:mm:ss
+     * @param bloodType  血型
+     * @param profession 职业
+     * @param signature  我的签名
+     * @author Mr.Deng
+     * @date 14:35 2018/12/7
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUserInfo(Integer id, String nickname, Short gender, String email,
+                               String cellphone, String iconUrl, String birthday, String bloodType, String profession,
+                               String signature) {
+        LocalDateTime birthdayTime = DateUtils.parseStringToDateTime(birthday, null);
+        User user = this.getById(id);
+        if (user != null) {
+            user.setNickname(nickname);
+            user.setGender(gender);
+            user.setEmail(email);
+            user.setCellphone(cellphone);
+            user.setIcon_url(iconUrl);
+            user.setBirthday(birthdayTime);
+            user.setBloodType(bloodType);
+            user.setProfession(profession);
+            user.setSignature(signature);
+
         }
     }
 

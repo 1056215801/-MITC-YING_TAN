@@ -197,10 +197,6 @@ public class OpenDoorService {
         }
         return result;
     }
-
-
-
-
 //    public static void main(String[] args) {
 //        String[] times = {"2018-12-4 18:10:10,2018-12-4 19:10:10", "2018-12-5 18:10:10,2018-12-5 19:10:10"};
 //        List<Object> list = Lists.newArrayListWithCapacity(3);

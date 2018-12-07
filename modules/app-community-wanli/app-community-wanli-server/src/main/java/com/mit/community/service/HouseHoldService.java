@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 /**
  * 住户
- *
  * @author shuyy
  * @date 2018/11/30
  * @company mitesofor
@@ -35,8 +34,6 @@ public class HouseHoldService {
     @Autowired
     private ClusterCommunityService clusterCommunityService;
 
-
-
     /**
      * 查询住户，通过住户列表
      * @param householdIdList 住户列表
@@ -44,10 +41,23 @@ public class HouseHoldService {
      * @author shuyy
      * @date 2018/11/30 11:15
      * @company mitesofor
-    */
-    public List<HouseHold> listByHouseholdIdList(List<Integer> householdIdList){
+     */
+    public List<HouseHold> listByHouseholdIdList(List<Integer> householdIdList) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("household_id", householdIdList);
         return houseHoldMapper.selectList(wrapper);
+    }
+
+    /**
+     * 查找住户信息，通过住户id
+     * @param householdId 住户id
+     * @return 住户信息
+     * @author Mr.Deng
+     * @date 16:06 2018/12/7
+     */
+    public HouseHold getByHouseholdId(Integer householdId) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        return houseHoldMapper.selectList(wrapper).get(0);
     }
 }

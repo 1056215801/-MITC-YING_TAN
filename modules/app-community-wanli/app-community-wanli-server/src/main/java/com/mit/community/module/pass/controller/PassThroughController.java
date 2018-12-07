@@ -121,14 +121,14 @@ public class PassThroughController {
     public Result applyKey(String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                            String roomNum, String contactPerson, String contactCellphone, String content,
-                           Integer creatorUserId, String IdCard, MultipartFile[] images) {
+                           Integer creatorUserId, String IDCord, MultipartFile[] images) {
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
         for (MultipartFile anImage : images) {
             String imageUrl = updateImages(anImage);
             imageUrls.add(imageUrl);
         }
         applyKeyService.insertApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName, unitId,
-                unitName, roomId, roomNum, contactPerson, contactCellphone, content, creatorUserId, IdCard, imageUrls);
+                unitName, roomId, roomNum, contactPerson, contactCellphone, content, creatorUserId, IDCord, imageUrls);
         return Result.success("发布成功");
     }
 
