@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.User;
@@ -33,17 +34,20 @@ public class ClusterCommunityService {
     private UserService userService;
     @Autowired
     private ClusterCommunityService clusterCommunityService;
+    @Autowired
+    private RedisService redisService;
 
 
     /**
      * 查询小区，通过communityCode列表
+     *
      * @param communityCodeList 小区code列表
      * @return java.util.List<com.mit.community.entity.ClusterCommunity>
      * @author shuyy
      * @date 2018/11/30 11:20
      * @company mitesofor
-    */
-    public List<ClusterCommunity> listByCommunityCodeList(List<String> communityCodeList){
+     */
+    public List<ClusterCommunity> listByCommunityCodeList(List<String> communityCodeList) {
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodeList);
         return clusterCommunityMapper.selectList(wrapper);
@@ -57,15 +61,14 @@ public class ClusterCommunityService {
      * @date 2018/11/30 11:25
      * @company mitesofor
      */
-    public List<ClusterCommunity> listClusterCommunityByUserCellphone(String userCellphone){
-        User user = userService.getByCellphone(userCellphone);
+    public List<ClusterCommunity> listClusterCommunityByUserCellphone(String userCellphone) {
+        User user = (User) redisService.get(RedisConstant.USER + userCellphone);
         List<UserHousehold> userHouseholds = userHouseholdService.listByUserId(user.getId());
-        if(userHouseholds.isEmpty()){
-           return null;
+        List<HouseHold> households = houseHoldService.listByUserId(user.getId());
+        if (households.isEmpty()) {
+            return null;
         }
-        List<Integer> householdIds = userHouseholds.parallelStream().map(UserHousehold::getHouseholdId).collect(Collectors.toList());
-        List<HouseHold> houseHolds = houseHoldService.listByHouseholdIdList(householdIds);
-        List<String> communityCodeList = houseHolds.parallelStream().map(HouseHold::getCommunityCode).collect(Collectors.toList());
+        List<String> communityCodeList = households.parallelStream().map(HouseHold::getCommunityCode).collect(Collectors.toList());
         List<ClusterCommunity> clusterCommunities = clusterCommunityService.listByCommunityCodeList(communityCodeList);
         return clusterCommunities;
     }

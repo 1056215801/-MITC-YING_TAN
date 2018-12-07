@@ -28,7 +28,8 @@ public class DnakeAppApiUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("loginName", "13064102937");
         map.put("password", "123456");
-        String invoke = DnakeAppApiUtil.invoke(url, map);
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
     }
 
@@ -45,7 +46,8 @@ public class DnakeAppApiUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("telNum", "13064102937");
         map.put("clusterAccountId", "pMXYTG6tXMzPHpErs0VYBjmiHBatkWEs");
-        String invoke = DnakeAppApiUtil.invoke(url, map);
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
     }
 
@@ -62,7 +64,8 @@ public class DnakeAppApiUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("telNum", "13064102937");
         map.put("smsCode", "103601");
-        String invoke = DnakeAppApiUtil.invoke(url, map);
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
     }
 
@@ -73,10 +76,11 @@ public class DnakeAppApiUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("loginName", "13064102937");
         map.put("password", "123456");
-        map.put("registrationId", DnakeAppUser.registrationId);
-        map.put("platform", DnakeAppUser.platform);
-        map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
-        String invoke = DnakeAppApiUtil.invoke(url, map);
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        map.put("registrationId", dnakeAppUser.getRegistrationId());
+        map.put("platform", dnakeAppUser.getPlatform());
+        map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
     }
 }

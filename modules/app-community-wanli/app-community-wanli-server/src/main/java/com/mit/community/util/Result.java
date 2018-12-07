@@ -24,7 +24,8 @@ public class Result implements Serializable {
     /**
      * 结果状态：成功or失败
      */
-    private boolean resultCode;
+    private boolean resultStatus;
+
 
     public Result() {
 
@@ -32,19 +33,19 @@ public class Result implements Serializable {
 
     private Result(String message) {
         this.message = message;
-        this.resultCode = false;
+        this.resultStatus = false;
     }
 
     private Result(Object data, String message) {
         this.object = data;
         this.message = message;
-        this.resultCode = true;
+        this.resultStatus = true;
     }
 
     private Result(Object data) {
         this.object = data;
         this.message = "success";
-        this.resultCode = true;
+        this.resultStatus = true;
     }
 
     public static Result error(String message) {
@@ -57,6 +58,10 @@ public class Result implements Serializable {
 
     public static Result success(Object data) {
         return new Result(data);
+    }
+
+    public static Result success(String message){
+        return new Result(null, message);
     }
 
 }

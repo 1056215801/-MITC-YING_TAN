@@ -36,7 +36,7 @@ public class User extends BaseEntity implements Serializable {
      */
     private String nickname;
     /**
-     * 性别。1、男。0、女。
+     * 性别。0、未知。1、男。2、女。
      */
     private Short gender;
     /**
