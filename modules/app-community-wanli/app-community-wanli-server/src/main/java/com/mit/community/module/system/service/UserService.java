@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * 用户
- *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -35,13 +34,23 @@ public class UserService {
     }
 
     /**
+     * 修改用户信息
+     * @param user 用户信息
+     * @date 10:56 2018/12/7
+     */
+    public void update(User user) {
+        user.setGmtModified(LocalDateTime.now());
+        userMapper.updateById(user);
+    }
+
+    /**
      * 保存
      * @param user user
      * @author shuyy
      * @date 2018/11/29 11:25
      * @company mitesofor
-    */
-    public void save(User user){
+     */
+    public void save(User user) {
         user.setGmtCreate(LocalDateTime.now());
         user.setGmtModified(LocalDateTime.now());
         userMapper.insert(user);
@@ -55,15 +64,15 @@ public class UserService {
      * @author shuyy
      * @date 2018/11/29 11:28
      * @company mitesofor
-    */
-    public User getByUsernameAndPassword(String username, String password){
+     */
+    public User getByUsernameAndPassword(String username, String password) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("username", username);
         wrapper.eq("password", password);
         List<User> users = userMapper.selectList(wrapper);
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return null;
-        }else{
+        } else {
             return users.get(0);
         }
     }
@@ -77,14 +86,14 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
-    public User getByCellphoneAndPassword(String cellphone, String password){
+    public User getByCellphoneAndPassword(String cellphone, String password) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
         wrapper.eq("password", password);
         List<User> users = userMapper.selectList(wrapper);
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return null;
-        }else{
+        } else {
             return users.get(0);
         }
     }
@@ -97,27 +106,27 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
-    public User getByCellphone(String cellphone){
+    public User getByCellphone(String cellphone) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
         List<User> users = userMapper.selectList(wrapper);
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return null;
-        }else{
+        } else {
             return users.get(0);
         }
     }
 
     /**
      * 注册
-     * @param cellphone 电话号码
-     * @param username 用户名
-     * @param password 密码
+     * @param cellphone  电话号码
+     * @param username   用户名
+     * @param password   密码
      * @param labelCodes 标签code
      * @author shuyy
      * @date 2018/11/30 9:29
      * @company mitesofor
-    */
+     */
     @Transactional(rollbackFor = Exception.class)
     public void register(String cellphone, String username, String password, String[] labelCodes){
         User user = new User(cellphone, password, cellphone, (short) 1, StringUtils.EMPTY, StringUtils.EMPTY, DateUtils.getNull(), StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
