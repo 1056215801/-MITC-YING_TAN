@@ -2,10 +2,12 @@ package com.mit.community.module.system.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.common.util.DateUtils;
-import com.mit.common.util.UUIDUtils;
+import com.mit.community.constants.Constants;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.User;
 import com.mit.community.entity.UserLabel;
 import com.mit.community.module.system.mapper.UserMapper;
+import com.mit.community.service.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,18 +27,12 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-    private final UserMapper userMapper;
 
     @Autowired
     private UserLabelService userLabelService;
 
     @Autowired
     private RedisService redisService;
-
-    @Autowired
-    public UserService(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    private UserLabelService userLabelService;
 
     /**
      * 查询用户信息，通过用户id
@@ -114,14 +110,14 @@ public class UserService {
 
     /**
      * 注册
-     * @param cellphone  电话号码
-     * @param password   密码
+     * @param cellphone 电话号码
+     * @param password  密码
      * @author shuyy
      * @date 2018/12/07 16:52
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void register(String cellphone, String password){
+    public void register(String cellphone, String password) {
         User user = new User(cellphone, password, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         this.save(user);
 //        for (String labelCode : labelCodes) {
@@ -137,9 +133,9 @@ public class UserService {
      * @author shuyy
      * @date 2018/11/30 9:41
      * @company mitesofor
-    */
+     */
     @Transactional(rollbackFor = Exception.class)
-    public void chooseLabelList(String cellphone, String[] labelList){
+    public void chooseLabelList(String cellphone, String[] labelList) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         for (String labelCode : labelList) {
             UserLabel userLabel = new UserLabel(labelCode, user.getId());
@@ -154,7 +150,7 @@ public class UserService {
      * @param gender     性别1、男。0、女。
      * @param email      邮件
      * @param cellphone  电话
-     * @param icon_url   头像地址
+     * @param iconUrl   头像地址
      * @param birthday   生日 yyyy-MM-dd HH:mm:ss
      * @param bloodType  血型
      * @param profession 职业

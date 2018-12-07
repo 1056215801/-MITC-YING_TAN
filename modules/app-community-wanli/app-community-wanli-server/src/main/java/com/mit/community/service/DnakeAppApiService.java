@@ -22,7 +22,6 @@ import java.util.Map;
 
 /**
  * dnake接口调用
- *
  * @author shuyy
  * @date 2018/12/7
  * @company mitesofor
@@ -68,7 +67,7 @@ public class DnakeAppApiService {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
         JSONObject jsonObject = JSON.parseObject(invoke);
-        if(jsonObject.get("errorCode") == null){
+        if (jsonObject.get("errorCode") == null) {
             return true;
         }
         return false;
@@ -76,14 +75,13 @@ public class DnakeAppApiService {
 
     /**
      * 登陆
-     * @param cellphone
-     * @param password
+     * @param cellphone 电话号码
+     * @param password  密码
      * @return com.mit.community.entity.DnakeLoginResponse
-     * @throws
      * @author shuyy
      * @date 2018/12/7 15:32
      * @company mitesofor
-    */
+     */
     public DnakeLoginResponse login(String cellphone, String password) {
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         String url = "/auth/base/login";
@@ -98,19 +96,16 @@ public class DnakeAppApiService {
         return JSON.parseObject(invoke, DnakeLoginResponse.class);
     }
 
-
     /**
      * http开门
      * @param communityCode 小区code
-     * @param username      用户名
-     * @param password      密码
+     * @param cellphone     电话号码
      * @param deviceNum     设备编号
      * @return 登录成功数据
      * @author Mr.Deng
      * @date 14:01 2018/12/4
      */
-    public boolean httpOpenDoor(String cellphone, String communityCode, String username, String password, String deviceNum) {
-        String result = StringUtils.EMPTY;
+    public boolean httpOpenDoor(String cellphone, String communityCode, String deviceNum) {
         String url = "/auth/api/device/unlock";
         DnakeLoginResponse dnakeLoginResponse = (DnakeLoginResponse) redisService.get(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone);
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
@@ -121,7 +116,7 @@ public class DnakeAppApiService {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
         JSONObject jsonObject = JSON.parseObject(invoke);
-        if(jsonObject.get("errorCode") != null){
+        if (jsonObject.get("errorCode") != null) {
             return false;
         }
         return true;
@@ -129,7 +124,7 @@ public class DnakeAppApiService {
 
     /**
      * 设置呼叫转移号码
-     * @param cellphone  手机号码
+     * @param cellphone 手机号码
      * @param sipMobile 转移号码
      * @return 返回操作成功是否
      * @author Mr.Deng
@@ -156,14 +151,11 @@ public class DnakeAppApiService {
      * @param times         开锁次数：无限次：0；一次：1；
      * @param deviceGroupId 设备分组id，默认只传公共权限组
      * @param communityCode 社区编号
-     * @param username      用户名
-     * @param password      密码
      * @return 申请成功返回信息
      * @author Mr.Deng
      * @date 16:32 2018/12/4
      */
-    public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode, String username,
-                                String password) {
+    public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
         String result = StringUtils.EMPTY;
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/common/inviteCode";
@@ -182,14 +174,12 @@ public class DnakeAppApiService {
 
     /**
      * 查询小区设备组信息,通过小区code
-     * @param username      用户名
-     * @param password      密码
      * @param communityCode 小区code
      * @return 小区设备组信息
      * @author Mr.Deng
      * @date 16:51 2018/12/4
      */
-    public String getDeviceGroup(String username, String password, String communityCode) {
+    public String getDeviceGroup(String communityCode) {
         String result = StringUtils.EMPTY;
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/device/getDeviceGroup";
@@ -206,16 +196,14 @@ public class DnakeAppApiService {
 
     /**
      * 获取我的钥匙
-     * @param username      用户名
-     * @param password      密码
      * @param communityCode 小区code
      * @return 我的钥匙信息
      * @author Mr.Deng
      * @date 14:08 2018/12/4
      */
-    public Map<String, Object> getMyKey(String cellphone, String username, String password, String communityCode) {
+    public Map<String, Object> getMyKey(String cellphone, String communityCode) {
         List<MyKey> unitKeys = Lists.newArrayListWithExpectedSize(10);
-        List<MyKey> CommunityKeys = Lists.newArrayListWithExpectedSize(10);
+        List<MyKey> communityKeys = Lists.newArrayListWithExpectedSize(10);
         Map<String, Object> maps = Maps.newHashMapWithExpectedSize(2);
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/user/myKey";
@@ -235,11 +223,11 @@ public class DnakeAppApiService {
                 if (StringUtils.isNotBlank(buildingCode)) {
                     unitKeys.add(myKey);
                 } else {
-                    CommunityKeys.add(myKey);
+                    communityKeys.add(myKey);
                 }
             }
             maps.put("unitKeys", unitKeys);
-            maps.put("CommunityKeys", CommunityKeys);
+            maps.put("CommunityKeys", communityKeys);
         }
         return maps;
     }

@@ -102,10 +102,10 @@ public class ApplyKeyService {
     public void insertApplyKey(String communityCode, String communityName, Integer zoneId, String zoneName,
                                Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                                String roomNum, String contactPerson, String contactCellphone, String content,
-                               Integer creatorUserId, String IdCard, List<String> images) {
+                               Integer creatorUserId, String idCard, List<String> images) {
         ApplyKey applyKey = new ApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName,
                 unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, 1, content, creatorUserId,
-                StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, IdCard);
+                StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, idCard);
         Integer applyKeySave = this.save(applyKey);
         if (applyKeySave > 0) {
             if (images.size() > 0 && StringUtils.isNotBlank(images.get(0))) {

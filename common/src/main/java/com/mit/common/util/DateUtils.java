@@ -1,20 +1,14 @@
 package com.mit.common.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * 日期处理工具类
- *
  * @author shuyy
  * @date 2018年10月19日
  * @company mitesofor
@@ -23,13 +17,11 @@ public class DateUtils {
 
     /**
      * 指定日期
-     *
      * @param @param  year
      * @param @param  month
      * @param @param  day
      * @param @return
      * @return Date
-     * @throws
      * @date 2018年10月19日
      * @company mitesofor
      * @author shuyy
@@ -44,12 +36,10 @@ public class DateUtils {
 
     /**
      * 日期加指定天数
-     *
      * @param @param  date
      * @param @param  days
      * @param @return
      * @return Date
-     * @throws
      * @date 2018年10月19日
      * @company mitesofor
      * @author shuyy
@@ -63,12 +53,10 @@ public class DateUtils {
 
     /**
      * 计算时间间隔，以分为单位。
-     *
      * @param @param  startData
      * @param @param  endDate
      * @param @return
      * @return Long
-     * @throws
      * @date 2018年10月24日
      * @company mitesofor
      * @author shuyy
@@ -81,7 +69,7 @@ public class DateUtils {
 
     /**
      * String转localDateTime。
-     * @param time 时间
+     * @param time   时间
      * @param format 如果为null，则默认格式：yyyy-MM-dd HH:mm:ss
      * @return LocalDateTime
      * @date 2018年10月31日
@@ -98,7 +86,7 @@ public class DateUtils {
 
     /**
      * String转LocalDate。
-     * @param time 时间
+     * @param time   时间
      * @param format 如果为null，则默认格式：yyyy-MM-dd
      * @return LocalDateTime
      * @date 2018年10月31日
@@ -114,17 +102,15 @@ public class DateUtils {
     }
 
     public static void main(String[] args) {
-        DateUtils dateUtils = new DateUtils();
-        dateUtils.parseStringToDateTime("19950101", "yyyyMMdd");
+        DateUtils.parseStringToDateTime("19950101", "yyyyMMdd");
     }
+
     /**
      * localDateTime转format
-     *
      * @param @param  dateTime
      * @param @param  format format 如果为null，则默认格式：yyyy-MM-dd HH:mm:ss
      * @param @return
      * @return String
-     * @throws
      * @date 2018年10月31日
      * @company mitesofor
      * @author shuyy
@@ -139,13 +125,13 @@ public class DateUtils {
     }
 
     /**
-     * 将字符串转换成时间戳
+     * 将字符串转换成unix时间戳
      * @param time 时间字符串
      * @return java.lang.Long 时间戳
      * @author shuyy
      * @date 2018/12/7 18:55
      * @company mitesofor
-    */
+     */
     public static Long parseStringToTimeStamp(String time) {
         LocalDateTime localDateTime = DateUtils.parseStringToDateTime(time, null);
         return Timestamp.valueOf(localDateTime).getTime();
