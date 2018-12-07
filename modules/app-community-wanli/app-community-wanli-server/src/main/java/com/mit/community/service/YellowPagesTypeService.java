@@ -1,7 +1,6 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.mit.community.entity.YellowPages;
 import com.mit.community.entity.YellowPagesType;
 import com.mit.community.mapper.YellowPagesTypeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
