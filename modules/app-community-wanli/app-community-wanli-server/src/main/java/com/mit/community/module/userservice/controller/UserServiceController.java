@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 住户-服务控制类
@@ -89,12 +90,12 @@ public class UserServiceController {
                                           Integer buildingId, String buildingName, Integer unitId, String unitName,
                                           Integer roomId, String roomNum, Integer householdId, String content,
                                           String reportUser, String cellphone, Integer maintainType,
-                                          Integer creatorUserId, MultipartFile[] images) {
+                                          Integer creatorUserId, MultipartFile[] images) throws Exception {
         //上传图片路径
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
         if (images != null) {
             for (MultipartFile image : images) {
-                String imageUrl = updateImage(image);
+                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
                 imageUrls.add(imageUrl);
             }
         }
@@ -218,12 +219,12 @@ public class UserServiceController {
     public Result applyBusinessHandling(String communityCode, String communityName, Integer zoneId, String zoneName,
                                         Integer buildingId, String buildingName, Integer unitId, String unitName,
                                         Integer roomId, String roomNum, String contactPerson, String contactCellphone,
-                                        String content, Integer type, Integer creatorUserId, MultipartFile[] images) {
+                                        String content, Integer type, Integer creatorUserId, MultipartFile[] images) throws Exception {
         //上传图片地址列表
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
         if (images != null) {
             for (MultipartFile image : images) {
-                String imageUrl = updateImage(image);
+                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
                 imageUrls.add(imageUrl);
             }
         }
@@ -327,38 +328,16 @@ public class UserServiceController {
     @PostMapping(value = "/submitFeedBack", produces = {"application/json"})
     @ApiOperation(value = "提交反馈意见", notes = "输入参数：title 标题；content 反馈内容；" +
             "type 类型。关联数据字典。code为feedback_type。1、APP功能反馈。2、物业/小区问题;userId 用户id；image 图片列表")
-    public Result submitFeedBack(String title, String content, Integer type, Integer userId, MultipartFile image) {
+    public Result submitFeedBack(String title, String content, Integer type, Integer userId, MultipartFile image) throws Exception {
         if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(content) && type != null && userId != null) {
             List<String> imageUrls = Lists.newArrayListWithCapacity(5);
             if (null != image) {
-                String imageUrl = updateImage(image);
+                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
                 imageUrls.add(imageUrl);
             }
             feedBackService.submitFeedBack(title, content, type, userId, imageUrls);
             return Result.success("提交成功");
         }
         return Result.error("参数不能为空");
-    }
-
-    /**
-     * 图片上传方法
-     * @param image 图片
-     * @return 图片访问路径
-     * @author Mr.Deng
-     * @date 11:36 2018/12/6
-     */
-    private String updateImage(MultipartFile image) {
-        String result = StringUtils.EMPTY;
-        if (image != null) {
-            try {
-                FastDFSClient instance = FastDFSClient.getInstance();
-                if (instance != null) {
-                    result = instance.uploadFile(image);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
     }
 }

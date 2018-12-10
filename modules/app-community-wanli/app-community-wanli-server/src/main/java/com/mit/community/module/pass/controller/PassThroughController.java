@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 住户-通行模块
@@ -34,25 +35,15 @@ import java.util.Map;
 public class PassThroughController {
 
     private final RegionService regionService;
-
     private final NoticeService noticeService;
-
     private final ApplyKeyService applyKeyService;
-
     private final VisitorService visitorService;
-
     private final DnakeAppApiService dnakeAppApiService;
-
     private final HouseHoldService houseHoldService;
-
     private final ZoneService zoneService;
-
     private final UnitService unitService;
-
     private final RoomService roomService;
-
     private final BuildingService buildingService;
-
     private final AccessControlService accessControlService;
 
     @Autowired
@@ -111,13 +102,16 @@ public class PassThroughController {
         Integer dateType = dateInit(localDate);
         String[] s = {"1和6", "2和7", "3和8", "4和9", "5和0"};
         String str;
-        if (dateType == 0) {
-            int value = localDate.getDayOfWeek().getValue();
-            str = "限行尾号为" + s[value - 1];
-        } else {
-            str = "不限行";
+        if (dateType != null) {
+            if (dateType == 0) {
+                int value = localDate.getDayOfWeek().getValue();
+                str = "限行尾号为" + s[value - 1];
+            } else {
+                str = "不限行";
+            }
+            return Result.success(str);
         }
-        return Result.success(str);
+        return Result.error("维修中");
     }
 
     /**
@@ -185,15 +179,17 @@ public class PassThroughController {
     @ApiOperation(value = "申请钥匙", notes = "输入参数：communityCode 小区code;communityName 小区名；zoneId 分区id;" +
             "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
             "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；creatorUserId 创建人用户id；" +
-            "image")
+            "images 图片列表（可不传）")
     public Result applyKey(String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                            String roomNum, String contactPerson, String contactCellphone, String content,
-                           Integer creatorUserId, String idCard, MultipartFile[] images) {
+                           Integer creatorUserId, String idCard, MultipartFile[] images) throws Exception {
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
-        for (MultipartFile anImage : images) {
-            String imageUrl = updateImages(anImage);
-            imageUrls.add(imageUrl);
+        if (images != null) {
+            for (MultipartFile image : images) {
+                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                imageUrls.add(imageUrl);
+            }
         }
         applyKeyService.insertApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName, unitId,
                 unitName, roomId, roomNum, contactPerson, contactCellphone, content, creatorUserId, idCard, imageUrls);
@@ -304,6 +300,26 @@ public class PassThroughController {
                 StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(cellphone)) {
             String inviteCode = dnakeAppApiService.getInviteCode(cellphone, dateTag, times, deviceGroupId, communityCode);
             JSONObject json = JSONObject.parseObject(inviteCode);
+            return Result.success(json);
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 获取邀请码记录
+     * @param cellphone 手机号
+     * @param pageIndex 页码，从0开始
+     * @param pageSize  页大小最大100
+     * @return result
+     * @author Mr.Deng
+     * @date 14:46 2018/12/10
+     */
+    @GetMapping("/openHistory")
+    @ApiOperation(value = "查询邀请码记录", notes = "输入参数：cellphone 电话号码；pageIndex 页码，从0开始；pageSize 页大小（最大100）")
+    public Result openHistory(String cellphone, Integer pageIndex, Integer pageSize) {
+        if (StringUtils.isNotBlank(cellphone) && pageIndex != null && pageSize != null) {
+            String invoke = dnakeAppApiService.openHistory(cellphone, pageIndex, pageSize);
+            JSONObject json = JSONObject.parseObject(invoke);
             return Result.success(json);
         }
         return Result.error("参数不能为空");
@@ -456,25 +472,4 @@ public class PassThroughController {
         return Result.success(accessControls);
     }
 
-    /**
-     * 图片上传方法
-     * @param image 图片
-     * @return 图片访问路径
-     * @author Mr.Deng
-     * @date 11:36 2018/12/6
-     */
-    private String updateImages(MultipartFile image) {
-        String result = StringUtils.EMPTY;
-        if (image != null) {
-            try {
-                FastDFSClient instance = FastDFSClient.getInstance();
-                if (instance != null) {
-                    result = instance.uploadFile(image);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
 }

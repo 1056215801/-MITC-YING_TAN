@@ -17,34 +17,38 @@ import java.util.Map;
 
 /**
  * 发送短信
- *
  * @author shuyy
  * @date 2018/12/10
  * @company mitesofor
  */
 public class SmsUtil {
 
-    //产品名称:云通信短信API产品,开发者无需替换
-    static final String product = "Dysmsapi";
-    //产品域名,开发者无需替换
-    static final String domain = "dysmsapi.aliyuncs.com";
+    /**
+     * 产品名称:云通信短信API产品,开发者无需替换
+     */
+    static final String PRODUCT = "Dysmsapi";
+    /**
+     * 产品域名,开发者无需替换
+     */
+    static final String DOMAIN = "dysmsapi.aliyuncs.com";
 
-    // TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String accessKeyId = "LTAIuEUjk3oQ1Tc3";
-    static final String accessKeySecret = "FBMOI8NGlIq5ss2QtsbcxF4oIsHN34";
+    /**
+     * TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
+     */
+    static final String ACCESS_KEY_ID = "LTAIuEUjk3oQ1Tc3";
+    static final String ACCESS_KEY_SECRET = "FBMOI8NGlIq5ss2QtsbcxF4oIsHN34";
 
     /**
      * 发送短信验证
      * @param tellphone 电话号码
-     * @param sign 签名
+     * @param sign      签名
      * @param modelCode 模板code
-     * @param param 参数
+     * @param param     参数
      * @return com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse
-     * @throws
      * @author shuyy
      * @date 2018/12/10 10:04
      * @company mitesofor
-    */
+     */
     public static SendSmsResponse sendSms(String tellphone, String sign, String modelCode, Map<String, String> param) throws ClientException {
 
         //可自助调整超时时间
@@ -52,8 +56,8 @@ public class SmsUtil {
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
 
         //初始化acsClient,暂不支持region化
-        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", ACCESS_KEY_ID, ACCESS_KEY_SECRET);
+        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", PRODUCT, DOMAIN);
         IAcsClient acsClient = new DefaultAcsClient(profile);
 
         //组装请求对象-具体描述见控制台-文档部分内容
@@ -65,8 +69,8 @@ public class SmsUtil {
         //必填:短信模板-可在短信控制台中找到
         request.setTemplateCode(modelCode);
         //可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
-        if(param != null){
-            param.forEach((key, value)->{
+        if (param != null) {
+            param.forEach((key, value) -> {
                 String s = JSON.toJSONString(param);
                 request.setTemplateParam(s);
             });
@@ -83,7 +87,6 @@ public class SmsUtil {
         return sendSmsResponse;
     }
 
-
     /**
      * 查询发送详情
      * @param bizId
@@ -92,7 +95,7 @@ public class SmsUtil {
      * @author shuyy
      * @date 2018/12/10 10:05
      * @company mitesofor
-    */
+     */
     public static QuerySendDetailsResponse querySendDetails(String bizId) throws ClientException {
 
         //可自助调整超时时间
@@ -100,8 +103,8 @@ public class SmsUtil {
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
 
         //初始化acsClient,暂不支持region化
-        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", ACCESS_KEY_ID, ACCESS_KEY_SECRET);
+        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", PRODUCT, DOMAIN);
         IAcsClient acsClient = new DefaultAcsClient(profile);
 
         //组装请求对象

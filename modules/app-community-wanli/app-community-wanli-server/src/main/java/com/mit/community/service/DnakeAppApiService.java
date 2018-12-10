@@ -22,7 +22,6 @@ import java.util.Map;
 
 /**
  * dnake接口调用
- *
  * @author shuyy
  * @date 2018/12/7
  * @company mitesofor
@@ -188,6 +187,28 @@ public class DnakeAppApiService {
             result = invoke;
         }
         return result;
+    }
+
+    /**
+     * 获取邀请码记录
+     * @param cellphone 手机号
+     * @param pageIndex 页码，从0开始
+     * @param pageSize  页大小
+     * @return 查询数据json
+     * @author Mr.Deng
+     * @date 14:34 2018/12/10
+     */
+    public String openHistory(String cellphone, Integer pageIndex, Integer pageSize) {
+        String url = "/auth/api/common/openHistory";
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
+        DnakeLoginResponse dnakeLoginResponse = (DnakeLoginResponse) redisService.get(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone);
+        map.put("appUserId", dnakeLoginResponse.getAppUserId());
+        map.put("pageIndex", pageIndex);
+        map.put("pageSize", pageSize);
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        log.info(invoke);
+        return invoke;
     }
 
     /**
