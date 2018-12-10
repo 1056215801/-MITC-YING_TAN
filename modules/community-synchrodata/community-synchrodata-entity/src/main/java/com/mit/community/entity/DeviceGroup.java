@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 设备组信息
  *
@@ -25,10 +27,16 @@ public class DeviceGroup extends BaseEntity {
      */
     @TableField("device_group_Id")
     private Integer deviceGroupId;
+
+    /**设备组*/
+    @TableField("device_group_name")
+    private String deviceGroupName;
     /**
      * 设备组类别（1,单元权限组,2,公共权限组,3,特殊权限组）
      */
     @TableField("group_type")
-    private String groupType;
+    private Short groupType;
 
+    @TableField(exist = false)
+    private List<DeviceDeviceGroup> deviceDeviceGroups;
 }

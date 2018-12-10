@@ -1,15 +1,14 @@
 package com.mit.community.schedule;
 
-import java.util.List;
-
+import com.mit.community.entity.Visitor;
+import com.mit.community.service.ClusterCommunityService;
+import com.mit.community.service.VisitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mit.community.entity.Visitor;
-import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.VisitorService;
+import java.util.List;
 
 /**
  * 访客定时同步
@@ -31,10 +30,11 @@ public class VisitorSchedule {
         this.clusterCommunityService = clusterCommunityService;
     }
 
-    @Scheduled(cron = "0 30 1 * * ?")
+    @Scheduled(cron = "0 59 * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         // 删除所有访客，再插入
         visitorService.remove();
         List<Visitor> visitors = visitorService.listFromDnakeByCommunityCodeList(communityCodeList);

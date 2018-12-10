@@ -50,10 +50,11 @@ public class UnitSchedule {
      * @company mitesofor
     */
     @CacheClear(pre="unit")
-    @Scheduled(cron = "0 20 1 * * ?")
+    @Scheduled(cron = "0 59 * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         // 先删除，在插入
         unitService.remove();
         communityCodeList.forEach(item -> {

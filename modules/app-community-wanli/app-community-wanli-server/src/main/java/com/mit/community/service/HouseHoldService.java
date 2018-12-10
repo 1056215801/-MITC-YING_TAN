@@ -2,9 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.common.collect.Lists;
-import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.User;
 import com.mit.community.entity.UserHousehold;
 import com.mit.community.mapper.HouseHoldMapper;
 import com.mit.community.mapper.UserHouseholdMapper;
@@ -89,13 +87,27 @@ public class HouseHoldService {
         houseHolds.forEach(houseHold -> {
             Integer authorizeStatus = houseHold.getAuthorizeStatus();
             String s = Integer.toBinaryString(authorizeStatus);
-            if(s.indexOf(1) == 1){
+            if(s.charAt(1) == '1'){
                 result.add(houseHold);
             }
         });
         return result;
     }
 
+    /**
+     * 查询住户列表，通过手机号
+     * @param cellphone
+     * @return java.util.List<com.mit.community.entity.HouseHold>
+     * @throws
+     * @author shuyy
+     * @date 2018/12/10 15:35
+     * @company mitesofor
+    */
+    public List<HouseHold> listByCellphone(String cellphone){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("mobile", cellphone);
+        return houseHoldMapper.selectList(wrapper);
+    }
 
     /**
      * 查找住户信息，通过住户id

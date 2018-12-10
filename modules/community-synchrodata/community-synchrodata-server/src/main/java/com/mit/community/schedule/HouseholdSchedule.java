@@ -1,7 +1,7 @@
 package com.mit.community.schedule;
 
-import com.mit.community.entity.AuthorizeAppHouseholdDevice;
-import com.mit.community.entity.AuthorizeHouseholdDevice;
+import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
+import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +29,21 @@ public class HouseholdSchedule {
 
     private final ClusterCommunityService clusterCommunityService;
 
-    private final AuthorizeAppHouseholdDeviceService authorizeAppHouseholdDeviceService;
+    private final AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceGroupService;
 
-    private final AuthorizeHouseholdDeviceService authorizeHouseholdDeviceService;
+    private final AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceGroupService;
 
     private final AccessControlService accessControlService;
 
     @Autowired
     public HouseholdSchedule(HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
-                             AuthorizeAppHouseholdDeviceService authorizeAppHouseholdDeviceService,
-                             AuthorizeHouseholdDeviceService authorizeHouseholdDeviceService,
+                             AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceService,
+                             AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceService,
                              AccessControlService accessControlService) {
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
-        this.authorizeAppHouseholdDeviceService = authorizeAppHouseholdDeviceService;
-        this.authorizeHouseholdDeviceService = authorizeHouseholdDeviceService;
+        this.authorizeAppHouseholdDeviceGroupService = authorizeAppHouseholdDeviceService;
+        this.authorizeHouseholdDeviceGroupService = authorizeHouseholdDeviceService;
         this.accessControlService = accessControlService;
     }
 
@@ -54,27 +54,27 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-//    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         // 先删除本地数据库，再插入
         houseHoldService.remove();
-//        authorizeHouseholdDeviceService.remove();
-//        authorizeAppHouseholdDeviceService.remove();
+        authorizeHouseholdDeviceGroupService.remove();
+        authorizeAppHouseholdDeviceGroupService.remove();
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);
         if (!houseHolds.isEmpty()) {
             houseHoldService.insertBatch(houseHolds);
-           /* houseHolds.forEach(item -> {
-                List<AuthorizeAppHouseholdDevice> authorizeAppHouseholdDevices = item.getAuthorizeAppHouseholdDevices();
+            houseHolds.forEach(item -> {
+                List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDevices = item.getAuthorizeAppHouseholdDeviceGroups();
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
-                    authorizeAppHouseholdDeviceService.insertBatch(authorizeAppHouseholdDevices);
+                    authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDevices);
                 }
-                List<AuthorizeHouseholdDevice> authorizeHouseholdDevices = item.getAuthorizeHouseholdDevices();
-                if (authorizeHouseholdDevices != null && !authorizeHouseholdDevices.isEmpty()) {
-                    authorizeHouseholdDeviceService.insertBatch(authorizeHouseholdDevices);
+                List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
+                if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {
+                    authorizeHouseholdDeviceGroupService.insertBatch(authorizeHouseholdDeviceGroups);
                 }
-            });*/
-
+            });
         }
     }
     
@@ -84,7 +84,7 @@ public class HouseholdSchedule {
      * @date 2018/12/08 15:36
      * @company mitesofor
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void updateIdCard() {
     	long start = System.currentTimeMillis();
     	List<HouseHold> list = houseHoldService.list();
@@ -200,7 +200,6 @@ public class HouseholdSchedule {
                     }
                 }
             }
-
         });
         // 分析身份类型
     }

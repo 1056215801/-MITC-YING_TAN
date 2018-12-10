@@ -1,7 +1,7 @@
 package com.mit.community.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.mit.community.entity.AuthorizeHouseholdDevice;
+import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
 
 /**
  * 住户设备授权
@@ -10,6 +10,6 @@ import com.mit.community.entity.AuthorizeHouseholdDevice;
  * @date 2018/11/19
  * @company mitesofor
  */
-public interface AuthorizeHouseholdDeviceMapper extends BaseMapper<AuthorizeHouseholdDevice> {
+public interface AuthorizeHouseholdDeviceGroupMapper extends BaseMapper<AuthorizeHouseholdDeviceGroup> {
 
 }

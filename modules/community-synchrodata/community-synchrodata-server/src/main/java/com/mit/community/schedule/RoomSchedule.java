@@ -45,10 +45,11 @@ public class RoomSchedule {
     }
 
     @CacheClear(pre="room")
-    @Scheduled(cron = "0 25 1 * * ?")
+    @Scheduled(cron = "0 59 * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         roomService.remove();
         List<Zone> zones = zoneService.listByCommunityCodeList(communityCodeList);
         List<Integer> zoneIdList = zones.parallelStream().map(Zone::getZoneId).collect(Collectors.toList());
