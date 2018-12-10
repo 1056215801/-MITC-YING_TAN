@@ -9,13 +9,12 @@ import com.mit.community.entity.UserLabel;
 import com.mit.community.module.system.mapper.UserMapper;
 import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.service.RedisService;
-import com.mit.community.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.reflect.annotation.ExceptionProxy;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -124,7 +123,7 @@ public class UserService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void register(String cellphone, String password) {
-        User user = new User(cellphone, password, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        User user = new User(cellphone, password, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         this.save(user);
 //        for (String labelCode : labelCodes) {
 //            UserLabel userLabel = new UserLabel(labelCode, user.getId());
@@ -167,7 +166,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void updateUserInfo(Integer userId, String nickname, Short gender, String email, String cellphone,
                                String iconUrl, String birthday, String bloodType, String profession, String signature) {
-        LocalDateTime birthdayTime = DateUtils.parseStringToDateTime(birthday, null);
+        LocalDate birthdayTime = DateUtils.parseStringToLocalDate(birthday, null);
         User user = this.getById(userId);
         if (user != null) {
             user.setNickname(nickname);
