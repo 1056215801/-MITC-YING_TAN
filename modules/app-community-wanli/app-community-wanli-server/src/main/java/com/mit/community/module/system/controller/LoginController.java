@@ -1,7 +1,5 @@
 package com.mit.community.module.system.controller;
 
-import com.mit.common.util.SmsUtil;
-import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.module.system.service.UserService;
@@ -42,7 +40,9 @@ public class LoginController {
     private final HouseHoldService houseHoldService;
 
     @Autowired
-    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService, ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService) {
+    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService,
+                           ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService,
+                           HouseHoldService houseHoldService) {
         this.redisService = redisService;
         this.userService = userService;
         this.deviceService = deviceService;
@@ -60,13 +60,13 @@ public class LoginController {
      * @company mitesofor
      */
     @GetMapping("/getMobileVerificationCode")
-    @ApiOperation(value = "获取手机验证码", notes="传参：cellphone 手机号、type 类型：1 注册, 2 登陆")
+    @ApiOperation(value = "获取手机验证码", notes = "传参：cellphone 手机号、type 类型：1 注册, 2 登陆")
     public Result getMobileVerificationCode(String cellphone, Integer type) {
         String code = SmsCommunityAppUtil.generatorCode();
-        if (type == SmsCommunityAppUtil.TYPE_REGISTER) {
+        if (SmsCommunityAppUtil.TYPE_REGISTER.equals(type)) {
             // 注册
             SmsCommunityAppUtil.send(cellphone, code, SmsCommunityAppUtil.TYPE_REGISTER);
-        }else if(type == SmsCommunityAppUtil.TYPE_LOGIN_CONFIRM){
+        } else if (SmsCommunityAppUtil.TYPE_LOGIN_CONFIRM.equals(type)) {
             SmsCommunityAppUtil.send(cellphone, code, SmsCommunityAppUtil.TYPE_LOGIN_CONFIRM);
         }
         redisService.set(RedisConstant.VERIFICATION_CODE + cellphone, code, RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
@@ -288,6 +288,8 @@ public class LoginController {
      * @author Mr.Deng
      * @date 13:54 2018/12/8
      */
+    @PatchMapping("/resetPwd")
+    @ApiOperation(value = "重置密码", notes = "输入参数：cellPhone 电话号码；newPassword 新密码；oldPassword 旧密码")
     public Result resetPwd(String cellPhone, String newPassword, String oldPassword) {
         if (StringUtils.isNotBlank(cellPhone) && StringUtils.isNotBlank(newPassword) && StringUtils.isNotBlank(oldPassword)) {
             Integer status = userService.resetPwd(cellPhone, newPassword, oldPassword);
@@ -296,7 +298,6 @@ public class LoginController {
                     return Result.error("旧密码不匹配");
                 }
                 if (status == 1) {
-
                     return Result.success("重置密码成功");
                 }
             }

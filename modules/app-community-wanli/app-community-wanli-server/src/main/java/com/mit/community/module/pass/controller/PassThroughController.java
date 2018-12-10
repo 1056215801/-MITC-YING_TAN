@@ -33,38 +33,46 @@ import java.util.Map;
 @Api(tags = "住户-通行模块接口")
 public class PassThroughController {
 
-    @Autowired
-    private RegionService regionService;
+    private final RegionService regionService;
+
+    private final NoticeService noticeService;
+
+    private final ApplyKeyService applyKeyService;
+
+    private final VisitorService visitorService;
+
+    private final DnakeAppApiService dnakeAppApiService;
+
+    private final HouseHoldService houseHoldService;
+
+    private final ZoneService zoneService;
+
+    private final UnitService unitService;
+
+    private final RoomService roomService;
+
+    private final BuildingService buildingService;
+
+    private final AccessControlService accessControlService;
 
     @Autowired
-    private NoticeService noticeService;
-
-    @Autowired
-    private ApplyKeyService applyKeyService;
-
-    @Autowired
-    private VisitorService visitorService;
-
-    @Autowired
-    private DnakeAppApiService dnakeAppApiService;
-
-    @Autowired
-    private HouseHoldService houseHoldService;
-
-    @Autowired
-    private ZoneService zoneService;
-
-    @Autowired
-    private UnitService unitService;
-
-    @Autowired
-    private RoomService roomService;
-
-    @Autowired
-    private BuildingService buildingService;
-
-    @Autowired
-    private AccessControlService accessControlService;
+    public PassThroughController(NoticeService noticeService, RegionService regionService,
+                                 ApplyKeyService applyKeyService, VisitorService visitorService,
+                                 DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
+                                 ZoneService zoneService, UnitService unitService, RoomService roomService,
+                                 BuildingService buildingService, AccessControlService accessControlService) {
+        this.noticeService = noticeService;
+        this.regionService = regionService;
+        this.applyKeyService = applyKeyService;
+        this.visitorService = visitorService;
+        this.dnakeAppApiService = dnakeAppApiService;
+        this.houseHoldService = houseHoldService;
+        this.zoneService = zoneService;
+        this.unitService = unitService;
+        this.roomService = roomService;
+        this.buildingService = buildingService;
+        this.accessControlService = accessControlService;
+    }
 
     /**
      * 查询当地当前天气信息，通过城市英文名

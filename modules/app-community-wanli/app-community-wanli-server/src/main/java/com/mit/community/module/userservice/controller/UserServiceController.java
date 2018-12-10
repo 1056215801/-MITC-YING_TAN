@@ -32,23 +32,31 @@ import java.util.Map;
 @Api(tags = "住户-服务模块接口")
 public class UserServiceController {
 
-    @Autowired
-    private ReportThingsRepairService reportThingsRepairService;
+    private final ReportThingsRepairService reportThingsRepairService;
+
+    private final CommunityServiceInfoService communityServiceInfoService;
+
+    private final BusinessHandlingService businessHandlingService;
+
+    private final CommunityPhoneService communityPhoneService;
+
+    private final YellowPagesService yellowPagesService;
+
+    private final FeedBackService feedBackService;
 
     @Autowired
-    private CommunityServiceInfoService communityServiceInfoService;
-
-    @Autowired
-    private BusinessHandlingService businessHandlingService;
-
-    @Autowired
-    private CommunityPhoneService communityPhoneService;
-
-    @Autowired
-    private YellowPagesService yellowPagesService;
-
-    @Autowired
-    private FeedBackService feedBackService;
+    public UserServiceController(ReportThingsRepairService reportThingsRepairService,
+                                 CommunityServiceInfoService communityServiceInfoService,
+                                 BusinessHandlingService businessHandlingService,
+                                 CommunityPhoneService communityPhoneService, YellowPagesService yellowPagesService,
+                                 FeedBackService feedBackService) {
+        this.reportThingsRepairService = reportThingsRepairService;
+        this.communityServiceInfoService = communityServiceInfoService;
+        this.businessHandlingService = businessHandlingService;
+        this.communityPhoneService = communityPhoneService;
+        this.yellowPagesService = yellowPagesService;
+        this.feedBackService = feedBackService;
+    }
 
     /**
      * 申请报事报修
