@@ -1,5 +1,7 @@
 package com.mit.community.entity;
 
+import java.io.Serializable;
+
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -15,7 +17,7 @@ import lombok.Data;
  */
 @TableName("idcard_region")
 @Data
-public class IdCardRegion {
+public class IdCardRegion implements Serializable{
     @TableId(type = IdType.AUTO)
     private Integer id;
     /**

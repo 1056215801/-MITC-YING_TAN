@@ -106,7 +106,7 @@ public class CommunityTestController {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/community/queryClusterCommunity";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
+        map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
         String invoke = DnakeWebApiUtil.invoke(url, map);
         //处理返回json数据
         JSONObject jsonObject = JSONObject.fromObject(invoke);

@@ -18,8 +18,8 @@ spring:
       #        # 使用druid数据源
       ##        type: com.alibaba.druid.pool.DruidDataSource
       #        driver-class-name: com.mysql.jdbc.Driver
-      maxActive: 20
-      initialSize: 1
+      maxActive: 100
+      initialSize: 100
       maxWait: 60000
       minIdle: 1
       timeBetweenEvictionRunsMillis: 60000
@@ -29,7 +29,7 @@ spring:
       testOnBorrow: false
       testOnReturn: false
       poolPreparedStatements: true
-      maxOpenPreparedStatements: 20
+      maxOpenPreparedStatements: 100
       aop-patterns: "com.mit.community"
       web-stat-filter:
         enabled: true
@@ -194,11 +194,17 @@ db:
       url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
+      initialSize: 100
+      minIdle: 1
+      maxActive: 100
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://192.168.1.222:3306/community-yingtan?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
+      initialSize: 100
+      minIdle: 1
+      maxActive: 100
 
 mybatis-plus:
   mapper-locations: classpath:com/mit/community/mapper/*.xml

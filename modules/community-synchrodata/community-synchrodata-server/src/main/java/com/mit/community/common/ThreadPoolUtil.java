@@ -33,8 +33,12 @@ public class ThreadPoolUtil implements CommandLineRunner {
      * @date 2018/11/14 9:33
      * @company mitesofor
     */
-    public static void submit(Runnable thread){
+    public static void execute(Runnable thread){
         threadPoolExecutor.execute(thread);
+    }
+
+    public static Future<?> submit(Callable thread){
+        return threadPoolExecutor.submit(thread);
     }
 
     @Override

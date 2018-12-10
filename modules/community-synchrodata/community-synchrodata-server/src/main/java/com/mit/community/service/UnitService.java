@@ -1,5 +1,7 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
+import com.ace.cache.annotation.CacheClear;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -69,6 +71,7 @@ public class UnitService extends ServiceImpl<UnitMapper, Unit> {
      * @date 2018/11/19 16:50
      * @company mitesofor
     */
+    @Cache(key = "unit:unitName:buildingId:{1}:{2}")
     public Unit getByNameAndBuildingId(String unitName, Integer buildingId){
         EntityWrapper<Unit> wrapper = new EntityWrapper<>();
         wrapper.eq("unit_name", unitName).eq("building_id", buildingId);
@@ -130,6 +133,7 @@ public class UnitService extends ServiceImpl<UnitMapper, Unit> {
      * @date 2018/11/21 9:00
      * @company mitesofor
     */
+    @CacheClear(pre="unit")
     public void remove(){
         this.unitMapper.delete(null);
     }

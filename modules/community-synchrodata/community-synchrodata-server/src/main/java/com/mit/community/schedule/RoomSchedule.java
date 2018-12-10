@@ -1,5 +1,6 @@
 package com.mit.community.schedule;
 
+import com.ace.cache.annotation.CacheClear;
 import com.google.common.collect.Lists;
 import com.mit.community.entity.Building;
 import com.mit.community.entity.Room;
@@ -43,6 +44,7 @@ public class RoomSchedule {
         this.unitService = unitService;
     }
 
+    @CacheClear(pre="room")
     @Scheduled(cron = "0 25 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){

@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ace.cache.annotation.CacheClear;
 import com.mit.community.entity.Zone;
 import com.mit.community.service.ClusterCommunityService;
 import com.mit.community.service.ZoneService;
@@ -38,6 +39,7 @@ public class ZoneSchedule {
      * @date 2018/11/20 11:28
      * @company mitesofor
     */
+    @CacheClear(pre="zone")
     @Scheduled(cron = "0 10 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){

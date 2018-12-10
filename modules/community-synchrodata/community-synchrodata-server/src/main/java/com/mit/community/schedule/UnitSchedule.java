@@ -1,5 +1,6 @@
 package com.mit.community.schedule;
 
+import com.ace.cache.annotation.CacheClear;
 import com.mit.community.entity.Building;
 import com.mit.community.entity.Unit;
 import com.mit.community.entity.Zone;
@@ -48,6 +49,7 @@ public class UnitSchedule {
      * @date 2018/11/21 9:21
      * @company mitesofor
     */
+    @CacheClear(pre="unit")
     @Scheduled(cron = "0 20 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){

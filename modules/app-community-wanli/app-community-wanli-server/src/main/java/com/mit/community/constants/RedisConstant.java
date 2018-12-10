@@ -22,17 +22,17 @@ public class RedisConstant {
     /**
      * 校验码过期时间
      */
-    public final static long VERIFICATION_CODE_EXPIRE_TIME = 120L;
+    public final static long VERIFICATION_CODE_EXPIRE_TIME = 600L;
 
     /**
      * 校验成功标记过期时间
      */
-    public final static long VERIFICATION_SUCCESS_EXPIRE_TIME = 300L;
+    public final static long VERIFICATION_SUCCESS_EXPIRE_TIME = 600L;
 
     /**
      * 登陆过期时间
      */
-    public final static long LOGIN_EXPIRE_TIME = 1800;
+    public final static long LOGIN_EXPIRE_TIME = 1800L;
 
     /**
      * dnake 登陆响应

@@ -1,14 +1,34 @@
 package com.mit.community.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableName;
+import lombok.Data;
+
 /**
  * 设备组信息
  *
- * @author Mr.Deng
- * @date 2018/11/15 11:26
- * <p>Copyright: Copyright (c) 2018</p>
- * <p>Company: mitesofor </p>
+ * @author shuyy
+ * @date 2018/12/10 10:52
+ * @company mitesofor
  */
-public class DeviceGroup {
+@Data
+@TableName("device_group")
+public class DeviceGroup extends BaseEntity {
 
+    /**
+     * 小区code
+     */
+    @TableField("community_code")
+    private String communityCode;
+    /**
+     * 设备组id
+     */
+    @TableField("device_group_Id")
+    private Integer deviceGroupId;
+    /**
+     * 设备组类别（1,单元权限组,2,公共权限组,3,特殊权限组）
+     */
+    @TableField("group_type")
+    private String groupType;
 
 }
