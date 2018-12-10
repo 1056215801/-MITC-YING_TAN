@@ -38,5 +38,6 @@ public class CommunityPhone extends BaseEntity {
     /**
      * 创建人。关联user表id
      */
+    @TableField("creator_user_id")
     private Integer creatorUserId;
 }

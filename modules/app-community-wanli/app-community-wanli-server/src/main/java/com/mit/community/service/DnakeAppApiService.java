@@ -166,26 +166,26 @@ public class DnakeAppApiService {
         log.info(invoke);
     }
 
-    /**
-     * 查询小区设备组信息,通过小区code
-     * @param cellphone     手机号码
-     * @param communityCode 小区code
-     * @return 小区设备组信息
-     * @author Mr.Deng
-     * @date 16:51 2018/12/4
-     */
-    public String getDeviceGroup(String cellphone, String communityCode) {
-        String result = StringUtils.EMPTY;
-        DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
-        String url = "/auth/api/device/getDeviceGroup";
-        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(1);
-        map.put("communityCode", communityCode);
-        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
-        if (StringUtils.isNotBlank(invoke)) {
-            result = invoke;
-        }
-        return result;
-    }
+//    /**
+//     * 查询小区设备组信息,通过小区code
+//     * @param cellphone     手机号码
+//     * @param communityCode 小区code
+//     * @return 小区设备组信息
+//     * @author Mr.Deng
+//     * @date 16:51 2018/12/4
+//     */
+//    public String getDeviceGroup(String cellphone, String communityCode) {
+//        String result = StringUtils.EMPTY;
+//        DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
+//        String url = "/auth/api/device/getDeviceGroup";
+//        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(1);
+//        map.put("communityCode", communityCode);
+//        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+//        if (StringUtils.isNotBlank(invoke)) {
+//            result = invoke;
+//        }
+//        return result;
+//    }
 
     /**
      * 获取邀请码记录

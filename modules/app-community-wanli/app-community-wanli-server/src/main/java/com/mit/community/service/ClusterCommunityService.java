@@ -69,8 +69,7 @@ public class ClusterCommunityService {
             return null;
         }
         List<String> communityCodeList = households.parallelStream().map(HouseHold::getCommunityCode).collect(Collectors.toList());
-        List<ClusterCommunity> clusterCommunities = clusterCommunityService.listByCommunityCodeList(communityCodeList);
-        return clusterCommunities;
+        return clusterCommunityService.listByCommunityCodeList(communityCodeList);
     }
 
 

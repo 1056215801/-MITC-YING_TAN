@@ -45,13 +45,15 @@ public class PassThroughController {
     private final RoomService roomService;
     private final BuildingService buildingService;
     private final AccessControlService accessControlService;
+    private final DeviceGroupService deviceGroupService;
 
     @Autowired
     public PassThroughController(NoticeService noticeService, RegionService regionService,
                                  ApplyKeyService applyKeyService, VisitorService visitorService,
                                  DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                                  ZoneService zoneService, UnitService unitService, RoomService roomService,
-                                 BuildingService buildingService, AccessControlService accessControlService) {
+                                 BuildingService buildingService, AccessControlService accessControlService,
+                                 DeviceGroupService deviceGroupService) {
         this.noticeService = noticeService;
         this.regionService = regionService;
         this.applyKeyService = applyKeyService;
@@ -63,6 +65,7 @@ public class PassThroughController {
         this.roomService = roomService;
         this.buildingService = buildingService;
         this.accessControlService = accessControlService;
+        this.deviceGroupService = deviceGroupService;
     }
 
     /**
@@ -273,11 +276,10 @@ public class PassThroughController {
     @GetMapping("/getDeviceGroup")
     @ApiOperation(value = "查询小区设备组信息,通过小区code", notes = "输入参数：communityCode 小区编号")
     public Result getDeviceGroup(String communityCode) {
-    /*    if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(communityCode)) {
-            String deviceGroup = openDoorService.getDeviceGroup(username, password, communityCode);
-            JSONObject json = JSONObject.parseObject(deviceGroup);
-            return Result.success(json);
-        }*/
+        if (StringUtils.isNotBlank(communityCode)) {
+            List<DeviceGroup> deviceGroups = deviceGroupService.getByCommunityCode(communityCode);
+            return Result.success(deviceGroups);
+        }
         return Result.error("参数不能为空");
     }
 
