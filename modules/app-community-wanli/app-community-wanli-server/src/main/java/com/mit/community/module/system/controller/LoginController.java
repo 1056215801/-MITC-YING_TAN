@@ -253,7 +253,7 @@ public class LoginController {
      * @author shuyy
      * @date 2018/11/30 11:50
      * @company mitesofor
-     */
+     *//*
     @GetMapping("/listDeviceByCommunityCodeAndCellphone")
     @ApiOperation(value = "全部钥匙", notes = "传参;communityCode 小区code, cellphone 手机号")
     public Result listDeviceByCommunityCodeAndCellphone(String communityCode, String cellphone) {
@@ -263,7 +263,7 @@ public class LoginController {
             return Result.success("没有钥匙");
         }
         return Result.success(devices);
-    }
+    }*/
 
 
 }
