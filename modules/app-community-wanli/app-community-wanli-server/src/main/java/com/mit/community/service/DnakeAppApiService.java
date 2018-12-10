@@ -35,25 +35,6 @@ public class DnakeAppApiService {
     private RedisService redisService;
 
     /**
-     * 发送手机验证码
-     * @author shuyy
-     * @date 2018/12/7 10:05
-     * @company mitesofor
-     */
-    public String getRegisterSmsCode(String telNum) {
-        String url = "/auth/base/getRegisterSmsCode";
-        Map<String, Object> map = new HashMap<>();
-        map.put("telNum", telNum);
-        map.put("clusterAccountId", "pMXYTG6tXMzPHpErs0VYBjmiHBatkWEs");
-        DnakeAppUser dnakeAppUser = new DnakeAppUser();
-        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
-        log.info(invoke);
-        JSONObject jsonObject = JSON.parseObject(invoke);
-        String smsVerifyCode = jsonObject.getString("smsVerifyCode");
-        return smsVerifyCode;
-    }
-
-    /**
      * 验证手机验证码
      * @author shuyy
      * @date 2018/12/7 10:05
