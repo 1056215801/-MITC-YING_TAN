@@ -2,6 +2,8 @@ package com.mit.community.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * dnake登陆响应
  *
@@ -10,7 +12,7 @@ import lombok.Data;
  * @company mitesofor
  */
 @Data
-public class DnakeLoginResponse {
+public class DnakeLoginResponse implements Serializable {
 
     /**
      * sip呼叫转移手机号

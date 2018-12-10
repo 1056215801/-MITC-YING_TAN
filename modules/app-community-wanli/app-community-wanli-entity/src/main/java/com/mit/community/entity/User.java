@@ -2,13 +2,12 @@ package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.mit.community.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * 用户
@@ -21,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @TableName("user")
-public class User extends BaseEntity implements Serializable {
+public class User extends BaseEntity {
 
     /**
      * 手机号
@@ -51,7 +50,7 @@ public class User extends BaseEntity implements Serializable {
     /**
      * 出生日期
      */
-    private LocalDateTime birthday;
+    private LocalDate birthday;
     /**
      * 血型
      */

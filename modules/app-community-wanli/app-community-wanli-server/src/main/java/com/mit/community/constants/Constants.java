@@ -1,5 +1,6 @@
 package com.mit.community.constants;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -17,6 +18,9 @@ public class Constants {
     public static final LocalDateTime NULL_LOCAL_DATE_TIME = LocalDateTime.of(1900, 01,
             01, 0, 0, 0);
 
+    /**逻辑为空的LocalDate*/
+    public static final LocalDate NULL_LOCAL_DATE = LocalDate.of(1900, 1,
+            1);
 
 
 }

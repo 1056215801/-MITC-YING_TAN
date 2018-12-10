@@ -1,5 +1,6 @@
 package com.mit.community.module.system.controller;
 
+import com.mit.common.util.DateUtils;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.module.system.service.UserService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -164,6 +166,27 @@ public class LoginController {
     public Result updateGender(String cellphone, Short gender) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         user.setGender(gender);
+        userService.update(user);
+        return Result.success("成功");
+    }
+
+    /**
+     * @param cellphone 手机号
+     * @param birthday 出生日期
+     * @param nickName 昵称
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/7 18:22
+     * @company mitesofor
+     */
+    @PostMapping("updateBirthdayAndNick")
+    @ApiOperation(value = "选择出生日期和昵称", notes = "传参;cellphone 手机号、birthday 出生日期、nickName 昵称 ")
+    public Result updateBirthdayAndNick(String cellphone, String birthday, String nickName) {
+        LocalDate localDate = DateUtils.parseStringToLocalDate(birthday, null);
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        user.setBirthday(localDate);
+        user.setNickname(nickName);
+        user.setPassword(null);
         userService.update(user);
         return Result.success("成功");
     }

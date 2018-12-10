@@ -1,8 +1,6 @@
 package com.mit.community.module.system.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.mit.common.util.DateUtils;
-import com.mit.common.util.UUIDUtils;
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.User;
@@ -112,7 +110,7 @@ public class UserService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void register(String cellphone, String password){
-        User user = new User(cellphone, password, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        User user = new User(cellphone, password, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         this.save(user);
 //        for (String labelCode : labelCodes) {
 //            UserLabel userLabel = new UserLabel(labelCode, user.getId());
