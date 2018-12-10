@@ -72,4 +72,6 @@ public class ClusterCommunityService {
         List<ClusterCommunity> clusterCommunities = clusterCommunityService.listByCommunityCodeList(communityCodeList);
         return clusterCommunities;
     }
+
+
 }

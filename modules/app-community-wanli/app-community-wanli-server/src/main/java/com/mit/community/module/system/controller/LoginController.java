@@ -1,30 +1,21 @@
 package com.mit.community.module.system.controller;
 
-import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
-import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.module.system.service.UserService;
-import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.DeviceService;
-import com.mit.community.service.HouseHoldService;
-import com.mit.community.service.RedisService;
+import com.mit.community.service.*;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
  * 注册登陆
- *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -46,7 +37,6 @@ public class LoginController {
     private final DnakeAppApiService dnakeAppApiService;
 
     private final HouseHoldService houseHoldService;
-
 
     @Autowired
     public LoginController(RedisService redisService, UserService userService, DeviceService deviceService, ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService) {
@@ -92,8 +82,8 @@ public class LoginController {
             "4、resultStatus: true, message: 没有授权app, object:user。\n" +
             "5、resultStatus: true, message: 已授权app, object:user。")
     public Result login(String cellphone, String verificationCode, String password) {
-        User user = null;
-        if(verificationCode != null){
+        User user;
+        if (verificationCode != null) {
             // 验证码登陆
             Object o = redisService.get(RedisConstant.VERIFICATION_CODE + cellphone);
             if (o == null || !verificationCode.equals(o.toString())) {
@@ -103,7 +93,7 @@ public class LoginController {
             if (user == null) {
                 return Result.error("用户不存在");
             }
-        }else{
+        } else {
             // 密码登陆
             user = userService.getByCellphoneAndPassword(cellphone, password);
             if (user == null) {
@@ -131,8 +121,25 @@ public class LoginController {
     }
 
     /**
+     * 登出
+     * @param cellphone 用户登录手机号
+     * @return result
+     * @author Mr.Deng
+     * @date 14:49 2018/12/8
+     */
+    @ApiOperation(value = "登出", notes = "输入参数：cellphone 用户登录手机号")
+    @GetMapping("/loginOut")
+    public Result loginOut(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            userService.loginOut(cellphone);
+            return Result.success("退出成功");
+        }
+        return Result.error("登出失败");
+
+    }
+
+    /**
      * 选择标签
-     *
      * @param cellphone 电话号码
      * @param labelList label列表
      * @return com.mit.community.util.Result
@@ -148,15 +155,13 @@ public class LoginController {
     }
 
     /**
-     *
-     * @param cellphone
-     * @param gender
+     * @param cellphone 电话号码
+     * @param gender    性别
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/12/7 18:22
      * @company mitesofor
-    */
+     */
     @PostMapping("updateGender")
     @ApiOperation(value = "选择性别", notes = "传参;cellphone 手机号：gender 性别，1、男。2、女")
     public Result updateGender(String cellphone, Short gender) {
@@ -240,5 +245,55 @@ public class LoginController {
         return Result.success(devices);
     }
 
+    /**
+     * 修改用户信息
+     * @param userId     用户id
+     * @param nickname   昵称
+     * @param gender     性别1、男。0、女。
+     * @param email      邮件
+     * @param cellphone  电话
+     * @param iconUrl    头像地址
+     * @param birthday   生日 yyyy-MM-dd HH:mm:ss
+     * @param bloodType  血型
+     * @param profession 职业
+     * @param signature  我的签名
+     * @return result
+     * @author Mr.Deng
+     * @date 12:02 2018/12/8
+     */
+    @ApiOperation(value = "修改用户信息", notes = "输入信息：userId 用户id；nickname 昵称；gender 性别1、男。0、女；email 邮件；" +
+            "cellphone 电话；iconUrl 头像地址；birthday 生日 yyyy-MM-dd HH:mm:ss；bloodType 血型；profession 职业；signature 我的签名")
+    @PatchMapping("/updateUserInfo")
+    public Result updateUserInfo(Integer userId, String nickname, Short gender, String email, String cellphone,
+                                 String iconUrl, String birthday, String bloodType, String profession, String signature) {
+        userService.updateUserInfo(userId, nickname, gender, email, cellphone, iconUrl, birthday, bloodType, profession, signature);
+        return Result.success("修改成功");
+    }
+
+    /**
+     * 重置密码
+     * @param cellPhone   电话号码
+     * @param newPassword 新密码
+     * @param oldPassword 旧密码
+     * @return result
+     * @author Mr.Deng
+     * @date 13:54 2018/12/8
+     */
+    public Result resetPwd(String cellPhone, String newPassword, String oldPassword) {
+        if (StringUtils.isNotBlank(cellPhone) && StringUtils.isNotBlank(newPassword) && StringUtils.isNotBlank(oldPassword)) {
+            Integer status = userService.resetPwd(cellPhone, newPassword, oldPassword);
+            if (status != null) {
+                if (status == 0) {
+                    return Result.error("旧密码不匹配");
+                }
+                if (status == 1) {
+
+                    return Result.success("重置密码成功");
+                }
+            }
+            return Result.error("重置密码失败");
+        }
+        return Result.error("参数不能为空");
+    }
 
 }

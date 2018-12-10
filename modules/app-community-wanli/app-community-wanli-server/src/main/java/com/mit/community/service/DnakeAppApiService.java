@@ -41,15 +41,14 @@ public class DnakeAppApiService {
      */
     public String getRegisterSmsCode(String telNum) {
         String url = "/auth/base/getRegisterSmsCode";
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         map.put("telNum", telNum);
         map.put("clusterAccountId", "pMXYTG6tXMzPHpErs0VYBjmiHBatkWEs");
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
         JSONObject jsonObject = JSON.parseObject(invoke);
-        String smsVerifyCode = jsonObject.getString("smsVerifyCode");
-        return smsVerifyCode;
+        return jsonObject.getString("smsVerifyCode");
     }
 
     /**
@@ -60,7 +59,7 @@ public class DnakeAppApiService {
      */
     public boolean checkSmsCode(String telNum, String smsCode) {
         String url = "/auth/base/checkSmsCode";
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         map.put("telNum", telNum);
         map.put("smsCode", smsCode);
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
@@ -85,7 +84,7 @@ public class DnakeAppApiService {
     public DnakeLoginResponse login(String cellphone, String password) {
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         String url = "/auth/base/login";
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(5);
         map.put("loginName", cellphone);
         map.put("password", password);
         map.put("registrationId", dnakeAppUser.getRegistrationId());
@@ -157,7 +156,6 @@ public class DnakeAppApiService {
      */
     public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
         String result = StringUtils.EMPTY;
-        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/common/inviteCode";
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(6);
         map.put("dateTag", dateTag);
@@ -173,6 +171,23 @@ public class DnakeAppApiService {
     }
 
     /**
+     * 重置密码
+     * @param telNum   电话号码
+     * @param password 密码
+     * @author Mr.Deng
+     * @date 13:47 2018/12/8
+     */
+    public void resetPwd(String telNum, String password) {
+        String url = "/auth/base/resetPwd";
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
+        map.put("telNum", telNum);
+        map.put("password", password);
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        log.info(invoke);
+    }
+
+    /**
      * 查询小区设备组信息,通过小区code
      * @param communityCode 小区code
      * @return 小区设备组信息
@@ -181,12 +196,10 @@ public class DnakeAppApiService {
      */
     public String getDeviceGroup(String communityCode) {
         String result = StringUtils.EMPTY;
-        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/api/device/getDeviceGroup";
-        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(1);
         map.put("communityCode", communityCode);
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
-
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         if (StringUtils.isNotBlank(invoke)) {
             result = invoke;
@@ -205,7 +218,7 @@ public class DnakeAppApiService {
         List<MyKey> unitKeys = Lists.newArrayListWithExpectedSize(10);
         List<MyKey> communityKeys = Lists.newArrayListWithExpectedSize(10);
         Map<String, Object> maps = Maps.newHashMapWithExpectedSize(2);
-        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+
         String url = "/auth/api/user/myKey";
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
         DnakeLoginResponse dnakeLoginResponse = (DnakeLoginResponse) redisService.get(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone);

@@ -6,22 +6,27 @@ import lombok.Data;
 
 /**
  * 用户住户关联表
- *
  * @author shuyy
  * @date 2018/11/30
  * @company mitesofor
  */
 @Data
 @TableName("user_household")
-public class UserHousehold extends BaseEntity{
+public class UserHousehold extends BaseEntity {
 
-    /**用户id。关联user表id字段。*/
+    /**
+     * 用户id。关联user表id字段。
+     */
     @TableField("user_id")
     private Integer userId;
-    /**住户id。关联household表id字段。*/
+    /**
+     * 住户id。关联household表id字段。
+     */
     @TableField("household_id")
     private Integer householdId;
-    /**创建人id。关联user表id。*/
+    /**
+     * 创建人id。关联user表id。
+     */
     @TableField("creator_user_id")
     private Integer creatorUserId;
 

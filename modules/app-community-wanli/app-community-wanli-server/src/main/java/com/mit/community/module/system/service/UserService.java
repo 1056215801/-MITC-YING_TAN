@@ -7,11 +7,14 @@ import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.User;
 import com.mit.community.entity.UserLabel;
 import com.mit.community.module.system.mapper.UserMapper;
+import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.service.RedisService;
+import com.mit.community.util.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.reflect.annotation.ExceptionProxy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +36,9 @@ public class UserService {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private DnakeAppApiService dnakeAppApiService;
 
     /**
      * 查询用户信息，通过用户id
@@ -145,12 +151,12 @@ public class UserService {
 
     /**
      * 修改用户信息
-     * @param id         用户id
+     * @param userId     用户id
      * @param nickname   昵称
      * @param gender     性别1、男。0、女。
      * @param email      邮件
      * @param cellphone  电话
-     * @param iconUrl   头像地址
+     * @param iconUrl    头像地址
      * @param birthday   生日 yyyy-MM-dd HH:mm:ss
      * @param bloodType  血型
      * @param profession 职业
@@ -159,11 +165,10 @@ public class UserService {
      * @date 14:35 2018/12/7
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserInfo(Integer id, String nickname, Short gender, String email,
-                               String cellphone, String iconUrl, String birthday, String bloodType, String profession,
-                               String signature) {
+    public void updateUserInfo(Integer userId, String nickname, Short gender, String email, String cellphone,
+                               String iconUrl, String birthday, String bloodType, String profession, String signature) {
         LocalDateTime birthdayTime = DateUtils.parseStringToDateTime(birthday, null);
-        User user = this.getById(id);
+        User user = this.getById(userId);
         if (user != null) {
             user.setNickname(nickname);
             user.setGender(gender);
@@ -174,8 +179,47 @@ public class UserService {
             user.setBloodType(bloodType);
             user.setProfession(profession);
             user.setSignature(signature);
-
+            this.update(user);
         }
+    }
+
+    /**
+     * 重置密码
+     * @param cellPhone   电话号码
+     * @param newPassword 新密码
+     * @param oldPassword 旧密码
+     * @return 返回状态码（1，重置成功；0，密码不匹配）
+     * @author Mr.Deng
+     * @date 14:19 2018/12/8
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Integer resetPwd(String cellPhone, String newPassword, String oldPassword) {
+        User user = this.getByCellphone(cellPhone);
+        int result = 0;
+        if (user != null) {
+            if (oldPassword.equals(user.getPassword())) {
+                //匹配成功修改数据库用户密码
+                user.setPassword(newPassword);
+                this.update(user);
+                //然后调用狄耐克重置密码接口重置狄耐克密码
+                dnakeAppApiService.resetPwd(cellPhone, newPassword);
+                //重置成功并退出登录
+                this.loginOut(cellPhone);
+                result = 1;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 登出
+     * @param cellPhone 手机号码
+     * @author Mr.Deng
+     * @date 14:47 2018/12/8
+     */
+    public void loginOut(String cellPhone) {
+        redisService.remove(RedisConstant.DNAKE_LOGIN_RESPONSE + cellPhone);
+        redisService.remove(RedisConstant.USER + cellPhone);
     }
 
 }

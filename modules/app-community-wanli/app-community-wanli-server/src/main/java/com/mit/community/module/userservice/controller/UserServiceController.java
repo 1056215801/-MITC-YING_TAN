@@ -1,7 +1,10 @@
 package com.mit.community.module.userservice.controller;
 
 import com.google.common.collect.Lists;
-import com.mit.community.entity.*;
+import com.mit.community.entity.BusinessHandling;
+import com.mit.community.entity.CommunityPhone;
+import com.mit.community.entity.CommunityServiceInfo;
+import com.mit.community.entity.ReportThingsRepair;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;

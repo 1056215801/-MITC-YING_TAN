@@ -74,7 +74,7 @@ public class DnakeAppApiUtilTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/login";
         Map<String, Object> map = new HashMap<>();
-        map.put("loginName", "13064102937");
+        map.put("loginName", "18779158391");
         map.put("password", "123456");
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         map.put("registrationId", dnakeAppUser.getRegistrationId());

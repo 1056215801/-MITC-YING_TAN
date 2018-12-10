@@ -2,9 +2,7 @@ package com.mit.community.module.pass.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.mit.community.entity.ApplyKey;
-import com.mit.community.entity.Region;
-import com.mit.community.entity.Visitor;
+import com.mit.community.entity.*;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.HttpUtil;
@@ -17,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +48,24 @@ public class PassThroughController {
     @Autowired
     private DnakeAppApiService dnakeAppApiService;
 
+    @Autowired
+    private HouseHoldService houseHoldService;
+
+    @Autowired
+    private ZoneService zoneService;
+
+    @Autowired
+    private UnitService unitService;
+
+    @Autowired
+    private RoomService roomService;
+
+    @Autowired
+    private BuildingService buildingService;
+
+    @Autowired
+    private AccessControlService accessControlService;
+
     /**
      * 查询当地当前天气信息，通过城市英文名
      * @param region 城市英文名
@@ -70,6 +88,48 @@ public class PassThroughController {
         } else {
             return Result.error("请输入参数");
         }
+    }
+
+    /**
+     * 查询当天通行限号
+     * @return result
+     * @author Mr.Deng
+     * @date 10:34 2018/12/10
+     */
+    @GetMapping("/getRestrictionsPassNum")
+    @ApiOperation(value = "通行限号", notes = "目前只支持南昌通行限号查询")
+    public Result getRestrictionsPassNum() {
+        LocalDate localDate = LocalDate.now();
+        Integer dateType = dateInit(localDate);
+        String[] s = {"1和6", "2和7", "3和8", "4和9", "5和0"};
+        String str;
+        if (dateType == 0) {
+            int value = localDate.getDayOfWeek().getValue();
+            str = "限行尾号为" + s[value - 1];
+        } else {
+            str = "不限行";
+        }
+        return Result.success(str);
+    }
+
+    /**
+     * 查询周末和节假日期，通过时间戳
+     * @param localDate 时间yyyy-MM-dd
+     * @return 工作日对应结果为 0, 休息日对应结果为 1, 节假日对应的结果为 2
+     * @author Mr.Deng
+     * @date 10:30 2018/12/10
+     */
+    private Integer dateInit(LocalDate localDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String dateStr = localDate.format(formatter);
+        String url = "http://api.goseek.cn/Tools/holiday?date=" + dateStr;
+        String s = HttpUtil.sendGet(url);
+        Integer i = null;
+        if (StringUtils.isNotBlank(s)) {
+            JSONObject jsonObject = JSONObject.parseObject(s);
+            i = jsonObject.getInteger("data");
+        }
+        return i;
     }
 
     /**
@@ -201,15 +261,14 @@ public class PassThroughController {
 
     /**
      * 查询小区设备组信息,通过小区code
-     * @param cellphone     电话号码
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
      * @date 16:53 2018/12/4
      */
     @GetMapping("/getDeviceGroup")
-    @ApiOperation(value = "查询小区设备组信息,通过小区code", notes = "输入参数：cellphone 电话号码 communityCode 小区编号")
-    public Result getDeviceGroup(String cellphone, String communityCode) {
+    @ApiOperation(value = "查询小区设备组信息,通过小区code", notes = "输入参数：communityCode 小区编号")
+    public Result getDeviceGroup(String communityCode) {
     /*    if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(communityCode)) {
             String deviceGroup = openDoorService.getDeviceGroup(username, password, communityCode);
             JSONObject json = JSONObject.parseObject(deviceGroup);
@@ -302,6 +361,91 @@ public class PassThroughController {
             return Result.error("设置失败");
         }
         return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询住户信息，通过用户id
+     * @param userId 用户id
+     * @return result
+     * @author Mr.Deng
+     * @date 9:48 2018/12/8
+     */
+    @ApiOperation(value = "查询住户信息，通过用户id")
+    @GetMapping("/listHouseHoldByUserId")
+    public Result listHouseHoldByUserId(Integer userId) {
+        List<HouseHold> houseHolds = houseHoldService.listByUserId(userId);
+        return Result.success(houseHolds);
+    }
+
+    /**
+     * 查询分区信息，通过小区code
+     * @param communityCode 小区code
+     * @return result
+     * @author Mr.Deng
+     * @date 9:24 2018/12/8
+     */
+    @ApiOperation(value = "查询分区信息，通过小区code")
+    @GetMapping("/listZoneByCommunityCode")
+    public Result listZoneByCommunityCode(String communityCode) {
+        List<Zone> zones = zoneService.listByCommunityCode(communityCode);
+        return Result.success(zones);
+    }
+
+    /**
+     * 查询楼栋信息，通过分区id
+     * @param zoneId 分区id
+     * @return 楼栋信息
+     * @author Mr.Deng
+     * @date 9:27 2018/12/8
+     */
+    @ApiOperation(value = "查询楼栋信息，通过分区id")
+    @GetMapping("/listBuildingByZoneId")
+    public Result listBuildingByZoneId(Integer zoneId) {
+        List<Building> buildings = buildingService.listByZoneId(zoneId);
+        return Result.success(buildings);
+    }
+
+    /**
+     * 查询单元信息，通过楼栋id
+     * @param buildingId 楼栋id
+     * @return result
+     * @author Mr.Deng
+     * @date 9:29 2018/12/8
+     */
+    @ApiOperation(value = "查询单元信息，通过楼栋id")
+    @GetMapping("/listUnitByBuildingId")
+    public Result listUnitByBuildingId(Integer buildingId) {
+        List<Unit> units = unitService.listByBuildingId(buildingId);
+        return Result.success(units);
+    }
+
+    /**
+     * 查询房间信息，通过单元id
+     * @param unitId 单元id
+     * @return result
+     * @author Mr.Deng
+     * @date 9:39 2018/12/8
+     */
+    @ApiOperation(value = "查询房间信息，通过单元id")
+    @GetMapping("/listRoomByUnitId")
+    public Result listRoomByUnitId(Integer unitId) {
+        List<Room> rooms = roomService.listByUnitId(unitId);
+        return Result.success(rooms);
+    }
+
+    /**
+     * 查询门禁记录，通过住户id
+     * @param communityCode 小区code
+     * @param houseHoldId   住户id
+     * @return result
+     * @author Mr.Deng
+     * @date 10:47 2018/12/8
+     */
+    @ApiOperation(value = "查询门禁记录，通过住户id")
+    @GetMapping("/listAccessControlByHouseHoldId")
+    public Result listAccessControlByHouseHoldId(String communityCode, Integer houseHoldId) {
+        List<AccessControl> accessControls = accessControlService.listByHouseHoldId(communityCode, houseHoldId);
+        return Result.success(accessControls);
     }
 
     /**
