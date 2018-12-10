@@ -54,17 +54,17 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 40 1 * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         // 先删除本地数据库，再插入
         houseHoldService.remove();
-        authorizeHouseholdDeviceService.remove();
-        authorizeAppHouseholdDeviceService.remove();
+//        authorizeHouseholdDeviceService.remove();
+//        authorizeAppHouseholdDeviceService.remove();
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);
         if (!houseHolds.isEmpty()) {
             houseHoldService.insertBatch(houseHolds);
-            houseHolds.forEach(item -> {
+           /* houseHolds.forEach(item -> {
                 List<AuthorizeAppHouseholdDevice> authorizeAppHouseholdDevices = item.getAuthorizeAppHouseholdDevices();
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
                     authorizeAppHouseholdDeviceService.insertBatch(authorizeAppHouseholdDevices);
@@ -73,9 +73,28 @@ public class HouseholdSchedule {
                 if (authorizeHouseholdDevices != null && !authorizeHouseholdDevices.isEmpty()) {
                     authorizeHouseholdDeviceService.insertBatch(authorizeHouseholdDevices);
                 }
-            });
+            });*/
 
         }
+    }
+    
+    /***
+     * 更新身份证信息
+     * @author shuyy
+     * @date 2018/12/08 15:36
+     * @company mitesofor
+     */
+    @Scheduled(cron = "*/5 * * * * ?")
+    public void updateIdCard() {
+    	long start = System.currentTimeMillis();
+    	List<HouseHold> list = houseHoldService.list();
+//    	list = list.subList(0, 1001);
+    	List<HouseHold> result = houseHoldService.getIdCardInfoFromDnake(list);
+    	if(!result.isEmpty()) {
+    		houseHoldService.updateBatchById(result);
+    	}
+    	long end = System.currentTimeMillis();
+    	System.out.println(end - start);
     }
 
     /***

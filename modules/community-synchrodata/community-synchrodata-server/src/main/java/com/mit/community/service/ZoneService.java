@@ -1,5 +1,7 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
+import com.ace.cache.annotation.CacheClear;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -66,6 +68,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper, Zone> {
      * @date 2018/11/19 15:57
      * @company mitesofor
     */
+    @Cache(key = "zone:zoneName:communityCode:{1}:{2}")
     public Zone getByNameAndCommunityCode(String zoneName, String communityCode){
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode).eq("zone_name", zoneName);
@@ -157,6 +160,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper, Zone> {
      * @date 2018/11/20 11:24
      * @company mitesofor
     */
+    @CacheClear(pre="zone")
     public void remove(){
         zoneMapper.delete(null);
     }

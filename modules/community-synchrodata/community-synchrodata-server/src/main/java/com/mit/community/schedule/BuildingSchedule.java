@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ace.cache.annotation.CacheClear;
 import com.mit.community.entity.Building;
 import com.mit.community.entity.Zone;
 import com.mit.community.service.BuildingService;
@@ -34,6 +35,7 @@ public class BuildingSchedule {
         this.zoneService = zoneService;
     }
 
+    @CacheClear(pre="building")
     @Scheduled(cron = "0 15 1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void remoteAndImport(){

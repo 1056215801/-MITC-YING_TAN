@@ -1,10 +1,12 @@
 package com.mit.community.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.IdCardRegion;
 import com.mit.community.mapper.IdCardRegionMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 身份证地区业务层
@@ -24,6 +26,7 @@ public class IdCardRegionService {
         this.idCardRegionMapper = idCardRegionMapper;
     }
 
+    @Cache(key = "idCardRegion:idCardSum6:{1}")
     public IdCardRegion getByIdCardSum6(String idCardSum6) {
         EntityWrapper<IdCardRegion> wrapper = new EntityWrapper<>();
         int idCardLen = idCardSum6.length();

@@ -1,10 +1,13 @@
 package com.mit.community.module.system.controller;
 
+import com.mit.common.util.SmsUtil;
+import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.module.system.service.UserService;
 import com.mit.community.service.*;
 import com.mit.community.util.Result;
+import com.mit.community.util.SmsCommunityAppUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -57,10 +60,16 @@ public class LoginController {
      * @company mitesofor
      */
     @GetMapping("/getMobileVerificationCode")
-    @ApiOperation(value = "获取手机验证码")
-    public Result getMobileVerificationCode(String cellphone) {
-        String registerSmsCode = dnakeAppApiService.getRegisterSmsCode(cellphone);
-        redisService.set(RedisConstant.VERIFICATION_CODE + cellphone, registerSmsCode, RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
+    @ApiOperation(value = "获取手机验证码", notes="传参：cellphone 手机号、type 类型：1 注册, 2 登陆")
+    public Result getMobileVerificationCode(String cellphone, Integer type) {
+        String code = SmsCommunityAppUtil.generatorCode();
+        if (type == SmsCommunityAppUtil.TYPE_REGISTER) {
+            // 注册
+            SmsCommunityAppUtil.send(cellphone, code, SmsCommunityAppUtil.TYPE_REGISTER);
+        }else if(type == SmsCommunityAppUtil.TYPE_LOGIN_CONFIRM){
+            SmsCommunityAppUtil.send(cellphone, code, SmsCommunityAppUtil.TYPE_LOGIN_CONFIRM);
+        }
+        redisService.set(RedisConstant.VERIFICATION_CODE + cellphone, code, RedisConstant.VERIFICATION_CODE_EXPIRE_TIME);
         return Result.success("发送成功");
     }
 
@@ -74,12 +83,12 @@ public class LoginController {
      * @company mitesofor
      */
     @PostMapping("/login")
-    @ApiOperation(value = "快捷登录或密码登录", notes = "密码登陆则传参verificationCode不传password。密码登录则相反。\n " +
-            "传参;cellphone 手机号：verificationCode 手机验证码。password：密码\n " +
-            "返回：1、resultStatus:false, message: 验证码错误。\n" +
-            "2、resultStatus:false, message: 用户不存在。\n" +
-            "3、resultStatus: true, message: 没有关联住户, object:user。\n" +
-            "4、resultStatus: true, message: 没有授权app, object:user。\n" +
+    @ApiOperation(value = "快捷登录或密码登录", notes = "密码登陆则传参verificationCode不传password。密码登录则相反。<br/> " +
+            "传参;cellphone 手机号：verificationCode 手机验证码。password：密码<br/> " +
+            "返回：1、resultStatus:false, message: 验证码错误。<br/>" +
+            "2、resultStatus:false, message: 用户不存在。<br/>" +
+            "3、resultStatus: true, message: 没有关联住户, object:user。<br/>" +
+            "4、resultStatus: true, message: 没有授权app, object:user。<br/>" +
             "5、resultStatus: true, message: 已授权app, object:user。")
     public Result login(String cellphone, String verificationCode, String password) {
         User user;

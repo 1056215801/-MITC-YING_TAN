@@ -1,24 +1,24 @@
 package com.mit.community.service;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ace.cache.annotation.Cache;
+import com.ace.cache.annotation.CacheClear;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
-import com.dnake.entity.DnakeAppUser;
 import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.Zone;
 import com.mit.community.mapper.ClusterCommunityMapper;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 集群小区业务层
@@ -46,6 +46,7 @@ public class ClusterCommunityService {
      * @date 2018/11/30 14:34
      * @company mitesofor
     */
+    @CacheClear(pre="community")
     public void remove(){
         clusterCommunityMapper.delete(null);
     }
@@ -81,6 +82,7 @@ public class ClusterCommunityService {
      * @date 2018/11/19 15:36
      * @company mitesofor
      */
+    @Cache(key = "community:communityCode:{1}")
     public ClusterCommunity getByCommunityCode(String communityCode) {
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCode);

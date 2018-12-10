@@ -63,8 +63,10 @@ public class DnakeInvokeTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/getHouseholdList";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("communityCode", "2c58fbed7bce49778da3b1717241df25");
-        map.put("pageNum", "1");
+        map.put("communityCode", "0125caffaae1472b996390e869129cc7");
+//        map.put("householdName", "WU");
+//        map.put("mobile", "15083669779");
+        map.put("pageNum", "15");
         map.put("pageSize", "10");
         String result = DnakeWebApiUtil.invoke(url, map);
         JSONArray jsonArray = JSON.parseObject(result).getJSONArray("householdList");
@@ -123,11 +125,27 @@ public class DnakeInvokeTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/community/queryClusterCommunity";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("clusterAccountId", DnakeAppUser.clusterAccountid);
+        map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
         String invoke = DnakeWebApiUtil.invoke(url, map);
         System.out.println(invoke);
     }
-
+    /**
+     * 查询设备组
+     * @author shuyy
+     * @date 2018/12/10 8:46
+     * @company mitesofor
+    */
+    @Test
+    public void getDeviceGroupList(){
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/v1/deviceGroup/getDeviceGroupList";
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("pageSize", "100");
+        map.put("pageNum", "1");
+        String invoke = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(invoke);
+    }
    
 
 }
