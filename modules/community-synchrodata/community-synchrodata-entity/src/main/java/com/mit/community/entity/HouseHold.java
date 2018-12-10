@@ -162,10 +162,10 @@ public class HouseHold extends BaseEntity {
     private Short identityType;
 
     @TableField(exist = false)
-    private List<AuthorizeHouseholdDevice> authorizeHouseholdDevices;
+    private List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups;
 
     @TableField(exist = false)
-    private List<AuthorizeAppHouseholdDevice> authorizeAppHouseholdDevices;
+    private List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups;
 
     /**群众*/
     @TableField(exist = false)

@@ -5,9 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
-
-import com.dnake.entity.DnakeAppUser;
-
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -140,7 +137,7 @@ public class DnakeInvokeTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/deviceGroup/getDeviceGroupList";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("communityCode", "b41bf2c76a3a4d5aaece65c15cfc350b");
         map.put("pageSize", "100");
         map.put("pageNum", "1");
         String invoke = DnakeWebApiUtil.invoke(url, map);

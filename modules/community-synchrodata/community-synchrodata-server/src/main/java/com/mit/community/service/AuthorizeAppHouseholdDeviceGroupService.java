@@ -1,9 +1,8 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.mit.community.entity.AuthorizeAppHouseholdDevice;
-import com.mit.community.mapper.AuthorizeAppHouseholdDeviceMapper;
-import com.mit.community.mapper.AuthorizeHouseholdDeviceMapper;
+import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
+import com.mit.community.mapper.AuthorizeAppHouseholdDeviceGroupMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +14,12 @@ import org.springframework.stereotype.Service;
  * @company mitesofor
  */
 @Service
-public class AuthorizeAppHouseholdDeviceService extends ServiceImpl<AuthorizeAppHouseholdDeviceMapper, AuthorizeAppHouseholdDevice> {
+public class AuthorizeAppHouseholdDeviceGroupService extends ServiceImpl<AuthorizeAppHouseholdDeviceGroupMapper, AuthorizeAppHouseholdDeviceGroup> {
 
-    private final AuthorizeAppHouseholdDeviceMapper authorizeAppHouseholdDeviceMapper;
+    private final AuthorizeAppHouseholdDeviceGroupMapper authorizeAppHouseholdDeviceMapper;
 
     @Autowired
-    public AuthorizeAppHouseholdDeviceService(AuthorizeAppHouseholdDeviceMapper authorizeAppHouseholdDeviceMapper) {
+    public AuthorizeAppHouseholdDeviceGroupService(AuthorizeAppHouseholdDeviceGroupMapper authorizeAppHouseholdDeviceMapper) {
         this.authorizeAppHouseholdDeviceMapper = authorizeAppHouseholdDeviceMapper;
     }
 

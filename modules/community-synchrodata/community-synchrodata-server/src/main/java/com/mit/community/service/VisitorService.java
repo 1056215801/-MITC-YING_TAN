@@ -176,8 +176,8 @@ public class VisitorService extends ServiceImpl<VisitorMapper, Visitor> {
                 visitors.remove(i--);
                 continue;
             }
-            if (item.getVisiterMobile() == null) {
-                item.setVisiterMobile(StringUtils.EMPTY);
+            if (item.getVisitorMobile() == null) {
+                item.setVisitorMobile(StringUtils.EMPTY);
             }
             item.setGmtCreate(LocalDateTime.now());
             item.setGmtModified(LocalDateTime.now());

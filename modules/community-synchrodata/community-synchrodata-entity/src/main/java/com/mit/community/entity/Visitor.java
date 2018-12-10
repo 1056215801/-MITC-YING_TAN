@@ -1,13 +1,8 @@
 package com.mit.community.entity;
 
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * 访客表
@@ -100,6 +95,6 @@ public class Visitor extends BaseEntity {
     private String visitorName;
 
     /**访客电话*/
-    @TableField("visiter_mobile")
-    private String visiterMobile;
+    @TableField("visitor_mobile")
+    private String visitorMobile;
 }

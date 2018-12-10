@@ -35,9 +35,10 @@ public class AccessControlSchedule {
      * @date 2018/11/16 16:55
      * @company mitesofor
     */
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "0 59 * * * ?")
     public void importIncrement (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         List<AccessControl> allAccessControlsList = accessControlService.listIncrementByCommunityCodeList(communityCodeList);
         if(!allAccessControlsList.isEmpty()){
             /* 测试模式，测试数据是否完成，所以把这里注释掉

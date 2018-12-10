@@ -1,15 +1,9 @@
 package com.mit.community.module.system.controller;
 
-import com.mit.common.util.SmsUtil;
-import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
-import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.module.system.service.UserService;
-import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.DeviceService;
-import com.mit.community.service.HouseHoldService;
-import com.mit.community.service.RedisService;
+import com.mit.community.service.*;
 import com.mit.community.util.Result;
 import com.mit.community.util.SmsCommunityAppUtil;
 import io.swagger.annotations.Api;
@@ -118,20 +112,21 @@ public class LoginController {
                 return Result.success("用户名或密码错误");
             }
         }
+        String psd = user.getPassword();
+        user.setPassword(StringUtils.EMPTY);
         // redis中保存用户
         redisService.set(RedisConstant.USER + user.getCellphone(), user, RedisConstant.LOGIN_EXPIRE_TIME);
-        List<HouseHold> houseHolds = houseHoldService.listByUserId(user.getId());
-        if (houseHolds == null) {
+        List<HouseHold> houseHolds = houseHoldService.listByCellphone(user.getCellphone());
+        if (houseHolds.isEmpty()) {
             return Result.success(user, "没有关联住户");
         }
-        user.setPassword(StringUtils.EMPTY);
         List<HouseHold> filterAppHouseholds = houseHoldService.filterAuthorizedApp(houseHolds);
         if (filterAppHouseholds.isEmpty()) {
             // 没有授权app
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
-            DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, user.getPassword());
+            DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
             redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
                     dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
             return Result.success(user, "已授权app");
