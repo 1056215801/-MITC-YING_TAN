@@ -2,6 +2,7 @@ package com.mit.community.module.pass.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
@@ -103,16 +104,46 @@ public class PassThroughController {
     public Result getRestrictionsPassNum() {
         LocalDate localDate = LocalDate.now();
         Integer dateType = dateInit(localDate);
+        int value = localDate.getDayOfWeek().getValue();
         String[] s = {"1和6", "2和7", "3和8", "4和9", "5和0"};
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
+        String week;
+        map.put("date", localDate);
+        switch (value) {
+            case 1:
+                week = "星期一";
+                break;
+            case 2:
+                week = "星期二";
+                break;
+            case 3:
+                week = "星期三";
+                break;
+            case 4:
+                week = "星期四";
+                break;
+            case 5:
+                week = "星期五";
+                break;
+            case 6:
+                week = "星期六";
+                break;
+            case 7:
+                week = "星期日";
+                break;
+            default:
+                week = StringUtils.EMPTY;
+        }
+        map.put("week", week);
         String str;
         if (dateType != null) {
             if (dateType == 0) {
-                int value = localDate.getDayOfWeek().getValue();
                 str = "限行尾号为" + s[value - 1];
             } else {
                 str = "不限行";
             }
-            return Result.success(str);
+            map.put("status", str);
+            return Result.success(map);
         }
         return Result.error("维修中");
     }
