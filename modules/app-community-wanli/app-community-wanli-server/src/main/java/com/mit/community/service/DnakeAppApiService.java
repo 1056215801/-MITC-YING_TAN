@@ -157,7 +157,7 @@ public class DnakeAppApiService {
      * @date 13:47 2018/12/8
      */
     public void resetPwd(String cellphone, String password) {
-        String url = "/auth/base/resetPwd";
+        String url = "/auth/base/modifyPwd";
         DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         map.put("telNum", cellphone);
