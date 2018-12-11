@@ -47,6 +47,7 @@ public class PassThroughController {
     private final BuildingService buildingService;
     private final AccessControlService accessControlService;
     private final DeviceGroupService deviceGroupService;
+    private final WeatherService weatherService;
 
     @Autowired
     public PassThroughController(NoticeService noticeService, RegionService regionService,
@@ -54,7 +55,7 @@ public class PassThroughController {
                                  DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                                  ZoneService zoneService, UnitService unitService, RoomService roomService,
                                  BuildingService buildingService, AccessControlService accessControlService,
-                                 DeviceGroupService deviceGroupService) {
+                                 DeviceGroupService deviceGroupService, WeatherService weatherService) {
         this.noticeService = noticeService;
         this.regionService = regionService;
         this.applyKeyService = applyKeyService;
@@ -67,6 +68,7 @@ public class PassThroughController {
         this.buildingService = buildingService;
         this.accessControlService = accessControlService;
         this.deviceGroupService = deviceGroupService;
+        this.weatherService = weatherService;
     }
 
     /**
@@ -80,14 +82,8 @@ public class PassThroughController {
     @ApiOperation(value = "天气", notes = "输入参数：region为城市英文名")
     public Result getWeather(String region) {
         if (StringUtils.isNotBlank(region)) {
-            Region byEnglishName = regionService.getByEnglishName(region);
-            if (byEnglishName != null) {
-                String s = "http://api.help.bj.cn/apis/weather/?id=" + byEnglishName.getCityCode();
-                String s1 = HttpUtil.sendGet(s);
-                JSONObject json = JSONObject.parseObject(s1);
-                return Result.success(json);
-            }
-            return Result.error("城市英文名输入有误！");
+            Weather weather = weatherService.ByCityeEnglish(region);
+            return Result.success(weather);
         } else {
             return Result.error("请输入参数");
         }

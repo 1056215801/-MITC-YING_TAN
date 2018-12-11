@@ -1,11 +1,12 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.google.common.collect.Lists;
+import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.ReportThingRepairImg;
 import com.mit.community.entity.ReportThingsRepair;
 import com.mit.community.mapper.ReportThingsRepairMapper;
 import com.mit.community.util.MakeOrderNumUtil;
-import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class ReportThingsRepairService {
 
     @Autowired
     private ReportThingRepairImgService reportThingRepairImgService;
+
+    @Autowired
+    private HouseHoldService houseHoldService;
 
     /**
      * 添加保修报修数据
@@ -89,6 +93,24 @@ public class ReportThingsRepairService {
     }
 
     /**
+     * 查询报事报修状态数据，通过手机号
+     * @param cellphone 手机号
+     * @param status    保修状态 0、未完成。1、已完成
+     * @return List<ReportThingsRepair>
+     * @author Mr.Deng
+     * @date 17:01 2018/12/11
+     */
+    public List<ReportThingsRepair> listReportThingsRepairByStatus(String cellphone, Integer status) {
+        List<ReportThingsRepair> reportThingsRepairList = Lists.newArrayListWithExpectedSize(10);
+        List<HouseHold> houseHolds = houseHoldService.listByCellphone(cellphone);
+        for (HouseHold houseHold : houseHolds) {
+            List<ReportThingsRepair> reportThingsRepairs = listByStatus(houseHold.getHouseholdId(), status);
+            reportThingsRepairList.addAll(reportThingsRepairs);
+        }
+        return reportThingsRepairList;
+    }
+
+    /**
      * 申请报事报修
      * @param communityCode 小区code
      * @param communityName 小区名
@@ -115,7 +137,7 @@ public class ReportThingsRepairService {
                                         Integer roomId, String roomNum, Integer householdId, String content,
                                         String reportUser, String cellphone, Integer maintainType, Integer creatorUserId,
                                         List<String> images) {
-        String number = MakeOrderNumUtil.makeOrderNum();
+        String number = "B" + MakeOrderNumUtil.makeOrderNum();
         ReportThingsRepair reportThingsRepair = new ReportThingsRepair(number, communityCode, communityName, zoneId,
                 zoneName, buildingId, buildingName, unitId, unitName, roomId, roomNum, householdId, content, 1,
                 reportUser, cellphone, LocalDateTime.now(), 0, 0,

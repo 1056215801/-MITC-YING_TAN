@@ -105,23 +105,19 @@ public class UserServiceController {
         return Result.success("申请成功");
     }
 
-
-
-
-
     /**
-     * 查询报事报修状态数据，通过住户id
-     * @param householdId 住户id
-     * @param status      保修状态 0、未完成。1、已完成
+     * 查询报事报修状态数据，通过手机号
+     * @param cellphone 手机号
+     * @param status    保修状态 0、未完成。1、已完成
      * @return result
      * @author Mr.Deng
      * @date 21:02 2018/12/3
      */
     @GetMapping("/listReportThingsRepairByStatus")
-    @ApiOperation(value = "查询相应状态的报事报修数据", notes = "输入参数：householdId 住户id，status 0、未完成。1、已完成")
-    public Result listReportThingsRepairByStatus(Integer householdId, Integer status) {
-        if (householdId != null && status != null) {
-            List<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listByStatus(householdId, status);
+    @ApiOperation(value = "查询相应状态的报事报修数据", notes = "输入参数：cellphone 手机号，status 0、未完成。1、已完成")
+    public Result listReportThingsRepairByStatus(String cellphone, Integer status) {
+        if (cellphone != null && status != null) {
+            List<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listReportThingsRepairByStatus(cellphone, status);
             return Result.success(reportThingsRepairs);
         }
         return Result.error("参数不能为空");
