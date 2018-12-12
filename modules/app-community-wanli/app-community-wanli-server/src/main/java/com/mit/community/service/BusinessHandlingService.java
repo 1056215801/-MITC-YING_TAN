@@ -1,9 +1,9 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.mit.community.entity.BusinessHandling;
-import com.mit.community.entity.BusinessHandlingImg;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.BusinessHandlingMapper;
+import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.util.MakeOrderNumUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,16 @@ import java.util.List;
 public class BusinessHandlingService {
     @Autowired
     private BusinessHandlingMapper businessHandlingMapper;
-
     @Autowired
     private BusinessHandlingImgService businessHandlingImgService;
+    @Autowired
+    private DictionaryService dictionaryService;
+    @Autowired
+    private UserTrackService userTrackService;
+    @Autowired
+    private HouseHoldService houseHoldService;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
 
     /**
      * 添加业务办理数据
@@ -66,43 +73,54 @@ public class BusinessHandlingService {
 
     /**
      * 申请业务办理
+     * @param cellphone        手机号码
      * @param communityCode    小区code
-     * @param communityName    小区名称
-     * @param zoneId           分区id
-     * @param zoneName         分区名称
-     * @param buildingId       楼栋id
-     * @param buildingName     楼栋名
-     * @param unitId           单元id
-     * @param unitName         单元名
      * @param roomId           房间id
      * @param roomNum          房间号
      * @param contactPerson    申请人
      * @param contactCellphone 申请人电话
      * @param content          申请内容
-     * @param type             业务类型1、入住证明。2、装修完工申请。3、大物件搬出申报。4、装修许可证。5、装修出入证。6、钥匙托管。7、业主卡。99、其他
+     * @param type             业务类型(关联字典表，code为business_handling_type。)
      * @param creatorUserId    创建人用户id
      * @param images           申请图片列表
      * @author Mr.Deng
      * @date 14:27 2018/12/5
      */
     @Transactional(rollbackFor = Exception.class)
-    public void applyBusinessHandling(String communityCode, String communityName, Integer zoneId, String zoneName,
-                                      Integer buildingId, String buildingName, Integer unitId, String unitName,
-                                      Integer roomId, String roomNum, String contactPerson, String contactCellphone,
-                                      String content, Integer type, Integer creatorUserId, List<String> images) {
-        String order = MakeOrderNumUtil.makeOrderNum();
-        BusinessHandling businessHandling = new BusinessHandling(order, communityCode, communityName, zoneId, zoneName,
-                buildingId, buildingName, unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, content,
-                1, type, creatorUserId, 0, 0, 0,
-                0, StringUtils.EMPTY);
-        Integer saveSize = this.save(businessHandling);
-        if (saveSize > 0) {
-            if (images.size() > 0 && StringUtils.isNotBlank(images.get(0))) {
-                for (String image : images) {
-                    BusinessHandlingImg businessHandlingImg = new BusinessHandlingImg(businessHandling.getId(), image);
-                    businessHandlingImgService.save(businessHandlingImg);
+    public void applyBusinessHandling(String cellphone, String communityCode, Integer roomId, String roomNum,
+                                      String contactPerson, String contactCellphone,
+                                      String content, String type, Integer creatorUserId, List<String> images) {
+        String order = "Y" + MakeOrderNumUtil.makeOrderNum();
+        //报事成功code
+        String status = "business_success";
+        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
+        if (houseHold != null) {
+            Integer householdId = houseHold.getHouseholdId();
+            HouseholdRoom householdRoom = householdRoomService.getByHouseholdIdAndRoomNum(householdId, roomNum);
+            if (householdRoom != null) {
+                BusinessHandling businessHandling = new BusinessHandling(order, communityCode, householdRoom.getCommunityName()
+                        , householdRoom.getZoneId(), householdRoom.getZoneName(), householdRoom.getBuildingId(),
+                        householdRoom.getBuildingName(), householdRoom.getUnitId(), householdRoom.getUnitName(),
+                        roomId, roomNum, contactPerson, contactCellphone, content,
+                        status, type, creatorUserId, 0, 0, 0,
+                        0, StringUtils.EMPTY);
+
+                this.save(businessHandling);
+                if (!images.isEmpty()) {
+                    for (String image : images) {
+                        BusinessHandlingImg businessHandlingImg = new BusinessHandlingImg(businessHandling.getId(), image);
+                        businessHandlingImgService.save(businessHandlingImg);
+                    }
                 }
             }
+        }
+        //记录足迹
+        Dictionary dictionary = dictionaryService.getByCode(status);
+        Dictionary byCode = dictionaryService.getByCode(type);
+        if (dictionary != null && byCode != null) {
+            String nameType = byCode.getName();
+            String nameStatus = dictionary.getName();
+            userTrackService.addUserTrack(cellphone, nameType, nameType + nameStatus);
         }
     }
 
@@ -116,21 +134,21 @@ public class BusinessHandlingService {
      */
     public List<BusinessHandling> listByStatus(Integer creatorUserId, Integer status) {
         EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
+        String[] s;
         //未完成
         if (status == 0) {
-            wrapper.ge("status", 1);
-            wrapper.le("status", 3);
+            s = new String[]{"business_success", "acceptance", "being_processed"};
+        } else {
+            s = new String[]{"remain_evaluated", "have_evaluation"};
         }
-        //已完成
-        if (status == 1) {
-            wrapper.ge("status", 4);
-        }
+        wrapper.in("status", s);
         wrapper.eq("creator_user_id", creatorUserId);
         return businessHandlingMapper.selectList(wrapper);
     }
 
     /**
      * 业务办理评价
+     * @param cellphone                 手机号
      * @param businessHandlingId        业务办理id
      * @param evaluateResponseSpeed     响应速度评价
      * @param evaluateResponseAttitude  响应态度评价
@@ -141,7 +159,7 @@ public class BusinessHandlingService {
      * @date 14:50 2018/12/5
      */
     @Transactional(rollbackFor = Exception.class)
-    public void evaluateBusinessHandling(Integer businessHandlingId, Integer evaluateResponseSpeed,
+    public void evaluateBusinessHandling(String cellphone, Integer businessHandlingId, Integer evaluateResponseSpeed,
                                          Integer evaluateResponseAttitude,
                                          Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
         BusinessHandling businessHandling = this.getById(businessHandlingId);
@@ -152,10 +170,13 @@ public class BusinessHandlingService {
             businessHandling.setEvaluateServiceProfession(evaluateServiceProfession);
             businessHandling.setEvaluateTotal(evaluateTotal);
             this.update(businessHandling);
+            //记录足迹
+            Dictionary dictionary = dictionaryService.getByCode(businessHandling.getType());
+            if (dictionary != null) {
+                String name = dictionary.getName();
+                userTrackService.addUserTrack(cellphone, name, businessHandling.getContactPerson() + "-" + name + "评价成功");
+            }
         }
     }
-
-
-
 
 }

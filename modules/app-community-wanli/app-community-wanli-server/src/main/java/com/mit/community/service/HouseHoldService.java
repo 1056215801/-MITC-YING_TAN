@@ -36,10 +36,8 @@ public class HouseHoldService {
     @Autowired
     private UserHouseholdMapper userHouseholdMapper;
 
-
     /**
      * 查询住户，通过住户列表
-     *
      * @param householdIdList 住户列表
      * @return java.util.List<com.mit.community.entity.HouseHold>
      * @author shuyy
@@ -80,15 +78,34 @@ public class HouseHoldService {
      * @author shuyy
      * @date 2018/12/10 15:35
      * @company mitesofor
-    */
-    public HouseHold getByCellphone(String cellphone){
+     */
+    public HouseHold getByCellphone(String cellphone) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
-        if(houseHolds.isEmpty()){
+        if (houseHolds.isEmpty()) {
             return null;
         }
-        return  houseHolds.get(0);
+        return houseHolds.get(0);
+    }
+
+    /**
+     * 查询住户信息，通过手机号和小区code
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return 住户信息
+     * @author Mr.Deng
+     * @date 14:15 2018/12/12
+     */
+    public HouseHold getByCellphoneAndCommunityCode(String cellphone, String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("mobile", cellphone);
+        wrapper.eq("community_code", communityCode);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if (houseHolds.isEmpty()) {
+            return null;
+        }
+        return houseHolds.get(0);
     }
 
     /**

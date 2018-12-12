@@ -33,6 +33,10 @@ public class DnakeAppApiService {
 
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private DeviceService deviceService;
+    @Autowired
+    private UserTrackService userTrackService;
 
     /**
      * 验证手机验证码
@@ -48,8 +52,8 @@ public class DnakeAppApiService {
         map.put("smsCode", smsCode);
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
-        JSONObject jsonObject = JSON.parseObject(invoke);
-        if (jsonObject.get("errorCode") == null) {
+        boolean b = dnakeReponseStatus(invoke);
+        if (b) {
             return true;
         }
         return false;
@@ -83,7 +87,7 @@ public class DnakeAppApiService {
      * @param communityCode 小区code
      * @param cellphone     电话号码
      * @param deviceNum     设备编号
-     * @return 登录成功数据
+     * @return boolean
      * @author Mr.Deng
      * @date 14:01 2018/12/4
      */
@@ -96,11 +100,11 @@ public class DnakeAppApiService {
         map.put("deviceNum", deviceNum);
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
-        JSONObject jsonObject = JSON.parseObject(invoke);
-        if (jsonObject.get("errorCode") != null) {
-            return false;
+        boolean b = dnakeReponseStatus(invoke);
+        if (b) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -112,17 +116,15 @@ public class DnakeAppApiService {
      * @date 10:25 2018/12/5
      */
     public String callForwarding(String cellphone, String sipMobile) {
-        String result = StringUtils.EMPTY;
         String url = "/auth/api/common/callForwarding";
         DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         map.put("sipMobile", sipMobile);
         map.put("appUserId", dnakeAppUser.getAppUserId());
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
-        if (StringUtils.isNotBlank(invoke)) {
-            result = invoke;
-        }
-        return result;
+        log.info(invoke);
+        boolean b = dnakeReponseStatus(invoke);
+        return invoke;
     }
 
     /**
@@ -136,7 +138,6 @@ public class DnakeAppApiService {
      * @date 16:32 2018/12/4
      */
     public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
-        String result = StringUtils.EMPTY;
         String url = "/auth/api/common/inviteCode";
         DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(6);
@@ -159,7 +160,6 @@ public class DnakeAppApiService {
      */
     public void resetPwd(String cellphone, String password) {
         String url = "/auth/base/resetPwd";
-//        DnakeAppUser dnakeAppUser = new DnakeAppUser();
         DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         map.put("telNum", cellphone);
@@ -169,7 +169,7 @@ public class DnakeAppApiService {
     }
 
     @Test
-    public void test(){
+    public void test() {
         this.resetPwd("13064102937", "111111");
     }
 
@@ -266,5 +266,21 @@ public class DnakeAppApiService {
             dnakeAppUser.setUuid(dnakeLoginResponse.getUuid());
         }
         return dnakeAppUser;
+    }
+
+    /**
+     * 判断狄耐克请求是否成功
+     * @param invoke json
+     * @return boolean true成功，false失败
+     * @author Mr.Deng
+     * @date 15:22 2018/12/12
+     */
+    private boolean dnakeReponseStatus(String invoke) {
+        JSONObject json = JSONObject.parseObject(invoke);
+        String errorCode = json.getString("errorCode");
+        if (StringUtils.isNotBlank(errorCode)) {
+            return false;
+        }
+        return true;
     }
 }

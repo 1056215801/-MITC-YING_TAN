@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * 数据字典
- *
  * @author shuyy
  * @date 2018/11/30
  * @company mitesofor
@@ -39,7 +38,7 @@ public class DictionaryController {
      * @author shuyy
      * @date 2018/11/30 10:14
      * @company mitesofor
-    */
+     */
     @GetMapping("/listByParentCode")
     @ApiOperation(value = "查询数据字典，通过parentCode")
     public Result listByParentCode(String mac, String cellphone, String parentCode) {

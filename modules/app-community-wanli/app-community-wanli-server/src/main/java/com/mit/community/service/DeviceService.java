@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * 设备
- *
  * @author shuyy
  * @date 2018/11/30
  * @company mitesofor
@@ -36,7 +35,7 @@ public class DeviceService {
      * @author shuyy
      * @date 2018/11/30 11:07
      * @company mitesofor
-    *//*
+     *//*
     public List<Device> listByHouseholdIdList(List<Integer> householdIdList){
         List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDevices = authorizeAppHouseholdDeviceService.listByHouseholdIdList(householdIdList);
         if(authorizeAppHouseholdDevices.isEmpty()){
@@ -53,11 +52,30 @@ public class DeviceService {
      * @author shuyy
      * @date 2018/11/30 11:06
      * @company mitesofor
-    */
-    public List<Device> listByDeviceIdList(List<Integer> deviceIdList){
+     */
+    public List<Device> listByDeviceIdList(List<Integer> deviceIdList) {
         EntityWrapper<Device> wrapper = new EntityWrapper<>();
         wrapper.in("device_id", deviceIdList);
         return deviceMapper.selectList(wrapper);
+    }
+
+    /**
+     * 查询设备信息，通过小区code和设备编号
+     * @param communityCode 小区code
+     * @param deviceNum     设备编码
+     * @return 设备信息
+     * @author Mr.Deng
+     * @date 14:54 2018/12/12
+     */
+    public Device getByDeviceNumAndCommunityCode(String communityCode, String deviceNum) {
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("device_num", deviceNum);
+        List<Device> devices = deviceMapper.selectList(wrapper);
+        if (devices.isEmpty()) {
+            return null;
+        }
+        return devices.get(0);
     }
 
     /**
@@ -68,7 +86,7 @@ public class DeviceService {
      * @author shuyy
      * @date 2018/11/30 11:45
      * @company mitesofor
-    *//*
+     *//*
     public List<Device> listDeviceByCommunityCodeAndCellphone(String CommunityCode, String cellphone){
         User user = userService.getByCellphone(cellphone);
         List<UserHousehold> userHouseholds = userHouseholdService.listByUserId(user.getId());

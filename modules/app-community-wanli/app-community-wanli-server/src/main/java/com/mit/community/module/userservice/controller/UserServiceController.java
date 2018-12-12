@@ -1,10 +1,8 @@
 package com.mit.community.module.userservice.controller;
 
 import com.google.common.collect.Lists;
-import com.mit.community.entity.BusinessHandling;
-import com.mit.community.entity.CommunityPhone;
-import com.mit.community.entity.CommunityServiceInfo;
-import com.mit.community.entity.ReportThingsRepair;
+import com.mit.community.entity.*;
+import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
@@ -34,62 +32,51 @@ import java.util.Objects;
 public class UserServiceController {
 
     private final ReportThingsRepairService reportThingsRepairService;
-
     private final CommunityServiceInfoService communityServiceInfoService;
-
     private final BusinessHandlingService businessHandlingService;
-
     private final CommunityPhoneService communityPhoneService;
-
     private final YellowPagesService yellowPagesService;
-
     private final FeedBackService feedBackService;
+    private final UserTrackService userTrackService;
+    private final DictionaryService dictionaryService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
                                  CommunityServiceInfoService communityServiceInfoService,
                                  BusinessHandlingService businessHandlingService,
                                  CommunityPhoneService communityPhoneService, YellowPagesService yellowPagesService,
-                                 FeedBackService feedBackService) {
+                                 FeedBackService feedBackService, UserTrackService userTrackService, DictionaryService dictionaryService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
         this.communityPhoneService = communityPhoneService;
         this.yellowPagesService = yellowPagesService;
         this.feedBackService = feedBackService;
+        this.userTrackService = userTrackService;
+        this.dictionaryService = dictionaryService;
     }
 
     /**
      * 申请报事报修
      * @param communityCode 小区code
-     * @param communityName 小区名
-     * @param zoneId        分区id
-     * @param zoneName      分区名
-     * @param buildingId    楼栋id
-     * @param buildingName  楼栋名
-     * @param unitId        单元id
-     * @param unitName      单元名
      * @param roomId        房间id
      * @param roomNum       房间号
-     * @param householdId   用户id
      * @param content       报事内容
      * @param reportUser    报事人
      * @param cellphone     联系人
-     * @param maintainType  维修类型1、水，2、电，3、可燃气，4、锁，5、其他
+     * @param maintainType  维修类型.关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他
      * @param creatorUserId 创建用户id
      * @return result
      * @author Mr.Deng
      * @date 20:16 2018/12/3
      */
     @PostMapping(value = "/applyReportThingsRepair", produces = {"application/json"})
-    @ApiOperation(value = "申请报事报修", notes = "输入参数：输入参数：communityCode 小区code;communityName 小区名；zoneId 分区id;" +
-            " zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
-            "roomNum 房间编号；householdId 住户id；content 报事内容；reportUser 报事人；cellphone 联系人；" +
-            "maintainType 维修类型1、水，2、电，3、可燃气，4、锁，5、其他；creatorUserId 创建用户id；images 图片（可不传）")
-    public Result applyReportThingsRepair(String communityCode, String communityName, Integer zoneId, String zoneName,
-                                          Integer buildingId, String buildingName, Integer unitId, String unitName,
-                                          Integer roomId, String roomNum, Integer householdId, String content,
-                                          String reportUser, String cellphone, Integer maintainType,
+    @ApiOperation(value = "申请报事报修", notes = "输入参数：输入参数：communityCode 小区code;cellphone 登录用户手机号；roomId 房间id;" +
+            "roomNum 房间编号；content 报事内容；reportUser 报事人；reportCellphone 报事人手机号；" +
+            "maintainType 维修类型.关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他；" +
+            "creatorUserId 创建用户id；images 图片（可不传）")
+    public Result applyReportThingsRepair(String communityCode, String cellphone, Integer roomId, String roomNum, String content,
+                                          String reportUser, String reportCellphone, String maintainType,
                                           Integer creatorUserId, MultipartFile[] images) throws Exception {
         //上传图片路径
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
@@ -99,29 +86,30 @@ public class UserServiceController {
                 imageUrls.add(imageUrl);
             }
         }
-        reportThingsRepairService.applyReportThingsRepair(communityCode, communityName, zoneId,
-                zoneName, buildingId, buildingName, unitId, unitName, roomId, roomNum, householdId, content,
-                reportUser, cellphone, maintainType, creatorUserId, imageUrls);
+        reportThingsRepairService.applyReportThingsRepair(communityCode, cellphone, roomId, roomNum, content,
+                reportUser, reportCellphone, maintainType, creatorUserId, imageUrls);
+        Dictionary dictionary = dictionaryService.getByCode(maintainType);
+        if (dictionary != null) {
+            userTrackService.addUserTrack(cellphone, "申请报事报修", "维修类型" + dictionary.getName() + "申请报事报修成功");
+        }
         return Result.success("申请成功");
     }
 
-
-
-
-
     /**
-     * 查询报事报修状态数据，通过住户id
-     * @param householdId 住户id
-     * @param status      保修状态 0、未完成。1、已完成
+     * 查询报事报修状态数据，通过手机号
+     * @param cellphone 手机号
+     * @param status    保修状态 0、未完成。1、已完成
      * @return result
      * @author Mr.Deng
      * @date 21:02 2018/12/3
      */
     @GetMapping("/listReportThingsRepairByStatus")
-    @ApiOperation(value = "查询相应状态的报事报修数据", notes = "输入参数：householdId 住户id，status 0、未完成。1、已完成")
-    public Result listReportThingsRepairByStatus(Integer householdId, Integer status) {
-        if (householdId != null && status != null) {
-            List<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listByStatus(householdId, status);
+    @ApiOperation(value = "查询相应状态的报事报修数据", notes = "输入参数：cellphone 手机号，status 0、未完成。1、已完成")
+    public Result listReportThingsRepairByStatus(String cellphone, Integer status) {
+        if (cellphone != null && status != null) {
+            List<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listReportThingsRepairByStatus(cellphone, status);
+            String st = (status == 0) ? "未完成" : "已完成";
+            userTrackService.addUserTrack(cellphone, "查询报事报修", "查询状态" + st + "报事报修成功");
             return Result.success(reportThingsRepairs);
         }
         return Result.error("参数不能为空");
@@ -143,32 +131,36 @@ public class UserServiceController {
     @ApiOperation(value = "报事报修评价", notes = "输入参数：applyReportId 报事报修id；evaluateResponseSpeed  响应速度评价；" +
             "evaluateResponseAttitude  响应态度评价；evaluateTotal  总体评价；evaluateServiceProfession 服务专业度评价；" +
             "evaluateContent   评价内容")
-    public Result evaluateReportThingsRepair(Integer applyReportId, Integer evaluateResponseSpeed, Integer evaluateResponseAttitude,
+    public Result evaluateReportThingsRepair(String cellphone, Integer applyReportId, Integer evaluateResponseSpeed, Integer evaluateResponseAttitude,
                                              Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
         if (applyReportId != null && evaluateResponseSpeed != null && evaluateResponseAttitude != null && evaluateTotal != null
                 && evaluateServiceProfession != null && StringUtils.isNotBlank(evaluateContent)) {
             reportThingsRepairService.evaluateReportThingsRepair(applyReportId, evaluateResponseSpeed,
                     evaluateResponseAttitude, evaluateTotal, evaluateServiceProfession, evaluateContent);
+            userTrackService.addUserTrack(cellphone, "报事报修评价", "报事报修评价成功");
             return Result.success("评价成功");
         }
         return Result.error("参数不能为空");
     }
 
     /**
-     * 查询社区门诊信息，通过社区code
+     * 查询社区服务信息，通过社区code
      * @param communityCode 小区code
-     * @param type          社区服务类型1、社区门诊2、开锁换锁3、送水到家
+     * @param type          社区服务类型 关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家
      * @return result
      * @author Mr.Deng
      * @date 11:38 2018/12/5
      */
     @GetMapping("/listCommunityServiceInfoByCommunityCode")
     @ApiOperation(value = "查询社区门诊信息，通过小区code", notes = "输入参数：communityCode 小区code;" +
-            "type 社区服务类型1、社区门诊2、开锁换锁3、送水到家 \n返回参数：name 名称；address 地址；cellphone 电话；" +
+            "type 社区服务类型.关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家" +
+            " \n返回参数：name 名称；address 地址；cellphone 电话；" +
             "distance 距离；distance 坐标；image 图片地址；creatorUserId 创建用户id ")
-    public Result listCommunityServiceInfoByCommunityCode(String communityCode, Integer type) {
+    public Result listCommunityServiceInfoByCommunityCode(String cellphone, String communityCode, String type) {
         if (type != null && StringUtils.isNotBlank(communityCode)) {
             List<CommunityServiceInfo> communityClinics = communityServiceInfoService.listByCommunityCode(communityCode, type);
+            Dictionary dictionary = dictionaryService.getByCode(type);
+            userTrackService.addUserTrack(cellphone, "查询社区服务", "查询" + dictionary.getName() + "信息成功");
             return Result.success(communityClinics);
         }
         return Result.error("参数不能为空");
@@ -195,35 +187,27 @@ public class UserServiceController {
 
     /**
      * 申请业务办理
+     * @param cellphone        手机号码
      * @param communityCode    小区code
-     * @param communityName    小区名称
-     * @param zoneId           分区id
-     * @param zoneName         分区名称
-     * @param buildingId       楼栋id
-     * @param buildingName     楼栋名
-     * @param unitId           单元id
-     * @param unitName         单元名
      * @param roomId           房间id
      * @param roomNum          房间号
      * @param contactPerson    申请人
      * @param contactCellphone 申请人电话
      * @param content          申请内容
-     * @param type             业务类型1、入住证明。2、装修完工申请。3、大物件搬出申报。4、装修许可证。5、装修出入证。6、钥匙托管。7、业主卡。99、其他。
+     * @param type             业务类型(关联字典表，code为business_handling_type。)
      * @param creatorUserId    创建人用户id
      * @return result
      * @author Mr.Deng
      * @date 14:31 2018/12/5
      */
     @PostMapping(value = "/applyBusinessHandling", produces = {"application/json"})
-    @ApiOperation(value = "申请业务办理", notes = "输入参数：communityCode 小区code;communityName 小区名；zoneId 分区id;" +
-            "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
+    @ApiOperation(value = "申请业务办理", notes = "输入参数：cellphone 手机号码，communityCode 小区code;roomId 房间id;" +
             "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 申请内容\n" +
-            "type 业务类型：1、入住证明。2、装修完工申请。3、大物件搬出申报。4、装修许可证。5、装修出入证。6、钥匙托管。7、业主卡。99、其他。;" +
+            "type 业务类型：(关联字典表，code为business_handling_type。)；" +
             "creatorUserId    创建人用户id;images 图片（可传可不传）")
-    public Result applyBusinessHandling(String communityCode, String communityName, Integer zoneId, String zoneName,
-                                        Integer buildingId, String buildingName, Integer unitId, String unitName,
-                                        Integer roomId, String roomNum, String contactPerson, String contactCellphone,
-                                        String content, Integer type, Integer creatorUserId, MultipartFile[] images) throws Exception {
+    public Result applyBusinessHandling(String cellphone, String communityCode, Integer roomId, String roomNum,
+                                        String contactPerson, String contactCellphone,
+                                        String content, String type, Integer creatorUserId, MultipartFile[] images) throws Exception {
         //上传图片地址列表
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
         if (images != null) {
@@ -232,8 +216,8 @@ public class UserServiceController {
                 imageUrls.add(imageUrl);
             }
         }
-        businessHandlingService.applyBusinessHandling(communityCode, communityName, zoneId, zoneName, buildingId,
-                buildingName, unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, content, type,
+        businessHandlingService.applyBusinessHandling(cellphone, communityCode, roomId, roomNum, contactPerson,
+                contactCellphone, content, type,
                 creatorUserId, imageUrls);
         return Result.success("申请提交成功");
     }
@@ -259,6 +243,7 @@ public class UserServiceController {
 
     /**
      * 业务办理评价
+     * @param cellphone                 手机号
      * @param businessHandlingId        业务办理id
      * @param evaluateResponseSpeed     响应速度评价
      * @param evaluateResponseAttitude  响应态度评价
@@ -270,15 +255,15 @@ public class UserServiceController {
      * @date 15:00 2018/12/5
      */
     @PatchMapping("/evaluateBusinessHandling")
-    @ApiOperation(value = "业务办理评价", notes = "输入参数:businessHandlingId 业务办理id；evaluateResponseSpeed  响应速度评价；" +
+    @ApiOperation(value = "业务办理评价", notes = "输入参数:cellphone 手机号码，businessHandlingId 业务办理id；evaluateResponseSpeed  响应速度评价；" +
             "evaluateResponseAttitude  响应态度评价；evaluateTotal  总体评价；evaluateServiceProfession 服务专业度评价；" +
             "evaluateContent   评价内容；评价范围为0-5")
-    public Result evaluateBusinessHandling(Integer businessHandlingId, Integer evaluateResponseSpeed,
+    public Result evaluateBusinessHandling(String cellphone, Integer businessHandlingId, Integer evaluateResponseSpeed,
                                            Integer evaluateResponseAttitude,
                                            Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
         if (businessHandlingId != null && evaluateResponseSpeed != null && evaluateResponseAttitude != null
                 && evaluateTotal != null && evaluateServiceProfession != null && StringUtils.isNotBlank(evaluateContent)) {
-            businessHandlingService.evaluateBusinessHandling(businessHandlingId, evaluateResponseSpeed,
+            businessHandlingService.evaluateBusinessHandling(cellphone, businessHandlingId, evaluateResponseSpeed,
                     evaluateResponseAttitude, evaluateTotal, evaluateServiceProfession, evaluateContent);
             return Result.success("评价成功");
         }
