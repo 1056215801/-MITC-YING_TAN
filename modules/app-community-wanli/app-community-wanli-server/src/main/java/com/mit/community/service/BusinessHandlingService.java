@@ -90,24 +90,23 @@ public class BusinessHandlingService {
     public void applyBusinessHandling(String cellphone, String communityCode, Integer roomId, String roomNum,
                                       String contactPerson, String contactCellphone,
                                       String content, String type, Integer creatorUserId, List<String> images) {
-        String order = MakeOrderNumUtil.makeOrderNum();
+        String order = "Y" + MakeOrderNumUtil.makeOrderNum();
         //报事成功code
         String status = "business_success";
         HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
         if (houseHold != null) {
             Integer householdId = houseHold.getHouseholdId();
             HouseholdRoom householdRoom = householdRoomService.getByHouseholdIdAndRoomNum(householdId, roomNum);
+            if (householdRoom != null) {
+                BusinessHandling businessHandling = new BusinessHandling(order, communityCode, householdRoom.getCommunityName()
+                        , householdRoom.getZoneId(), householdRoom.getZoneName(), householdRoom.getBuildingId(),
+                        householdRoom.getBuildingName(), householdRoom.getUnitId(), householdRoom.getUnitName(),
+                        roomId, roomNum, contactPerson, contactCellphone, content,
+                        status, type, creatorUserId, 0, 0, 0,
+                        0, StringUtils.EMPTY);
 
-            BusinessHandling businessHandling = new BusinessHandling(order, communityCode, householdRoom.getCommunityName()
-                    , householdRoom.getZoneId(), householdRoom.getZoneName(), householdRoom.getBuildingId(),
-                    householdRoom.getBuildingName(), householdRoom.getUnitId(), householdRoom.getUnitName(),
-                    roomId, roomNum, contactPerson, contactCellphone, content,
-                    status, type, creatorUserId, 0, 0, 0,
-                    0, StringUtils.EMPTY);
-
-            Integer saveSize = this.save(businessHandling);
-            if (saveSize > 0) {
-                if (images.size() > 0 && StringUtils.isNotBlank(images.get(0))) {
+                this.save(businessHandling);
+                if (!images.isEmpty()) {
                     for (String image : images) {
                         BusinessHandlingImg businessHandlingImg = new BusinessHandlingImg(businessHandling.getId(), image);
                         businessHandlingImgService.save(businessHandlingImg);
@@ -115,7 +114,6 @@ public class BusinessHandlingService {
                 }
             }
         }
-
         //记录足迹
         Dictionary dictionary = dictionaryService.getByCode(status);
         Dictionary byCode = dictionaryService.getByCode(type);
@@ -136,15 +134,14 @@ public class BusinessHandlingService {
      */
     public List<BusinessHandling> listByStatus(Integer creatorUserId, Integer status) {
         EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
+        String[] s;
         //未完成
         if (status == 0) {
-            wrapper.ge("status", 1);
-            wrapper.le("status", 3);
+            s = new String[]{"business_success", "acceptance", "being_processed"};
+        } else {
+            s = new String[]{"remain_evaluated", "have_evaluation"};
         }
-        //已完成
-        if (status == 1) {
-            wrapper.ge("status", 4);
-        }
+        wrapper.in("status", s);
         wrapper.eq("creator_user_id", creatorUserId);
         return businessHandlingMapper.selectList(wrapper);
     }

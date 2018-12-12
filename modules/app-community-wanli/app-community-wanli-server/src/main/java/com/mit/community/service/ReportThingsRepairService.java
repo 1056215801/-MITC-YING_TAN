@@ -3,6 +3,7 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.common.collect.Lists;
 import com.mit.community.entity.HouseHold;
+import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.entity.ReportThingRepairImg;
 import com.mit.community.entity.ReportThingsRepair;
 import com.mit.community.mapper.ReportThingsRepairMapper;
@@ -32,6 +33,8 @@ public class ReportThingsRepairService {
 
     @Autowired
     private HouseHoldService houseHoldService;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
 
     /**
      * 添加保修报修数据
@@ -79,15 +82,14 @@ public class ReportThingsRepairService {
      */
     public List<ReportThingsRepair> listByStatus(Integer householdId, Integer status) {
         EntityWrapper<ReportThingsRepair> wrapper = new EntityWrapper<>();
+        String[] s;
         //未完成
         if (status == 0) {
-            wrapper.ge("status", 1);
-            wrapper.le("status", 3);
+            s = new String[]{"business_success", "acceptance", "being_processed"};
+        } else {
+            s = new String[]{"remain_evaluated", "have_evaluation"};
         }
-        //已完成
-        if (status == 1) {
-            wrapper.ge("status", 4);
-        }
+        wrapper.in("status", s);
         wrapper.eq("household_id", householdId);
         return reportThingsRepairMapper.selectList(wrapper);
     }
@@ -110,43 +112,40 @@ public class ReportThingsRepairService {
 
     /**
      * 申请报事报修
-     * @param communityCode 小区code
-     * @param communityName 小区名
-     * @param zoneId        分区id
-     * @param zoneName      分区名
-     * @param buildingId    楼栋id
-     * @param buildingName  楼栋名
-     * @param unitId        单元id
-     * @param unitName      单元名
-     * @param roomId        房间id
-     * @param roomNum       房间号
-     * @param householdId   用户id
-     * @param content       报事内容
-     * @param reportUser    报事人
-     * @param cellphone     联系人
-     * @param maintainType  维修类型
-     * @param creatorUserId 创建用户id
+     * @param communityCode   小区code
+     * @param roomId          房间id
+     * @param roomNum         房间号
+     * @param content         报事内容
+     * @param reportUser      报事人
+     * @param reportCellphone 联系人电话
+     * @param maintainType    维修类型.关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他
+     * @param creatorUserId   创建用户id
      * @author Mr.Deng
      * @date 20:02 2018/12/3
      */
     @Transactional(rollbackFor = Exception.class)
-    public void applyReportThingsRepair(String communityCode, String communityName, Integer zoneId, String zoneName,
-                                        Integer buildingId, String buildingName, Integer unitId, String unitName,
-                                        Integer roomId, String roomNum, Integer householdId, String content,
-                                        String reportUser, String cellphone, Integer maintainType, Integer creatorUserId,
+    public void applyReportThingsRepair(String communityCode, String cellphone, Integer roomId, String roomNum, String content,
+                                        String reportUser, String reportCellphone, String maintainType, Integer creatorUserId,
                                         List<String> images) {
         String number = "B" + MakeOrderNumUtil.makeOrderNum();
-        ReportThingsRepair reportThingsRepair = new ReportThingsRepair(number, communityCode, communityName, zoneId,
-                zoneName, buildingId, buildingName, unitId, unitName, roomId, roomNum, householdId, content, 1,
-                reportUser, cellphone, LocalDateTime.now(), 0, 0,
-                0, 0, StringUtils.EMPTY, maintainType, creatorUserId);
-        Integer reportThingsRepairSize = this.save(reportThingsRepair);
-        //报事信息是否添加成功
-        if (reportThingsRepairSize > 0) {
-            if (images.size() > 0 && StringUtils.isNotBlank(images.get(0))) {
-                for (String image : images) {
-                    ReportThingRepairImg reportThingRepairImg = new ReportThingRepairImg(reportThingsRepair.getId(), image);
-                    reportThingRepairImgService.save(reportThingRepairImg);
+        //报事成功code
+        String status = "business_success";
+        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
+        if (houseHold != null) {
+            Integer householdId = houseHold.getHouseholdId();
+            HouseholdRoom householdRoom = householdRoomService.getByHouseholdIdAndRoomNum(householdId, roomNum);
+            if (householdRoom != null) {
+                ReportThingsRepair reportThingsRepair = new ReportThingsRepair(number, communityCode, householdRoom.getCommunityName(),
+                        householdRoom.getZoneId(), householdRoom.getZoneName(), householdRoom.getBuildingId(), householdRoom.getBuildingName(),
+                        householdRoom.getUnitId(), householdRoom.getUnitName(), roomId, roomNum, householdId,
+                        content, status, reportUser, reportCellphone, LocalDateTime.now(), 0, 0,
+                        0, 0, StringUtils.EMPTY, maintainType, creatorUserId);
+                this.save(reportThingsRepair);
+                if (!images.isEmpty()) {
+                    for (String image : images) {
+                        ReportThingRepairImg reportThingRepairImg = new ReportThingRepairImg(reportThingsRepair.getId(), image);
+                        reportThingRepairImgService.save(reportThingRepairImg);
+                    }
                 }
             }
         }
@@ -166,13 +165,14 @@ public class ReportThingsRepairService {
     @Transactional(rollbackFor = Exception.class)
     public void evaluateReportThingsRepair(Integer applyReportId, Integer evaluateResponseSpeed, Integer evaluateResponseAttitude,
                                            Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
+        String status = "have_evaluation";
         ReportThingsRepair reportThingsRepair = this.getById(applyReportId);
         reportThingsRepair.setEvaluateContent(evaluateContent);
         reportThingsRepair.setEvaluateResponseAttitude(evaluateResponseAttitude);
         reportThingsRepair.setEvaluateResponseSpeed(evaluateResponseSpeed);
         reportThingsRepair.setEvaluateServiceProfession(evaluateServiceProfession);
         reportThingsRepair.setEvaluateTotal(evaluateTotal);
-        reportThingsRepair.setStatus(5);
+        reportThingsRepair.setStatus(status);
         this.update(reportThingsRepair);
     }
 

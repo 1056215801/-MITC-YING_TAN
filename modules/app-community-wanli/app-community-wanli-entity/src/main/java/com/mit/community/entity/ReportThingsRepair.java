@@ -86,7 +86,7 @@ public class ReportThingsRepair extends BaseEntity {
     /**
      * 状态。关联书字典，code为，report_thing_repair_type。1、报事成功。2、已受理。3、处理中.、4、待评价。5、已评价。
      */
-    private Integer status;
+    private String status;
     /**
      * 报事人
      */
@@ -127,10 +127,10 @@ public class ReportThingsRepair extends BaseEntity {
     @TableField("evaluate_content")
     private String evaluateContent;
     /**
-     * 维修类型。1、水，2、电，3、可燃气，4、锁，5、其他
+     * 维修类型。关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他
      */
     @TableField("maintain_type")
-    private Integer maintainType;
+    private String maintainType;
     /**
      * 创建用户id
      */
