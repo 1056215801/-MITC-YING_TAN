@@ -102,11 +102,9 @@ public class ReportThingsRepairService {
      */
     public List<ReportThingsRepair> listReportThingsRepairByStatus(String cellphone, Integer status) {
         List<ReportThingsRepair> reportThingsRepairList = Lists.newArrayListWithExpectedSize(10);
-        List<HouseHold> houseHolds = houseHoldService.listByCellphone(cellphone);
-        for (HouseHold houseHold : houseHolds) {
-            List<ReportThingsRepair> reportThingsRepairs = listByStatus(houseHold.getHouseholdId(), status);
-            reportThingsRepairList.addAll(reportThingsRepairs);
-        }
+        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
+        List<ReportThingsRepair> reportThingsRepairs = listByStatus(houseHold.getHouseholdId(), status);
+        reportThingsRepairList.addAll(reportThingsRepairs);
         return reportThingsRepairList;
     }
 

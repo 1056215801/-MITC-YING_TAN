@@ -133,7 +133,7 @@ public class ApplyKeyService {
         applyKey.setCheckPerson(checkPerson);
         this.update(applyKey);
         //记录足迹
-        userTrackService.addUserTrack(cellphone, "审批钥匙", cellphone + "钥匙审批成功");
+        userTrackService.addUserTrack(cellphone, "审批钥匙", applyKey.getCheckPerson() + "钥匙审批成功");
     }
 
 }

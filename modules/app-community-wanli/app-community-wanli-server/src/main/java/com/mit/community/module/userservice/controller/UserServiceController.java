@@ -188,13 +188,6 @@ public class UserServiceController {
      * 申请业务办理
      * @param cellphone        手机号码
      * @param communityCode    小区code
-     * @param communityName    小区名称
-     * @param zoneId           分区id
-     * @param zoneName         分区名称
-     * @param buildingId       楼栋id
-     * @param buildingName     楼栋名
-     * @param unitId           单元id
-     * @param unitName         单元名
      * @param roomId           房间id
      * @param roomNum          房间号
      * @param contactPerson    申请人
@@ -207,14 +200,12 @@ public class UserServiceController {
      * @date 14:31 2018/12/5
      */
     @PostMapping(value = "/applyBusinessHandling", produces = {"application/json"})
-    @ApiOperation(value = "申请业务办理", notes = "输入参数：cellphone 手机号码，communityCode 小区code;communityName 小区名；zoneId 分区id;" +
-            "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
+    @ApiOperation(value = "申请业务办理", notes = "输入参数：cellphone 手机号码，communityCode 小区code;roomId 房间id;" +
             "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 申请内容\n" +
             "type 业务类型：(关联字典表，code为business_handling_type。)；" +
             "creatorUserId    创建人用户id;images 图片（可传可不传）")
-    public Result applyBusinessHandling(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
-                                        Integer buildingId, String buildingName, Integer unitId, String unitName,
-                                        Integer roomId, String roomNum, String contactPerson, String contactCellphone,
+    public Result applyBusinessHandling(String cellphone, String communityCode, Integer roomId, String roomNum,
+                                        String contactPerson, String contactCellphone,
                                         String content, String type, Integer creatorUserId, MultipartFile[] images) throws Exception {
         //上传图片地址列表
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
@@ -224,8 +215,8 @@ public class UserServiceController {
                 imageUrls.add(imageUrl);
             }
         }
-        businessHandlingService.applyBusinessHandling(cellphone, communityCode, communityName, zoneId, zoneName, buildingId,
-                buildingName, unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, content, type,
+        businessHandlingService.applyBusinessHandling(cellphone, communityCode, roomId, roomNum, contactPerson,
+                contactCellphone, content, type,
                 creatorUserId, imageUrls);
         return Result.success("申请提交成功");
     }

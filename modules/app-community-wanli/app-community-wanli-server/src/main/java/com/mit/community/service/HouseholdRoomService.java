@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * 住户房屋关联
- *
  * @author shuyy
  * @date 2018/12/11
  * @company mitesofor
@@ -33,12 +32,30 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
      * @author shuyy
      * @date 2018/12/12 9:04
      * @company mitesofor
-    */
-    public List<HouseholdRoom> listByHouseholdId(Integer householdId){
+     */
+    public List<HouseholdRoom> listByHouseholdId(Integer householdId) {
         EntityWrapper<HouseholdRoom> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);
+        return householdRoomMapper.selectList(wrapper);
+    }
+
+    /**
+     * 查询房间信息，通过住户id和房号
+     * @param householdId 住户id
+     * @param roomNum     房号
+     * @return 房间信息
+     * @author Mr.Deng
+     * @date 14:05 2018/12/12
+     */
+    public HouseholdRoom getByHouseholdIdAndRoomNum(Integer householdId, String roomNum) {
+        EntityWrapper<HouseholdRoom> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        wrapper.eq("room_num", roomNum);
         List<HouseholdRoom> householdRooms = householdRoomMapper.selectList(wrapper);
-        return householdRooms;
+        if (householdRooms.isEmpty()) {
+            return null;
+        }
+        return householdRooms.get(0);
     }
 
     /***
@@ -46,8 +63,8 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
      * @author shuyy
      * @date 2018/12/11 20:24
      * @company mitesofor
-    */
-    public void remove(){
+     */
+    public void remove() {
         householdRoomMapper.delete(null);
     }
 }
