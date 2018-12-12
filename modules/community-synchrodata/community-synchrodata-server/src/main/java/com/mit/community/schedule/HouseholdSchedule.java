@@ -64,13 +64,13 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "*/2 * * * * ?")
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 */2 * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         // 先删除本地数据库，再插入
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
+        updateAuth(houseHolds);
         List<HouseHold> list = houseHoldService.list();
         // 对比出三种类型的数据
         Map<Integer, HouseHold> map = Maps.newHashMapWithExpectedSize(list.size());
@@ -124,6 +124,7 @@ public class HouseholdSchedule {
     private void updateAuth(List<HouseHold> houseHolds){
         authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
+        householdRoomService.remove();
         if (!houseHolds.isEmpty()) {
             houseHolds.forEach(item -> {
                 List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDevices = item.getAuthorizeAppHouseholdDeviceGroups();

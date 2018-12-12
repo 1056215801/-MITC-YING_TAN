@@ -8,7 +8,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.junit.Test;
 
 /**
  * http获取平台数据测试
@@ -18,7 +17,7 @@ import org.junit.Test;
  */
 public class HttpLoginTest {
 
-    @Test
+//    @Test
     public void test() {
         HttpLogin httpLogin = new HttpLogin("ytyuehu", "654321");
         httpLogin.loginUser();
@@ -35,7 +34,7 @@ public class HttpLoginTest {
         }
     }
 
-    @Test
+//    @Test
     public void ss() {
         HttpLogin httpLogin = new HttpLogin("ytkxwtxq", "654321");
         httpLogin.loginUser();
@@ -46,7 +45,7 @@ public class HttpLoginTest {
         }
     }
 
-    @Test
+//    @Test
     public void t() {
         // 登陆 Url
         String loginUrl = "http://cmp.ishanghome.com/mp/login";
