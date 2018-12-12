@@ -23,13 +23,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseHold extends BaseEntity {
-
-    /* *//**
+    /**
      * 小区Code
-     *//*
+     */
     @TableField("community_code")
     private String communityCode;
-
+    /*
     *//**
      * 小区名
      *//*
