@@ -160,7 +160,9 @@ public class UserServiceController {
         if (type != null && StringUtils.isNotBlank(communityCode)) {
             List<CommunityServiceInfo> communityClinics = communityServiceInfoService.listByCommunityCode(communityCode, type);
             Dictionary dictionary = dictionaryService.getByCode(type);
-            userTrackService.addUserTrack(cellphone, "查询社区服务", "查询" + dictionary.getName() + "信息成功");
+            if (dictionary != null) {
+                userTrackService.addUserTrack(cellphone, "查询社区服务", "查询" + dictionary.getName() + "信息成功");
+            }
             return Result.success(communityClinics);
         }
         return Result.error("参数不能为空");
@@ -169,17 +171,21 @@ public class UserServiceController {
     /**
      * 查询社区电话，通过小区code和电话类型
      * @param communityCode 小区code
-     * @param type          社区电话类型1、物业电话；2、紧急电话
+     * @param type          社区电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话
      * @return result
      * @author Mr.Deng
      * @date 16:01 2018/12/5
      */
     @GetMapping("/listCommunityPhoneByCommunityCodeAndType")
     @ApiOperation(value = "查询社区电话，通过小区code和电话类型", notes = "输入参数：communityCode 小区code" +
-            "type 社区电话类型1、物业电话；2、紧急电话")
-    public Result listCommunityPhoneByCommunityCodeAndType(String communityCode, Integer type) {
+            "type 社区电话类型,关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话")
+    public Result listCommunityPhoneByCommunityCodeAndType(String cellphone, String communityCode, String type) {
         if (type != null && StringUtils.isNotBlank(communityCode)) {
             List<CommunityPhone> communityPhones = communityPhoneService.listByCommunityCodeAndType(communityCode, type);
+            Dictionary dictionary = dictionaryService.getByCode(type);
+            if (dictionary != null) {
+                userTrackService.addUserTrack(cellphone, "查询社区电话", "查询" + dictionary.getName() + "信息成功");
+            }
             return Result.success(communityPhones);
         }
         return Result.error("参数不能为空");
@@ -217,8 +223,13 @@ public class UserServiceController {
             }
         }
         businessHandlingService.applyBusinessHandling(cellphone, communityCode, roomId, roomNum, contactPerson,
-                contactCellphone, content, type,
-                creatorUserId, imageUrls);
+                contactCellphone, content, type, creatorUserId, imageUrls);
+        //记录足迹
+        Dictionary dictionary = dictionaryService.getByCode(type);
+        if (dictionary != null) {
+            String name = dictionary.getName();
+            userTrackService.addUserTrack(cellphone, "申请业务办理", name + "业务办理成功");
+        }
         return Result.success("申请提交成功");
     }
 
@@ -233,9 +244,11 @@ public class UserServiceController {
     @GetMapping("/listBusinessHandlingByStatus")
     @ApiOperation(value = "查询业务办理状态数据，通过用户id", notes = "输入参数：creatorUserId 用户id；" +
             "业务办理状态 0、未完成。1、已完成")
-    public Result listBusinessHandlingByStatus(Integer creatorUserId, Integer status) {
+    public Result listBusinessHandlingByStatus(String cellphone, Integer creatorUserId, Integer status) {
         if (creatorUserId != null && status != null) {
             List<BusinessHandling> listBusinessHandling = businessHandlingService.listByStatus(creatorUserId, status);
+            String st = (status == 0) ? "未完成" : "已完成";
+            userTrackService.addUserTrack(cellphone, "查询业务办理数据", "查询办理状态" + st + "业务数据成功");
             return Result.success(listBusinessHandling);
         }
         return Result.error("参数不能为空");
@@ -259,12 +272,21 @@ public class UserServiceController {
             "evaluateResponseAttitude  响应态度评价；evaluateTotal  总体评价；evaluateServiceProfession 服务专业度评价；" +
             "evaluateContent   评价内容；评价范围为0-5")
     public Result evaluateBusinessHandling(String cellphone, Integer businessHandlingId, Integer evaluateResponseSpeed,
-                                           Integer evaluateResponseAttitude,
-                                           Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
+                                           Integer evaluateResponseAttitude, Integer evaluateTotal,
+                                           Integer evaluateServiceProfession, String evaluateContent) {
         if (businessHandlingId != null && evaluateResponseSpeed != null && evaluateResponseAttitude != null
                 && evaluateTotal != null && evaluateServiceProfession != null && StringUtils.isNotBlank(evaluateContent)) {
-            businessHandlingService.evaluateBusinessHandling(cellphone, businessHandlingId, evaluateResponseSpeed,
+            businessHandlingService.evaluateBusinessHandling(businessHandlingId, evaluateResponseSpeed,
                     evaluateResponseAttitude, evaluateTotal, evaluateServiceProfession, evaluateContent);
+            //记录足迹
+            BusinessHandling businessHandling = businessHandlingService.getById(businessHandlingId);
+            if (businessHandling != null) {
+                Dictionary dictionary = dictionaryService.getByCode(businessHandling.getType());
+                if (dictionary != null) {
+                    String name = dictionary.getName();
+                    userTrackService.addUserTrack(cellphone, name, businessHandling.getContactPerson() + "-" + name + "评价成功");
+                }
+            }
             return Result.success("评价成功");
         }
         return Result.error("参数不能为空");
@@ -293,12 +315,16 @@ public class UserServiceController {
     @GetMapping("/listByYellowPagesTypeId")
     @ApiOperation(value = "查询生活黄页信息，通过黄页类型id", notes = "输入参数：yellowPagesTypeId 黄页类型id" +
             "(传入参数查询某一个子菜单的号码，不传入查询所有菜单号码)")
-    public Result listByYellowPagesTypeId(Integer yellowPagesTypeId) {
+    public Result listByYellowPagesTypeId(String cellphone, Integer yellowPagesTypeId) {
         if (null != yellowPagesTypeId) {
             Map<String, Object> map = yellowPagesService.mapToPhoneByYellowPagesTypeId(yellowPagesTypeId);
+            if (!map.isEmpty()) {
+                userTrackService.addUserTrack(cellphone, "查询生活黄页", "查询生活黄页" + map.get("submenuName") + "成功");
+            }
             return Result.success(map);
         } else {
             List<Map<String, Object>> list = yellowPagesService.listToPhone();
+            userTrackService.addUserTrack(cellphone, "查询生活黄页", "查询全部生活黄页成功");
             return Result.success(list);
         }
     }
@@ -309,7 +335,7 @@ public class UserServiceController {
      * @param content 反馈内容
      * @param type    类型。关联数据字典。code为feedback_type。1、APP功能反馈。2、物业/小区问题
      * @param userId  用户id。关联user表id
-     * @param image   图片列表
+     * @param images  图片列表
      * @return result
      * @author Mr.Deng
      * @date 18:29 2018/12/6
@@ -317,14 +343,20 @@ public class UserServiceController {
     @PostMapping(value = "/submitFeedBack", produces = {"application/json"})
     @ApiOperation(value = "提交反馈意见", notes = "输入参数：title 标题；content 反馈内容；" +
             "type 类型。关联数据字典。code为feedback_type。1、APP功能反馈。2、物业/小区问题;userId 用户id；image 图片列表")
-    public Result submitFeedBack(String title, String content, Integer type, Integer userId, MultipartFile image) throws Exception {
+    public Result submitFeedBack(String cellphone, String title, String content, String type, Integer userId, MultipartFile[] images) throws Exception {
         if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(content) && type != null && userId != null) {
             List<String> imageUrls = Lists.newArrayListWithCapacity(5);
-            if (null != image) {
-                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
-                imageUrls.add(imageUrl);
+            if (null != images) {
+                for (MultipartFile image : images) {
+                    String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                    imageUrls.add(imageUrl);
+                }
             }
             feedBackService.submitFeedBack(title, content, type, userId, imageUrls);
+            Dictionary dictionary = dictionaryService.getByCode(type);
+            if (dictionary != null) {
+                userTrackService.addUserTrack(cellphone, "反馈意见", "提交" + dictionary.getName() + "成功");
+            }
             return Result.success("提交成功");
         }
         return Result.error("参数不能为空");

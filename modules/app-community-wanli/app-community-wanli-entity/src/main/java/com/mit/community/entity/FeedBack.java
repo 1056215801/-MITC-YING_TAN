@@ -29,7 +29,7 @@ public class FeedBack extends BaseEntity {
     /**
      * 类型。关联数据字典。code为feedback_type。1、APP功能反馈。2、物业/小区问题
      */
-    private Integer type;
+    private String type;
     /**
      * 用户id。关联user表id。
      */

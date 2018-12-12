@@ -19,7 +19,6 @@ import java.util.List;
 
 /**
  * 注册登陆
- *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -34,24 +33,22 @@ public class LoginController {
 
     private final UserService userService;
 
-    private final DeviceService deviceService;
-
     private final ClusterCommunityService clusterCommunityService;
 
     private final DnakeAppApiService dnakeAppApiService;
 
     private final HouseHoldService houseHoldService;
+    private final UserTrackService userTrackService;
 
     @Autowired
-    public LoginController(RedisService redisService, UserService userService, DeviceService deviceService,
-                           ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService,
-                           HouseHoldService houseHoldService) {
+    public LoginController(RedisService redisService, UserService userService, ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService,
+                           HouseHoldService houseHoldService, UserTrackService userTrackService) {
         this.redisService = redisService;
         this.userService = userService;
-        this.deviceService = deviceService;
         this.clusterCommunityService = clusterCommunityService;
         this.dnakeAppApiService = dnakeAppApiService;
         this.houseHoldService = houseHoldService;
+        this.userTrackService = userTrackService;
     }
 
     /***
@@ -119,8 +116,8 @@ public class LoginController {
         HouseHold houseHold = houseHoldService.getByCellphone(user.getCellphone());
         if (houseHold == null) {
             return Result.success(user, "没有关联住户");
-        }else {
-            if(user.getHouseholdId() == 0){
+        } else {
+            if (user.getHouseholdId() == 0) {
                 user.setHouseholdId(houseHold.getHouseholdId());
                 user.setPassword(psd);
                 userService.update(user);
@@ -128,7 +125,7 @@ public class LoginController {
         }
         Integer authorizeStatus = houseHold.getAuthorizeStatus();
         String s = Integer.toBinaryString(authorizeStatus);
-        if(s.charAt(1) != '1'){
+        if (s.charAt(1) != '1') {
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
@@ -141,7 +138,6 @@ public class LoginController {
 
     /**
      * 登出
-     *
      * @param cellphone 用户登录手机号
      * @return result
      * @author Mr.Deng
@@ -160,7 +156,6 @@ public class LoginController {
 
     /**
      * 选择标签
-     *
      * @param cellphone 电话号码
      * @param labelList label列表
      * @return com.mit.community.util.Result
@@ -248,9 +243,9 @@ public class LoginController {
             return Result.error("请在10分钟内完成注册");
         }
         int status = userService.register(cellphone, password);
-        if(status == 0){
+        if (status == 0) {
             return Result.success("用户已经存在");
-        }else{
+        } else {
             return Result.success("注册成功");
         }
     }
@@ -293,7 +288,6 @@ public class LoginController {
 
     /**
      * 修改用户信息
-     *
      * @param userId     用户id
      * @param nickname   昵称
      * @param gender     性别1、男。0、女。
@@ -314,6 +308,7 @@ public class LoginController {
     public Result updateUserInfo(Integer userId, String nickname, Short gender, String email, String cellphone,
                                  String iconUrl, String birthday, String bloodType, String profession, String signature) {
         userService.updateUserInfo(userId, nickname, gender, email, cellphone, iconUrl, birthday, bloodType, profession, signature);
+        userTrackService.addUserTrack(cellphone, "修改用户信息", "修改用户信息成功");
         return Result.success("修改成功");
     }
 
@@ -334,6 +329,7 @@ public class LoginController {
                 return Result.error("旧密码不匹配");
             }
             if (status == 1) {
+                userTrackService.addUserTrack(cellPhone, "修改密码", "修改密码成功");
                 return Result.success("修改密码成功");
             }
         }
@@ -348,18 +344,19 @@ public class LoginController {
      * @author shuyy
      * @date 2018/12/11 9:59
      * @company mitesofor
-    */
+     */
     @PatchMapping("/resetPwd")
     @ApiOperation(value = "重置密码", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
-    public Result resetPwd(String cellphone, String newPassword){
+    public Result resetPwd(String cellphone, String newPassword) {
         Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + cellphone);
         if (o == null) {
             return Result.error("请在10分钟内完成重置密码");
         }
         Integer status = userService.resetPwd(cellphone, newPassword);
-        if(status == 0){
+        if (status == 0) {
             return Result.success("不存在用户");
         }
+        userTrackService.addUserTrack(cellphone, "修改密码", "修改密码成功");
         return Result.success("重置成功");
     }
 
