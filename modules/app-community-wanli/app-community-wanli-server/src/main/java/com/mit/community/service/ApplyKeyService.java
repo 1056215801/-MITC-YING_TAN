@@ -1,7 +1,6 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.ApplyKey;
 import com.mit.community.entity.ApplyKeyImg;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,6 +27,8 @@ public class ApplyKeyService {
     private ApplyKeyMapper applyKeyMapper;
     @Autowired
     private ApplyKeyImgService applyKeyImgService;
+    @Autowired
+    private UserTrackService userTrackService;
 
     /**
      * 添加申请钥匙数据
@@ -81,6 +81,7 @@ public class ApplyKeyService {
 
     /**
      * 申请钥匙
+     * @param cellphone        手机号
      * @param communityCode    小区code
      * @param communityName    小区名称
      * @param zoneId           分区id
@@ -99,7 +100,7 @@ public class ApplyKeyService {
      * @date 14:50 2018/12/3
      */
     @Transactional(rollbackFor = Exception.class)
-    public void insertApplyKey(String communityCode, String communityName, Integer zoneId, String zoneName,
+    public void insertApplyKey(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
                                Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                                String roomNum, String contactPerson, String contactCellphone, String content,
                                Integer creatorUserId, String idCard, List<String> images) {
@@ -113,8 +114,11 @@ public class ApplyKeyService {
                     ApplyKeyImg applyKeyImg = new ApplyKeyImg(applyKey.getId(), image);
                     applyKeyImgService.save(applyKeyImg);
                 }
+
             }
         }
+        //记录足迹
+        userTrackService.addUserTrack(cellphone, "申请钥匙", "开门钥匙申请成功");
     }
 
     /**
@@ -125,12 +129,14 @@ public class ApplyKeyService {
      * @date 15:26 2018/12/3
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateByCheckPerson(Integer applyKeyId, String checkPerson) {
+    public void updateByCheckPerson(String cellphone, Integer applyKeyId, String checkPerson) {
         ApplyKey applyKey = this.selectById(applyKeyId);
         applyKey.setCheckTime(LocalDateTime.now());
         applyKey.setStatus(2);
         applyKey.setCheckPerson(checkPerson);
         this.update(applyKey);
+        //记录足迹
+        userTrackService.addUserTrack(cellphone, "审批钥匙", cellphone + "钥匙审批成功");
     }
 
 }

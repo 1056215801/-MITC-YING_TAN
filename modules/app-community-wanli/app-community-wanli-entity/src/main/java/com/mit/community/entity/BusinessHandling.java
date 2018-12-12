@@ -94,13 +94,13 @@ public class BusinessHandling extends BaseEntity {
     /**
      * 状态。关联书字典，code为，report_thing_repair_type。1、报事成功。2、已受理。3、处理中.、4、待评价。5、已评价。
      */
-    private Integer status;
+    private String status;
 
     /**
      * 业务类型，关联字典表，code为business_handling_type。1、入住证明。2、装修完工申请。3、大物件搬出申报。4、装修许可证。
      * 5、装修出入证。6、钥匙托管。7、业主卡。99、其他。
      */
-    private Integer type;
+    private String type;
     /**
      * 创建人用户id,关联user表
      */

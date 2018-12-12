@@ -1,7 +1,5 @@
 package com.mit.community.module.system.controller;
 
-import com.mit.community.constants.Constants;
-import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.Dictionary;
 import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.util.Result;
@@ -17,7 +15,6 @@ import java.util.List;
 
 /**
  * 数据字典
- *
  * @author shuyy
  * @date 2018/11/30
  * @company mitesofor
@@ -41,7 +38,7 @@ public class DictionaryController {
      * @author shuyy
      * @date 2018/11/30 10:14
      * @company mitesofor
-    */
+     */
     @GetMapping("/listByParentCode")
     @ApiOperation(value = "查询数据字典，通过parentCode")
     public Result listByParentCode(String parentCode) {

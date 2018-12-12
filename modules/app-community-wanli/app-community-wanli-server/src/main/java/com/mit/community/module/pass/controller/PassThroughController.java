@@ -35,7 +35,6 @@ import java.util.Objects;
 @Api(tags = "住户-通行模块接口")
 public class PassThroughController {
 
-    private final RegionService regionService;
     private final NoticeService noticeService;
     private final ApplyKeyService applyKeyService;
     private final VisitorService visitorService;
@@ -50,14 +49,12 @@ public class PassThroughController {
     private final WeatherService weatherService;
 
     @Autowired
-    public PassThroughController(NoticeService noticeService, RegionService regionService,
-                                 ApplyKeyService applyKeyService, VisitorService visitorService,
+    public PassThroughController(NoticeService noticeService, ApplyKeyService applyKeyService, VisitorService visitorService,
                                  DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                                  ZoneService zoneService, UnitService unitService, RoomService roomService,
                                  BuildingService buildingService, AccessControlService accessControlService,
                                  DeviceGroupService deviceGroupService, WeatherService weatherService) {
         this.noticeService = noticeService;
-        this.regionService = regionService;
         this.applyKeyService = applyKeyService;
         this.visitorService = visitorService;
         this.dnakeAppApiService = dnakeAppApiService;
@@ -167,7 +164,7 @@ public class PassThroughController {
     /**
      * 发布通知通告信息
      * @param title     标题
-     * @param type      类型
+     * @param code      类型(查询字典notice_type)
      * @param synopsis  简介
      * @param publisher 发布人
      * @param creator   创建人
@@ -177,16 +174,17 @@ public class PassThroughController {
      * @date 16:35 2018/11/29
      */
     @PostMapping("/insertByNotice")
-    @ApiOperation(value = "发布通知通告信息", notes = "输入参数：title 标题、type 类型、releaseTime 发布时间" +
+    @ApiOperation(value = "发布通知通告信息", notes = "输入参数：title 标题、code 类型(查询字典notice_type)、releaseTime 发布时间" +
             "synopsis 简介、publisher 发布人、creator 创建人")
-    public Result insertByNotice(String title, String type, String typeName, String synopsis,
+    public Result insertByNotice(String title, String code, String typeName, String synopsis,
                                  String publisher, String creator, String content) {
-        noticeService.releaseNotice(title, type, typeName, synopsis, publisher, creator, content);
+        noticeService.releaseNotice(title, code, typeName, synopsis, publisher, creator, content);
         return Result.success("发布成功！");
     }
 
     /**
      * 申请钥匙
+     * @param cellphone        手机号
      * @param communityCode    小区code
      * @param communityName    小区名称
      * @param zoneId           分区id
@@ -206,11 +204,11 @@ public class PassThroughController {
      * @date 15:01 2018/12/3
      */
     @PostMapping(value = "/applyKey", produces = {"application/json"})
-    @ApiOperation(value = "申请钥匙", notes = "输入参数：communityCode 小区code;communityName 小区名；zoneId 分区id;" +
+    @ApiOperation(value = "申请钥匙", notes = "输入参数：cellphone 手机号，communityCode 小区code;communityName 小区名；zoneId 分区id;" +
             "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
             "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；creatorUserId 创建人用户id；" +
             "images 图片列表（可不传）")
-    public Result applyKey(String communityCode, String communityName, Integer zoneId, String zoneName,
+    public Result applyKey(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                            String roomNum, String contactPerson, String contactCellphone, String content,
                            Integer creatorUserId, String idCard, MultipartFile[] images) throws Exception {
@@ -221,13 +219,14 @@ public class PassThroughController {
                 imageUrls.add(imageUrl);
             }
         }
-        applyKeyService.insertApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName, unitId,
+        applyKeyService.insertApplyKey(cellphone, communityCode, communityName, zoneId, zoneName, buildingId, buildingName, unitId,
                 unitName, roomId, roomNum, contactPerson, contactCellphone, content, creatorUserId, idCard, imageUrls);
         return Result.success("发布成功");
     }
 
     /**
      * 审批钥匙
+     * @param cellphone   手机号
      * @param applyKeyId  申请钥匙id
      * @param checkPerson 审批人
      * @return Result
@@ -235,9 +234,9 @@ public class PassThroughController {
      * @date 15:36 2018/12/3
      */
     @PatchMapping("/approveKey")
-    @ApiOperation(value = "审批钥匙", notes = "applyKeyId 申请钥匙id ")
-    public Result approveKey(Integer applyKeyId, String checkPerson) {
-        applyKeyService.updateByCheckPerson(applyKeyId, checkPerson);
+    @ApiOperation(value = "审批钥匙", notes = "传参：cellphone 手机号，applyKeyId 申请钥匙id，checkPerson 审批人 ")
+    public Result approveKey(String cellphone, Integer applyKeyId, String checkPerson) {
+        applyKeyService.updateByCheckPerson(cellphone, applyKeyId, checkPerson);
         return Result.success("审批成功");
     }
 

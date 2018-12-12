@@ -1,8 +1,10 @@
 package com.mit.community.service;
 
+import com.mit.community.entity.Dictionary;
 import com.mit.community.entity.Notice;
 import com.mit.community.entity.NoticeContent;
 import com.mit.community.mapper.NoticeMapper;
+import com.mit.community.module.system.service.DictionaryService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,10 @@ public class NoticeService {
     private NoticeMapper noticeMapper;
     @Autowired
     private NoticeContentService noticeContentService;
+    @Autowired
+    private UserTrackService userTrackService;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     /**
      * 添加通知通告数据
@@ -63,8 +69,7 @@ public class NoticeService {
     /**
      * 发布通知通告
      * @param title     标题
-     * @param type      类型
-     * @param typeName  类型名
+     * @param code      类型(查询字典notice_type)
      * @param synopsis  简介
      * @param publisher 发布人
      * @param creator   创建人
@@ -73,13 +78,18 @@ public class NoticeService {
      * @date 10:31 2018/11/30
      */
     @Transactional(rollbackFor = Exception.class)
-    public void releaseNotice(String title, String type, String typeName, String synopsis,
+    public void releaseNotice(String cellphone, String title, String code, String synopsis,
                               String publisher, String creator, String content) {
-        Notice notice = new Notice(title, type, typeName, LocalDateTime.now(), synopsis, publisher, creator, StringUtils.EMPTY);
-        Integer save = this.save(notice);
-        if (save > 0) {
-            NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
-            noticeContentService.save(noticeContent);
+        Notice notice = new Notice(title, code, LocalDateTime.now(), synopsis, publisher, creator, StringUtils.EMPTY);
+        this.save(notice);
+        NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
+        noticeContentService.save(noticeContent);
+        //添加足迹
+        Dictionary dictionary = dictionaryService.getByCode(code);
+        if (dictionary != null) {
+            String name = dictionary.getName();
+            String str = "发布" + name + "-" + title + "成功";
+            userTrackService.addUserTrack(cellphone, name, str);
         }
     }
 

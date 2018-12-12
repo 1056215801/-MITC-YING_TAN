@@ -28,14 +28,9 @@ public class Notice extends BaseEntity {
      * 类型。关联数据字典code为notice_type。
      * 一、通知公告：1、政策性通知。2、人口普查。3、入学通知。4、物业公告。
      * 二、系统消息。
-     * 三、1.生活服务：2.快递待取消息、3.失物招领、4.周边促销、5.老人体检
+     * 三、生活服务：2.快递待取消息、3.失物招领、4.周边促销、5.老人体检
      */
     private String type;
-    /**
-     * 类型名称
-     */
-    @TableField("type_name")
-    private String typeName;
     /**
      * 发布时间
      */

@@ -3,23 +3,24 @@ package com.mit.community.entity;
 import com.baomidou.mybatisplus.annotations.TableField;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Date;
 
 /**
+ * 数据字典表
  * @author shuyy
  * @email 490899514@qq.com
  * @date 2018-08-11 06:47:40
  */
 @Table(name = "base_dictionary")
 @Data
-public class Dictionary extends BaseEntity implements Serializable {
-
+public class Dictionary extends BaseEntity {
+    /**
+     * 名称
+     */
     private String name;
-
+    /**
+     * 编号
+     */
     private String code;
 
     /**

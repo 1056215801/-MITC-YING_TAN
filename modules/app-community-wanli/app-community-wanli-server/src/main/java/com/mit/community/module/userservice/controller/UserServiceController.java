@@ -34,15 +34,10 @@ import java.util.Objects;
 public class UserServiceController {
 
     private final ReportThingsRepairService reportThingsRepairService;
-
     private final CommunityServiceInfoService communityServiceInfoService;
-
     private final BusinessHandlingService businessHandlingService;
-
     private final CommunityPhoneService communityPhoneService;
-
     private final YellowPagesService yellowPagesService;
-
     private final FeedBackService feedBackService;
 
     @Autowired
@@ -191,6 +186,7 @@ public class UserServiceController {
 
     /**
      * 申请业务办理
+     * @param cellphone        手机号码
      * @param communityCode    小区code
      * @param communityName    小区名称
      * @param zoneId           分区id
@@ -204,22 +200,22 @@ public class UserServiceController {
      * @param contactPerson    申请人
      * @param contactCellphone 申请人电话
      * @param content          申请内容
-     * @param type             业务类型1、入住证明。2、装修完工申请。3、大物件搬出申报。4、装修许可证。5、装修出入证。6、钥匙托管。7、业主卡。99、其他。
+     * @param type             业务类型(关联字典表，code为business_handling_type。)
      * @param creatorUserId    创建人用户id
      * @return result
      * @author Mr.Deng
      * @date 14:31 2018/12/5
      */
     @PostMapping(value = "/applyBusinessHandling", produces = {"application/json"})
-    @ApiOperation(value = "申请业务办理", notes = "输入参数：communityCode 小区code;communityName 小区名；zoneId 分区id;" +
+    @ApiOperation(value = "申请业务办理", notes = "输入参数：cellphone 手机号码，communityCode 小区code;communityName 小区名；zoneId 分区id;" +
             "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
             "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 申请内容\n" +
-            "type 业务类型：1、入住证明。2、装修完工申请。3、大物件搬出申报。4、装修许可证。5、装修出入证。6、钥匙托管。7、业主卡。99、其他。;" +
+            "type 业务类型：(关联字典表，code为business_handling_type。)；" +
             "creatorUserId    创建人用户id;images 图片（可传可不传）")
-    public Result applyBusinessHandling(String communityCode, String communityName, Integer zoneId, String zoneName,
+    public Result applyBusinessHandling(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
                                         Integer buildingId, String buildingName, Integer unitId, String unitName,
                                         Integer roomId, String roomNum, String contactPerson, String contactCellphone,
-                                        String content, Integer type, Integer creatorUserId, MultipartFile[] images) throws Exception {
+                                        String content, String type, Integer creatorUserId, MultipartFile[] images) throws Exception {
         //上传图片地址列表
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
         if (images != null) {
@@ -228,7 +224,7 @@ public class UserServiceController {
                 imageUrls.add(imageUrl);
             }
         }
-        businessHandlingService.applyBusinessHandling(communityCode, communityName, zoneId, zoneName, buildingId,
+        businessHandlingService.applyBusinessHandling(cellphone, communityCode, communityName, zoneId, zoneName, buildingId,
                 buildingName, unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, content, type,
                 creatorUserId, imageUrls);
         return Result.success("申请提交成功");
@@ -255,6 +251,7 @@ public class UserServiceController {
 
     /**
      * 业务办理评价
+     * @param cellphone                 手机号
      * @param businessHandlingId        业务办理id
      * @param evaluateResponseSpeed     响应速度评价
      * @param evaluateResponseAttitude  响应态度评价
@@ -266,15 +263,15 @@ public class UserServiceController {
      * @date 15:00 2018/12/5
      */
     @PatchMapping("/evaluateBusinessHandling")
-    @ApiOperation(value = "业务办理评价", notes = "输入参数:businessHandlingId 业务办理id；evaluateResponseSpeed  响应速度评价；" +
+    @ApiOperation(value = "业务办理评价", notes = "输入参数:cellphone 手机号码，businessHandlingId 业务办理id；evaluateResponseSpeed  响应速度评价；" +
             "evaluateResponseAttitude  响应态度评价；evaluateTotal  总体评价；evaluateServiceProfession 服务专业度评价；" +
             "evaluateContent   评价内容；评价范围为0-5")
-    public Result evaluateBusinessHandling(Integer businessHandlingId, Integer evaluateResponseSpeed,
+    public Result evaluateBusinessHandling(String cellphone, Integer businessHandlingId, Integer evaluateResponseSpeed,
                                            Integer evaluateResponseAttitude,
                                            Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
         if (businessHandlingId != null && evaluateResponseSpeed != null && evaluateResponseAttitude != null
                 && evaluateTotal != null && evaluateServiceProfession != null && StringUtils.isNotBlank(evaluateContent)) {
-            businessHandlingService.evaluateBusinessHandling(businessHandlingId, evaluateResponseSpeed,
+            businessHandlingService.evaluateBusinessHandling(cellphone, businessHandlingId, evaluateResponseSpeed,
                     evaluateResponseAttitude, evaluateTotal, evaluateServiceProfession, evaluateContent);
             return Result.success("评价成功");
         }
