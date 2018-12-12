@@ -45,7 +45,7 @@ public class RoomSchedule {
     }
 
     @CacheClear(pre="room")
-    @Scheduled(cron = "0 59 * * * ?")
+    @Scheduled(cron = "0 25 23 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

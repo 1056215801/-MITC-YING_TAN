@@ -1,7 +1,6 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.google.common.collect.Lists;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.UserHousehold;
 import com.mit.community.mapper.HouseHoldMapper;
@@ -73,27 +72,6 @@ public class HouseHoldService {
         }
     }
 
-
-    /**
-     * 过滤得到已授权app的住户
-     * @param houseHolds 住户列表
-     * @return java.util.List<com.mit.community.entity.HouseHold>
-     * @author shuyy
-     * @date 2018/12/7 17:05
-     * @company mitesofor
-    */
-    public List<HouseHold> filterAuthorizedApp(List<HouseHold> houseHolds){
-        List<HouseHold> result = Lists.newArrayListWithCapacity(houseHolds.size());
-        houseHolds.forEach(houseHold -> {
-            Integer authorizeStatus = houseHold.getAuthorizeStatus();
-            String s = Integer.toBinaryString(authorizeStatus);
-            if(s.charAt(1) == '1'){
-                result.add(houseHold);
-            }
-        });
-        return result;
-    }
-
     /**
      * 查询住户列表，通过手机号
      * @param cellphone
@@ -103,10 +81,14 @@ public class HouseHoldService {
      * @date 2018/12/10 15:35
      * @company mitesofor
     */
-    public List<HouseHold> listByCellphone(String cellphone){
+    public HouseHold getByCellphone(String cellphone){
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
-        return houseHoldMapper.selectList(wrapper);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if(houseHolds.isEmpty()){
+            return null;
+        }
+        return  houseHolds.get(0);
     }
 
     /**

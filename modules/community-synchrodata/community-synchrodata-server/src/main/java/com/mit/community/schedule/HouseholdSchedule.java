@@ -1,8 +1,8 @@
 package com.mit.community.schedule;
 
-import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
-import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
-import com.mit.community.entity.HouseHold;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.mit.community.entity.*;
 import com.mit.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,36 +35,96 @@ public class HouseholdSchedule {
 
     private final AccessControlService accessControlService;
 
+    private final HouseholdRoomService householdRoomService;
+
+    private final UserService userService;
+
     @Autowired
     public HouseholdSchedule(HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
                              AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceService,
                              AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceService,
-                             AccessControlService accessControlService) {
+                             AccessControlService accessControlService, HouseholdRoomService householdRoomService, UserService userService) {
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.authorizeAppHouseholdDeviceGroupService = authorizeAppHouseholdDeviceService;
         this.authorizeHouseholdDeviceGroupService = authorizeHouseholdDeviceService;
         this.accessControlService = accessControlService;
+        this.householdRoomService = householdRoomService;
+        this.userService = userService;
     }
 
     /***
      * 删除然后导入
+     * 同步住户数据的时候，先查出dnake接口返回的所有住户，然后和我们数据库住户进行对比，分析出，增加、修改、删除的数据，
+     * 然后对这三类数据进行分别处理，对于修改的数据，如果修改了手机号，那么直接修改我们数据库用户表的手机号。
+     * 对于增加的数据，直接增加。对于删除的数据，直接删除。
+     * 授权设备组则直接删除再插入
      * @author shuyy
      * @date 2018/11/21 10:09
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
+    @Scheduled(cron = "*/2 * * * * ?")
     @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         // 先删除本地数据库，再插入
-        houseHoldService.remove();
+        List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
+        List<HouseHold> list = houseHoldService.list();
+        // 对比出三种类型的数据
+        Map<Integer, HouseHold> map = Maps.newHashMapWithExpectedSize(list.size());
+        list.forEach(l -> {
+            map.put(l.getHouseholdId(), l);
+        });
+        List<HouseHold> updateHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
+        List<HouseHold> addHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
+        List<HouseHold> removeHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
+        for (HouseHold h : houseHolds) {
+            HouseHold houseHold = map.get(h.getHouseholdId());
+            if (houseHold == null) {
+                addHousehold.add(h);
+            } else {
+                boolean update = houseHoldService.isUpdate(h, houseHold);
+                if (update) {
+                    updateHousehold.add(h);
+                }
+                map.remove(h.getHouseholdId());
+            }
+        }
+        map.forEach((key, value) -> removeHousehold.add(value));
+        // 删除
+        if(!removeHousehold.isEmpty()){
+            List<Integer> deleteId = removeHousehold.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
+            houseHoldService.deleteBatchIds(deleteId);
+        }
+        // 更新
+        if(!updateHousehold.isEmpty()){
+            houseHoldService.updateBatchById(updateHousehold, 1);
+            updateHousehold.forEach(houseHold -> {
+                String mobile = houseHold.getMobile();
+                userService.updateCellphoneByHouseholdId(mobile, houseHold.getHouseholdId());
+            });
+        }
+        if(!addHousehold.isEmpty()){
+            // 增加
+            houseHoldService.insertBatch(addHousehold);
+        }
+    }
+
+    /**
+     * 更新授权设备
+     * @param houseHolds
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2018/12/12 10:45
+     * @company mitesofor
+    */
+    private void updateAuth(List<HouseHold> houseHolds){
         authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
-        List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);
         if (!houseHolds.isEmpty()) {
-            houseHoldService.insertBatch(houseHolds);
             houseHolds.forEach(item -> {
                 List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDevices = item.getAuthorizeAppHouseholdDeviceGroups();
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
@@ -74,27 +134,31 @@ public class HouseholdSchedule {
                 if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {
                     authorizeHouseholdDeviceGroupService.insertBatch(authorizeHouseholdDeviceGroups);
                 }
+                List<HouseholdRoom> householdRoomList = item.getHouseholdRoomList();
+                if (householdRoomList != null && !householdRoomList.isEmpty()) {
+                    householdRoomService.insertBatch(householdRoomList);
+                }
             });
         }
     }
-    
+
     /***
      * 更新身份证信息
      * @author shuyy
      * @date 2018/12/08 15:36
      * @company mitesofor
      */
-//    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updateIdCard() {
-    	long start = System.currentTimeMillis();
-    	List<HouseHold> list = houseHoldService.list();
+        long start = System.currentTimeMillis();
+        List<HouseHold> list = houseHoldService.list();
 //    	list = list.subList(0, 1001);
-    	List<HouseHold> result = houseHoldService.getIdCardInfoFromDnake(list);
-    	if(!result.isEmpty()) {
-    		houseHoldService.updateBatchById(result);
-    	}
-    	long end = System.currentTimeMillis();
-    	System.out.println(end - start);
+        List<HouseHold> result = houseHoldService.getIdCardInfoFromDnake(list);
+        if (!result.isEmpty()) {
+            houseHoldService.updateBatchById(result);
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
     }
 
     /***
@@ -103,7 +167,7 @@ public class HouseholdSchedule {
      * @date 2018/11/24 10:36
      * @company mitesofor
      */
-    @Scheduled(cron = "0 40 3 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void parseIdentityType() {
         List<Map<String, Object>> maps = houseHoldService.listActiveRoomId();
         maps.forEach(item -> {

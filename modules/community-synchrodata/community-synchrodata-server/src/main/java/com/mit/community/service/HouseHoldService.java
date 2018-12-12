@@ -157,6 +157,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 19:35 2018/11/14
      */
+//    @Cache(key = "household:all")
     public List<HouseHold> list() {
         return houseHoldMapper.selectList(null);
     }
@@ -414,7 +415,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      */
     private List<HouseHold> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum, Integer pageSize,
                                                              Map<String, Object> param) {
-        String url = "/v1/household/getHouseholdList";
+        String url = "/v1/household/getHouseholdListMore";
+//        String url = "/v1/household/getHouseholdList";
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
         map.put("pageNum", pageNum);
@@ -435,40 +437,9 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         ArrayList<HouseHold> householdResultList = Lists.newArrayListWithCapacity(householdList.size());
         String communityName = clusterCommunityService.getByCommunityCode(communityCode).getCommunityName();
         for (int i = 0; i < householdList.size(); i++) {
+            JSONObject jsonObject = householdList.getJSONObject(i);
             // 构建household对象residenceTime"residenceTime" -> "2023-08-15 00:00:00"
             HouseHold houseHold = householdList.getObject(i, HouseHold.class);
-            houseHold.setCommunityName(communityName);
-            houseHold.setCommunityCode(communityCode);
-            String zoneName = houseHold.getZoneName();
-            // dnake接口返回数据有问题，这里进行转换
-            String needConvertZoneName = "凯翔国际外滩";
-            if (zoneName.equals(needConvertZoneName)) {
-                zoneName = "凯翔外滩国际";
-            }
-            Zone zone = zoneService.getByNameAndCommunityCode(zoneName, communityCode);
-            if (zone == null) {
-                householdList.remove(i--);
-                continue;
-            }
-            Integer zoneId = zone.getZoneId();
-            houseHold.setZoneId(zoneId);
-            houseHold.setZoneName(zoneName);
-            String buildingName = houseHold.getBuildingName();
-            Building building = buildingService.getByNameAndZoneId(buildingName, zoneId);
-            if (building == null) {
-                householdList.remove(i--);
-                continue;
-            }
-            Integer buildingId = building.getBuildingId();
-            houseHold.setBuildingId(buildingId);
-            String unitName = houseHold.getUnitName();
-            Unit unit = unitService.getByNameAndBuildingId(unitName, buildingId);
-            if (unit == null) {
-                householdList.remove(i--);
-                continue;
-            }
-            Integer unitId = unit.getUnitId();
-            houseHold.setUnitId(unitId);
             houseHold.setGmtCreate(LocalDateTime.now());
             houseHold.setGmtModified(LocalDateTime.now());
             if (houseHold.getSipAccount() == null) {
@@ -477,19 +448,11 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             if (houseHold.getSipPassword() == null) {
                 houseHold.setSipPassword(StringUtils.EMPTY);
             }
-            if (houseHold.getHouseholdType() == null) {
-                houseHold.setHouseholdType(1);
-            }
-            Room room = roomService.getByUnitIdAndRoomNum(houseHold.getRoomNum(), houseHold.getUnitId());
-            if (room != null) {
-                houseHold.setRoomId(room.getRoomId());
-            } else {
-                houseHold.setRoomId(0);
-            }
             Integer health = 1;
             if (!health.equals(houseHold.getHouseholdStatus())) {
                 continue;
             }
+            houseHold.setCommunityCode(communityCode);
             houseHold.setCredentialNum(StringUtils.EMPTY);
             houseHold.setIdentityType(HouseHold.NORMAL);
             houseHold.setProvince(StringUtils.EMPTY);
@@ -497,10 +460,47 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             houseHold.setRegion(StringUtils.EMPTY);
             houseHold.setBirthday(CommonConstatn.NULL_LOCAL_DATE);
             houseHold.setIdentityType((short) 99);
-//            JSONObject jsonObject = householdList.getJSONObject(i);
-//            parseDoorDevice(jsonObject, houseHold);
-//            parseAppDevice(jsonObject, houseHold);
-            JSONObject jsonObject = householdList.getJSONObject(i);
+            JSONArray houseList = jsonObject.getJSONArray("houseList");
+            for (int index = 0; index < houseList.size(); index++) {
+                JSONObject j = (JSONObject) houseList.get(index);
+                Short householdType = j.getShort("householdType");
+                String buildingName = (String) j.get("buildingName");
+                String unitName = (String) j.get("unitName");
+                String roomNum = (String) j.get("roomNum");
+                String zoneName = (String) j.get("zoneName");
+                // dnake接口返回数据有问题，这里进行转换
+                String needConvertZoneName = "凯翔国际外滩";
+                if (zoneName.equals(needConvertZoneName)) {
+                    zoneName = "凯翔外滩国际";
+                }
+                Zone zone = zoneService.getByNameAndCommunityCode(zoneName, communityCode);
+                if (zone == null) {
+                    continue;
+                }
+                Building building = buildingService.getByNameAndZoneId(buildingName, zone.getZoneId());
+                if (building == null) {
+                    continue;
+                }
+                Unit unit = unitService.getByNameAndBuildingId(unitName, building.getBuildingId());
+                if (unit == null) {
+                    continue;
+                }
+                Room room = roomService.getByUnitIdAndRoomNum(roomNum, unit.getUnitId());
+                if (room == null) {
+                    continue;
+                }
+                HouseholdRoom householdRoom = new HouseholdRoom(communityCode, communityName, zone.getZoneId(),
+                        zoneName, building.getBuildingId(), buildingName,
+                        unit.getUnitId(), unitName, room.getRoomId(), roomNum, householdType, houseHold.getHouseholdId());
+                householdRoom.setGmtCreate(LocalDateTime.now());
+                householdRoom.setGmtModified(LocalDateTime.now());
+                List<HouseholdRoom> householdRoomList = houseHold.getHouseholdRoomList();
+                if(householdRoomList == null){
+                    householdRoomList = Lists.newArrayListWithCapacity(5);
+                    houseHold.setHouseholdRoomList(householdRoomList);
+                }
+                householdRoomList.add(householdRoom);
+            }
             parseAppDeviceGroup(jsonObject, houseHold);
             parseDoorDevice(jsonObject, houseHold);
             householdResultList.add(houseHold);
@@ -568,5 +568,43 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         wrapper.eq("room_id", roomId);
         return houseHoldMapper.selectList(wrapper);
     }
+
+    /**
+     * 判断住户对象是否改变
+     * @param houseHoldA 住户A
+     * @param houseHoldB 住户B
+     * @return boolean
+     * @author shuyy
+     * @date 2018/12/12 10:38
+     * @company mitesofor
+    */
+    public boolean isUpdate(HouseHold houseHoldA, HouseHold houseHoldB){
+        if(!houseHoldA.getMobile().equals(houseHoldB.getMobile())){
+            return true;
+        }
+        if(!houseHoldA.getHouseholdName().equals(houseHoldB.getHouseholdName())){
+            return true;
+        }
+        if(!houseHoldA.getHouseholdStatus().equals(houseHoldB.getHouseholdStatus())){
+            return true;
+        }
+        if(!houseHoldA.getAuthorizeStatus().equals(houseHoldB.getAuthorizeStatus())){
+            return true;
+        }
+        if(!houseHoldA.getGender().equals(houseHoldB.getGender())){
+            return true;
+        }
+        if(!houseHoldA.getResidenceTime().equals(houseHoldB.getResidenceTime())){
+            return true;
+        }
+        if(!houseHoldA.getSipAccount().equals(houseHoldB.getSipAccount())){
+            return true;
+        }
+        if(!houseHoldA.getSipPassword().equals(houseHoldB.getSipPassword())){
+            return true;
+        }
+        return false;
+    }
+
 
 }

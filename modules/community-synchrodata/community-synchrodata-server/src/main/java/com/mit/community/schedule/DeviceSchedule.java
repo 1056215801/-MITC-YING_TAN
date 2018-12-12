@@ -30,7 +30,7 @@ public class DeviceSchedule {
         this.deviceService = deviceService;
     }
 
-    @Scheduled(cron = "0 59 * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

@@ -13,6 +13,7 @@ import com.mit.community.entity.DnakeLoginResponse;
 import com.mit.community.entity.MyKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -146,7 +147,7 @@ public class DnakeAppApiService {
         map.put("communityCode", communityCode);
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
-        return result;
+        return invoke;
     }
 
     /**
@@ -157,13 +158,19 @@ public class DnakeAppApiService {
      * @date 13:47 2018/12/8
      */
     public void resetPwd(String cellphone, String password) {
-        String url = "/auth/base/modifyPwd";
+        String url = "/auth/base/resetPwd";
+//        DnakeAppUser dnakeAppUser = new DnakeAppUser();
         DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         map.put("telNum", cellphone);
         map.put("password", password);
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
+    }
+
+    @Test
+    public void test(){
+        this.resetPwd("13064102937", "111111");
     }
 
 //    /**

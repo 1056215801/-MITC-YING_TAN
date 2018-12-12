@@ -116,13 +116,19 @@ public class LoginController {
         user.setPassword(StringUtils.EMPTY);
         // redis中保存用户
         redisService.set(RedisConstant.USER + user.getCellphone(), user, RedisConstant.LOGIN_EXPIRE_TIME);
-        List<HouseHold> houseHolds = houseHoldService.listByCellphone(user.getCellphone());
-        if (houseHolds.isEmpty()) {
+        HouseHold houseHold = houseHoldService.getByCellphone(user.getCellphone());
+        if (houseHold == null) {
             return Result.success(user, "没有关联住户");
+        }else {
+            if(user.getHouseholdId() == 0){
+                user.setHouseholdId(houseHold.getHouseholdId());
+                user.setPassword(psd);
+                userService.update(user);
+            }
         }
-        List<HouseHold> filterAppHouseholds = houseHoldService.filterAuthorizedApp(houseHolds);
-        if (filterAppHouseholds.isEmpty()) {
-            // 没有授权app
+        Integer authorizeStatus = houseHold.getAuthorizeStatus();
+        String s = Integer.toBinaryString(authorizeStatus);
+        if(s.charAt(1) != '1'){
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app

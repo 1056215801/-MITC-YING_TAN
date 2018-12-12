@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Region;
 import com.mit.community.mapper.RegionMapper;
@@ -29,6 +30,7 @@ public class RegionService {
      * @author Mr.Deng
      * @date 15:15 2018/11/29
      */
+    @Cache(key = "region:englishName:{1}")
     public Region getByEnglishName(String englishName) {
         EntityWrapper<Region> wrapper = new EntityWrapper<>();
         wrapper.eq("english_name", englishName);
