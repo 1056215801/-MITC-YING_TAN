@@ -27,13 +27,13 @@ public class HouseHold extends BaseEntity {
     /**
      * 小区Code
      */
-     @TableField("community_code")
+    @TableField("community_code")
     private String communityCode;
 
 
 
 
-  /*  *//**
+    /*  *//**
      * 小区名
      *//*
     @TableField("community_name")
@@ -162,6 +162,12 @@ public class HouseHold extends BaseEntity {
      */
     @TableField("identity_type")
     private Short identityType;
+
+    /**
+     * 星座
+     */
+    private String constellation;
+
     /**
      * 授权设备组
      */

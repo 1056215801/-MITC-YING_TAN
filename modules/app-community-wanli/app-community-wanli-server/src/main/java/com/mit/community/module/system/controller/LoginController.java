@@ -64,7 +64,7 @@ public class LoginController {
      */
     @GetMapping("/getMobileVerificationCode")
     @ApiOperation(value = "获取手机验证码", notes = "传参：cellphone 手机号、type 类型：1 注册, 2 登陆")
-    public Result getMobileVerificationCode(String cellphone, Integer type) {
+    public Result getMobileVerificationCode(String mac, String cellphone, Integer type) {
         String code = SmsCommunityAppUtil.generatorCode();
         if (SmsCommunityAppUtil.TYPE_REGISTER.equals(type)) {
             // 注册
@@ -93,7 +93,7 @@ public class LoginController {
             "3、resultStatus: true, message: 没有关联住户, object:user。<br/>" +
             "4、resultStatus: true, message: 没有授权app, object:user。<br/>" +
             "5、resultStatus: true, message: 已授权app, object:user。")
-    public Result login(String cellphone, String verificationCode, String password) {
+    public Result login(String mac, String cellphone, String verificationCode, String password) {
         User user;
         if (verificationCode != null) {
             // 验证码登陆
@@ -115,7 +115,8 @@ public class LoginController {
         String psd = user.getPassword();
         user.setPassword(StringUtils.EMPTY);
         // redis中保存用户
-        redisService.set(RedisConstant.USER + user.getCellphone(), user, RedisConstant.LOGIN_EXPIRE_TIME);
+        redisService.set(RedisConstant.USER + user.getCellphone(), user);
+        redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
         HouseHold houseHold = houseHoldService.getByCellphone(user.getCellphone());
         if (houseHold == null) {
             return Result.success(user, "没有关联住户");
@@ -149,7 +150,7 @@ public class LoginController {
      */
     @ApiOperation(value = "登出", notes = "输入参数：cellphone 用户登录手机号")
     @GetMapping("/loginOut")
-    public Result loginOut(String cellphone) {
+    public Result loginOut(String mac, String cellphone) {
         if (StringUtils.isNotBlank(cellphone)) {
             userService.loginOut(cellphone);
             return Result.success("退出成功");
@@ -170,7 +171,7 @@ public class LoginController {
      */
     @PostMapping("chooseLabelList")
     @ApiOperation(value = "选择标签", notes = "传参;cellphone 手机号：labelList 多个标签。标签来自于数据字典parentCode为label")
-    public Result chooseLabelList(String cellphone, String[] labelList) {
+    public Result chooseLabelList(String mac, String cellphone, String[] labelList) {
         userService.chooseLabelList(cellphone, labelList);
         return Result.success("成功");
     }
@@ -185,7 +186,7 @@ public class LoginController {
      */
     @PostMapping("updateGender")
     @ApiOperation(value = "选择性别", notes = "传参;cellphone 手机号：gender 性别，1、男。2、女")
-    public Result updateGender(String cellphone, Short gender) {
+    public Result updateGender(String mac, String cellphone, Short gender) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         user.setGender(gender);
         userService.update(user);
@@ -203,7 +204,7 @@ public class LoginController {
      */
     @PostMapping("updateBirthdayAndNick")
     @ApiOperation(value = "选择出生日期和昵称", notes = "传参;cellphone 手机号、birthday 出生日期、nickName 昵称 ")
-    public Result updateBirthdayAndNick(String cellphone, String birthday, String nickName) {
+    public Result updateBirthdayAndNick(String mac, String cellphone, String birthday, String nickName) {
         LocalDate localDate = DateUtils.parseStringToLocalDate(birthday, null);
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         user.setBirthday(localDate);
@@ -223,7 +224,7 @@ public class LoginController {
      */
     @GetMapping("/cellphoneVerification")
     @ApiOperation(value = "手机验证码验证", notes = "传参;cellphone 手机号：verificationCode 手机验证码")
-    public Result cellphoneVerification(String cellphone, String verificationCode) {
+    public Result cellphoneVerification(String mac, String cellphone, String verificationCode) {
         Object o = redisService.get(RedisConstant.VERIFICATION_CODE + cellphone);
         if (o == null || !verificationCode.equals(o.toString())) {
             return Result.error("验证码错误");
@@ -242,7 +243,7 @@ public class LoginController {
      */
     @PostMapping("/register")
     @ApiOperation(value = "注册", notes = "传参;cellphone 手机号：username用户名，password 密码")
-    public Result register(String cellphone, String password) {
+    public Result register(String mac, String cellphone, String password) {
         Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + cellphone);
         if (o == null) {
             return Result.error("请在10分钟内完成注册");
@@ -264,7 +265,7 @@ public class LoginController {
      */
     @GetMapping("/listClusterCommunityByUserCellphone")
     @ApiOperation(value = "查询用户授权的所有小区", notes = "传参;cellphone 手机号")
-    public Result listClusterCommunityByUserCellphone(String cellphone) {
+    public Result listClusterCommunityByUserCellphone(String mac, String cellphone) {
         List<ClusterCommunity> clusterCommunities = clusterCommunityService.listClusterCommunityByUserCellphone(cellphone);
         if (clusterCommunities == null) {
             return Result.success("没有关联小区");
@@ -311,7 +312,7 @@ public class LoginController {
     @ApiOperation(value = "修改用户信息", notes = "输入信息：userId 用户id；nickname 昵称；gender 性别1、男。0、女；email 邮件；" +
             "cellphone 电话；iconUrl 头像地址；birthday 生日 yyyy-MM-dd HH:mm:ss；bloodType 血型；profession 职业；signature 我的签名")
     @PatchMapping("/updateUserInfo")
-    public Result updateUserInfo(Integer userId, String nickname, Short gender, String email, String cellphone,
+    public Result updateUserInfo(String mac, Integer userId, String nickname, Short gender, String email, String cellphone,
                                  String iconUrl, String birthday, String bloodType, String profession, String signature) {
         userService.updateUserInfo(userId, nickname, gender, email, cellphone, iconUrl, birthday, bloodType, profession, signature);
         return Result.success("修改成功");
@@ -327,7 +328,7 @@ public class LoginController {
      */
     @PatchMapping("/modifyPwd")
     @ApiOperation(value = "修改密码", notes = "输入参数：cellPhone 电话号码；newPassword 新密码；oldPassword 旧密码")
-    public Result modifyPwd(String cellPhone, String newPassword, String oldPassword) {
+    public Result modifyPwd(String mac, String cellPhone, String newPassword, String oldPassword) {
         if (StringUtils.isNotBlank(cellPhone) && StringUtils.isNotBlank(newPassword) && StringUtils.isNotBlank(oldPassword)) {
             Integer status = userService.modifyPwd(cellPhone, newPassword, oldPassword);
             if (status == 0) {
@@ -351,7 +352,7 @@ public class LoginController {
     */
     @PatchMapping("/resetPwd")
     @ApiOperation(value = "重置密码", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
-    public Result resetPwd(String cellphone, String newPassword){
+    public Result resetPwd(String mac, String cellphone, String newPassword){
         Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + cellphone);
         if (o == null) {
             return Result.error("请在10分钟内完成重置密码");

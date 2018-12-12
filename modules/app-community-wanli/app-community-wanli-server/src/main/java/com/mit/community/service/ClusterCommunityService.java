@@ -39,6 +39,25 @@ public class ClusterCommunityService {
 
 
     /**
+     * 获取小区， 通过小区code
+     * @param communityCode
+     * @return com.mit.community.entity.ClusterCommunity
+     * @throws
+     * @author shuyy
+     * @date 2018/12/12 16:46
+     * @company mitesofor
+    */
+    public ClusterCommunity getByCommunityCode(String communityCode){
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        List<ClusterCommunity> clusterCommunities = clusterCommunityMapper.selectList(wrapper);
+        if(clusterCommunities.isEmpty()){
+            return null;
+        }
+        return clusterCommunities.get(0);
+    }
+
+    /**
      * 查询小区，通过communityCode列表
      *
      * @param communityCodeList 小区code列表

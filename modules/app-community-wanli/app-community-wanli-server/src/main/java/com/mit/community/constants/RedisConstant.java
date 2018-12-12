@@ -44,5 +44,10 @@ public class RedisConstant {
      */
     public final static String USER = "USER";
 
+    /**
+     * 用户
+     */
+    public final static String MAC = "MAC";
+
 
 }

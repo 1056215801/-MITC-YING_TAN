@@ -40,6 +40,24 @@ public class DictionaryService {
     }
 
     /**
+     * 获取字典，通过code
+     * @param code code
+     * @return com.mit.community.entity.Dictionary
+     * @author shuyy
+     * @date 2018/12/12 16:55
+     * @company mitesofor
+    */
+    public Dictionary getByCode(String code){
+        EntityWrapper<Dictionary> wrapper = new EntityWrapper<>();
+        wrapper.eq("code", code);
+        List<Dictionary> dictionaries = dictionaryMapper.selectList(wrapper);
+        if(dictionaries.isEmpty()){
+            return null;
+        }
+        return dictionaries.get(0);
+    }
+
+    /**
      * 查询所有的数据字典
      * @return java.util.List<com.mit.community.entity.Dictionary>
      * @author shuyy

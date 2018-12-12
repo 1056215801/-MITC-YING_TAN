@@ -136,7 +136,7 @@ public class UserService {
             status = 0;
             return status;
         }
-        user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+        user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, "普通业主");
         this.save(user);
         return status;
     }
@@ -154,7 +154,7 @@ public class UserService {
     public void chooseLabelList(String cellphone, String[] labelList) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         for (String labelCode : labelList) {
-            UserLabel userLabel = new UserLabel(labelCode, user.getId());
+            UserLabel userLabel = new UserLabel(labelCode, user.getId(), null);
             userLabelService.save(userLabel);
         }
     }

@@ -1,7 +1,5 @@
 package com.mit.community.module.system.controller;
 
-import com.mit.community.constants.Constants;
-import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.Dictionary;
 import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.util.Result;
@@ -44,7 +42,7 @@ public class DictionaryController {
     */
     @GetMapping("/listByParentCode")
     @ApiOperation(value = "查询数据字典，通过parentCode")
-    public Result listByParentCode(String parentCode) {
+    public Result listByParentCode(String mac, String cellphone, String parentCode) {
         List<Dictionary> dictionaries = dictionaryService.listByParentCode(parentCode);
         return Result.success(dictionaries);
     }
@@ -57,7 +55,7 @@ public class DictionaryController {
      */
     @GetMapping("/listDictionaryByParentCode")
     @ApiOperation(value = "查询所有数据字典")
-    public Result list() {
+    public Result list(String mac, String cellphone) {
         List<Dictionary> dictionaries = dictionaryService.list();
         return Result.success(dictionaries);
     }

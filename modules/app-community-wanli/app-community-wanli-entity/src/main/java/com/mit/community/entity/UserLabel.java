@@ -24,10 +24,18 @@ public class UserLabel extends BaseEntity {
      */
     @TableField("label_code")
     private String labelCode;
+
+
     /**
      * 用户id，关联user表id字段。
      */
     @TableField("user_id")
     private Integer userId;
 
+
+    /**
+     * 标签名
+     */
+    @TableField(exist = false)
+    private String lableName;
 }

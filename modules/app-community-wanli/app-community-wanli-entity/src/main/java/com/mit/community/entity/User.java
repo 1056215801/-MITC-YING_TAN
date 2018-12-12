@@ -68,4 +68,7 @@ public class User extends BaseEntity {
      */
     private String signature;
 
+    /**身份*/
+    private String role;
+
 }

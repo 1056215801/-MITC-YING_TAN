@@ -101,6 +101,19 @@ public class RedisService {
     }
 
     /**
+     * 获取过期时间
+     * @param key key
+     * @return java.lang.Long
+     * @author shuyy
+     * @date 2018/12/12 14:22
+     * @company mitesofor
+    */
+    public Long getExpire(String key){
+        Long expire = redisTemplate.getExpire(key);
+        return expire;
+    }
+
+    /**
      * 判断缓存中是否有对应的value
      * @param key key
      * @return boolean

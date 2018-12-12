@@ -15,6 +15,7 @@ import com.mit.community.common.ThreadPoolUtil;
 import com.mit.community.constants.CommonConstatn;
 import com.mit.community.entity.*;
 import com.mit.community.mapper.HouseHoldMapper;
+import com.mit.community.util.ConstellationUtil;
 import com.mit.community.util.IdCardInfoExtractorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.httpclient.NameValuePair;
@@ -254,6 +255,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             houseHold.setAuthorizeAppHouseholdDeviceGroups(authorizeAppHouseholdDeviceGroups);
         }
     }
+
     /***
      * 构建授权门禁设备对象
      * @param jsonObject json对象
@@ -275,6 +277,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             houseHold.setAuthorizeHouseholdDeviceGroups(authorizeHouseholdDeviceGroups);
         }
     }
+
     /***
      * 获取身份证号码，从dnake平台接口
      *
@@ -297,7 +300,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/21 14:13
      */
-    private String getCredentialNumFromDnake(Integer householdId, int retryNum){
+    private String getCredentialNumFromDnake(Integer householdId, int retryNum) {
         String url = "http://cmp.ishanghome.com/cmp/household/getStepOneInfo";
         NameValuePair[] data = {new NameValuePair("householdId", householdId.toString())};
         String result = httpLogin.post(url, data, httpLogin.getCookie());
@@ -366,6 +369,10 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                         LocalDate birthday = idCardInfo.getBirthday();
                         if (birthday != null) {
                             item.setBirthday(birthday);
+                            String constellation = ConstellationUtil.calc(birthday);
+                            item.setConstellation(constellation);
+                        } else {
+                            item.setConstellation(StringUtils.EMPTY);
                         }
                         String city = idCardInfo.getCity();
                         if (city != null) {
@@ -494,7 +501,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                 householdRoom.setGmtCreate(LocalDateTime.now());
                 householdRoom.setGmtModified(LocalDateTime.now());
                 List<HouseholdRoom> householdRoomList = houseHold.getHouseholdRoomList();
-                if(householdRoomList == null){
+                if (householdRoomList == null) {
                     householdRoomList = Lists.newArrayListWithCapacity(5);
                     houseHold.setHouseholdRoomList(householdRoomList);
                 }
@@ -513,7 +520,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2018/11/19 17:45
      */
-    @CacheClear(pre="household")
+    @CacheClear(pre = "household")
     public void remove() {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("1=1; truncate household");
@@ -543,7 +550,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     /***
      * 查询有住户的所有房间id
      *
-     * @return java.util.List<java.util.Map   <   java.lang.String   ,   java.lang.Object>>
+     * @return java.util.List<java.util.Map       <       java.lang.String       ,       java.lang.Object>>
      * @author shuyy
      * @date 2018/11/24 9:38
      */
@@ -570,36 +577,37 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 判断住户对象是否改变
+     *
      * @param houseHoldA 住户A
      * @param houseHoldB 住户B
      * @return boolean
      * @author shuyy
      * @date 2018/12/12 10:38
      * @company mitesofor
-    */
-    public boolean isUpdate(HouseHold houseHoldA, HouseHold houseHoldB){
-        if(!houseHoldA.getMobile().equals(houseHoldB.getMobile())){
+     */
+    public boolean isUpdate(HouseHold houseHoldA, HouseHold houseHoldB) {
+        if (!houseHoldA.getMobile().equals(houseHoldB.getMobile())) {
             return true;
         }
-        if(!houseHoldA.getHouseholdName().equals(houseHoldB.getHouseholdName())){
+        if (!houseHoldA.getHouseholdName().equals(houseHoldB.getHouseholdName())) {
             return true;
         }
-        if(!houseHoldA.getHouseholdStatus().equals(houseHoldB.getHouseholdStatus())){
+        if (!houseHoldA.getHouseholdStatus().equals(houseHoldB.getHouseholdStatus())) {
             return true;
         }
-        if(!houseHoldA.getAuthorizeStatus().equals(houseHoldB.getAuthorizeStatus())){
+        if (!houseHoldA.getAuthorizeStatus().equals(houseHoldB.getAuthorizeStatus())) {
             return true;
         }
-        if(!houseHoldA.getGender().equals(houseHoldB.getGender())){
+        if (!houseHoldA.getGender().equals(houseHoldB.getGender())) {
             return true;
         }
-        if(!houseHoldA.getResidenceTime().equals(houseHoldB.getResidenceTime())){
+        if (!houseHoldA.getResidenceTime().equals(houseHoldB.getResidenceTime())) {
             return true;
         }
-        if(!houseHoldA.getSipAccount().equals(houseHoldB.getSipAccount())){
+        if (!houseHoldA.getSipAccount().equals(houseHoldB.getSipAccount())) {
             return true;
         }
-        if(!houseHoldA.getSipPassword().equals(houseHoldB.getSipPassword())){
+        if (!houseHoldA.getSipPassword().equals(houseHoldB.getSipPassword())) {
             return true;
         }
         return false;

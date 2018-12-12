@@ -5,6 +5,7 @@ import com.google.code.kaptcha.util.Config;
 import com.mit.auth.client.interceptor.ServiceAuthRestInterceptor;
 import com.mit.auth.client.interceptor.UserAuthRestInterceptor;
 import com.mit.common.handler.GlobalExceptionHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -23,6 +24,10 @@ import java.util.Properties;
 @Configuration("admimWebConfig")
 @Primary
 public class WebConfiguration implements WebMvcConfigurer {
+
+    @Autowired
+    private LoginInterceptor loginInterceptor;
+
     @Bean
     GlobalExceptionHandler getGlobalExceptionHandler() {
         return new GlobalExceptionHandler();
@@ -33,6 +38,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 //    	//是否有访问这个服务的权限
         registry.addInterceptor(getServiceAuthRestInterceptor()).
                 addPathPatterns(getIncludePathPatterns());
+        // 拦截只有一台设备可以登录
+        registry.addInterceptor(loginInterceptor).excludePathPatterns("/login/**").addPathPatterns("/**");
         //这里的拦截，只是拦截是否有登录过，request头部有没有token,并且把token中分析的信息放入threadLocal
         registry.addInterceptor(getUserAuthRestInterceptor()).
                 addPathPatterns(getIncludePathPatterns());

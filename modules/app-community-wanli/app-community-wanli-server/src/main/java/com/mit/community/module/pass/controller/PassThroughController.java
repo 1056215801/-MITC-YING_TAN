@@ -85,7 +85,7 @@ public class PassThroughController {
      */
     @GetMapping("/getWeather")
     @ApiOperation(value = "天气", notes = "输入参数：region为城市英文名")
-    public Result getWeather(String region) {
+    public Result getWeather(String mac, String cellphone, String region) {
         if (StringUtils.isNotBlank(region)) {
             Region byEnglishName = regionService.getByEnglishName(region);
             if (byEnglishName != null) {
@@ -109,7 +109,7 @@ public class PassThroughController {
      */
     @GetMapping("/getRestrictionsPassNum")
     @ApiOperation(value = "通行限号", notes = "目前只支持南昌通行限号查询")
-    public Result getRestrictionsPassNum() {
+    public Result getRestrictionsPassNum(String mac, String cellphone) {
         LocalDate localDate = LocalDate.now();
         Integer dateType = dateInit(localDate);
         int value = localDate.getDayOfWeek().getValue();
@@ -193,7 +193,7 @@ public class PassThroughController {
     @PostMapping("/insertByNotice")
     @ApiOperation(value = "发布通知通告信息", notes = "输入参数：title 标题、type 类型、releaseTime 发布时间" +
             "synopsis 简介、publisher 发布人、creator 创建人")
-    public Result insertByNotice(String title, String type, String typeName, String synopsis,
+    public Result insertByNotice(String mac, String cellphone, String title, String type, String typeName, String synopsis,
                                  String publisher, String creator, String content) {
         noticeService.releaseNotice(title, type, typeName, synopsis, publisher, creator, content);
         return Result.success("发布成功！");
@@ -225,7 +225,7 @@ public class PassThroughController {
             "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
             "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；cellphone 手机号；" +
             "images 图片列表（可不传）")
-    public Result applyKey(String communityCode, String communityName, Integer zoneId, String zoneName,
+    public Result applyKey(String mac, String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                            String roomNum, String contactPerson, String contactCellphone, String content,
                            String cellphone, String idCard, MultipartFile[] images) throws Exception {
@@ -253,7 +253,7 @@ public class PassThroughController {
      */
     @PatchMapping("/approveKey")
     @ApiOperation(value = "审批钥匙", notes = "applyKeyId 申请钥匙id ")
-    public Result approveKey(Integer applyKeyId, String checkPerson) {
+    public Result approveKey(String mac, String cellphone, Integer applyKeyId, String checkPerson) {
         applyKeyService.updateByCheckPerson(applyKeyId, checkPerson);
         return Result.success("审批成功");
     }
@@ -268,7 +268,7 @@ public class PassThroughController {
      */
     @GetMapping("/selectByStatus")
     @ApiOperation(value = "查找相应状态的申请钥匙数据", notes = "输入参数：status -1、全部，1、申请中，2、审批通过")
-    public Result selectByStatus(Integer status) {
+    public Result selectByStatus(String mac, String cellphone, Integer status) {
         List<ApplyKey> applyKeys = applyKeyService.listByStatus(status);
         return Result.success(applyKeys);
     }
@@ -285,7 +285,7 @@ public class PassThroughController {
      */
     @PostMapping("/httpOpenDoor")
     @ApiOperation(value = "http开门", notes = "输入参数：communityCode 小区code。cellphone 电话号码。deviceNum 设备编号")
-    public Result httpOpenDoor(String cellphone, String communityCode, String deviceNum) {
+    public Result httpOpenDoor(String mac, String cellphone, String communityCode, String deviceNum) {
         if (StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(deviceNum)) {
             dnakeAppApiService.httpOpenDoor(cellphone, communityCode, deviceNum);
             return Result.success("开锁成功");
@@ -305,7 +305,7 @@ public class PassThroughController {
     @PostMapping("/getMyKey")
     @ApiOperation(value = "获取我的钥匙", notes = "输入参数：cellphone 电话号码。communityCode 小区code \n" +
             "返回参数: unitKeys 单元钥匙、 CommunityKeys 小区钥匙 ")
-    public Result getMyKey(String cellphone, String communityCode) {
+    public Result getMyKey(String mac, String cellphone, String communityCode) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             Map<String, Object> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
             return Result.success(myKey);
@@ -323,7 +323,7 @@ public class PassThroughController {
      */
     @GetMapping("/getDeviceGroup")
     @ApiOperation(value = "查询小区设备组信息,通过小区code", notes = "输入参数：communityCode 小区编号")
-    public Result getDeviceGroup(String communityCode) {
+    public Result getDeviceGroup(String mac, String cellphone, String communityCode) {
         if (StringUtils.isNotBlank(communityCode)) {
             List<DeviceGroup> deviceGroups = deviceGroupService.getByCommunityCode(communityCode);
             return Result.success(deviceGroups);
@@ -346,7 +346,7 @@ public class PassThroughController {
     @PostMapping("/getInviteCode")
     @ApiOperation(value = "申请访客邀请码", notes = "传参：dateTag 日期标志：今天:0；明天：1; " +
             "times 开锁次数：无限次：0；一次：1；deviceGroupId 设备分组id，默认只传公共权限组；communityCode 社区编号；")
-    public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
+    public String getInviteCode(String mac, String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
         if (StringUtils.isNotBlank(dateTag) && StringUtils.isNotBlank(times) && StringUtils.isNotBlank(deviceGroupId) &&
                 StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(cellphone)) {
             String result = dnakeAppApiService.getInviteCode(cellphone, dateTag, times, deviceGroupId, communityCode);
