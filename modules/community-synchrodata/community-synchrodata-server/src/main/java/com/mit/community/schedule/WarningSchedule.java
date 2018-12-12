@@ -31,7 +31,7 @@ public class WarningSchedule {
         this.sysUserService = sysUserService;
     }
 
-    @Scheduled(cron = "0 59 * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void saveWaring() {
         warningService.remove();

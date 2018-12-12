@@ -3,7 +3,6 @@ package com.mit.community.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -12,10 +11,7 @@ import com.dnake.constant.DnakeWebConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
-import com.mit.community.entity.AccessControl;
-import com.mit.community.entity.ActivePeople;
-import com.mit.community.entity.Device;
-import com.mit.community.entity.HouseHold;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -23,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +44,9 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     private final ActivePeopleService activePeopleService;
 
     private final HouseHoldService houseHoldService;
+
+    @Autowired
+    private HouseholdRoomService householdRoomService;
 
     @Autowired
     public AccessControlService(AccessControlMapper accessControlMapper,
@@ -168,8 +166,8 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                         Integer zoneId = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item).getZoneId();
                         accessControl.setZoneId(zoneId);
                         // 查询房号
-                        HouseHold household = houseHoldService.getByHouseholdId(accessControl.getHouseholdId());
-                        accessControl.setRoomNum(household == null ? StringUtils.EMPTY : household.getRoomNum());
+                        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(accessControl.getHouseholdId());
+                        accessControl.setRoomNum(householdRooms.isEmpty() ? StringUtils.EMPTY : householdRooms.get(0).getRoomNum());
                         accessControl.setGmtCreate(LocalDateTime.now());
                         accessControl.setGmtModified(LocalDateTime.now());
                     }

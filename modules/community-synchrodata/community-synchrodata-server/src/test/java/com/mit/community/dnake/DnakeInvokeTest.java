@@ -60,11 +60,29 @@ public class DnakeInvokeTest {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/getHouseholdList";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("communityCode", "0125caffaae1472b996390e869129cc7");
-//        map.put("householdName", "WU");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("householdName", "舒园园");
 //        map.put("mobile", "15083669779");
-        map.put("pageNum", "15");
+        map.put("pageNum", "1");
         map.put("pageSize", "10");
+        String result = DnakeWebApiUtil.invoke(url, map);
+        JSONArray jsonArray = JSON.parseObject(result).getJSONArray("householdList");
+        System.out.println(jsonArray.size());
+        System.out.println(result);
+        long end = System.currentTimeMillis();
+        System.out.println(end - startTime);
+    }
+    @Test
+    public void getHouseholdListMore(){
+        long startTime = System.currentTimeMillis();
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/v1/household/getHouseholdListMore";
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+//        map.put("householdName", "舒园园");
+//        map.put("mobile", "15083669779");
+        map.put("pageNum", "1");
+        map.put("pageSize", "100");
         String result = DnakeWebApiUtil.invoke(url, map);
         JSONArray jsonArray = JSON.parseObject(result).getJSONArray("householdList");
         System.out.println(jsonArray.size());

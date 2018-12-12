@@ -4,6 +4,7 @@ import com.ace.cache.annotation.CacheClear;
 import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.service.ClusterCommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class ClusterCommunitySchedule {
         this.clusterCommunityService = clusterCommunityService;
     }
 
-//    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 0 0 1 * ?")
     @CacheClear(pre="community")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){

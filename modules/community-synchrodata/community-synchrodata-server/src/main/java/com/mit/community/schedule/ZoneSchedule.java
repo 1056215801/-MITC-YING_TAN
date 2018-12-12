@@ -39,7 +39,7 @@ public class ZoneSchedule {
      * @company mitesofor
     */
     @CacheClear(pre="zone")
-    @Scheduled(cron = "0 59 * * * ?")
+    @Scheduled(cron = "0 0 23 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

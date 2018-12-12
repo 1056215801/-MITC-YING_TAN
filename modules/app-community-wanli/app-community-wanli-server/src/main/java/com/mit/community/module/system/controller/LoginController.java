@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * 注册登陆
+ *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -115,13 +116,19 @@ public class LoginController {
         user.setPassword(StringUtils.EMPTY);
         // redis中保存用户
         redisService.set(RedisConstant.USER + user.getCellphone(), user, RedisConstant.LOGIN_EXPIRE_TIME);
-        List<HouseHold> houseHolds = houseHoldService.listByCellphone(user.getCellphone());
-        if (houseHolds.isEmpty()) {
+        HouseHold houseHold = houseHoldService.getByCellphone(user.getCellphone());
+        if (houseHold == null) {
             return Result.success(user, "没有关联住户");
+        }else {
+            if(user.getHouseholdId() == 0){
+                user.setHouseholdId(houseHold.getHouseholdId());
+                user.setPassword(psd);
+                userService.update(user);
+            }
         }
-        List<HouseHold> filterAppHouseholds = houseHoldService.filterAuthorizedApp(houseHolds);
-        if (filterAppHouseholds.isEmpty()) {
-            // 没有授权app
+        Integer authorizeStatus = houseHold.getAuthorizeStatus();
+        String s = Integer.toBinaryString(authorizeStatus);
+        if(s.charAt(1) != '1'){
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
@@ -134,6 +141,7 @@ public class LoginController {
 
     /**
      * 登出
+     *
      * @param cellphone 用户登录手机号
      * @return result
      * @author Mr.Deng
@@ -152,6 +160,7 @@ public class LoginController {
 
     /**
      * 选择标签
+     *
      * @param cellphone 电话号码
      * @param labelList label列表
      * @return com.mit.community.util.Result
@@ -160,7 +169,7 @@ public class LoginController {
      * @company mitesofor
      */
     @PostMapping("chooseLabelList")
-    @ApiOperation(value = "选择标签", notes = "传参;cellphone 手机号：labelList 多个标签")
+    @ApiOperation(value = "选择标签", notes = "传参;cellphone 手机号：labelList 多个标签。标签来自于数据字典parentCode为label")
     public Result chooseLabelList(String cellphone, String[] labelList) {
         userService.chooseLabelList(cellphone, labelList);
         return Result.success("成功");
@@ -185,8 +194,8 @@ public class LoginController {
 
     /**
      * @param cellphone 手机号
-     * @param birthday 出生日期
-     * @param nickName 昵称
+     * @param birthday  出生日期
+     * @param nickName  昵称
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/7 18:22
@@ -236,10 +245,14 @@ public class LoginController {
     public Result register(String cellphone, String password) {
         Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + cellphone);
         if (o == null) {
-            return Result.error("请在2分钟内完成注册");
+            return Result.error("请在10分钟内完成注册");
         }
-        userService.register(cellphone, password);
-        return Result.success("注册成功");
+        int status = userService.register(cellphone, password);
+        if(status == 0){
+            return Result.success("用户已经存在");
+        }else{
+            return Result.success("注册成功");
+        }
     }
 
     /**
@@ -280,6 +293,7 @@ public class LoginController {
 
     /**
      * 修改用户信息
+     *
      * @param userId     用户id
      * @param nickname   昵称
      * @param gender     性别1、男。0、女。
@@ -304,7 +318,6 @@ public class LoginController {
     }
 
     /**
-     * 重置密码
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @param oldPassword 旧密码
@@ -312,22 +325,42 @@ public class LoginController {
      * @author Mr.Deng
      * @date 13:54 2018/12/8
      */
-    @PatchMapping("/resetPwd")
-    @ApiOperation(value = "重置密码", notes = "输入参数：cellPhone 电话号码；newPassword 新密码；oldPassword 旧密码")
-    public Result resetPwd(String cellPhone, String newPassword, String oldPassword) {
+    @PatchMapping("/modifyPwd")
+    @ApiOperation(value = "修改密码", notes = "输入参数：cellPhone 电话号码；newPassword 新密码；oldPassword 旧密码")
+    public Result modifyPwd(String cellPhone, String newPassword, String oldPassword) {
         if (StringUtils.isNotBlank(cellPhone) && StringUtils.isNotBlank(newPassword) && StringUtils.isNotBlank(oldPassword)) {
-            Integer status = userService.resetPwd(cellPhone, newPassword, oldPassword);
-            if (status != null) {
-                if (status == 0) {
-                    return Result.error("旧密码不匹配");
-                }
-                if (status == 1) {
-                    return Result.success("重置密码成功");
-                }
+            Integer status = userService.modifyPwd(cellPhone, newPassword, oldPassword);
+            if (status == 0) {
+                return Result.error("旧密码不匹配");
             }
-            return Result.error("重置密码失败");
+            if (status == 1) {
+                return Result.success("修改密码成功");
+            }
         }
         return Result.error("参数不能为空");
+    }
+
+    /**
+     * @param cellphone
+     * @param newPassword
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/11 9:59
+     * @company mitesofor
+    */
+    @PatchMapping("/resetPwd")
+    @ApiOperation(value = "重置密码", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
+    public Result resetPwd(String cellphone, String newPassword){
+        Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + cellphone);
+        if (o == null) {
+            return Result.error("请在10分钟内完成重置密码");
+        }
+        Integer status = userService.resetPwd(cellphone, newPassword);
+        if(status == 0){
+            return Result.success("不存在用户");
+        }
+        return Result.success("重置成功");
     }
 
 }

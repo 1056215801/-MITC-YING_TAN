@@ -75,7 +75,9 @@ public class ApplyKeyService {
      */
     public List<ApplyKey> listByStatus(Integer status) {
         EntityWrapper<ApplyKey> wrapper = new EntityWrapper<>();
-        wrapper.eq("status", status);
+        if(status != -1){
+            wrapper.eq("status", status);
+        }
         return applyKeyMapper.selectList(wrapper);
     }
 
@@ -107,15 +109,10 @@ public class ApplyKeyService {
         ApplyKey applyKey = new ApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName,
                 unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, 1, content, creatorUserId,
                 StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, idCard);
-        Integer applyKeySave = this.save(applyKey);
-        if (applyKeySave > 0) {
-            if (images.size() > 0 && StringUtils.isNotBlank(images.get(0))) {
-                for (String image : images) {
-                    ApplyKeyImg applyKeyImg = new ApplyKeyImg(applyKey.getId(), image);
-                    applyKeyImgService.save(applyKeyImg);
-                }
-
-            }
+        this.save(applyKey);
+        for (String image : images) {
+            ApplyKeyImg applyKeyImg = new ApplyKeyImg(applyKey.getId(), image);
+            applyKeyImgService.save(applyKeyImg);
         }
         //记录足迹
         userTrackService.addUserTrack(cellphone, "申请钥匙", "开门钥匙申请成功");

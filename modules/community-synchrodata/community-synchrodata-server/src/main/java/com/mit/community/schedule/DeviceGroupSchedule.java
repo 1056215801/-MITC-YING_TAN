@@ -37,7 +37,7 @@ public class DeviceGroupSchedule {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 59 * * * ?")
+    @Scheduled(cron = "0 */1 * * * ?")
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));

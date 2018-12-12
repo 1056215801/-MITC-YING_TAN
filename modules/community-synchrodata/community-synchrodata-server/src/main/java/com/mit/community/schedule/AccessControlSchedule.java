@@ -4,7 +4,6 @@ import com.mit.community.entity.AccessControl;
 import com.mit.community.service.AccessControlService;
 import com.mit.community.service.ClusterCommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,7 +34,7 @@ public class AccessControlSchedule {
      * @date 2018/11/16 16:55
      * @company mitesofor
     */
-    @Scheduled(cron = "0 59 * * * ?")
+//    @Scheduled(cron = "*/30 * * * * ?")
     public void importIncrement (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));

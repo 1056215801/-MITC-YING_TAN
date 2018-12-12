@@ -2,16 +2,14 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.User;
-import com.mit.community.entity.UserHousehold;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.ClusterCommunityMapper;
 import com.mit.community.module.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +34,8 @@ public class ClusterCommunityService {
     private ClusterCommunityService clusterCommunityService;
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
 
 
     /**
@@ -64,13 +64,57 @@ public class ClusterCommunityService {
     public List<ClusterCommunity> listClusterCommunityByUserCellphone(String userCellphone) {
         User user = (User) redisService.get(RedisConstant.USER + userCellphone);
         List<UserHousehold> userHouseholds = userHouseholdService.listByUserId(user.getId());
-        List<HouseHold> households = houseHoldService.listByUserId(user.getId());
-        if (households.isEmpty()) {
+//        List<HouseHold> households = houseHoldService.listByUserId(user.getId());
+        HouseHold household = houseHoldService.getByCellphone(user.getCellphone());
+        if (household == null) {
             return null;
         }
-        List<String> communityCodeList = households.parallelStream().map(HouseHold::getCommunityCode).collect(Collectors.toList());
+        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(household.getHouseholdId());
+        List<String> communityCodeList = householdRooms.parallelStream().map(HouseholdRoom::getCommunityCode).collect(Collectors.toList());
         return clusterCommunityService.listByCommunityCodeList(communityCodeList);
     }
 
+    /**
+     * 查询小区列表，通过城市名称
+     *
+     * @param cityName 城市名
+     * @return 小区信息列表
+     * @author Mr.Deng
+     * @date 11:53 2018/11/21
+     */
+    public List<ClusterCommunity> listByCityName(String cityName) {
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.eq("city_name", cityName);
+        return clusterCommunityMapper.selectList(wrapper);
+    }
+
+    /**
+     *  查询所有省份
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/12/11 14:07
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> listProvince(){
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.groupBy("province_name");
+        wrapper.setSqlSelect("province_name");
+        return clusterCommunityMapper.selectMaps(wrapper);
+    }
+    /**
+     * 查询所有城市，通过省份
+     * @param province 省份
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.Object>>
+     * @author shuyy
+     * @date 2018/12/11 14:09
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> listCityByProvince(String province){
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.groupBy("city_name");
+        wrapper.eq("province_name", province);
+        wrapper.setSqlSelect("city_name");
+        return clusterCommunityMapper.selectMaps(wrapper);
+    }
 
 }

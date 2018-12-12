@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * 用户
+ *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -41,6 +42,7 @@ public class UserService {
 
     /**
      * 查询用户信息，通过用户id
+     *
      * @param id 用户id
      * @return 用户信息
      * @author Mr.Deng
@@ -52,6 +54,7 @@ public class UserService {
 
     /**
      * 修改用户信息
+     *
      * @param user 用户信息
      * @date 10:56 2018/12/7
      */
@@ -62,6 +65,7 @@ public class UserService {
 
     /**
      * 保存
+     *
      * @param user user
      * @author shuyy
      * @date 2018/11/29 11:25
@@ -75,6 +79,7 @@ public class UserService {
 
     /**
      * 获取User，通过cellphone和密码
+     *
      * @param cellphone 手机号
      * @param password  密码
      * @return com.mit.community.entity.User
@@ -96,6 +101,7 @@ public class UserService {
 
     /**
      * 获取User，通过cellphone
+     *
      * @param cellphone 手机号
      * @return com.mit.community.entity.User
      * @author shuyy
@@ -115,6 +121,7 @@ public class UserService {
 
     /**
      * 注册
+     *
      * @param cellphone 电话号码
      * @param password  密码
      * @author shuyy
@@ -122,17 +129,21 @@ public class UserService {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void register(String cellphone, String password) {
-        User user = new User(cellphone, password, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+    public Integer register(String cellphone, String password) {
+        int status = 1;
+        User user = this.getByCellphone(cellphone);
+        if(user != null){
+            status = 0;
+            return status;
+        }
+        user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
         this.save(user);
-//        for (String labelCode : labelCodes) {
-//            UserLabel userLabel = new UserLabel(labelCode, user.getId());
-//            userLabelService.save(userLabel);
-//        }
+        return status;
     }
 
     /**
      * 选择标签
+     *
      * @param cellphone 电话号码
      * @param labelList label列表
      * @author shuyy
@@ -150,6 +161,7 @@ public class UserService {
 
     /**
      * 修改用户信息
+     *
      * @param userId     用户id
      * @param nickname   昵称
      * @param gender     性别1、男。0、女。
@@ -183,7 +195,8 @@ public class UserService {
     }
 
     /**
-     * 重置密码
+     * 修改密码
+     *
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @param oldPassword 旧密码
@@ -192,7 +205,7 @@ public class UserService {
      * @date 14:19 2018/12/8
      */
     @Transactional(rollbackFor = Exception.class)
-    public Integer resetPwd(String cellPhone, String newPassword, String oldPassword) {
+    public Integer modifyPwd(String cellPhone, String newPassword, String oldPassword) {
         User user = this.getByCellphone(cellPhone);
         int result = 0;
         if (user != null) {
@@ -211,7 +224,32 @@ public class UserService {
     }
 
     /**
+     * 重置密码
+     * @param cellPhone   电话号码
+     * @param newPassword 新密码
+     * @return 返回状态码（1，重置成功；0，密码不匹配）
+     * @author Mr.Deng
+     * @date 14:19 2018/12/8
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Integer resetPwd(String cellPhone, String newPassword) {
+        User user = this.getByCellphone(cellPhone);
+        int result = 0;
+        if (user != null) {
+            user.setPassword(newPassword);
+            this.update(user);
+            //然后调用狄耐克重置密码接口重置狄耐克密码
+            dnakeAppApiService.resetPwd(cellPhone, newPassword);
+            //重置成功并退出登录
+            this.loginOut(cellPhone);
+            result = 1;
+        }
+        return result;
+    }
+
+    /**
      * 登出
+     *
      * @param cellPhone 手机号码
      * @author Mr.Deng
      * @date 14:47 2018/12/8

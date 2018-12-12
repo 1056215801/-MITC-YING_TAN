@@ -3,6 +3,7 @@ package com.mit.community.module.pass.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
@@ -35,6 +36,7 @@ import java.util.Objects;
 @Api(tags = "住户-通行模块接口")
 public class PassThroughController {
 
+    private final RegionService regionService;
     private final NoticeService noticeService;
     private final ApplyKeyService applyKeyService;
     private final VisitorService visitorService;
@@ -46,14 +48,19 @@ public class PassThroughController {
     private final BuildingService buildingService;
     private final AccessControlService accessControlService;
     private final DeviceGroupService deviceGroupService;
+    private final RedisService redisService;
+    private final ClusterCommunityService clusterCommunityService;
     private final WeatherService weatherService;
 
     @Autowired
-    public PassThroughController(NoticeService noticeService, ApplyKeyService applyKeyService, VisitorService visitorService,
+    public PassThroughController(RegionService regionService, NoticeService noticeService, ApplyKeyService applyKeyService,
+                                 VisitorService visitorService,
                                  DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                                  ZoneService zoneService, UnitService unitService, RoomService roomService,
                                  BuildingService buildingService, AccessControlService accessControlService,
-                                 DeviceGroupService deviceGroupService, WeatherService weatherService) {
+                                 DeviceGroupService deviceGroupService, WeatherService weatherService,
+                                 RedisService redisService, ClusterCommunityService clusterCommunityService) {
+        this.regionService = regionService;
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
         this.visitorService = visitorService;
@@ -66,6 +73,8 @@ public class PassThroughController {
         this.accessControlService = accessControlService;
         this.deviceGroupService = deviceGroupService;
         this.weatherService = weatherService;
+        this.redisService = redisService;
+        this.clusterCommunityService = clusterCommunityService;
     }
 
     /**
@@ -198,7 +207,7 @@ public class PassThroughController {
      * @param contactPerson    申请人
      * @param contactCellphone 申请人电话
      * @param content          描述
-     * @param creatorUserId    创建人id
+     * @param cellphone        手机号
      * @return result
      * @author Mr.Deng
      * @date 15:01 2018/12/3
@@ -206,12 +215,12 @@ public class PassThroughController {
     @PostMapping(value = "/applyKey", produces = {"application/json"})
     @ApiOperation(value = "申请钥匙", notes = "输入参数：cellphone 手机号，communityCode 小区code;communityName 小区名；zoneId 分区id;" +
             "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
-            "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；creatorUserId 创建人用户id；" +
+            "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；cellphone 手机号；" +
             "images 图片列表（可不传）")
     public Result applyKey(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                            String roomNum, String contactPerson, String contactCellphone, String content,
-                           Integer creatorUserId, String idCard, MultipartFile[] images) throws Exception {
+                           String idCard, MultipartFile[] images) throws Exception {
         List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
         if (images != null) {
             for (MultipartFile image : images) {
@@ -219,14 +228,14 @@ public class PassThroughController {
                 imageUrls.add(imageUrl);
             }
         }
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
         applyKeyService.insertApplyKey(cellphone, communityCode, communityName, zoneId, zoneName, buildingId, buildingName, unitId,
-                unitName, roomId, roomNum, contactPerson, contactCellphone, content, creatorUserId, idCard, imageUrls);
+                unitName, roomId, roomNum, contactPerson, contactCellphone, content, user.getId(), idCard, imageUrls);
         return Result.success("发布成功");
     }
 
     /**
      * 审批钥匙
-     * @param cellphone   手机号
      * @param applyKeyId  申请钥匙id
      * @param checkPerson 审批人
      * @return Result
@@ -248,7 +257,7 @@ public class PassThroughController {
      * @date 15:48 2018/12/3
      */
     @GetMapping("/selectByStatus")
-    @ApiOperation(value = "查找相应状态的申请钥匙数据", notes = "输入参数：status 1、申请中，2、审批通过")
+    @ApiOperation(value = "查找相应状态的申请钥匙数据", notes = "输入参数：status -1、全部，1、申请中，2、审批通过")
     public Result selectByStatus(Integer status) {
         List<ApplyKey> applyKeys = applyKeyService.listByStatus(status);
         return Result.success(applyKeys);
@@ -321,20 +330,18 @@ public class PassThroughController {
      * @date 16:38 2018/12/4
      */
     @PostMapping("/getInviteCode")
-    @ApiOperation(value = "申请访客邀请码", notes = "返回参数：dateTag 日期标志：今天:0；明天：1; " +
+    @ApiOperation(value = "申请访客邀请码", notes = "传参：dateTag 日期标志：今天:0；明天：1; " +
             "times 开锁次数：无限次：0；一次：1；deviceGroupId 设备分组id，默认只传公共权限组；communityCode 社区编号；")
-    public Result getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
+    public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
         if (StringUtils.isNotBlank(dateTag) && StringUtils.isNotBlank(times) && StringUtils.isNotBlank(deviceGroupId) &&
                 StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(cellphone)) {
-            String inviteCode = dnakeAppApiService.getInviteCode(cellphone, dateTag, times, deviceGroupId, communityCode);
-            JSONObject json = JSONObject.parseObject(inviteCode);
-            return Result.success(json);
+            String result = dnakeAppApiService.getInviteCode(cellphone, dateTag, times, deviceGroupId, communityCode);
+            return result;
         }
-        return Result.error("参数不能为空");
+        return "参数不能为空";
     }
 
     /**
-     * 获取邀请码记录
      * @param cellphone 手机号
      * @param pageIndex 页码，从0开始
      * @param pageSize  页大小最大100
@@ -343,7 +350,10 @@ public class PassThroughController {
      * @date 14:46 2018/12/10
      */
     @GetMapping("/openHistory")
-    @ApiOperation(value = "查询邀请码记录", notes = "输入参数：cellphone 电话号码；pageIndex 页码，从0开始；pageSize 页大小（最大100）")
+    @ApiOperation(value = "查询邀请码记录", notes = "输入参数：cellphone 电话号码；pageIndex 页码，从0开始；pageSize 页大小（最大100）。<br/>" +
+            " 输出参数：validityEndTime 过期时间、dataStatus 邀请码是否失效: 1可用，0失效、 " +
+            "inviteCodeType 邀请码类型：1，今天无限次；2，今天仅一次；3，明天无限次；4，明天仅一次；5，高级设置、 " +
+            "useTimes 使用次数，大于0则已使用")
     public Result openHistory(String cellphone, Integer pageIndex, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && pageIndex != null && pageSize != null) {
             String invoke = dnakeAppApiService.openHistory(cellphone, pageIndex, pageSize);
@@ -427,6 +437,48 @@ public class PassThroughController {
     public Result listHouseHoldByUserId(Integer userId) {
         List<HouseHold> houseHolds = houseHoldService.listByUserId(userId);
         return Result.success(houseHolds);
+    }
+
+    /**
+     * @param city 城市名
+     * @return result
+     * @author shuyy
+     * @date 2018-12-11
+     */
+    @ApiOperation(value = "查询小区，通过城市名")
+    @GetMapping("/listCommunityByCity")
+    public Result listCommunityByCity(String city) {
+        List<ClusterCommunity> clusterCommunities = clusterCommunityService.listByCityName(city);
+        return Result.success(clusterCommunities);
+    }
+
+    /**
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/11 14:12
+     * @company mitesofor
+     */
+    @ApiOperation(value = "查询省份")
+    @GetMapping("/listProvince")
+    public Result listProvince() {
+        List<Map<String, Object>> maps = clusterCommunityService.listProvince();
+        return Result.success(maps);
+    }
+
+    /**
+     * @param province
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/11 14:13
+     * @company mitesofor
+     */
+    @ApiOperation(value = "查询城市")
+    @GetMapping("/listCityByProvince")
+    public Result listCityByProvince(String province) {
+        List<Map<String, Object>> maps = clusterCommunityService.listCityByProvince(province);
+        return Result.success(maps);
     }
 
     /**

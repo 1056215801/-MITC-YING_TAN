@@ -35,7 +35,7 @@ public class BuildingSchedule {
     }
 
     @CacheClear(pre="building")
-    @Scheduled(cron = "0 59 * * * ?")
+    @Scheduled(cron = "0 10 23 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void remoteAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
