@@ -157,7 +157,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 19:35 2018/11/14
      */
-//    @Cache(key = "household:all")
     public List<HouseHold> list() {
         return houseHoldMapper.selectList(null);
     }

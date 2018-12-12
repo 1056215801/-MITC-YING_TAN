@@ -1,7 +1,7 @@
 logging:
   level:
     #        tk.mybatis: DEBUG
-    com.mit: DEBUG
+    com.mit: INFO
 spring:
   application:
     name: community-synchrodata
@@ -49,7 +49,7 @@ spring:
         stat:
           db-type: mysql
           log-slow-sql: true
-          slow-sql-millis: 10
+          slow-sql-millis: 2000
         wall:
           enabled: true
           db-type: mysql

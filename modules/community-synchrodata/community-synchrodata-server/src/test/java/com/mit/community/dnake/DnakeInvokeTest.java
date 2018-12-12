@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
-import org.junit.Test;
 
 import java.util.HashMap;
 
@@ -24,7 +23,7 @@ public class DnakeInvokeTest {
      * @date 2018/11/16 15:26
      * @company mitesofor
     */
-    @Test
+//    @Test
     public void getAccessControlList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -41,7 +40,7 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
-    @Test
+//    @Test
     public void queryVisitorInfo(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -54,7 +53,7 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
-    @Test
+//    @Test
     public void getHouseholdList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -72,7 +71,7 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
-    @Test
+//    @Test
     public void getHouseholdListMore(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -90,7 +89,7 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
-    @Test
+//    @Test
     public void queryHouseholdInfoByName(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -104,7 +103,7 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
-    @Test
+//    @Test
     public void getVisitorList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -121,7 +120,7 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
-    @Test
+//    @Test
     public void queryHouseholdInfo(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -135,7 +134,7 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
-    @Test
+//    @Test
     public void queryClusterCommunity(){
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/community/queryClusterCommunity";
@@ -150,7 +149,7 @@ public class DnakeInvokeTest {
      * @date 2018/12/10 8:46
      * @company mitesofor
     */
-    @Test
+//    @Test
     public void getDeviceGroupList(){
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/deviceGroup/getDeviceGroupList";
