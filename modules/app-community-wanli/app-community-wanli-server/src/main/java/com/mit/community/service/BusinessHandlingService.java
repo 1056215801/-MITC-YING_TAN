@@ -104,7 +104,6 @@ public class BusinessHandlingService {
                         roomId, roomNum, contactPerson, contactCellphone, content,
                         status, type, creatorUserId, 0, 0, 0,
                         0, StringUtils.EMPTY);
-
                 this.save(businessHandling);
                 if (!images.isEmpty()) {
                     for (String image : images) {
@@ -113,14 +112,6 @@ public class BusinessHandlingService {
                     }
                 }
             }
-        }
-        //记录足迹
-        Dictionary dictionary = dictionaryService.getByCode(status);
-        Dictionary byCode = dictionaryService.getByCode(type);
-        if (dictionary != null && byCode != null) {
-            String nameType = byCode.getName();
-            String nameStatus = dictionary.getName();
-            userTrackService.addUserTrack(cellphone, nameType, nameType + nameStatus);
         }
     }
 
@@ -159,7 +150,7 @@ public class BusinessHandlingService {
      * @date 14:50 2018/12/5
      */
     @Transactional(rollbackFor = Exception.class)
-    public void evaluateBusinessHandling(String cellphone, Integer businessHandlingId, Integer evaluateResponseSpeed,
+    public void evaluateBusinessHandling(Integer businessHandlingId, Integer evaluateResponseSpeed,
                                          Integer evaluateResponseAttitude,
                                          Integer evaluateTotal, Integer evaluateServiceProfession, String evaluateContent) {
         BusinessHandling businessHandling = this.getById(businessHandlingId);
@@ -170,12 +161,7 @@ public class BusinessHandlingService {
             businessHandling.setEvaluateServiceProfession(evaluateServiceProfession);
             businessHandling.setEvaluateTotal(evaluateTotal);
             this.update(businessHandling);
-            //记录足迹
-            Dictionary dictionary = dictionaryService.getByCode(businessHandling.getType());
-            if (dictionary != null) {
-                String name = dictionary.getName();
-                userTrackService.addUserTrack(cellphone, name, businessHandling.getContactPerson() + "-" + name + "评价成功");
-            }
+
         }
     }
 

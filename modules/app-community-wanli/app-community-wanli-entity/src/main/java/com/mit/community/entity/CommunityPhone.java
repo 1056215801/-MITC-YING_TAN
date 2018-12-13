@@ -32,9 +32,9 @@ public class CommunityPhone extends BaseEntity {
      */
     private String phone;
     /**
-     * 电话类型1、物业电话；2、紧急电话
+     * 电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话
      */
-    private Integer type;
+    private String type;
     /**
      * 创建人。关联user表id
      */

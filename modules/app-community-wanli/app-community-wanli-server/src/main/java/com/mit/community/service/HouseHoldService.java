@@ -23,16 +23,12 @@ public class HouseHoldService {
 
     @Autowired
     private HouseHoldMapper houseHoldMapper;
-
     @Autowired
     private UserHouseholdService userHouseholdService;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private ClusterCommunityService clusterCommunityService;
-
     @Autowired
     private UserHouseholdMapper userHouseholdMapper;
 
@@ -119,5 +115,15 @@ public class HouseHoldService {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);
         return houseHoldMapper.selectList(wrapper).get(0);
+    }
+
+    /**
+     * 更新数据
+     * @param houseHold 住户信息
+     * @author Mr.Deng
+     * @date 14:11 2018/12/13
+     */
+    public void update(HouseHold houseHold) {
+        houseHoldMapper.updateById(houseHold);
     }
 }

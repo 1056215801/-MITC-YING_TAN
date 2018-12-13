@@ -1,6 +1,9 @@
 package com.mit.community.module.system.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.google.common.collect.Lists;
+import com.mit.community.entity.Dictionary;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Dictionary;
 import com.mit.community.entity.UserLabel;
 import com.mit.community.module.system.mapper.UserLabelMapper;
@@ -12,7 +15,6 @@ import java.util.List;
 
 /**
  * 用户标签
- *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -56,11 +58,13 @@ public class UserLabelService {
      * @param userLabel userlabel
      * @date 2018/11/29 11:45
      * @company mitesofor
-    */
-    public void save(UserLabel userLabel){
+     */
+    public void save(UserLabel userLabel) {
         userLabel.setGmtCreate(LocalDateTime.now());
         userLabel.setGmtModified(LocalDateTime.now());
         userLabelMapper.insert(userLabel);
     }
+
+
 
 }

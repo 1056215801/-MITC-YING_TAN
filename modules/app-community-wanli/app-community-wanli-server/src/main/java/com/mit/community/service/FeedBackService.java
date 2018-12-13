@@ -6,7 +6,6 @@ import com.mit.community.mapper.FeedBackMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.reflect.annotation.ExceptionProxy;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,15 +49,13 @@ public class FeedBackService {
      * @date 18:18 2018/12/6
      */
     @Transactional(rollbackFor = Exception.class)
-    public void submitFeedBack(String title, String content, Integer type, Integer userId, List<String> imageUrls) {
+    public void submitFeedBack(String title, String content, String type, Integer userId, List<String> imageUrls) {
         FeedBack feedBack = new FeedBack(title, content, type, userId);
-        Integer size = this.save(feedBack);
-        if (size > 0) {
-            if (!imageUrls.isEmpty()) {
-                for (String imageUrl : imageUrls) {
-                    FeedBackImg feedBackImg = new FeedBackImg(feedBack.getId(), imageUrl);
-                    feedBackImgService.save(feedBackImg);
-                }
+        this.save(feedBack);
+        if (!imageUrls.isEmpty()) {
+            for (String imageUrl : imageUrls) {
+                FeedBackImg feedBackImg = new FeedBackImg(feedBack.getId(), imageUrl);
+                feedBackImgService.save(feedBackImg);
             }
         }
     }

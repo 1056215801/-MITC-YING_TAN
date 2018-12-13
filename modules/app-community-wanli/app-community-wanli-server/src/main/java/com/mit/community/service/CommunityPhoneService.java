@@ -23,12 +23,12 @@ public class CommunityPhoneService {
     /**
      * 查询社区电话，通过小区code和电话类型
      * @param communityCode 小区code
-     * @param type          社区电话类型1、物业电话；2、紧急电话
+     * @param type          社区电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话
      * @return 社区电话列表
      * @author Mr.Deng
      * @date 15:55 2018/12/5
      */
-    public List<CommunityPhone> listByCommunityCodeAndType(String communityCode, Integer type) {
+    public List<CommunityPhone> listByCommunityCodeAndType(String communityCode, String type) {
         EntityWrapper<CommunityPhone> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.eq("type", type);

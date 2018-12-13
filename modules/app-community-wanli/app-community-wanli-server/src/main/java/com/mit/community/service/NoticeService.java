@@ -1,6 +1,5 @@
 package com.mit.community.service;
 
-import com.mit.community.entity.Dictionary;
 import com.mit.community.entity.Notice;
 import com.mit.community.entity.NoticeContent;
 import com.mit.community.mapper.NoticeMapper;
@@ -78,19 +77,12 @@ public class NoticeService {
      * @date 10:31 2018/11/30
      */
     @Transactional(rollbackFor = Exception.class)
-    public void releaseNotice(String cellphone, String title, String code, String synopsis,
+    public void releaseNotice(String title, String code, String synopsis,
                               String publisher, String creator, String content) {
         Notice notice = new Notice(title, code, LocalDateTime.now(), synopsis, publisher, creator, StringUtils.EMPTY);
         this.save(notice);
         NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
         noticeContentService.save(noticeContent);
-        //添加足迹
-        Dictionary dictionary = dictionaryService.getByCode(code);
-        if (dictionary != null) {
-            String name = dictionary.getName();
-            String str = "发布" + name + "-" + title + "成功";
-            userTrackService.addUserTrack(cellphone, name, str);
-        }
     }
 
 }

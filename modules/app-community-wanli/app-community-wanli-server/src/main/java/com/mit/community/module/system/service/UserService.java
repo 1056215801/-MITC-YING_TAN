@@ -1,14 +1,14 @@
 package com.mit.community.module.system.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.User;
-import com.mit.community.entity.UserLabel;
+import com.mit.community.entity.*;
 import com.mit.community.module.system.mapper.UserMapper;
-import com.mit.community.service.DnakeAppApiService;
-import com.mit.community.service.RedisService;
+import com.mit.community.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户
- *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -30,19 +30,19 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-
     @Autowired
     private UserLabelService userLabelService;
-
     @Autowired
     private RedisService redisService;
-
     @Autowired
     private DnakeAppApiService dnakeAppApiService;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
+    @Autowired
+    private HouseHoldService houseHoldService;
 
     /**
      * 查询用户信息，通过用户id
-     *
      * @param id 用户id
      * @return 用户信息
      * @author Mr.Deng
@@ -54,7 +54,6 @@ public class UserService {
 
     /**
      * 修改用户信息
-     *
      * @param user 用户信息
      * @date 10:56 2018/12/7
      */
@@ -65,7 +64,6 @@ public class UserService {
 
     /**
      * 保存
-     *
      * @param user user
      * @author shuyy
      * @date 2018/11/29 11:25
@@ -79,7 +77,6 @@ public class UserService {
 
     /**
      * 获取User，通过cellphone和密码
-     *
      * @param cellphone 手机号
      * @param password  密码
      * @return com.mit.community.entity.User
@@ -101,7 +98,6 @@ public class UserService {
 
     /**
      * 获取User，通过cellphone
-     *
      * @param cellphone 手机号
      * @return com.mit.community.entity.User
      * @author shuyy
@@ -121,7 +117,6 @@ public class UserService {
 
     /**
      * 注册
-     *
      * @param cellphone 电话号码
      * @param password  密码
      * @author shuyy
@@ -132,18 +127,20 @@ public class UserService {
     public Integer register(String cellphone, String password) {
         int status = 1;
         User user = this.getByCellphone(cellphone);
-        if(user != null){
+        if (user != null) {
             status = 0;
             return status;
         }
-        user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, "普通业主");
+
+        user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
+                Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+                "普通业主", );
         this.save(user);
         return status;
     }
 
     /**
      * 选择标签
-     *
      * @param cellphone 电话号码
      * @param labelList label列表
      * @author shuyy
@@ -161,42 +158,39 @@ public class UserService {
 
     /**
      * 修改用户信息
-     *
-     * @param userId     用户id
-     * @param nickname   昵称
-     * @param gender     性别1、男。0、女。
-     * @param email      邮件
-     * @param cellphone  电话
-     * @param iconUrl    头像地址
-     * @param birthday   生日 yyyy-MM-dd HH:mm:ss
-     * @param bloodType  血型
-     * @param profession 职业
-     * @param signature  我的签名
+     * @param cellphone     手机号
+     * @param userId        用户id
+     * @param nickname      昵称
+     * @param gender        性别1、男。0、女。
+     * @param birthday      出生日期 yyyy-MM-dd
+     * @param bloodType     血型
+     * @param profession    职业
+     * @param signature     我的签名
+     * @param constellation 星座
      * @author Mr.Deng
      * @date 14:35 2018/12/7
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserInfo(Integer userId, String nickname, Short gender, String email, String cellphone,
-                               String iconUrl, String birthday, String bloodType, String profession, String signature) {
+    public void updateUserInfo(Integer userId, String nickname, Short gender, String birthday, String bloodType,
+                               String profession, String signature, String constellation, String cellphone) {
         LocalDate birthdayTime = DateUtils.parseStringToLocalDate(birthday, null);
         User user = this.getById(userId);
-        if (user != null) {
+        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
+        if (user != null && houseHold != null) {
             user.setNickname(nickname);
             user.setGender(gender);
-            user.setEmail(email);
-            user.setCellphone(cellphone);
-            user.setIcon_url(iconUrl);
             user.setBirthday(birthdayTime);
             user.setBloodType(bloodType);
             user.setProfession(profession);
             user.setSignature(signature);
             this.update(user);
+            houseHold.setConstellation(constellation);
+            houseHoldService.update(houseHold);
         }
     }
 
     /**
      * 修改密码
-     *
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @param oldPassword 旧密码
@@ -270,7 +264,6 @@ public class UserService {
 
     /**
      * 登出
-     *
      * @param cellPhone 手机号码
      * @author Mr.Deng
      * @date 14:47 2018/12/8
@@ -280,4 +273,45 @@ public class UserService {
         redisService.remove(RedisConstant.USER + cellPhone);
     }
 
+    /**
+     * 我的资料
+     * @return 资料
+     * @author Mr.Deng
+     * @date 11:29 2018/12/13
+     */
+    public Map<String, Object> mapProfile(String cellphone, String communityCode) {
+        User user = this.getByCellphone(cellphone);
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(12);
+        if (user != null) {
+            user.setPassword(StringUtils.EMPTY);
+            HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
+            if (houseHold != null) {
+                List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
+                List<String> communityRegion = Lists.newArrayListWithExpectedSize(5);
+                if (!householdRooms.isEmpty()) {
+                    for (HouseholdRoom householdRoom : householdRooms) {
+                        String str = householdRoom.getCommunityName() + "-" + householdRoom.getZoneName() +
+                                "-" + householdRoom.getBuildingName() + "-" + householdRoom.getUnitName() +
+                                "-" + householdRoom.getRoomNum();
+                        communityRegion.add(str);
+                    }
+                }
+                List<String> userLabels = userLabelService.listLabelByUserId(user.getId());
+                Short gender = user.getGender();
+                map.put("nickName", user.getNickname());
+                map.put("gender", gender == 0 ? "未知" : (gender == 1 ? "男" : "女"));
+                map.put("bloodType", user.getBloodType());
+                map.put("birthday", user.getBirthday());
+                map.put("constellation", houseHold.getConstellation());
+                map.put("region", user.getRegion());
+                map.put("profession", user.getProfession());
+                map.put("role", user.getRole());
+                map.put("coordinates", communityRegion);
+                map.put("signature", user.getSignature());
+                map.put("userLabels", userLabels);
+
+            }
+        }
+        return map;
+    }
 }
