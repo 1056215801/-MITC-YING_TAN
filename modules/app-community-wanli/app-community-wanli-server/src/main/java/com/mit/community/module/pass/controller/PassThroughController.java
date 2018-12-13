@@ -25,6 +25,7 @@ import java.util.Objects;
 
 /**
  * 住户-通行模块
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:27
  * <p>Copyright: Copyright (c) 2018</p>
@@ -83,6 +84,7 @@ public class PassThroughController {
 
     /**
      * 查询当地当前天气信息，通过城市英文名
+     *
      * @param region 城市英文名
      * @return result
      * @author Mr.Deng
@@ -101,6 +103,7 @@ public class PassThroughController {
 
     /**
      * 查询当天通行限号
+     *
      * @return result
      * @author Mr.Deng
      * @date 10:34 2018/12/10
@@ -156,6 +159,7 @@ public class PassThroughController {
 
     /**
      * 查询周末和节假日期，通过时间戳
+     *
      * @param localDate 时间yyyy-MM-dd
      * @return 工作日对应结果为 0, 休息日对应结果为 1, 节假日对应的结果为 2
      * @author Mr.Deng
@@ -176,6 +180,7 @@ public class PassThroughController {
 
     /**
      * 发布通知通告信息
+     *
      * @param title     标题
      * @param code      类型(查询字典notice_type)
      * @param synopsis  简介
@@ -190,7 +195,6 @@ public class PassThroughController {
     @ApiOperation(value = "发布通知通告信息", notes = "输入参数：title 标题、code 类型(查询字典notice_type)、releaseTime 发布时间" +
             "synopsis 简介、publisher 发布人、creator 创建人")
     public Result insertByNotice(String title, String code, String typeName, String synopsis,
-    public Result insertByNotice(String mac, String cellphone, String title, String type, String typeName, String synopsis,
                                  String publisher, String creator, String content) {
         noticeService.releaseNotice(title, code, typeName, synopsis, publisher, creator, content);
         return Result.success("发布成功！");
@@ -198,6 +202,7 @@ public class PassThroughController {
 
     /**
      * 申请钥匙
+     *
      * @param cellphone        手机号
      * @param communityCode    小区code
      * @param communityName    小区名称
@@ -223,7 +228,6 @@ public class PassThroughController {
             "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；cellphone 手机号；" +
             "images 图片列表（可不传）")
     public Result applyKey(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
-    public Result applyKey(String mac, String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                            String roomNum, String contactPerson, String contactCellphone, String content,
                            String idCard, MultipartFile[] images) throws Exception {
@@ -242,6 +246,7 @@ public class PassThroughController {
 
     /**
      * 审批钥匙
+     *
      * @param applyKeyId  申请钥匙id
      * @param checkPerson 审批人
      * @return Result
@@ -249,9 +254,6 @@ public class PassThroughController {
      * @date 15:36 2018/12/3
      */
     @PatchMapping("/approveKey")
-    @ApiOperation(value = "审批钥匙", notes = "applyKeyId 申请钥匙id ")
-    public Result approveKey(String mac, String cellphone, Integer applyKeyId, String checkPerson) {
-        applyKeyService.updateByCheckPerson(applyKeyId, checkPerson);
     @ApiOperation(value = "审批钥匙", notes = "传参：cellphone 手机号，applyKeyId 申请钥匙id，checkPerson 审批人 ")
     public Result approveKey(String cellphone, Integer applyKeyId, String checkPerson) {
         applyKeyService.updateByCheckPerson(cellphone, applyKeyId, checkPerson);
@@ -260,6 +262,7 @@ public class PassThroughController {
 
     /**
      * 查询申请钥匙信息，通过钥匙申请状态
+     *
      * @param status 钥匙申请状态
      * @return result
      * @author Mr.Deng
@@ -288,13 +291,11 @@ public class PassThroughController {
             return Result.success(applyKeys);
         }
         return Result.error("参数不能为空");
-    public Result selectByStatus(String mac, String cellphone, Integer status) {
-        List<ApplyKey> applyKeys = applyKeyService.listByStatus(status);
-        return Result.success(applyKeys);
     }
 
     /**
      * http开门
+     *
      * @param communityCode 小区code
      * @param cellphone     电话号码
      * @param deviceNum     设备编号
@@ -304,7 +305,7 @@ public class PassThroughController {
      */
     @PostMapping("/httpOpenDoor")
     @ApiOperation(value = "http开门", notes = "输入参数：communityCode 小区code。cellphone 电话号码。deviceNum 设备编号")
-    public Result httpOpenDoor(String mac, String cellphone, String communityCode, String deviceNum) {
+    public Result httpOpenDoor(String cellphone, String communityCode, String deviceNum) {
         if (StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(deviceNum)) {
             dnakeAppApiService.httpOpenDoor(cellphone, communityCode, deviceNum);
             //添加足迹
@@ -319,6 +320,7 @@ public class PassThroughController {
 
     /**
      * 获取我的钥匙
+     *
      * @param cellphone     电话号码
      * @param communityCode 小区code
      * @return result
@@ -339,6 +341,7 @@ public class PassThroughController {
 
     /**
      * 查询小区设备组信息,通过小区code
+     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -356,6 +359,7 @@ public class PassThroughController {
 
     /**
      * 申请访客邀请码
+     *
      * @param dateTag       日期标志：今天:0；明天：1;
      * @param times         开锁次数：无限次：0；一次：1；
      * @param deviceGroupId 设备分组id，默认只传公共权限组
@@ -370,7 +374,6 @@ public class PassThroughController {
             "times 开锁次数：无限次：0；一次：1；deviceGroupId 设备分组id，默认只传公共权限组；communityCode 社区编号；")
     public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String
             communityCode) {
-    public String getInviteCode(String mac, String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
         if (StringUtils.isNotBlank(dateTag) && StringUtils.isNotBlank(times) && StringUtils.isNotBlank(deviceGroupId) &&
                 StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(cellphone)) {
             userTrackService.addUserTrack(cellphone, "申请访客邀请码", "申请访客邀请码成功");
@@ -381,6 +384,7 @@ public class PassThroughController {
 
     /**
      * 查询邀请码记录
+     *
      * @param cellphone 手机号
      * @param pageIndex 页码，从0开始
      * @param pageSize  页大小最大100
@@ -405,6 +409,7 @@ public class PassThroughController {
 
     /**
      * 图片上传
+     *
      * @param image 文件
      * @return result
      * @author Mr.Deng
@@ -432,6 +437,7 @@ public class PassThroughController {
 
     /**
      * 查询所有访客信息
+     *
      * @return result
      * @author Mr.Deng
      * @date 18:28 2018/12/3
@@ -449,6 +455,7 @@ public class PassThroughController {
 
     /**
      * 设置呼叫转移号码
+     *
      * @param cellphone 手机号
      * @param sipMobile 转移号码
      * @return result
@@ -469,6 +476,7 @@ public class PassThroughController {
 
     /**
      * 查询住户信息，通过用户id
+     *
      * @param userId 用户id
      * @return result
      * @author Mr.Deng
@@ -496,6 +504,7 @@ public class PassThroughController {
 
     /**
      * 查询省份
+     *
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/11 14:12
@@ -510,6 +519,7 @@ public class PassThroughController {
 
     /**
      * 查询城市
+     *
      * @param province 省份
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -525,6 +535,7 @@ public class PassThroughController {
 
     /**
      * 查询分区信息，通过小区code
+     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -539,6 +550,7 @@ public class PassThroughController {
 
     /**
      * 查询楼栋信息，通过分区id
+     *
      * @param zoneId 分区id
      * @return 楼栋信息
      * @author Mr.Deng
@@ -553,6 +565,7 @@ public class PassThroughController {
 
     /**
      * 查询单元信息，通过楼栋id
+     *
      * @param buildingId 楼栋id
      * @return result
      * @author Mr.Deng
@@ -567,6 +580,7 @@ public class PassThroughController {
 
     /**
      * 查询房间信息，通过单元id
+     *
      * @param unitId 单元id
      * @return result
      * @author Mr.Deng
@@ -581,6 +595,7 @@ public class PassThroughController {
 
     /**
      * 查询门禁记录，通过手机号
+     *
      * @param communityCode 小区code
      * @param cellphone     手机号码
      * @return result

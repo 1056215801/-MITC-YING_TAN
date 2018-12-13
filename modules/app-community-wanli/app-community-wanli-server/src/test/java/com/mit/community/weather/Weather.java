@@ -11,7 +11,7 @@ import org.junit.Test;
  */
 public class Weather {
 
-    @Test
+    // @Test
     public void weatherInfo() {
         String url = "https://api.seniverse.com/v3/weather/now.json?" +
                 "key=adfeskm2upezsis0&location=nanchang&language=zh-Hans&unit=c";

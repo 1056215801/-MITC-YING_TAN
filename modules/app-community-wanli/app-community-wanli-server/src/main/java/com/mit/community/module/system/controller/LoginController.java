@@ -364,4 +364,17 @@ public class LoginController {
         return Result.success("重置成功");
     }
 
+
+    @PatchMapping("/updateCellphone")
+    @ApiOperation(value = "修改手机号", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
+    public Result updateCellphone(String mac, String cellphone, String newCellphone){
+        Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + newCellphone);
+        if (o == null) {
+            return Result.error("请在10分钟内完成修改手机号");
+        }
+
+        return Result.success("重置成功");
+    }
+
+
 }

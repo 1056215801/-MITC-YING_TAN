@@ -247,6 +247,27 @@ public class UserService {
         return result;
     }
 
+/*    *//**
+     * 修改密码
+     * @param cellPhone   电话号码
+     * @param newPassword 新密码
+     * @return 返回状态码（1，重置成功；0，密码不匹配）
+     * @author Mr.Deng
+     * @date 14:19 2018/12/8
+     *//*
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateCellphone(String cellPhone, String newCellphone) {
+        User user = this.getByCellphone(cellPhone);
+        user.setCellphone(newCellphone);
+            this.update(user);
+            //然后调用狄耐克重置密码接口重置狄耐克密码
+            dnakeAppApiService.resetPwd(cellPhone, newPassword);
+            //重置成功并退出登录
+            this.loginOut(cellPhone);
+            result = 1;
+        return result;
+    }*/
+
     /**
      * 登出
      *

@@ -21,7 +21,7 @@ public class DnakeAppApiUtilTest {
      * @date 2018/12/7 10:05
      * @company mitesofor
     */
-    @Test
+    // @Test
     public void register() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/register";
@@ -39,7 +39,7 @@ public class DnakeAppApiUtilTest {
      * @date 2018/12/7 10:05
      * @company mitesofor
      */
-    @Test
+    // @Test
     public void getRegisterSmsCode() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/getRegisterSmsCode";
@@ -57,7 +57,7 @@ public class DnakeAppApiUtilTest {
      * @date 2018/12/7 10:05
      * @company mitesofor
      */
-    @Test
+    // @Test
     public void checkSmsCode() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/checkSmsCode";
@@ -69,7 +69,7 @@ public class DnakeAppApiUtilTest {
         System.out.println(invoke);
     }
 
-    @Test
+    // @Test
     public void login() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/login";

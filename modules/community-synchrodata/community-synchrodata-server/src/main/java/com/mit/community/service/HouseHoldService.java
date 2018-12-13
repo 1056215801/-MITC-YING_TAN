@@ -466,6 +466,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
             houseHold.setRegion(StringUtils.EMPTY);
             houseHold.setBirthday(CommonConstatn.NULL_LOCAL_DATE);
             houseHold.setIdentityType((short) 99);
+            houseHold.setConstellation(StringUtils.EMPTY);
             JSONArray houseList = jsonObject.getJSONArray("houseList");
             for (int index = 0; index < houseList.size(); index++) {
                 JSONObject j = (JSONObject) houseList.get(index);

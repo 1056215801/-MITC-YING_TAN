@@ -77,19 +77,6 @@ public class DictionaryService {
     }
 
     /**
-     * 查询字典信息，通告字典code
-     * @param code 字典code
-     * @return 字典信息
-     * @author Mr.Deng
-     * @date 8:58 2018/12/12
-     */
-    public Dictionary getByCode(String code) {
-        EntityWrapper<Dictionary> wrapper = new EntityWrapper<>();
-        wrapper.eq("code", code);
-        return dictionaryMapper.selectList(wrapper).get(0);
-    }
-
-    /**
      * 查询字典信息，通过字典id
      * @param id id
      * @return 字典信息
