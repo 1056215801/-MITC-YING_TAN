@@ -10,7 +10,6 @@ import java.time.LocalDate;
 
 /**
  * 用户
- *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -30,7 +29,9 @@ public class User extends BaseEntity {
      */
     private String password;
 
-    /**住户id*/
+    /**
+     * 住户id
+     */
     @TableField("household_id")
     private Integer householdId;
     /**
@@ -67,5 +68,13 @@ public class User extends BaseEntity {
      * 我的签名
      */
     private String signature;
+    /**
+     * 小区身份
+     */
+    private String role;
+    /**
+     * 地区
+     */
+    private String region;
 
 }

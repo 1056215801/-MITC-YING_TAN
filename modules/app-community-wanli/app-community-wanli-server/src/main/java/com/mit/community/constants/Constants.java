@@ -28,5 +28,9 @@ public class Constants {
      * 用户足迹开关（true为打开，false为关）
      */
     public static final Boolean USER_TRACK_TYPE = true;
+    /**
+     * 用户默认头像地址
+     */
+    public static final String USER_ICO_DEFULT = "192.168.1.222:8088/group1/M00/00/03/wKgB3lwR-ViAakJKAAAOWH6Ql6c941.png";
 
 }

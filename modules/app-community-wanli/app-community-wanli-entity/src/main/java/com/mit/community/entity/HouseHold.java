@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * 住户表
- *
  * @author Mr.Deng
  * @date 2018/11/14 19:00
  * <p>Copyright: Copyright (c) 2018</p>
@@ -28,8 +27,12 @@ public class HouseHold extends BaseEntity {
      */
     @TableField("community_code")
     private String communityCode;
+    /**
+     * 星座
+     */
+    private String constellation;
     /*
-    *//**
+     *//**
      * 小区名
      *//*
     @TableField("community_name")
@@ -216,6 +219,5 @@ public class HouseHold extends BaseEntity {
      */
     @TableField(exist = false)
     public static final Short OTHER = 7;
-
 
 }
