@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 用户
@@ -131,7 +132,6 @@ public class UserService {
             status = 0;
             return status;
         }
-
         user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                 "普通业主", StringUtils.EMPTY);
@@ -241,27 +241,6 @@ public class UserService {
         return result;
     }
 
-    /*    *//**
-     * 修改密码
-     * @param cellPhone   电话号码
-     * @param newPassword 新密码
-     * @return 返回状态码（1，重置成功；0，密码不匹配）
-     * @author Mr.Deng
-     * @date 14:19 2018/12/8
-     *//*
-    @Transactional(rollbackFor = Exception.class)
-    public Integer updateCellphone(String cellPhone, String newCellphone) {
-        User user = this.getByCellphone(cellPhone);
-        user.setCellphone(newCellphone);
-            this.update(user);
-            //然后调用狄耐克重置密码接口重置狄耐克密码
-            dnakeAppApiService.resetPwd(cellPhone, newPassword);
-            //重置成功并退出登录
-            this.loginOut(cellPhone);
-            result = 1;
-        return result;
-    }*/
-
     /**
      * 登出
      * @param cellPhone 手机号码
@@ -296,8 +275,8 @@ public class UserService {
                         communityRegion.add(str);
                     }
                 }
-
-//                List<String> userLabels = userLabelService.listLabelByUserId(user.getId());
+                List<UserLabel> userLabels = userLabelService.listByUserId(user.getId());
+                List<String> userLabelNameList = userLabels.parallelStream().map(UserLabel::getLableName).collect(Collectors.toList());
                 Short gender = user.getGender();
                 map.put("nickName", user.getNickname());
                 map.put("gender", gender == 0 ? "未知" : (gender == 1 ? "男" : "女"));
@@ -309,7 +288,7 @@ public class UserService {
                 map.put("role", user.getRole());
                 map.put("coordinates", communityRegion);
                 map.put("signature", user.getSignature());
-//                map.put("userLabels", userLabels);
+                map.put("userLabels", userLabelNameList);
 
             }
         }
