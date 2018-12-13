@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,8 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "* */2 * * * ?")
+//    @Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "*/2 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
@@ -87,6 +89,8 @@ public class HouseholdSchedule {
             } else {
                 boolean update = houseHoldService.isUpdate(h, houseHold);
                 if (update) {
+                    h.setId(houseHold.getId());
+                    h.setGmtModified(LocalDateTime.now());
                     updateHousehold.add(h);
                 }
                 map.remove(h.getHouseholdId());

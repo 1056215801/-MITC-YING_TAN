@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dnake.common.DnakeAppApiUtil;
+import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.entity.DnakeAppUser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.DnakeLoginResponse;
+import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.entity.MyKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -249,6 +251,45 @@ public class DnakeAppApiService {
             maps.put("CommunityKeys", communityKeys);
         }
         return maps;
+    }
+
+    /**
+     * 更新用户手机号
+     * @param householdId
+     * @param communityCode
+     * @param householdName
+     * @param householdRooms
+     * @param mobile
+     * @return boolean
+     * @throws
+     * @author shuyy
+     * @date 2018/12/13 16:09
+     * @company mitesofor
+    */
+    public boolean updateHouseholdCellphone(Integer householdId, String communityCode, String householdName, List<HouseholdRoom> householdRooms, String mobile){
+        String url = "/v1/household/saveOrUpdateHouseholdMore";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
+        map.put("communityCode", communityCode);
+        map.put("id", householdId);
+        List<Map<String, Object>> houseList = Lists.newArrayListWithCapacity(householdRooms.size());
+        householdRooms.forEach(item -> {
+            Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
+            h.put("zoneId", item.getZoneId());
+            h.put("buildingId", item.getBuildingId());
+            h.put("unitId", item.getUnitId());
+            h.put("roomId", item.getRoomId());
+            houseList.add(h);
+        });
+        String s = JSON.toJSONString(houseList);
+        map.put("houseList", s);
+        map.put("mobile", mobile);
+        map.put("householdName", householdName);
+        String result = DnakeWebApiUtil.invoke(url, map);
+        Integer isSuccess = JSON.parseObject(result).getInteger("isSuccess");
+        if(isSuccess == 1){
+            return true;
+        }
+        return false;
     }
 
     /**

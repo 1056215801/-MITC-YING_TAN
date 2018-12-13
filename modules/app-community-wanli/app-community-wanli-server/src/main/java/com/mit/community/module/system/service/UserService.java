@@ -294,4 +294,27 @@ public class UserService {
         }
         return map;
     }
+
+    /**
+     * 更新用户手机号
+     * @param cellPhone 旧手机号
+     * @param newCellPhone 新手机号
+     * @author shuyy
+     * @date 2018/12/13 16:15
+     * @company mitesofor
+    */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateHouseholdCellphone(String cellPhone, String newCellPhone) {
+        User user = this.getByCellphone(cellPhone);
+        user.setCellphone(newCellPhone);
+        this.update(user);
+        // 修改dnake手机号
+        HouseHold houseHold = houseHoldService.getByHouseholdId(user.getHouseholdId());
+        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(user.getHouseholdId());
+        boolean status = dnakeAppApiService.updateHouseholdCellphone(user.getHouseholdId(),
+                houseHold.getCommunityCode(), houseHold.getHouseholdName(), householdRooms, newCellPhone);
+        if(!status){
+            throw new RuntimeException("更新失败");
+        }
+    }
 }

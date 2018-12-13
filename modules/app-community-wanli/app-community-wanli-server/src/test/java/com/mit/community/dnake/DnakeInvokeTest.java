@@ -5,9 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * dnake 调用测试
@@ -147,16 +151,22 @@ public class DnakeInvokeTest {
     public void saveOrUpdateHousehold(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/household/saveOrUpdateHousehold";
+        String url = "/v1/household/saveOrUpdateHouseholdMore";
         HashMap<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
-        map.put("householdName", "邓诚");
-        map.put("buildingId", "423");
-        map.put("unitId", "565");
-        map.put("roomId", "24058");
-        map.put("mobile", "13064102937");
+        map.put("id", "52833");
+        List<Map<String, Object>> houseList = Lists.newArrayListWithCapacity(2);
+         Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
+         h.put("zoneId", "363");
+         h.put("buildingId", "423");
+         h.put("unitId", "565");
+         h.put("roomId", "15448");
+         houseList.add(h);
+         String s = JSON.toJSONString(houseList);
+         map.put("houseList", s);
+         map.put("mobile", "17679015638");
 
-//        map.put("householdName", "舒园园");
+        map.put("householdName", "舒园园");
         String result = DnakeWebApiUtil.invoke(url, map);
         System.out.println(result);
         long end = System.currentTimeMillis();

@@ -241,7 +241,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @date 2018/11/21 14:26
      */
     private void parseAppDeviceGroup(JSONObject jsonObject, HouseHold houseHold) {
-        String appDeviceGroupIds = jsonObject.getString("appDeviceGroupIds");
+        String appDeviceGroupIds = jsonObject.getString("deviceGroupIds");
         if (StringUtils.isNotBlank(appDeviceGroupIds)) {
             String[] devices = appDeviceGroupIds.split(",");
             ArrayList<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups = Lists.newArrayListWithCapacity(devices.length);
