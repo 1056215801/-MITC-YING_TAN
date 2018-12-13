@@ -164,11 +164,6 @@ public class HouseHold extends BaseEntity {
     private Short identityType;
 
     /**
-     * 星座
-     */
-    private String constellation;
-
-    /**
      * 授权设备组
      */
     @TableField(exist = false)

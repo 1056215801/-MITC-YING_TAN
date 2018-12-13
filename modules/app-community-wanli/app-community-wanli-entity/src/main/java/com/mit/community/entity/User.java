@@ -77,7 +77,5 @@ public class User extends BaseEntity {
      */
     private String region;
 
-    /**身份*/
-    private String role;
 
 }

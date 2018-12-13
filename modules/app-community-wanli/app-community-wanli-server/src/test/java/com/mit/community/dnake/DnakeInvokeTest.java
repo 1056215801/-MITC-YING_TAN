@@ -150,7 +150,7 @@ public class DnakeInvokeTest {
         String url = "/v1/household/saveOrUpdateHousehold";
         HashMap<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
-        map.put("householdName", "舒园园");
+        map.put("householdName", "邓诚");
         map.put("buildingId", "423");
         map.put("unitId", "565");
         map.put("roomId", "24058");
