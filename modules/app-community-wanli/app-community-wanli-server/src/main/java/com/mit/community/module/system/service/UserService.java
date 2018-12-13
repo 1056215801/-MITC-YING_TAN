@@ -134,7 +134,7 @@ public class UserService {
 
         user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                "普通业主", );
+                "普通业主", StringUtils.EMPTY);
         this.save(user);
         return status;
     }
@@ -241,7 +241,7 @@ public class UserService {
         return result;
     }
 
-/*    *//**
+    /*    *//**
      * 修改密码
      * @param cellPhone   电话号码
      * @param newPassword 新密码
@@ -296,7 +296,8 @@ public class UserService {
                         communityRegion.add(str);
                     }
                 }
-                List<String> userLabels = userLabelService.listLabelByUserId(user.getId());
+
+//                List<String> userLabels = userLabelService.listLabelByUserId(user.getId());
                 Short gender = user.getGender();
                 map.put("nickName", user.getNickname());
                 map.put("gender", gender == 0 ? "未知" : (gender == 1 ? "男" : "女"));
@@ -308,7 +309,7 @@ public class UserService {
                 map.put("role", user.getRole());
                 map.put("coordinates", communityRegion);
                 map.put("signature", user.getSignature());
-                map.put("userLabels", userLabels);
+//                map.put("userLabels", userLabels);
 
             }
         }
