@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.mapper.AccessControlMapper;
@@ -17,7 +18,7 @@ import java.util.List;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class AccessControlService {
+public class AccessControlService extends ServiceImpl<AccessControlMapper, AccessControl> {
 
     @Autowired
     private AccessControlMapper accessControlMapper;

@@ -27,23 +27,30 @@ public class DeviceService {
     private HouseHoldService houseHoldService;
     @Autowired
     private AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceService;
+    @Autowired
+    private DeviceDeviceGroupService deviceDeviceGroupService;
 
     /**
-     * 查询住户app关联的设备， 通过住户id列表
+     * 查询住户app关联的设备编号， 通过住户id列表
      * @param householdIdList 住户id列表
      * @return java.util.List<com.mit.community.entity.Device>
      * @author shuyy
      * @date 2018/11/30 11:07
      * @company mitesofor
-     *//*
-    public List<Device> listByHouseholdIdList(List<Integer> householdIdList){
-        List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDevices = authorizeAppHouseholdDeviceService.listByHouseholdIdList(householdIdList);
-        if(authorizeAppHouseholdDevices.isEmpty()){
-            return null;
-        }
-        List<Integer> deviceIds = authorizeAppHouseholdDevices.parallelStream().map(AuthorizeAppHouseholdDevice::getDevice_id).collect(Collectors.toList());
-        return this.listByDeviceIdList(deviceIds);
-    }*/
+     */
+//    public List<Device> listByHouseholdIdList(List<Integer> householdIdList) {
+//        List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups = authorizeAppHouseholdDeviceService.listByHouseholdIdList(householdIdList);
+//        if (authorizeAppHouseholdDeviceGroups.isEmpty()) {
+//            return null;
+//        }
+//        List<Integer> deviceGroups = authorizeAppHouseholdDeviceGroups.parallelStream().map(AuthorizeAppHouseholdDeviceGroup::getDeviceGroupId).collect(Collectors.toList());
+//        List<DeviceDeviceGroup> deviceDeviceGroups = deviceDeviceGroupService.listByDeviceGroupIds(deviceGroups);
+//        if (deviceDeviceGroups.isEmpty()) {
+//            return null;
+//        }
+//        List<String> deviceNums = deviceDeviceGroups.parallelStream().map(DeviceDeviceGroup::getDeviceNum).collect(Collectors.toList());
+//        return this.listByDeviceNumList(deviceNums);
+//    }
 
     /**
      * 查询所有的设备，通过设备id列表
@@ -58,6 +65,23 @@ public class DeviceService {
         wrapper.in("device_id", deviceIdList);
         return deviceMapper.selectList(wrapper);
     }
+
+//    /**
+//     * 查询所有的设备，通过设备编号列表
+//     * @param deviceNum 设备编号
+//     * @return 设备
+//     * @author Mr.Deng
+//     * @date 16:48 2018/12/13
+//     */
+//    public Device listByDeviceNum(String deviceNum) {
+//        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+//        wrapper.eq("device_num", deviceNum);
+//        List<Device> devices = deviceMapper.selectList(wrapper);
+//        if (devices.isEmpty()) {
+//            return null;
+//        }
+//        return devices.get(0);
+//    }
 
     /**
      * 查询设备信息，通过小区code和设备编号
@@ -79,21 +103,23 @@ public class DeviceService {
     }
 
     /**
-     * 查询关联的设备，通过小区code，手机号
-     * @param CommunityCode 小区code
-     * @param cellphone 手机号
+     * 查询关联的设备编号，通过小区code，手机号
+     * @param communityCode 小区code
+     * @param cellphone     手机号
+     * @param type          M：单元机；W：门口机；
      * @return java.util.List<com.mit.community.entity.Device>
      * @author shuyy
      * @date 2018/11/30 11:45
      * @company mitesofor
-     *//*
-    public List<Device> listDeviceByCommunityCodeAndCellphone(String CommunityCode, String cellphone){
-        User user = userService.getByCellphone(cellphone);
-        List<UserHousehold> userHouseholds = userHouseholdService.listByUserId(user.getId());
-        List<Integer> householdIds = userHouseholds.parallelStream().map(UserHousehold::getHouseholdId).collect(Collectors.toList());
-        List<HouseHold> houseHolds = houseHoldService.listByHouseholdIdList(householdIds);
-        List<HouseHold> result = houseHolds.parallelStream().filter(item -> item.getCommunityCode().equals(CommunityCode)).collect(Collectors.toList());
-        return this.listByHouseholdIdList(result.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList()));
-
-    }*/
+     */
+//    public List<String> listDeviceNumByCommunityCodeAndCellphone(String communityCode, String cellphone, String type) {
+//        User user = userService.getByCellphone(cellphone);
+//        List<UserHousehold> userHouseholds = userHouseholdService.listByUserId(user.getId());
+//        List<Integer> householdIds = userHouseholds.parallelStream().map(UserHousehold::getHouseholdId).collect(Collectors.toList());
+//        List<HouseHold> houseHolds = houseHoldService.listByHouseholdIdList(householdIds);
+//        List<HouseHold> result = houseHolds.parallelStream().filter(item -> item.getCommunityCode().equals(communityCode)).collect(Collectors.toList());
+//        List<Device> devices = this.listByHouseholdIdList(result.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList()));
+//        List<Device> resultDevice = devices.parallelStream().filter(item -> item.getDeviceType().equals(type)).collect(Collectors.toList());
+//        return resultDevice.parallelStream().map(Device::getDeviceNum).collect(Collectors.toList());
+//    }
 }

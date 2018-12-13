@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * 设备和设备组关联
- *
  * @author shuyy
  * @date 2018/12/10
  * @company mitesofor
@@ -23,7 +22,7 @@ public class DeviceDeviceGroup extends BaseEntity {
      * 设备编号
      */
     @TableField("device_num")
-    private String device_num;
+    private String deviceNum;
 
     /**
      * 设备组id

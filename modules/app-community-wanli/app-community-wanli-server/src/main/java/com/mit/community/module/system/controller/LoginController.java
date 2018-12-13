@@ -254,12 +254,15 @@ public class LoginController {
     @GetMapping("/cellphoneVerification")
     @ApiOperation(value = "手机验证码验证", notes = "传参;cellphone 手机号：verificationCode 手机验证码")
     public Result cellphoneVerification(String mac, String cellphone, String verificationCode) {
-        Object o = redisService.get(RedisConstant.VERIFICATION_CODE + cellphone);
-        if (o == null || !verificationCode.equals(o.toString())) {
-            return Result.error("验证码错误");
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(verificationCode)) {
+            Object o = redisService.get(RedisConstant.VERIFICATION_CODE + cellphone);
+            if (o == null || !verificationCode.equals(o.toString())) {
+                return Result.error("验证码错误");
+            }
+            redisService.set(RedisConstant.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
+            return Result.success("验证成功");
         }
-        redisService.set(RedisConstant.VERIFICATION_SUCCESS + cellphone, cellphone, RedisConstant.VERIFICATION_SUCCESS_EXPIRE_TIME);
-        return Result.success("验证成功");
+        return Result.error("参数不能为空");
     }
 
     /**
@@ -454,7 +457,7 @@ public class LoginController {
 
     @PatchMapping("/updateCellphone")
     @ApiOperation(value = "修改手机号", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
-    public Result updateCellphone(String mac, String cellphone, String newCellphone){
+    public Result updateCellphone(String mac, String cellphone, String newCellphone) {
         Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + newCellphone);
         if (o == null) {
             return Result.error("请在10分钟内完成修改手机号");
@@ -462,6 +465,5 @@ public class LoginController {
 
         return Result.success("重置成功");
     }
-
 
 }

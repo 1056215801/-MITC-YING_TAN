@@ -615,20 +615,34 @@ public class PassThroughController {
      * 查询门禁记录，通过手机号
      * @param cellphone     手机号码
      * @param communityCode 小区code
+     * @param type          类型；M：单元机；W：门口机；
      * @return result
      * @author Mr.Deng
      * @date 10:47 2018/12/8
      */
-    @ApiOperation(value = "查询门禁记录，通过手机号")
     @GetMapping("/listAccessControlByHouseHoldId")
-    public Result listAccessControlByHouseHoldId(String cellphone, String communityCode) {
+    @ApiOperation(value = "查询门禁记录，通过手机号", notes = "传参：cellphone 手机号，communityCode 社区code,type M：单元机；W：门口机；")
+    public Result listAccessControlByHouseHoldId(String cellphone, String communityCode, String type) {
+        List<AccessControl> list = Lists.newArrayListWithExpectedSize(100);
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             List<AccessControl> accessControls = accessControlService.listByUserId(communityCode, cellphone);
-            //添加足迹
-            userTrackService.addUserTrack(cellphone, "查询门禁记录", "门禁记录查询成功");
-            return Result.success(accessControls);
+            if (!accessControls.isEmpty()) {
+                for (AccessControl accessControl : accessControls) {
+                    Device device = deviceService.getByDeviceNumAndCommunityCode(communityCode, accessControl.getDeviceNum());
+                    if (device != null) {
+                        String deviceType = device.getDeviceType();
+                        if (type.equals(deviceType)) {
+                            list.add(accessControl);
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+                //添加足迹
+                userTrackService.addUserTrack(cellphone, "查询门禁记录", "门禁记录查询成功");
+                return Result.success(list);
+            }
         }
         return Result.error("参数不能为空");
     }
-
 }
