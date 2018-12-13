@@ -5,14 +5,11 @@ import com.google.common.collect.Maps;
 import com.mit.common.constant.SmsConstants;
 import com.mit.common.util.SmsUtil;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Test;
 
 import java.util.Map;
-import java.util.Random;
 
 /**
  * 智慧社区发送短信工具类
- *
  * @author shuyy
  * @date 2018/12/10
  * @company mitesofor
@@ -22,12 +19,12 @@ public class SmsCommunityAppUtil {
     /**
      * 发送注册验证码
      * @param tellphone 手机号
-     * @param code 验证码
+     * @param code      验证码
      * @author shuyy
      * @date 2018/12/10 10:12
      * @company mitesofor
-    */
-    public static void sendRegister(String tellphone, String code){
+     */
+    public static void sendRegister(String tellphone, String code) {
         Map<String, String> param = Maps.newHashMapWithExpectedSize(1);
         param.put("code", code);
         try {
@@ -44,8 +41,8 @@ public class SmsCommunityAppUtil {
      * @author shuyy
      * @date 2018/12/10 10:16
      * @company mitesofor
-    */
-    public String generatorCode(){
+     */
+    public String generatorCode() {
         int i = RandomUtils.nextInt(1000, 9999);
         return i + "";
     }
