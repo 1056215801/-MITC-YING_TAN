@@ -1,7 +1,7 @@
 package com.mit.community.module.system.controller;
 
 import com.mit.community.entity.Dictionary;
-import com.mit.community.module.system.service.DictionaryService;
+import com.mit.community.service.DictionaryService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

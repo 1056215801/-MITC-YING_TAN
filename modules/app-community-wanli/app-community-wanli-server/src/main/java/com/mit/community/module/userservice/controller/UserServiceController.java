@@ -2,7 +2,6 @@ package com.mit.community.module.userservice.controller;
 
 import com.google.common.collect.Lists;
 import com.mit.community.entity.*;
-import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;

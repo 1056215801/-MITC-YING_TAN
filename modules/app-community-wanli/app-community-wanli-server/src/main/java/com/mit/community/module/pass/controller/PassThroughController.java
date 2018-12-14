@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
-import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.HttpUtil;
@@ -56,6 +55,7 @@ public class PassThroughController {
     private final UserTrackService userTrackService;
     private final DictionaryService dictionaryService;
     private final NoticeReadUserService noticeReadUserService;
+    private final ExpressAddressService expressAddressService;
 
     @Autowired
     public PassThroughController(RegionService regionService, NoticeService noticeService, ApplyKeyService applyKeyService,
@@ -66,7 +66,8 @@ public class PassThroughController {
                                  DeviceGroupService deviceGroupService, WeatherService weatherService,
                                  RedisService redisService, ClusterCommunityService clusterCommunityService,
                                  DeviceService deviceService, UserTrackService userTrackService,
-                                 DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService) {
+                                 DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService,
+                                 ExpressAddressService expressAddressService) {
         this.regionService = regionService;
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
@@ -86,6 +87,7 @@ public class PassThroughController {
         this.userTrackService = userTrackService;
         this.dictionaryService = dictionaryService;
         this.noticeReadUserService = noticeReadUserService;
+        this.expressAddressService = expressAddressService;
     }
 
     /**
@@ -98,7 +100,7 @@ public class PassThroughController {
     @GetMapping("/getWeather")
     @ApiOperation(value = "天气", notes = "输入参数：region为城市英文名")
     public Result getWeather(String mac, String cellphone, String region) {
-        if (StringUtils.isNotBlank(region)) {
+        if (StringUtils.isNotBlank(region) && StringUtils.isNotBlank(mac) && StringUtils.isNotBlank(cellphone)) {
             Weather weather = weatherService.ByCityeEnglish(region);
             return Result.success(weather);
         }
@@ -252,8 +254,12 @@ public class PassThroughController {
             if (!notice.isEmpty()) {
                 User user = (User) redisService.get(RedisConstant.USER + cellphone);
                 if (user != null) {
-                    NoticeReadUser noticeReadUser = new NoticeReadUser(noticeId, user.getId());
-                    noticeReadUserService.save(noticeReadUser);
+                    //标记已读，如果已经读过了则不再进行标记记录
+                    NoticeReadUser noticeReadUser1 = noticeReadUserService.getNoticeReadUser(noticeId, user.getId());
+                    if (noticeReadUser1 == null) {
+                        NoticeReadUser noticeReadUser = new NoticeReadUser(noticeId, user.getId());
+                        noticeReadUserService.save(noticeReadUser);
+                    }
                 } else {
                     return Result.error("请登录,标记已读失败");
                 }
@@ -713,6 +719,28 @@ public class PassThroughController {
                 userTrackService.addUserTrack(cellphone, "查询门禁记录", "门禁记录查询成功");
                 return Result.success(list);
             }
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询快递位置信息
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return result
+     * @author Mr.Deng
+     * @date 17:21 2018/12/14
+     */
+    @GetMapping("/listExpressAddress")
+    @ApiOperation(value = "查询快递位置信息", notes = "")
+    public Result listExpressAddress(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<Object> list = expressAddressService.listExpressAddress(user.getId(), communityCode);
+                return Result.success(list);
+            }
+            return Result.error("请登录");
         }
         return Result.error("参数不能为空");
     }

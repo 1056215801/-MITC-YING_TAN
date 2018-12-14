@@ -11,6 +11,9 @@
     <modules>
         <module>app-community-wanli-server</module>
         <module>app-community-wanli-entity</module>
+        <module>app-community-wanli-common</module>
+        <module>app-community-wanli-mapper</module>
+        <module>app-community-wanli-service</module>
         <module>app-community-wanli-interface</module>
     </modules>
 </project>
