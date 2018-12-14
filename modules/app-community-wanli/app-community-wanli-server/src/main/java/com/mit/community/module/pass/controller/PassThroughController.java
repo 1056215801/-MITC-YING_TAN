@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
-import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.HttpUtil;
@@ -55,6 +54,7 @@ public class PassThroughController {
     private final DeviceService deviceService;
     private final UserTrackService userTrackService;
     private final DictionaryService dictionaryService;
+    private final NoticeReadUserService noticeReadUserService;
 
     @Autowired
     public PassThroughController(RegionService regionService, NoticeService noticeService, ApplyKeyService applyKeyService,
@@ -64,7 +64,8 @@ public class PassThroughController {
                                  BuildingService buildingService, AccessControlService accessControlService,
                                  DeviceGroupService deviceGroupService, WeatherService weatherService,
                                  RedisService redisService, ClusterCommunityService clusterCommunityService,
-                                 DeviceService deviceService, UserTrackService userTrackService, DictionaryService dictionaryService) {
+                                 DeviceService deviceService, UserTrackService userTrackService,
+                                 DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService) {
         this.regionService = regionService;
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
@@ -83,6 +84,7 @@ public class PassThroughController {
         this.deviceService = deviceService;
         this.userTrackService = userTrackService;
         this.dictionaryService = dictionaryService;
+        this.noticeReadUserService = noticeReadUserService;
     }
 
     /**
@@ -206,6 +208,74 @@ public class PassThroughController {
                 userTrackService.addUserTrack(cellphone, name, "发布" + name + "成功");
             }
             return Result.success("发布成功！");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询所有的通知信息
+     * @param cellphone 手机号
+     * @return result
+     * @author Mr.Deng
+     * @date 13:55 2018/12/14
+     */
+    @GetMapping("/listNotices")
+    @ApiOperation(value = "查询所有的通知信息", notes = "返回参数：title 标题；" +
+            "type 通知类型。关联数据字典code为notice_type。：1、政策性通知。2、人口普查。3、入学通知。4、物业公告。" +
+            "releaseTime 发布时间；synopsis 简介；publisher 发布人；creator 创建人；modifier 修改人")
+    public Result listNotices(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<Map<String, Object>> list = noticeService.listNotices(user.getId());
+                return Result.success(list);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询通知详情，通过手机号和通告id
+     * @param cellphone 手机号
+     * @param noticeId  通告id
+     * @return result
+     * @author Mr.Deng
+     * @date 13:49 2018/12/14
+     */
+    @GetMapping("/selectNotices")
+    @ApiOperation(value = "查询通知详情，通过手机号和通告id", notes = "传参：cellphone 手机号 ；noticeId 通知id")
+    public Result selectNotices(String cellphone, Integer noticeId) {
+        if (StringUtils.isNotBlank(cellphone) && noticeId != null) {
+            List<Object> notice = noticeService.getNoticInfoByNotiveId(noticeId);
+            if (!notice.isEmpty()) {
+                User user = (User) redisService.get(RedisConstant.USER + cellphone);
+                if (user != null) {
+                    NoticeReadUser noticeReadUser = new NoticeReadUser(noticeId, user.getId());
+                    noticeReadUserService.save(noticeReadUser);
+                } else {
+                    return Result.error("请登录,标记已读失败");
+                }
+            }
+            return Result.success(notice);
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询通知信息浏览量
+     * @param cellphone 手机号
+     * @param noticeId  通知id
+     * @return result
+     * @author Mr.Deng
+     * @date 14:17 2018/12/14
+     */
+    @GetMapping("/countViewNum")
+    @ApiOperation(value = "查询通知信息浏览量")
+    public Result countViewNum(String cellphone, Integer noticeId) {
+        if (StringUtils.isNotBlank(cellphone) && noticeId != null) {
+            Integer viewNum = noticeReadUserService.countViewNum(noticeId);
+            return Result.success(viewNum);
         }
         return Result.error("参数不能为空");
     }

@@ -2,7 +2,6 @@ package com.mit.community.module.userservice.controller;
 
 import com.google.common.collect.Lists;
 import com.mit.community.entity.*;
-import com.mit.community.module.system.service.DictionaryService;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
@@ -150,21 +149,22 @@ public class UserServiceController {
 
     /**
      * 查询社区服务信息，通过社区code
-     * @param cellphone     手机号
-     * @param communityCode 小区code
-     * @param type          社区服务类型 关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家
+     * @param cellphone 手机号
+     * @param longitude 经度
+     * @param latitude  纬度
+     * @param type      社区服务类型 关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家
      * @return result
      * @author Mr.Deng
      * @date 11:38 2018/12/5
      */
     @GetMapping("/listCommunityServiceInfoByCommunityCode")
-    @ApiOperation(value = "查询社区门诊信息，通过小区code", notes = "输入参数：cellphone 手机号；communityCode 小区code;" +
-            "type 社区服务类型.关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家" +
-            " \n返回参数：name 名称；address 地址；cellphone 电话号码；" +
-            "distance 距离；distance 坐标；image 图片地址；creatorUserId 创建用户id ")
-    public Result listCommunityServiceInfoByCommunityCode(String cellphone, String communityCode, String type) {
-        if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(cellphone)) {
-            List<CommunityServiceInfo> communityClinics = communityServiceInfoService.listByCommunityCode(communityCode, type);
+    @ApiOperation(value = "查询社区门诊信息，通过小区code", notes = "输入参数：cellphone 手机号；（坐标为当前用户定位坐标）" +
+            "longitude 经度;latitude 纬度；type 社区服务类型.关联字典code community_service_type 社区服务类型" +
+            " \n返回参数：name 名称；address 地址；cellphone 电话号码；distance 距离；longitude 经度;latitude 纬度" +
+            "image 图片地址；creatorUserId 创建用户id ")
+    public Result listCommunityServiceInfoByCommunityCode(String cellphone, Double longitude, Double latitude, String type) {
+        if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(cellphone) && longitude != null && latitude != null) {
+            List<CommunityServiceInfo> communityClinics = communityServiceInfoService.findNeighPosition(longitude, latitude, type);
             //记录足迹
             Dictionary dictionary = dictionaryService.getByCode(type);
             if (dictionary != null) {

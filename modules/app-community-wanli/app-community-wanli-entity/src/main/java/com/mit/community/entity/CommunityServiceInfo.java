@@ -40,9 +40,15 @@ public class CommunityServiceInfo extends BaseEntity {
      */
     private Integer distance;
     /**
-     * 坐标
+     * 经度
      */
-    private String coordinate;
+    private double longitude;
+
+    /**
+     * 纬度
+     */
+    private double latitude;
+
     /**
      * 图片
      */
