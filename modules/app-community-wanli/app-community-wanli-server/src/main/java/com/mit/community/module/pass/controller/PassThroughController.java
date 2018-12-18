@@ -369,28 +369,30 @@ public class PassThroughController {
     @GetMapping("/listAppKeyByStatus")
     @ApiOperation(value = "查找相应状态的申请钥匙数据", notes = "输入参数：cellphone 手机号；status: 1、申请中，2、审批通过。不传则全部")
     public Result listAppKeyByStatusPage(String cellphone, Integer status, Integer pageNum, Integer pageSize) {
-        if (StringUtils.isNotBlank(cellphone) && status != null) {
+        if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
-            List<ApplyKey> applyKeys = applyKeyService.listByPage(user.getId(), null,
-                    null, null, null, null, null,
-                    null, status, pageNum, pageSize);
-            //记录足迹
-            String message;
-            switch (status) {
-                case -1:
-                    message = "全部";
-                    break;
-                case 1:
-                    message = "申请中";
-                    break;
-                case 2:
-                    message = "审批通过";
-                    break;
-                default:
-                    message = StringUtils.EMPTY;
+            if (user != null) {
+                List<ApplyKey> applyKeys = applyKeyService.listByPage(user.getId(), null,
+                        null, null, null, null, null,
+                        null, status, pageNum, pageSize);
+                //记录足迹
+                String message = "全部";
+                if (status != null) {
+                    switch (status) {
+                        case 1:
+                            message = "申请中";
+                            break;
+                        case 2:
+                            message = "审批通过";
+                            break;
+                        default:
+                            message = StringUtils.EMPTY;
+                    }
+                }
+                userTrackService.addUserTrack(cellphone, "查询钥匙申请状态", "查询" + message + "钥匙成功");
+                return Result.success(applyKeys);
             }
-            userTrackService.addUserTrack(cellphone, "查询钥匙申请状态", "查询" + message + "钥匙成功");
-            return Result.success(applyKeys);
+            return Result.error("请登录");
         }
         return Result.error("参数不能为空");
     }

@@ -69,8 +69,9 @@ public class UserTrackService {
                 UserTrack userTrack = new UserTrack(user.getId(), title, content, LocalDateTime.now());
                 this.save(userTrack);
                 log.info(cellphone + "-" + title + "添加成功");
+            } else {
+                log.info(cellphone + "-" + title + "添加失败");
             }
-            log.info(cellphone + "-" + title + "添加失败");
         }
     }
 

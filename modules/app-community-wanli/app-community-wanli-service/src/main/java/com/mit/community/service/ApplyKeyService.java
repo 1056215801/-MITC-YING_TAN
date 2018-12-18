@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * 申请钥匙业务层
- *
  * @author Mr.Deng
  * @date 2018/12/3 14:45
  * <p>Copyright: Copyright (c) 2018</p>
@@ -34,7 +33,6 @@ public class ApplyKeyService {
 
     /**
      * 添加申请钥匙数据
-     *
      * @param applyKey 申请钥匙数据
      * @return 添加数据条数
      * @author Mr.Deng
@@ -48,7 +46,6 @@ public class ApplyKeyService {
 
     /**
      * 修改数据
-     *
      * @param applyKey 申请钥匙数据
      * @return 修改数据
      * @author Mr.Deng
@@ -61,7 +58,6 @@ public class ApplyKeyService {
 
     /**
      * 查询申请钥匙数据，通过申请钥匙id
-     *
      * @param applyKeyId 申请钥匙id
      * @return 申请钥匙信息
      * @author Mr.Deng
@@ -73,22 +69,22 @@ public class ApplyKeyService {
 
     /**
      * 查询申请钥匙列表. 通过申请状态
-     * @param zoneId 分区id
-     * @param buildingId 楼栋id
-     * @param unitId 单元id
-     * @param roomId 房间id
-     * @param contactPerson 联系人
+     * @param zoneId           分区id
+     * @param buildingId       楼栋id
+     * @param unitId           单元id
+     * @param roomId           房间id
+     * @param contactPerson    联系人
      * @param contactCellphone 联系电话
-     * @param status 状态
+     * @param status           状态
      * @return java.util.List<com.mit.community.entity.ApplyKey>
      * @author shuyy
      * @date 2018/12/14 16:03
      * @company mitesofor
-    */
+     */
     public List<ApplyKey> listByPage(Integer createUserId, String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
-                                 Integer roomId, String contactPerson, String contactCellphone, Integer status, Integer pageNum, Integer pageSize) {
+                                     Integer roomId, String contactPerson, String contactCellphone, Integer status, Integer pageNum, Integer pageSize) {
         EntityWrapper<ApplyKey> wrapper = new EntityWrapper<>();
-        if(createUserId != null){
+        if (createUserId != null) {
             wrapper.eq("creator_user_id", createUserId);
         }
         if (zoneId != null) {
@@ -96,6 +92,9 @@ public class ApplyKeyService {
         }
         if (buildingId != null) {
             wrapper.eq("building_id", buildingId);
+        }
+        if (unitId != null) {
+            wrapper.eq("unit_id", unitId);
         }
         if (roomId != null) {
             wrapper.eq("roomId", roomId);
@@ -112,7 +111,7 @@ public class ApplyKeyService {
         if (status != null) {
             wrapper.eq("status", status);
         }
-        if(pageNum != null && pageSize != null){
+        if (pageNum != null && pageSize != null) {
             Page<ApplyKey> page = new Page<>(pageNum, pageSize);
             return applyKeyMapper.selectPage(page, wrapper);
         }
@@ -125,10 +124,10 @@ public class ApplyKeyService {
         wrapper.eq("contact_person", contactPerson);
         return applyKeyMapper.selectList(wrapper);
     }
+*/
 
     /**
      * 申请钥匙
-     *
      * @param communityCode    小区code
      * @param communityName    小区名称
      * @param zoneId           分区id
@@ -163,7 +162,6 @@ public class ApplyKeyService {
 
     /**
      * 审批申请钥匙
-     *
      * @param applyKeyId  申请钥匙id
      * @param checkPerson 审批人
      * @author Mr.Deng
