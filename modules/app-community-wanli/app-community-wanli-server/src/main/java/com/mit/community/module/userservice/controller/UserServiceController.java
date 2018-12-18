@@ -469,11 +469,11 @@ public class UserServiceController {
     @GetMapping("/listLostFount")
     @ApiOperation(value = "查询所有的失物招领信息", notes = "返回参数：readStatus 是否已读，id 失物招领id，" +
             "title 标题,imgUrl 图片url,receiverAddress 领取地址,receiverStatus 领取状态（1、未领取；2、已领取）")
-    public Result listLostFount(String cellphone) {
-        if (StringUtils.isNotBlank(cellphone)) {
+    public Result listLostFount(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<Map<String, Object>> list = lostFoundService.listAll(user.getId());
+                List<Map<String, Object>> list = lostFoundService.listAll(user.getId(), communityCode);
                 return Result.success(list);
             }
             return Result.error("请登录");

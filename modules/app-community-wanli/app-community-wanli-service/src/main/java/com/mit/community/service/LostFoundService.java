@@ -35,9 +35,10 @@ public class LostFoundService {
      * @author Mr.Deng
      * @date 9:19 2018/12/18
      */
-    public List<Map<String, Object>> list() {
+    public List<Map<String, Object>> list(String communityCode) {
         EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("id,title,img_url as imgUrl,receiver_address as receiverAddress,receiver_status as receiverStatus");
+        wrapper.eq("community_code", communityCode);
         return lostFoundMapper.selectMaps(wrapper);
     }
 
@@ -85,9 +86,9 @@ public class LostFoundService {
      * @author Mr.Deng
      * @date 10:02 2018/12/18
      */
-    public List<Map<String, Object>> listAll(Integer userId) {
+    public List<Map<String, Object>> listAll(Integer userId, String communityCode) {
         List<Map<String, Object>> mapList = Lists.newArrayListWithExpectedSize(100);
-        List<Map<String, Object>> list = this.list();
+        List<Map<String, Object>> list = this.list(communityCode);
         if (!list.isEmpty()) {
             for (Map<String, Object> map : list) {
                 String id = map.get("id").toString();
