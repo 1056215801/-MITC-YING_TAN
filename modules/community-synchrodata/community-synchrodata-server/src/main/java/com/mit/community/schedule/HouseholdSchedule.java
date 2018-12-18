@@ -65,12 +65,14 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 */2 * * * ?")
+//    @Scheduled(cron = "0 */2 * * * ?")
 //    @Scheduled(cron = "*/2 * * * * ?")
     public void removeAndiImport() {
-        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
-        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        // 先删除本地数据库，再插入
+//        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+//        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
+        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("南昌市");
+
+        //
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
         updateAuth(houseHolds);
         List<HouseHold> list = houseHoldService.list();

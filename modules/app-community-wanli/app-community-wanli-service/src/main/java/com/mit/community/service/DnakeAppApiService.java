@@ -81,7 +81,37 @@ public class DnakeAppApiService {
         map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
+        JSONObject jsonObject = JSON.parseObject(invoke);
+        if(jsonObject.get("errorCode") != null && jsonObject.get("errorCode").equals(12)){
+            boolean status = this.register(cellphone, password);
+            if(status){
+                this.login(cellphone, password);
+            }
+        }
         return JSON.parseObject(invoke, DnakeLoginResponse.class);
+    }
+
+    /**
+     * 注册
+     * @param cellphone 手机号
+     * @param password 密码
+     * @author shuyy
+     * @date 2018/12/18 11:13
+     * @company mitesofor
+    */
+    public boolean register(String cellphone, String password) {
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String url = "/auth/base/register";
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(5);
+        map.put("loginName", cellphone);
+        map.put("password", password);
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        log.info(invoke);
+        JSONObject jsonObject = JSON.parseObject(invoke);
+        if(jsonObject.get("isSuccess").equals(1)){
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -37,7 +37,7 @@ public class WeatherSchedule {
      * @author Mr.Deng
      * @date 15:01 2018/12/11
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {
         String[] regions = {"nanchang", "yingtan"};

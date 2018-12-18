@@ -3,6 +3,7 @@ package com.mit.community.dnake;
 import com.dnake.common.DnakeAppApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.entity.DnakeAppUser;
+import com.mit.common.util.UUIDUtils;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -21,13 +22,14 @@ public class DnakeAppApiUtilTest {
      * @date 2018/12/7 10:05
      * @company mitesofor
     */
-    // @Test
+     @Test
     public void register() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/register";
         Map<String, Object> map = new HashMap<>();
         map.put("loginName", "13064102937");
-        map.put("password", "123456");
+         String s = UUIDUtils.generateShortUuid();
+         map.put("password", s);
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
@@ -69,12 +71,12 @@ public class DnakeAppApiUtilTest {
         System.out.println(invoke);
     }
 
-    // @Test
+     @Test
     public void login() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/login";
         Map<String, Object> map = new HashMap<>();
-        map.put("loginName", "18779158391");
+        map.put("loginName", "13064102937");
         map.put("password", "123456");
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         map.put("registrationId", dnakeAppUser.getRegistrationId());
