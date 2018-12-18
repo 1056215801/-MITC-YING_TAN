@@ -366,11 +366,14 @@ public class PassThroughController {
      * @author Mr.Deng
      * @date 15:48 2018/12/3
      */
-    @GetMapping("/selectByStatus")
-    @ApiOperation(value = "查找相应状态的申请钥匙数据", notes = "输入参数：cellphone 手机号；status -1、全部，1、申请中，2、审批通过")
-    public Result selectByStatus(String cellphone, Integer status) {
+    @GetMapping("/listAppKeyByStatus")
+    @ApiOperation(value = "查找相应状态的申请钥匙数据", notes = "输入参数：cellphone 手机号；status: 1、申请中，2、审批通过。不传则全部")
+    public Result listAppKeyByStatusPage(String cellphone, Integer status, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && status != null) {
-            List<ApplyKey> applyKeys = applyKeyService.listByStatus(status);
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            List<ApplyKey> applyKeys = applyKeyService.listByPage(user.getId(), null,
+                    null, null, null, null, null,
+                    null, status, pageNum, pageSize);
             //记录足迹
             String message;
             switch (status) {

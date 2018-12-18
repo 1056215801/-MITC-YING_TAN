@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * 用户
@@ -77,5 +78,7 @@ public class User extends BaseEntity {
      */
     private String region;
 
+    @TableField(exist = false)
+    private List<HouseholdRoom> householdRoomList;
 
 }

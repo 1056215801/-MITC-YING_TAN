@@ -2,10 +2,7 @@ package com.mit.community.module.system.controller;
 
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.DnakeLoginResponse;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.User;
+import com.mit.community.entity.*;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
@@ -40,16 +37,18 @@ public class LoginController {
     private final ClusterCommunityService clusterCommunityService;
     private final DnakeAppApiService dnakeAppApiService;
     private final HouseHoldService houseHoldService;
+    private final HouseholdRoomService householdRoomService;
     private final UserTrackService userTrackService;
 
     @Autowired
     public LoginController(RedisService redisService, UserService userService, ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService,
-                           HouseHoldService houseHoldService, UserTrackService userTrackService) {
+                           HouseHoldService houseHoldService, HouseholdRoomService householdRoomService, UserTrackService userTrackService) {
         this.redisService = redisService;
         this.userService = userService;
         this.clusterCommunityService = clusterCommunityService;
         this.dnakeAppApiService = dnakeAppApiService;
         this.houseHoldService = houseHoldService;
+        this.householdRoomService = householdRoomService;
         this.userTrackService = userTrackService;
     }
 
@@ -103,17 +102,18 @@ public class LoginController {
             }
             user = userService.getByCellphone(cellphone);
             if (user == null) {
-                return Result.error("用户不存在");
+                userService.register(cellphone, StringUtils.EMPTY);
+                user = userService.getByCellphone(cellphone);
             }
         } else {
             // 密码登陆
             user = userService.getByCellphoneAndPassword(cellphone, password);
             if (user == null) {
-                return Result.success("用户名或密码错误");
+                return Result.error("用户名或密码错误");
             }
         }
         String psd = user.getPassword();
-        user.setPassword(StringUtils.EMPTY);
+        user.setPassword(null);
         // redis中保存用户
         redisService.set(RedisConstant.USER + user.getCellphone(), user);
         redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
@@ -127,6 +127,8 @@ public class LoginController {
                 userService.update(user);
             }
         }
+        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
+        user.setHouseholdRoomList(householdRooms);
         Integer authorizeStatus = houseHold.getAuthorizeStatus();
         String s = Integer.toBinaryString(authorizeStatus);
         if (s.charAt(1) != '1') {
@@ -193,6 +195,7 @@ public class LoginController {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             user.setGender(gender);
+            user.setPassword(null);
             userService.update(user);
             return Result.success("成功");
         }
@@ -238,6 +241,7 @@ public class LoginController {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(region)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             user.setRegion(region);
+            user.setPassword(null);
             userService.update(user);
             return Result.success("成功");
         }
@@ -288,7 +292,7 @@ public class LoginController {
             if (status == 0) {
                 return Result.success("用户已经存在");
             } else {
-                return Result.success("注册成功");
+                return this.login(null, cellphone, null, password);
             }
         }
         return Result.error("参数不能为空");
@@ -438,14 +442,6 @@ public class LoginController {
         return Result.success("重置成功");
     }
 
-    /**
-     * 查询我的资料，通告手机号和小区code
-     * @param cellphone     手机号
-     * @param communityCode 小区code
-     * @return result
-     * @author Mr.Deng
-     * @date 13:44 2018/12/13
-     */
     @GetMapping("/myProfile")
     @ApiOperation(value = "我的资料", notes = "反回参数：nickName 昵称，gender 性别；bloodType 血型；birthday 出生日期yyyy-mm-dd;" +
             "constellation 星座；region 地区；profession 职业，role 身份；coordinates 小区位置；signature 签名；userLabels 用户标签")
@@ -453,6 +449,27 @@ public class LoginController {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             Map<String, Object> map = userService.mapProfile(cellphone, communityCode);
             return Result.success(map);
+        }
+        return Result.error("参数不能为空");
+
+    }
+
+    /**
+     * @param cellphone 手机号
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/18 10:34
+     * @company mitesofor
+    */
+    @GetMapping("/haveLogin")
+    @ApiOperation(value = "用户是否登录", notes = "传参：cellphone 用户手机号")
+    public Result haveLogin(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            boolean b = userService.haveLogin(cellphone);
+            if(b){
+                return Result.success("已经登录");
+            }
+            return Result.error("未登录");
         }
         return Result.error("参数不能为空");
     }

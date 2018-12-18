@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 /**
  * 用户
+ *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -46,6 +47,7 @@ public class UserService {
 
     /**
      * 查询用户信息，通过用户id
+     *
      * @param id 用户id
      * @return 用户信息
      * @author Mr.Deng
@@ -57,6 +59,7 @@ public class UserService {
 
     /**
      * 修改用户信息
+     *
      * @param user 用户信息
      * @date 10:56 2018/12/7
      */
@@ -67,6 +70,7 @@ public class UserService {
 
     /**
      * 保存
+     *
      * @param user user
      * @author shuyy
      * @date 2018/11/29 11:25
@@ -80,6 +84,7 @@ public class UserService {
 
     /**
      * 获取User，通过cellphone和密码
+     *
      * @param cellphone 手机号
      * @param password  密码
      * @return com.mit.community.entity.User
@@ -101,6 +106,7 @@ public class UserService {
 
     /**
      * 获取User，通过cellphone
+     *
      * @param cellphone 手机号
      * @return com.mit.community.entity.User
      * @author shuyy
@@ -120,6 +126,7 @@ public class UserService {
 
     /**
      * 注册
+     *
      * @param cellphone 电话号码
      * @param password  密码
      * @author shuyy
@@ -136,13 +143,14 @@ public class UserService {
         }
         user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                "普通业主", StringUtils.EMPTY);
+                "普通业主", StringUtils.EMPTY, null);
         this.save(user);
         return status;
     }
 
     /**
      * 选择标签
+     *
      * @param cellphone 电话号码
      * @param labelList label列表
      * @author shuyy
@@ -160,6 +168,7 @@ public class UserService {
 
     /**
      * 修改用户信息
+     *
      * @param cellphone     手机号
      * @param userId        用户id
      * @param nickname      昵称
@@ -193,6 +202,7 @@ public class UserService {
 
     /**
      * 修改密码
+     *
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @param oldPassword 旧密码
@@ -221,6 +231,7 @@ public class UserService {
 
     /**
      * 重置密码
+     *
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @return 返回状态码（1，重置成功；0，密码不匹配）
@@ -245,6 +256,7 @@ public class UserService {
 
     /**
      * 登出
+     *
      * @param cellPhone 手机号码
      * @author Mr.Deng
      * @date 14:47 2018/12/8
@@ -255,7 +267,24 @@ public class UserService {
     }
 
     /**
+     * 判断是否已经登录
+     *
+     * @param cellphone 手机号
+     * @author shuyy
+     * @date 2018/12/18 10:31
+     * @company mitesofor
+     */
+    public boolean haveLogin(String cellphone) {
+        Object o = redisService.get(RedisConstant.USER + cellphone);
+        if (o == null) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * 我的资料
+     *
      * @return 资料
      * @author Mr.Deng
      * @date 11:29 2018/12/13
@@ -299,12 +328,13 @@ public class UserService {
 
     /**
      * 更新用户手机号
-     * @param cellPhone 旧手机号
+     *
+     * @param cellPhone    旧手机号
      * @param newCellPhone 新手机号
      * @author shuyy
      * @date 2018/12/13 16:15
      * @company mitesofor
-    */
+     */
     @Transactional(rollbackFor = Exception.class)
     public void updateHouseholdCellphone(String cellPhone, String newCellPhone) {
         User user = this.getByCellphone(cellPhone);
@@ -315,7 +345,7 @@ public class UserService {
         List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(user.getHouseholdId());
         boolean status = dnakeAppApiService.updateHouseholdCellphone(user.getHouseholdId(),
                 houseHold.getCommunityCode(), houseHold.getHouseholdName(), householdRooms, newCellPhone);
-        if(!status){
+        if (!status) {
             throw new RuntimeException("更新失败");
         }
     }
