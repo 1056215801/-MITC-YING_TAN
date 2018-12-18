@@ -93,7 +93,7 @@ mybatis:
   mapper-locations: "classpath*:mapper/*.xml"
 
 server:
-  port: 8764
+  port: 9764
 
 
 eureka:
