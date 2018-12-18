@@ -94,7 +94,8 @@ mybatis:
 
 server:
   port: 8764
-#  servlet:
+
+  servlet:
     context-path: /api/communityyingtan/
 
 
