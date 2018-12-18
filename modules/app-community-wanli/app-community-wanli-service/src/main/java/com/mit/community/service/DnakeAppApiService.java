@@ -184,6 +184,40 @@ public class DnakeAppApiService {
     }
 
     /**
+     * 访客高级邀请，
+     * @param cellphone     手机号
+     * @param time          日期时间段
+     * @param deviceGroupId 设备组id
+     * @param communityCode 小区code
+     * @return 返回信息
+     * @author Mr.Deng
+     * @date 15:07 2018/12/17
+     */
+    public String highGrade(String cellphone, List<Map<String, Object>> time, String deviceGroupId, String communityCode) {
+        DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
+        String url = "/auth/api/common/inviteCode/highGrade";
+        String timeStr = JSON.toJSONString(time);
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
+//        String s = "[{ \"start_time\": \"1517212800\",\"end_time\": \"1517220000\",\"once\":0,\"room\":0801}]";
+        map.put("time", timeStr);
+        map.put("appUserId", dnakeAppUser.getAppUserId());
+        map.put("deviceGroupId", deviceGroupId);
+        map.put("communityCode", communityCode);
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        System.out.println(invoke);
+        return invoke;
+    }
+
+    public static void main(String[] args) {
+        String plain = String.format("time=%s&appUserId=%s&deviceGroupId=%s&communityCode=%s",
+                "[{ \"start_time\": \"1517212800\",\"end_time\": \"1517220000\",\"once\":0,\"room\":0801}]", 417, 227,
+                "d00887b8436b49dc8c2ab0979a316028");
+        System.out.println(plain);
+
+        //time=[{ "start_time": "1517212800","end_time": "1517220000","once":0,"room":0801}]&appUserId=417&deviceGroupId=227&communityCode=d00887b8436b49dc8c2ab0979a316028
+    }
+
+    /**
      * 重置密码
      * @param cellphone 电话号码
      * @param password  密码
@@ -285,18 +319,17 @@ public class DnakeAppApiService {
 
     /**
      * 更新用户手机号
-     * @param householdId
-     * @param communityCode
-     * @param householdName
-     * @param householdRooms
-     * @param mobile
+     * @param householdId    住户id
+     * @param communityCode  小区code
+     * @param householdName  住户姓名
+     * @param householdRooms 住户房号
+     * @param mobile         手机号
      * @return boolean
-     * @throws
      * @author shuyy
      * @date 2018/12/13 16:09
      * @company mitesofor
-    */
-    public boolean updateHouseholdCellphone(Integer householdId, String communityCode, String householdName, List<HouseholdRoom> householdRooms, String mobile){
+     */
+    public boolean updateHouseholdCellphone(Integer householdId, String communityCode, String householdName, List<HouseholdRoom> householdRooms, String mobile) {
         String url = "/v1/household/saveOrUpdateHouseholdMore";
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
@@ -316,7 +349,7 @@ public class DnakeAppApiService {
         map.put("householdName", householdName);
         String result = DnakeWebApiUtil.invoke(url, map);
         Integer isSuccess = JSON.parseObject(result).getInteger("isSuccess");
-        if(isSuccess == 1){
+        if (isSuccess == 1) {
             return true;
         }
         return false;

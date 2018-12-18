@@ -3,6 +3,7 @@ package com.mit.community.dnake;
 import com.dnake.common.DnakeAppApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.entity.DnakeAppUser;
+import com.google.common.collect.Maps;
 import com.mit.common.util.UUIDUtils;
 import org.junit.Test;
 
@@ -14,13 +15,15 @@ import java.util.Map;
  * @author shuyy
  * @date 2018/12/7 13:50
  * @company mitesofor
-*/
+ */
 public class DnakeAppApiUtilTest {
     /**
      * 注册
      * @author shuyy
      * @date 2018/12/7 10:05
      * @company mitesofor
+     */
+    // @Test
     */
      @Test
     public void register() {
@@ -85,6 +88,19 @@ public class DnakeAppApiUtilTest {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
     }
-    
+
+    @Test
+    public void highGrade() {
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/auth/api/common/inviteCode/highGrade";
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
+        map.put("time", "[{\"start_time\":\"1517212800\",\"end_time\":\"1517220000\",\"once\":0,\"room\":0101}]");
+        map.put("appUserId", "156781");
+        map.put("deviceGroupId", "735");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        System.out.println(invoke);
+    }
 
 }

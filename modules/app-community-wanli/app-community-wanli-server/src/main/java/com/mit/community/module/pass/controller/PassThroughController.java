@@ -97,7 +97,7 @@ public class PassThroughController {
     @GetMapping("/getWeather")
     @ApiOperation(value = "天气", notes = "输入参数：region为城市英文名")
     public Result getWeather(String mac, String cellphone, String region) {
-        if (StringUtils.isNotBlank(region)) {
+        if (StringUtils.isNotBlank(region) && StringUtils.isNotBlank(mac) && StringUtils.isNotBlank(cellphone)) {
             Weather weather = weatherService.ByCityeEnglish(region);
             return Result.success(weather);
         }
@@ -251,8 +251,12 @@ public class PassThroughController {
             if (!notice.isEmpty()) {
                 User user = (User) redisService.get(RedisConstant.USER + cellphone);
                 if (user != null) {
-                    NoticeReadUser noticeReadUser = new NoticeReadUser(noticeId, user.getId());
-                    noticeReadUserService.save(noticeReadUser);
+                    //标记已读，如果已经读过了则不再进行标记记录
+                    NoticeReadUser noticeReadUser1 = noticeReadUserService.getNoticeReadUser(noticeId, user.getId());
+                    if (noticeReadUser1 == null) {
+                        NoticeReadUser noticeReadUser = new NoticeReadUser(noticeId, user.getId());
+                        noticeReadUserService.save(noticeReadUser);
+                    }
                 } else {
                     return Result.error("请登录,标记已读失败");
                 }
@@ -638,8 +642,20 @@ public class PassThroughController {
     @ApiOperation(value = "查询分区信息，通过小区code")
     @GetMapping("/listZoneByCommunityCode")
     public Result listZoneByCommunityCode(String communityCode) {
-        List<Zone> zones = zoneService.listByCommunityCode(communityCode);
-        return Result.success(zones);
+        if (StringUtils.isNotBlank(communityCode)) {
+            List<Zone> zones = zoneService.listByCommunityCode(communityCode);
+            List<Zone> zoneList = Lists.newArrayListWithExpectedSize(20);
+            if (!zones.isEmpty()) {
+                for (Zone zone : zones) {
+                    String zoneName = zone.getZoneName();
+                    if (!"默认分区".equals(zoneName)) {
+                        zoneList.add(zone);
+                    }
+                }
+            }
+            return Result.success(zoneList);
+        }
+        return Result.error("参数不能为空");
     }
 
     /**
@@ -652,8 +668,11 @@ public class PassThroughController {
     @ApiOperation(value = "查询楼栋信息，通过分区id")
     @GetMapping("/listBuildingByZoneId")
     public Result listBuildingByZoneId(Integer zoneId) {
-        List<Building> buildings = buildingService.listByZoneId(zoneId);
-        return Result.success(buildings);
+        if (zoneId != null) {
+            List<Building> buildings = buildingService.listByZoneId(zoneId);
+            return Result.success(buildings);
+        }
+        return Result.error("参数不能为空");
     }
 
     /**
@@ -666,8 +685,11 @@ public class PassThroughController {
     @ApiOperation(value = "查询单元信息，通过楼栋id")
     @GetMapping("/listUnitByBuildingId")
     public Result listUnitByBuildingId(Integer buildingId) {
-        List<Unit> units = unitService.listByBuildingId(buildingId);
-        return Result.success(units);
+        if (buildingId != null) {
+            List<Unit> units = unitService.listByBuildingId(buildingId);
+            return Result.success(units);
+        }
+        return Result.error("参数不能为空");
     }
 
     /**
@@ -680,8 +702,11 @@ public class PassThroughController {
     @ApiOperation(value = "查询房间信息，通过单元id")
     @GetMapping("/listRoomByUnitId")
     public Result listRoomByUnitId(Integer unitId) {
-        List<Room> rooms = roomService.listByUnitId(unitId);
-        return Result.success(rooms);
+        if (unitId != null) {
+            List<Room> rooms = roomService.listByUnitId(unitId);
+            return Result.success(rooms);
+        }
+        return Result.error("参数不能为空");
     }
 
     /**
@@ -717,5 +742,31 @@ public class PassThroughController {
             }
         }
         return Result.error("参数不能为空");
+    }
+
+    /**
+     * 访客高级邀请，
+     * @param cellphone     手机号
+     * @param times         时间段（时间格式（yyyy-MM-dd HH:mm:ss）：{"startTime,endTime","startTime,endTime"}）
+     * @param deviceGroupId 设备组id
+     * @param communityCode 小区code
+     * @param roomNum       房号
+     * @return String
+     * @author Mr.Deng
+     * @date 15:08 2018/12/17
+     */
+    @GetMapping("/highGrade")
+    @ApiOperation(value = "访客邀请（高级模式）", notes = "传参：cellphone  手机号；deviceGroupId 设备组id；communityCode 小区code" +
+            "times  时间段（时间格式（yyyy-MM-dd HH:mm:ss）：{\"startTime,endTime\",\"startTime,endTime\"}）")
+    public String highGrade(String cellphone, String[] times, String roomNum, String deviceGroupId, String
+            communityCode) {
+        Map<String, Object> timeMap = Maps.newHashMapWithExpectedSize(4);
+        timeMap.put("start_time", "1517212800");
+        timeMap.put("end_time", "1517220000");
+        timeMap.put("once", 0);
+        timeMap.put("room", roomNum);
+        List<Map<String, Object>> list = Lists.newArrayListWithExpectedSize(15);
+        list.add(timeMap);
+        return dnakeAppApiService.highGrade(cellphone, list, deviceGroupId, communityCode);
     }
 }

@@ -78,7 +78,7 @@ public class DnakeInvokeTest {
     public void queryHouseholdInfoByName(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1//household/queryHouseholdInfoByName";
+        String url = "/v1/household/queryHouseholdInfoByName";
         HashMap<String, Object> map = new HashMap<>();
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("householdName", "舒园园");

@@ -1,6 +1,7 @@
 package com.mit.community.module.userservice.controller;
 
 import com.google.common.collect.Lists;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
@@ -38,6 +39,12 @@ public class UserServiceController {
     private final FeedBackService feedBackService;
     private final UserTrackService userTrackService;
     private final DictionaryService dictionaryService;
+    private final LostFoundService lostFoundService;
+    private final ExpressAddressService expressAddressService;
+    private final ExpressInfoService expressInfoService;
+    private final ExpressReadUserService expressReadUserService;
+    private final RedisService redisService;
+    private final LostFountReadUserService lostFountReadUserService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -45,7 +52,10 @@ public class UserServiceController {
                                  BusinessHandlingService businessHandlingService,
                                  CommunityPhoneService communityPhoneService, YellowPagesService yellowPagesService,
                                  FeedBackService feedBackService, UserTrackService userTrackService,
-                                 DictionaryService dictionaryService) {
+                                 DictionaryService dictionaryService, LostFoundService lostFoundService,
+                                 ExpressAddressService expressAddressService, ExpressInfoService expressInfoService,
+                                 ExpressReadUserService expressReadUserService, RedisService redisService,
+                                 LostFountReadUserService lostFountReadUserService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -54,6 +64,12 @@ public class UserServiceController {
         this.feedBackService = feedBackService;
         this.userTrackService = userTrackService;
         this.dictionaryService = dictionaryService;
+        this.lostFoundService = lostFoundService;
+        this.expressAddressService = expressAddressService;
+        this.expressInfoService = expressInfoService;
+        this.expressReadUserService = expressReadUserService;
+        this.redisService = redisService;
+        this.lostFountReadUserService = lostFountReadUserService;
     }
 
     /**
@@ -386,4 +402,117 @@ public class UserServiceController {
         }
         return Result.error("参数不能为空");
     }
+
+    /**
+     * 查询快递位置信息
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return result
+     * @author Mr.Deng
+     * @date 17:21 2018/12/14
+     */
+    @GetMapping("/listExpressAddress")
+    @ApiOperation(value = "查询快递位置信息", notes = "输出参数：imgUrl 图标；address 地址；name 快递名称；expressNum 未领快递数；" +
+            "communityCode 小区code;id 快递地址id；createUserName 创建人名称,readStatus 是否已读")
+    public Result listExpressAddress(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<Map<String, Object>> list = expressAddressService.listExpressAddress(user.getId(), communityCode);
+                userTrackService.addUserTrack(cellphone, "查看我的快递", "未领取快递信息查看成功");
+                return Result.success(list);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询快递详情信息
+     * @param cellphone        手机号
+     * @param expressAddressId 快递地址id
+     * @return result
+     * @author Mr.Deng
+     * @date 17:55 2018/12/17
+     */
+    @GetMapping("/listExpressInfo")
+    @ApiOperation(value = "查询快递详情信息", notes = "输出参数：userId 用户id，expressAddressId 快递地址id；waybillNum 订单编号" +
+            "receiveStatus 领取状态1、已领取2、未领取；receiveTime 领取时间；receiver 领取人；receiverPhone 领取人手机号；" +
+            "createUserName 创建人")
+    public Result listExpressInfo(String cellphone, Integer expressAddressId) {
+        if (StringUtils.isNotBlank(cellphone) && expressAddressId != null) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<ExpressInfo> expressInfos = expressInfoService.listExpressInfo(user.getId(), expressAddressId);
+                ExpressReadUser expressReadUser1 = expressReadUserService.ByUserIdAndExpressAddressId(user.getId(), expressAddressId);
+                if (expressReadUser1 == null) {
+                    //添加已读
+                    ExpressReadUser expressReadUser = new ExpressReadUser(user.getId(), expressAddressId);
+                    expressReadUserService.save(expressReadUser);
+                }
+                //记录足迹
+                userTrackService.addUserTrack(cellphone, "查看快递详情", "查看快递详情成功");
+                return Result.success(expressInfos);
+            }
+            return Result.error("请登录");
+        }
+        return Result.success("参数不能为空");
+    }
+
+    /**
+     * 查询所有的失物招领信息
+     * @param cellphone 手机号
+     * @return result
+     * @author Mr.Deng
+     * @date 10:12 2018/12/18
+     */
+    @GetMapping("/listLostFount")
+    @ApiOperation(value = "查询所有的失物招领信息", notes = "返回参数：readStatus 是否已读，id 失物招领id，" +
+            "title 标题,imgUrl 图片url,receiverAddress 领取地址,receiverStatus 领取状态（1、未领取；2、已领取）")
+    public Result listLostFount(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<Map<String, Object>> list = lostFoundService.listAll(user.getId());
+                return Result.success(list);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询失物招领详情
+     * @param cellphone   手机号
+     * @param lostFountId 失物招领id
+     * @return result
+     * @author Mr.Deng
+     * @date 10:24 2018/12/18
+     */
+    @GetMapping("/getLostFountInfo")
+    @ApiOperation(value = "查询失物招领详情", notes = "输出参数：id 失物招领id；issuer 发布人；issuer_phone 发布人电话；" +
+            "title 标题,imgUrl 图片url,receiverAddress 领取地址,receiverStatus 领取状态（1、未领取；2、已领取）")
+    public Result getLostFountInfo(String cellphone, Integer lostFountId) {
+        if (lostFountId != null && StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                Map<String, Object> lostFountInfo = lostFoundService.getLostFountInfo(lostFountId);
+                if (!lostFountInfo.isEmpty()) {
+                    //标记已读
+                    LostFountReadUser lostFountReadUser = lostFountReadUserService.getByUserIdByLostFountId(user.getId(), lostFountId);
+                    if (lostFountReadUser == null) {
+                        LostFountReadUser lostFountReadUser1 = new LostFountReadUser(user.getId(), lostFountId);
+                        lostFountReadUserService.save(lostFountReadUser1);
+                    }
+                    //添加足迹
+                    String title = lostFountInfo.get("title").toString();
+                    userTrackService.addUserTrack(cellphone, "查询失物招领", "查询" + title + "成功");
+                }
+                return Result.success(lostFountInfo);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
 }
