@@ -9,59 +9,47 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * 促销表
+ * 老人体检信息表
  * @author Mr.Deng
- * @date 2018/12/18 15:41
+ * @date 2018/12/18 19:29
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-@TableName("promotion")
-public class Promotion extends BaseEntity {
+@TableName("old_medical")
+public class OldMedical extends BaseEntity {
     /**
-     * 促销类型，关联数据字典code   promotion_type
+     * 小区code
      */
-    @TableField("promotion_type")
-    private String promotionType;
+    @TableField("community_code")
+    private String communityCode;
     /**
      * 标题
      */
     private String title;
     /**
-     * 封面图片地址
-     */
-    @TableField("img_url")
-    private String imgUrl;
-    /**
      * 发布人
      */
     private String issuer;
     /**
-     * 发布人联系电话
-     */
-    @TableField("issuer_phone")
-    private String issuerPhone;
-    /**
-     * 促销地址
-     */
-    @TableField("promotion_address")
-    private String promotionAddress;
-    /**
      * 发布时间
      */
-    @TableField("issue_time")
-    private LocalDateTime issueTime;
+    @TableField("issuer_time")
+    private LocalDateTime issuerTime;
     /**
-     * 折扣
+     * 联系人
      */
-    private Float discount;
+    private String contacts;
     /**
-     * 活动内容
+     * 联系电话
      */
-    @TableField("activity_content")
-    private String activityContent;
+    private String phone;
+    /**
+     * 登记地点
+     */
+    private String address;
     /**
      * 活动开始时间
      */
@@ -72,14 +60,9 @@ public class Promotion extends BaseEntity {
      */
     @TableField("end_time")
     private LocalDateTime endTime;
-    /**
-     * 小区code
-     */
-    @TableField("community_code")
-    private String communityCode;
 
-    @TableField(exist = false, value = "促销状态")
-    private String promotionStatus;
+    @TableField(exist = false, value = "活动状态状态")
+    private String oldMedicalStatus;
 
     @TableField(exist = false, value = "已读状态")
     private Boolean readStatus;
@@ -89,4 +72,5 @@ public class Promotion extends BaseEntity {
 
     @TableField(exist = false, value = "浏览量")
     private Integer readNum;
+
 }

@@ -58,6 +58,7 @@ public class ExpressInfoService {
         EntityWrapper<ExpressInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("express_address_id", expressAddressId);
+        wrapper.orderBy("gmt_create", false);
         return expressInfoMapper.selectList(wrapper);
     }
 

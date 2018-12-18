@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.Notice;
@@ -31,10 +32,6 @@ public class NoticeService {
     private NoticeContentService noticeContentService;
     @Autowired
     private NoticeReadUserService noticeReadUserService;
-    @Autowired
-    private UserTrackService userTrackService;
-    @Autowired
-    private DictionaryService dictionaryService;
 
     /**
      * 添加通知通告数据
@@ -67,7 +64,9 @@ public class NoticeService {
      * @date 16:26 2018/12/3
      */
     public List<Notice> list() {
-        return noticeMapper.selectList(null);
+        EntityWrapper<Notice> wrapper = new EntityWrapper<>();
+        wrapper.orderBy("gmt_create", false);
+        return noticeMapper.selectList(wrapper);
     }
 
     /**

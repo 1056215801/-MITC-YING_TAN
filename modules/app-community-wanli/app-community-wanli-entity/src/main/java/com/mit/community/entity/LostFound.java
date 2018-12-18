@@ -77,4 +77,13 @@ public class LostFound extends BaseEntity {
      */
     @TableField("community_code")
     private String communityCode;
+
+    @TableField(exist = false, value = "已读状态")
+    private Boolean readStatus;
+
+    @TableField(exist = false, value = "详情")
+    private String content;
+
+    @TableField(exist = false, value = "浏览量")
+    private Integer readNum;
 }
