@@ -1,7 +1,7 @@
 logging:
   level:
     #        tk.mybatis: DEBUG
-    com.mit: DEBUG
+    com.mit: INFO
 spring:
   application:
     name: community-synchrodata
