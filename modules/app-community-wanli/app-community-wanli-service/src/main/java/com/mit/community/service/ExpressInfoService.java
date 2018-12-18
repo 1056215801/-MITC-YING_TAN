@@ -6,6 +6,8 @@ import com.mit.community.mapper.ExpressInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 快递信息业务处理层
  * @author Mr.Deng
@@ -36,12 +38,27 @@ public class ExpressInfoService {
      * @author Mr.Deng
      * @date 17:08 2018/12/14
      */
-    public Integer countExpressNum(Integer userId, Integer expressAddressId) {
+    public Integer countNotExpressNum(Integer userId, Integer expressAddressId) {
         EntityWrapper<ExpressInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("express_address_id", expressAddressId);
         wrapper.eq("receive_status", 2);
         return expressInfoMapper.selectCount(wrapper);
+    }
+
+    /**
+     * 查询快递详细信息
+     * @param userId           用户id
+     * @param expressAddressId 快递地址信息
+     * @return 快递信息
+     * @author Mr.Deng
+     * @date 17:58 2018/12/17
+     */
+    public List<ExpressInfo> listExpressInfo(Integer userId, Integer expressAddressId) {
+        EntityWrapper<ExpressInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        wrapper.eq("express_address_id", expressAddressId);
+        return expressInfoMapper.selectList(wrapper);
     }
 
 }

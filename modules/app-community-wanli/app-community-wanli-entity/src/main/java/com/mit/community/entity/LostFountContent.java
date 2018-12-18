@@ -7,25 +7,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 快递提醒已读表
+ * 失物招领内容详情表
  * @author Mr.Deng
- * @date 2018/12/14 16:46
+ * @date 2018/12/17 20:26
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("express_read_user")
-public class ExpressReadUser extends BaseEntity {
+@TableName("lost_fount_content")
+public class LostFountContent extends BaseEntity {
     /**
-     * 关联user表，用户id
+     * 关联lost_fount表id
      */
-    @TableField("user_id")
-    private Integer userId;
+    @TableField("lost_fount_id")
+    private Integer lostFountId;
     /**
-     * 关联express_address快递位置表id
+     * 失物详情
      */
-    @TableField("express_address_id")
-    private Integer expressAddressId;
+    private String content;
 }
