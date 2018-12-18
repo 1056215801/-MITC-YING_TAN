@@ -24,7 +24,6 @@ public class DnakeAppApiUtilTest {
      * @company mitesofor
      */
     // @Test
-    */
      @Test
     public void register() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
