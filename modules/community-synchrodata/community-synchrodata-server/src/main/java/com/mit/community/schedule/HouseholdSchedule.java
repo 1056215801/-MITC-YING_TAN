@@ -65,12 +65,12 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-//    @Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 */2 * * * ?")
 //    @Scheduled(cron = "*/2 * * * * ?")
     public void removeAndiImport() {
-//        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
-//        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("南昌市");
+        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
+//        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("南昌市");
 
         //
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
@@ -102,7 +102,7 @@ public class HouseholdSchedule {
         // 删除
         if(!removeHousehold.isEmpty()){
             List<Integer> deleteId = removeHousehold.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
-            houseHoldService.deleteBatchIds(deleteId);
+            houseHoldService.removeByhouseholdIdList(deleteId);
         }
         // 更新
         if(!updateHousehold.isEmpty()){
