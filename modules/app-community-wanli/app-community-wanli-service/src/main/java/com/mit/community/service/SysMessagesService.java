@@ -6,7 +6,6 @@ import com.mit.community.entity.User;
 import com.mit.community.mapper.SysMessagesMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
