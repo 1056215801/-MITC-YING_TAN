@@ -25,7 +25,6 @@ import java.util.Map;
 
 /**
  * dnake接口调用
- *
  * @author shuyy
  * @date 2018/12/7
  * @company mitesofor
@@ -36,14 +35,9 @@ public class DnakeAppApiService {
 
     @Autowired
     private RedisService redisService;
-    @Autowired
-    private DeviceService deviceService;
-    @Autowired
-    private UserTrackService userTrackService;
 
     /**
      * 验证手机验证码
-     *
      * @author shuyy
      * @date 2018/12/7 10:05
      * @company mitesofor
@@ -65,7 +59,6 @@ public class DnakeAppApiService {
 
     /**
      * 登陆
-     *
      * @param cellphone 电话号码
      * @param password  密码
      * @return com.mit.community.entity.DnakeLoginResponse
@@ -96,7 +89,6 @@ public class DnakeAppApiService {
 
     /**
      * 注册
-     *
      * @param cellphone 手机号
      * @param password  密码
      * @author shuyy
@@ -120,7 +112,6 @@ public class DnakeAppApiService {
 
     /**
      * http开门
-     *
      * @param communityCode 小区code
      * @param cellphone     电话号码
      * @param deviceNum     设备编号
@@ -146,7 +137,6 @@ public class DnakeAppApiService {
 
     /**
      * 设置呼叫转移号码
-     *
      * @param cellphone 手机号码
      * @param sipMobile 转移号码
      * @return 返回操作成功是否
@@ -167,7 +157,6 @@ public class DnakeAppApiService {
 
     /**
      * 申请访客邀请码
-     *
      * @param dateTag       日期标志：今天:0；明天：1;
      * @param times         开锁次数：无限次：0；一次：1；
      * @param deviceGroupId 设备分组id，默认只传公共权限组
@@ -192,7 +181,6 @@ public class DnakeAppApiService {
 
     /**
      * 访客高级邀请，
-     *
      * @param cellphone     手机号
      * @param time          日期时间段
      * @param deviceGroupId 设备组id
@@ -216,18 +204,8 @@ public class DnakeAppApiService {
         return invoke;
     }
 
-    public static void main(String[] args) {
-        String plain = String.format("time=%s&appUserId=%s&deviceGroupId=%s&communityCode=%s",
-                "[{ \"start_time\": \"1517212800\",\"end_time\": \"1517220000\",\"once\":0,\"room\":0801}]", 417, 227,
-                "d00887b8436b49dc8c2ab0979a316028");
-        System.out.println(plain);
-
-        //time=[{ "start_time": "1517212800","end_time": "1517220000","once":0,"room":0801}]&appUserId=417&deviceGroupId=227&communityCode=d00887b8436b49dc8c2ab0979a316028
-    }
-
     /**
      * 重置密码
-     *
      * @param cellphone 电话号码
      * @param password  密码
      * @author Mr.Deng
@@ -271,7 +249,6 @@ public class DnakeAppApiService {
 
     /**
      * 获取邀请码记录
-     *
      * @param cellphone 手机号
      * @param pageIndex 页码，从0开始
      * @param pageSize  页大小
@@ -293,7 +270,6 @@ public class DnakeAppApiService {
 
     /**
      * 获取我的钥匙
-     *
      * @param communityCode 小区code
      * @return 我的钥匙信息
      * @author Mr.Deng
@@ -330,7 +306,6 @@ public class DnakeAppApiService {
 
     /**
      * 更新用户手机号
-     *
      * @param householdId    住户id
      * @param communityCode  小区code
      * @param householdName  住户姓名
@@ -369,7 +344,6 @@ public class DnakeAppApiService {
 
     /**
      * 通用获取DnakeAppUser对象，通过手机号码
-     *
      * @param cellphone 手机号码
      * @return DnakeAppUser
      * @author Mr.Deng
@@ -387,7 +361,6 @@ public class DnakeAppApiService {
 
     /**
      * 判断狄耐克请求是否成功
-     *
      * @param invoke json
      * @return boolean true成功，false失败
      * @author Mr.Deng
@@ -404,7 +377,6 @@ public class DnakeAppApiService {
 
     /**
      * 保存住户
-     *
      * @param communityCode 小区code
      * @param mobile        手机号
      * @param householdName 住户名
@@ -437,10 +409,9 @@ public class DnakeAppApiService {
 
     /**
      * 授权用户设备组
-     *
-     * @param communityCode  小区code
-     * @param householdId 用户id
-     * @param expiryDate 过期时间
+     * @param communityCode   小区code
+     * @param householdId     用户id
+     * @param expiryDate      过期时间
      * @param deviceGroupList 设备组id，逗号分隔
      * @author shuyy
      * @date 2018/12/19 9:31

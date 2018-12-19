@@ -642,11 +642,11 @@ public class UserServiceController {
      */
     @GetMapping("/listUserTrackInfo")
     @ApiOperation(value = "我的足迹", notes = "输出参数：userId用户id，title 标题，content 内容，gmtVisit 访问时间")
-    public Result listUserTrackInfo(String cellphone) {
+    public Result listUserTrackInfo(String cellphone, String startTime, String endTime) {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<UserTrack> userTracks = userTrackService.listByUserId(user.getId());
+                List<UserTrack> userTracks = userTrackService.listByUserId(user.getId(), startTime, endTime);
                 return Result.success(userTracks);
             }
             return Result.error("请登录");
