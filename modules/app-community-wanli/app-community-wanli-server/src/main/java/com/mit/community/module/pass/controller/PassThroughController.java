@@ -566,8 +566,8 @@ public class PassThroughController {
     @ApiOperation(value = "查询住户信息，通过用户id")
     @GetMapping("/listHouseHoldByUserId")
     public Result listHouseHoldByUserId(Integer userId) {
-        List<HouseHold> houseHolds = houseHoldService.listByUserId(userId);
-        return Result.success(houseHolds);
+        HouseHold houseHold = houseHoldService.getByUserId(userId);
+        return Result.success(houseHold);
     }
 
     /**

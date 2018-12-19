@@ -27,9 +27,9 @@ public class DnakeInvokeTest {
      * @author shuyy
      * @date 2018/11/16 15:26
      * @company mitesofor
-    */
+     */
     // @Test
-    public void getAccessControlList(){
+    public void getAccessControlList() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/device/getAccessControlList";
@@ -45,8 +45,9 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
+
     // @Test
-    public void queryVisitorInfo(){
+    public void queryVisitorInfo() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/visitor/queryVisitorInfo";
@@ -58,8 +59,9 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
+
     // @Test
-    public void getHouseholdList(){
+    public void getHouseholdList() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/getHouseholdList";
@@ -74,8 +76,9 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
+
     // @Test
-    public void queryHouseholdInfoByName(){
+    public void queryHouseholdInfoByName() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/queryHouseholdInfoByName";
@@ -89,7 +92,7 @@ public class DnakeInvokeTest {
     }
 
     // @Test
-    public void getVisitorList(){
+    public void getVisitorList() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/visitor/list";
@@ -106,7 +109,7 @@ public class DnakeInvokeTest {
     }
 
     // @Test
-    public void queryHouseholdInfo(){
+    public void queryHouseholdInfo() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/queryHouseholdInfo";
@@ -120,7 +123,7 @@ public class DnakeInvokeTest {
     }
 
     // @Test
-    public void register(){
+    public void register() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/register";
@@ -134,7 +137,7 @@ public class DnakeInvokeTest {
     }
 
     // @Test
-    public void getRegisterSmsCode(){
+    public void getRegisterSmsCode() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/getRegisterSmsCode";
@@ -147,8 +150,14 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
-     @Test
-    public void saveOrUpdateHousehold(){
+    /**
+     * 保存住户
+     * @author shuyy
+     * @date 2018/12/19 16:13
+     * @company mitesofor
+     */
+    @Test
+    public void saveOrUpdateHousehold() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/saveOrUpdateHouseholdMore";
@@ -156,15 +165,15 @@ public class DnakeInvokeTest {
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
         map.put("id", "52833");
         List<Map<String, Object>> houseList = Lists.newArrayListWithCapacity(2);
-         Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
-         h.put("zoneId", "363");
-         h.put("buildingId", "423");
-         h.put("unitId", "565");
-         h.put("roomId", "15448");
-         houseList.add(h);
-         String s = JSON.toJSONString(houseList);
-         map.put("houseList", s);
-         map.put("mobile", "17679015638");
+        Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
+        h.put("zoneId", "363");
+        h.put("buildingId", "423");
+        h.put("unitId", "565");
+        h.put("roomId", "15448");
+        houseList.add(h);
+        String s = JSON.toJSONString(houseList);
+        map.put("houseList", s);
+        map.put("mobile", "17679015638");
 
         map.put("householdName", "舒园园");
         String result = DnakeWebApiUtil.invoke(url, map);
@@ -173,8 +182,15 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
+    /**
+     * 住户授权
+     *
+     * @author shuyy
+     * @date 2018/12/19 16:13
+     * @company mitesofor
+     */
     @Test
-    public void authorizeHousehold(){
+    public void authorizeHousehold() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/authorizeHousehold";
@@ -190,4 +206,25 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
+    /**
+     * 注销用户
+     *
+     * @author shuyy
+     * @date 2018/12/19 16:13
+     * @company mitesofor
+     */
+    @Test
+    public void operateHousehold() {
+        long startTime = System.currentTimeMillis();
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/v1//household/operateHousehold";
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", "56323");
+        map.put("operateType", "0");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        String result = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(result);
+        long end = System.currentTimeMillis();
+        System.out.println(end - startTime);
+    }
 }

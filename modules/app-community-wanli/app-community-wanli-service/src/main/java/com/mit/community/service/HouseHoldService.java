@@ -53,7 +53,7 @@ public class HouseHoldService {
      * @date 2018/12/7 10:54
      * @company mitesofor
      */
-    public List<HouseHold> listByUserId(Integer userId) {
+    public HouseHold getByUserId(Integer userId) {
         EntityWrapper<UserHousehold> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         List<UserHousehold> userHouseholds = userHouseholdMapper.selectList(wrapper);
@@ -61,7 +61,7 @@ public class HouseHoldService {
             return null;
         } else {
             List<Integer> householdIds = userHouseholds.parallelStream().map(UserHousehold::getHouseholdId).collect(Collectors.toList());
-            return this.listByHouseholdIdList(householdIds);
+            return this.listByHouseholdIdList(householdIds).get(0);
         }
     }
 
