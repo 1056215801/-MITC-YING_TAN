@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.mit.community.entity.HouseHold;
+import com.mit.community.entity.User;
 import com.mit.community.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class AppUserService {
     private UserHouseholdService userHouseholdService;
     @Autowired
     private HouseHoldService houseHoldService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 删除用户
@@ -35,10 +38,14 @@ public class AppUserService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void handleRemove(Integer id) {
+        User user = userService.getById(id);
+        HouseHold household = houseHoldService.getByHouseholdId(user.getHouseholdId());
         userMapper.deleteById(id);
-        HouseHold houseHold = houseHoldService.getByUserId(id);
-        if(houseHold != null){
-            dnakeAppApiService.operateHousehold(houseHold.getHouseholdId(), houseHold.getCommunityCode());
+        if(household  == null){
+            throw new RuntimeException("住户数据还没同步，5分钟后重试");
+        } else {
+            dnakeAppApiService.operateHousehold(user.getHouseholdId(),
+                    household.getCommunityCode());
         }
     }
 }

@@ -32,12 +32,15 @@ public class AppUserController {
      * @author shuyy
      * @date 2018/12/19 16:48
      * @company mitesofor
-    */
+     */
     @PostMapping("/removeUser")
     @ApiOperation(value = "删除用户", notes = "传参：userId app user id")
     public Result removeUser(Integer userId) {
-        appUserService.handleRemove(userId);
-        return Result.success("删除成功");
+        try {
+            appUserService.handleRemove(userId);
+            return Result.success("删除成功");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
     }
-
 }

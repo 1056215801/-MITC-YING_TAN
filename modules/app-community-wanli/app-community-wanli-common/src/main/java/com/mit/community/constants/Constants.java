@@ -32,5 +32,8 @@ public class Constants {
      * 用户默认头像地址
      */
     public static final String USER_ICO_DEFULT = "192.168.1.222:8088/group1/M00/00/03/wKgB3lwR-ViAakJKAAAOWH6Ql6c941.png";
-
+    /**标签类型-系统*/
+    public static final Short LABEL_TYPE_SYSTEM = 1;
+    /**标签类型-自定义*/
+    public static final Short LABEL_TYPE_CUSTOMER = 2;
 }

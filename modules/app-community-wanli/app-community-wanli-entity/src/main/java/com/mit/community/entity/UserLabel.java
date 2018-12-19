@@ -20,10 +20,10 @@ import lombok.NoArgsConstructor;
 public class UserLabel extends BaseEntity {
 
     /**
-     * 标签code。关联数据字典code为label。
+     * 标签id。关联label表id字段。
      */
-    @TableField("label_code")
-    private String labelCode;
+    @TableField("label_id")
+    private Integer labelId;
 
 
     /**
@@ -31,6 +31,12 @@ public class UserLabel extends BaseEntity {
      */
     @TableField("user_id")
     private Integer userId;
+
+    /**
+     * 标签类型
+     */
+    @TableField("label_type")
+    private Short labelType;
 
 
     /**
