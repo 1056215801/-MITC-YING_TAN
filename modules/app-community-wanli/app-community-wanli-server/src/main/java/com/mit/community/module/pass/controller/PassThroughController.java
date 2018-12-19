@@ -471,20 +471,20 @@ public class PassThroughController {
     /**
      * 查询邀请码记录
      * @param cellphone 手机号
-     * @param pageIndex 页码，从0开始
+     * @param pageNum   页码，从1开始
      * @param pageSize  页大小最大100
      * @return result
      * @author Mr.Deng
      * @date 14:46 2018/12/10
      */
     @GetMapping("/openHistory")
-    @ApiOperation(value = "查询邀请码记录", notes = "输入参数：cellphone 手机号；pageIndex 页码，从0开始；pageSize 页大小（最大100）。<br/>" +
+    @ApiOperation(value = "查询邀请码记录", notes = "输入参数：cellphone 手机号；pageIndex 页码，从1开始；pageSize 页大小（最大100）。<br/>" +
             " 输出参数：validityEndTime 过期时间、dataStatus 邀请码是否失效: 1可用，0失效、 " +
             "inviteCodeType 邀请码类型：1，今天无限次；2，今天仅一次；3，明天无限次；4，明天仅一次；5，高级设置、 " +
             "useTimes 使用次数，大于0则已使用")
-    public Result openHistory(String cellphone, Integer pageIndex, Integer pageSize) {
-        if (StringUtils.isNotBlank(cellphone) && pageIndex != null && pageSize != null) {
-            String invoke = dnakeAppApiService.openHistory(cellphone, pageIndex, pageSize);
+    public Result openHistory(String cellphone, Integer pageNum, Integer pageSize) {
+        if (StringUtils.isNotBlank(cellphone) && pageNum != null && pageSize != null) {
+            String invoke = dnakeAppApiService.openHistory(cellphone, (pageNum - 1), pageSize);
             JSONObject json = JSONObject.parseObject(invoke);
             //添加足迹
             userTrackService.addUserTrack(cellphone, "查询邀请码记录", "查询邀请码记录成功");

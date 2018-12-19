@@ -36,5 +36,6 @@ public class SysMessages extends BaseEntity {
     /**
      * 通知消息添加时间
      */
+    @TableField("add_time")
     private LocalDateTime addTime;
 }

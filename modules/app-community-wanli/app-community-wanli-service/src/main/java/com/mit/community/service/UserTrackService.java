@@ -46,9 +46,12 @@ public class UserTrackService {
      * @author Mr.Deng
      * @date 19:30 2018/12/11
      */
-    public List<UserTrack> listByUserId(Integer userId) {
+    public List<UserTrack> listByUserId(Integer userId, String startTime, String endTime) {
         EntityWrapper<UserTrack> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
+        wrapper.le("gmt_visit", endTime).or();
+        wrapper.ge("gmt_visit", startTime);
+        wrapper.orderBy("gmt_visit", false);
         return userTrackMapper.selectList(wrapper);
     }
 
