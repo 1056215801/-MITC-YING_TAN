@@ -49,6 +49,7 @@ public class UserServiceController {
     private final PromotionReadUserService promotionReadUserService;
     private final OldMedicalReadUserService oldMedicalReadUserService;
     private final OldMedicalService oldMedicalService;
+    private final SysMessagesService sysMessagesService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -61,7 +62,7 @@ public class UserServiceController {
                                  ExpressReadUserService expressReadUserService, RedisService redisService,
                                  LostFountReadUserService lostFountReadUserService, PromotionService promotionService,
                                  PromotionReadUserService promotionReadUserService,
-                                 OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService) {
+                                 OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService, SysMessagesService sysMessagesService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -80,6 +81,7 @@ public class UserServiceController {
         this.promotionReadUserService = promotionReadUserService;
         this.oldMedicalReadUserService = oldMedicalReadUserService;
         this.oldMedicalService = oldMedicalService;
+        this.sysMessagesService = sysMessagesService;
     }
 
     /**
@@ -587,7 +589,9 @@ public class UserServiceController {
      * @date 20:16 2018/12/18
      */
     @GetMapping("/listOldMedical")
-    @ApiOperation(value = "查询所有老人体检信息，通过小区code", notes = "")
+    @ApiOperation(value = "查询所有老人体检信息，通过小区code", notes = "返回参数：communityCode小区code,title标题，issuer发布人，" +
+            "issuerTime发布时间，contacts联系人，phone联系电话，address 登记地址，startTime 开始时间，endTime 结束时间，" +
+            "oldMedicalStatus 活动状态，readStatus 已读状态")
     public Result listOldMedical(String cellphone, String communityCode) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
@@ -609,7 +613,9 @@ public class UserServiceController {
      * @date 20:23 2018/12/18
      */
     @GetMapping("/getOldMedical")
-    @ApiOperation(value = "查询老人体检详情信息，老人体检id", notes = "")
+    @ApiOperation(value = "查询老人体检详情信息，老人体检id", notes = "输入参数：oldMedicalId 老人体检id;<br/>" +
+            "返回参数：communityCode小区code,title标题，issuer发布人，issuerTime发布时间，contacts联系人，phone联系电话，" +
+            "address 登记地址，startTime 开始时间，endTime 结束时间，oldMedicalStatus 活动状态，content详情，readNum浏览量")
     public Result getOldMedical(String cellphone, Integer oldMedicalId) {
         if (StringUtils.isNotBlank(cellphone) && oldMedicalId != null) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
@@ -623,6 +629,48 @@ public class UserServiceController {
                     userTrackService.addUserTrack(cellphone, "查看老人体检", "查询老人体检-" + oldMedical.getTitle() + "成功");
                 }
             }
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 我的足迹
+     * @param cellphone 手机号
+     * @returnc result
+     * @author Mr.Deng
+     * @date 11:33 2018/12/19
+     */
+    @GetMapping("/listUserTrackInfo")
+    @ApiOperation(value = "我的足迹", notes = "输出参数：userId用户id，title 标题，content 内容，gmtVisit 访问时间")
+    public Result listUserTrackInfo(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<UserTrack> userTracks = userTrackService.listByUserId(user.getId());
+                return Result.success(userTracks);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询所有系统消息
+     * @param cellphone 手机号
+     * @return result
+     * @author Mr.Deng
+     * @date 11:23 2018/12/19
+     */
+    @GetMapping("/listSysMessages")
+    @ApiOperation(value = "查询所有系统消息", notes = "返回参数：userId 用户id；title 标题；details 详情；addTime 添加时间")
+    public Result listSysMessages(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<SysMessages> sysMessages = sysMessagesService.listByUserId(user.getId());
+                return Result.success(sysMessages);
+            }
+            return Result.error("请登录");
         }
         return Result.error("参数不能为空");
     }

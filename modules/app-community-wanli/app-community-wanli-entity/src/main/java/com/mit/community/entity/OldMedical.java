@@ -61,7 +61,7 @@ public class OldMedical extends BaseEntity {
     @TableField("end_time")
     private LocalDateTime endTime;
 
-    @TableField(exist = false, value = "活动状态状态")
+    @TableField(exist = false, value = "活动状态")
     private String oldMedicalStatus;
 
     @TableField(exist = false, value = "已读状态")

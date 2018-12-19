@@ -39,10 +39,13 @@ public class LoginController {
     private final HouseHoldService houseHoldService;
     private final HouseholdRoomService householdRoomService;
     private final UserTrackService userTrackService;
+    private final SysMessagesService sysMessagesService;
 
     @Autowired
-    public LoginController(RedisService redisService, UserService userService, ClusterCommunityService clusterCommunityService, DnakeAppApiService dnakeAppApiService,
-                           HouseHoldService houseHoldService, HouseholdRoomService householdRoomService, UserTrackService userTrackService) {
+    public LoginController(RedisService redisService, UserService userService, ClusterCommunityService clusterCommunityService,
+                           DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
+                           HouseholdRoomService householdRoomService, UserTrackService userTrackService,
+                           SysMessagesService sysMessagesService) {
         this.redisService = redisService;
         this.userService = userService;
         this.clusterCommunityService = clusterCommunityService;
@@ -50,6 +53,7 @@ public class LoginController {
         this.houseHoldService = houseHoldService;
         this.householdRoomService = householdRoomService;
         this.userTrackService = userTrackService;
+        this.sysMessagesService = sysMessagesService;
     }
 
     /***
@@ -292,7 +296,10 @@ public class LoginController {
             if (status == 0) {
                 return Result.success("用户已经存在");
             } else {
-                return this.login(null, cellphone, null, password);
+                Result login = this.login(null, cellphone, null, password);
+                //添加系统消息
+                sysMessagesService.addSysMessages(cellphone, "注册", "成功注册赣鄱乐生活账号！");
+                return login;
             }
         }
         return Result.error("参数不能为空");
@@ -460,13 +467,13 @@ public class LoginController {
      * @author shuyy
      * @date 2018/12/18 10:34
      * @company mitesofor
-    */
+     */
     @GetMapping("/haveLogin")
     @ApiOperation(value = "用户是否登录", notes = "传参：cellphone 用户手机号")
     public Result haveLogin(String cellphone) {
         if (StringUtils.isNotBlank(cellphone)) {
             boolean b = userService.haveLogin(cellphone);
-            if(b){
+            if (b) {
                 return Result.success("已经登录");
             }
             return Result.error("未登录");
@@ -474,7 +481,7 @@ public class LoginController {
         return Result.error("参数不能为空");
     }
 
-   @PatchMapping("/updateCellphone")
+    @PatchMapping("/updateCellphone")
     @ApiOperation(value = "修改手机号", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
     public Result updateCellphone(String mac, String cellphone, String newCellphone) {
         Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + newCellphone);
@@ -483,7 +490,7 @@ public class LoginController {
         }
         try {
             userService.updateHouseholdCellphone(cellphone, newCellphone);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.error("修改失败");
         }
