@@ -1,10 +1,15 @@
 package com.mit.community.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.ApplyKey;
 import com.mit.community.entity.ApplyKeyImg;
+import com.mit.community.entity.HouseHold;
+import com.mit.community.entity.User;
 import com.mit.community.mapper.ApplyKeyMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 申请钥匙业务层
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:45
  * <p>Copyright: Copyright (c) 2018</p>
@@ -30,9 +37,16 @@ public class ApplyKeyService {
     private ApplyKeyImgService applyKeyImgService;
     @Autowired
     private UserTrackService userTrackService;
+    @Autowired
+    private DnakeAppApiService dnakeAppApiService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private HouseHoldService houseHoldService;
 
     /**
      * 添加申请钥匙数据
+     *
      * @param applyKey 申请钥匙数据
      * @return 添加数据条数
      * @author Mr.Deng
@@ -46,6 +60,7 @@ public class ApplyKeyService {
 
     /**
      * 修改数据
+     *
      * @param applyKey 申请钥匙数据
      * @return 修改数据
      * @author Mr.Deng
@@ -58,6 +73,7 @@ public class ApplyKeyService {
 
     /**
      * 查询申请钥匙数据，通过申请钥匙id
+     *
      * @param applyKeyId 申请钥匙id
      * @return 申请钥匙信息
      * @author Mr.Deng
@@ -69,6 +85,7 @@ public class ApplyKeyService {
 
     /**
      * 查询申请钥匙列表. 通过申请状态
+     *
      * @param zoneId           分区id
      * @param buildingId       楼栋id
      * @param unitId           单元id
@@ -128,6 +145,7 @@ public class ApplyKeyService {
 
     /**
      * 申请钥匙
+     *
      * @param communityCode    小区code
      * @param communityName    小区名称
      * @param zoneId           分区id
@@ -162,18 +180,51 @@ public class ApplyKeyService {
 
     /**
      * 审批申请钥匙
-     * @param applyKeyId  申请钥匙id
+     *
+     * @param applyKeyId 申请记录id
      * @param checkPerson 审批人
-     * @author Mr.Deng
-     * @date 15:26 2018/12/3
+     * @param residenceTime 过期时间
+     * @param deviceGroupIdList 设备组id列表
+     * @author shuyy
+     * @date 2018/12/19 9:53
+     * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateByCheckPerson(Integer applyKeyId, String checkPerson) {
+    public String approval(Integer applyKeyId, String checkPerson,
+                                      String residenceTime, List<String> deviceGroupIdList) {
+        // 判断用户表里有没有数据，有则说明数据还没同步，提示已有钥匙，5分钟后重新登录，直接返回
         ApplyKey applyKey = this.selectById(applyKeyId);
+        Integer creatorUserId = applyKey.getCreatorUserId();
+        User user = userService.getById(creatorUserId);
+        String cellphone = user.getCellphone();
+        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
+        if (houseHold != null) {
+            return "数据还没同步，已有钥匙,5分钟后重新查看";
+        }
+        // 更新申请钥匙记录
         applyKey.setCheckTime(LocalDateTime.now());
         applyKey.setStatus(2);
         applyKey.setCheckPerson(checkPerson);
         this.update(applyKey);
+        // 增加住户，
+        String communityCode = applyKey.getCommunityCode();
+        Integer zoneId = applyKey.getZoneId();
+        Integer buildingId = applyKey.getBuildingId();
+        Integer unitId = applyKey.getUnitId();
+        Integer roomId = applyKey.getRoomId();
+        String contactPerson = applyKey.getContactPerson();
+        List<Map<String, Object>> houseList = Lists.newArrayListWithCapacity(10);
+        Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
+        h.put("zoneId", zoneId);
+        h.put("buildingId", buildingId);
+        h.put("unitId", unitId);
+        h.put("roomId", roomId);
+        houseList.add(h);
+        JSONObject jsonObject = dnakeAppApiService.saveHousehold(communityCode, cellphone, contactPerson, residenceTime, houseList);
+        // 添加授权设备组
+        Integer householdId = (Integer) jsonObject.get("householdId");
+        dnakeAppApiService.authorizeHousehold(communityCode, householdId, residenceTime, deviceGroupIdList);
+        return "success";
     }
 
 }

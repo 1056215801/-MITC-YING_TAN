@@ -5,6 +5,7 @@ import com.google.code.kaptcha.util.Config;
 import com.mit.auth.client.interceptor.ServiceAuthRestInterceptor;
 import com.mit.auth.client.interceptor.UserAuthRestInterceptor;
 import com.mit.common.handler.GlobalExceptionHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -16,7 +17,6 @@ import java.util.Collections;
 import java.util.Properties;
 
 /**
- *
  * @author ace
  * @date 2017/9/8
  */
@@ -24,6 +24,8 @@ import java.util.Properties;
 @Primary
 public class WebConfiguration implements WebMvcConfigurer {
 
+    @Autowired
+    private LoginInterceptor loginInterceptor;
 
     @Bean
     GlobalExceptionHandler getGlobalExceptionHandler() {
@@ -38,6 +40,13 @@ public class WebConfiguration implements WebMvcConfigurer {
         //这里的拦截，只是拦截是否有登录过，request头部有没有token,并且把token中分析的信息放入threadLocal
         registry.addInterceptor(getUserAuthRestInterceptor()).
                 addPathPatterns(getIncludePathPatterns());
+        // 拦截只有一台设备可以登录
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
+//        registry.addInterceptor(loginInterceptor).excludePathPatterns("/login/**","**/error**",
+//                "/**/swagger**/**", "\\.html", "*\\.js",
+//                "*\\.css", "*\\.jpg", "*\\.gif", "/**\\.png").addPathPatterns("/**");
+
+
     }
 
     @Bean
@@ -52,12 +61,13 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     /**
      * 需要用户和服务认证判断的路径
+     *
      * @return
      */
     private ArrayList<String> getIncludePathPatterns() {
         ArrayList<String> list = new ArrayList<>();
         String[] urls = {
-        		"/api/**"
+                "/api/**"
 //                "/element/**",
 //                "/gateLog/**",
 //                "/group/**",

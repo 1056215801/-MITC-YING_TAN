@@ -274,12 +274,17 @@ public class UserService {
      * @date 2018/12/18 10:31
      * @company mitesofor
      */
-    public boolean haveLogin(String cellphone) {
+    public boolean haveLogin(String mac, String cellphone) {
         Object o = redisService.get(RedisConstant.USER + cellphone);
         if (o == null) {
             return false;
+        } else {
+            String redisMac = (String) redisService.get(RedisConstant.MAC + cellphone);
+            if (!mac.equals(redisMac)) {
+                return false;
+            }
+            return true;
         }
-        return true;
     }
 
     /**

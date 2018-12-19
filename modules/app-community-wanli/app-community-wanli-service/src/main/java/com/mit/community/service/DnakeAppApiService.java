@@ -25,6 +25,7 @@ import java.util.Map;
 
 /**
  * dnake接口调用
+ *
  * @author shuyy
  * @date 2018/12/7
  * @company mitesofor
@@ -42,6 +43,7 @@ public class DnakeAppApiService {
 
     /**
      * 验证手机验证码
+     *
      * @author shuyy
      * @date 2018/12/7 10:05
      * @company mitesofor
@@ -63,6 +65,7 @@ public class DnakeAppApiService {
 
     /**
      * 登陆
+     *
      * @param cellphone 电话号码
      * @param password  密码
      * @return com.mit.community.entity.DnakeLoginResponse
@@ -82,9 +85,9 @@ public class DnakeAppApiService {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
         JSONObject jsonObject = JSON.parseObject(invoke);
-        if(jsonObject.get("errorCode") != null && jsonObject.get("errorCode").equals(12)){
+        if (jsonObject.get("errorCode") != null && jsonObject.get("errorCode").equals(12)) {
             boolean status = this.register(cellphone, password);
-            if(status){
+            if (status) {
                 this.login(cellphone, password);
             }
         }
@@ -93,12 +96,13 @@ public class DnakeAppApiService {
 
     /**
      * 注册
+     *
      * @param cellphone 手机号
-     * @param password 密码
+     * @param password  密码
      * @author shuyy
      * @date 2018/12/18 11:13
      * @company mitesofor
-    */
+     */
     public boolean register(String cellphone, String password) {
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         String url = "/auth/base/register";
@@ -108,7 +112,7 @@ public class DnakeAppApiService {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         log.info(invoke);
         JSONObject jsonObject = JSON.parseObject(invoke);
-        if(jsonObject.get("isSuccess").equals(1)){
+        if (jsonObject.get("isSuccess").equals(1)) {
             return true;
         }
         return false;
@@ -116,6 +120,7 @@ public class DnakeAppApiService {
 
     /**
      * http开门
+     *
      * @param communityCode 小区code
      * @param cellphone     电话号码
      * @param deviceNum     设备编号
@@ -141,6 +146,7 @@ public class DnakeAppApiService {
 
     /**
      * 设置呼叫转移号码
+     *
      * @param cellphone 手机号码
      * @param sipMobile 转移号码
      * @return 返回操作成功是否
@@ -161,6 +167,7 @@ public class DnakeAppApiService {
 
     /**
      * 申请访客邀请码
+     *
      * @param dateTag       日期标志：今天:0；明天：1;
      * @param times         开锁次数：无限次：0；一次：1；
      * @param deviceGroupId 设备分组id，默认只传公共权限组
@@ -185,6 +192,7 @@ public class DnakeAppApiService {
 
     /**
      * 访客高级邀请，
+     *
      * @param cellphone     手机号
      * @param time          日期时间段
      * @param deviceGroupId 设备组id
@@ -219,6 +227,7 @@ public class DnakeAppApiService {
 
     /**
      * 重置密码
+     *
      * @param cellphone 电话号码
      * @param password  密码
      * @author Mr.Deng
@@ -262,6 +271,7 @@ public class DnakeAppApiService {
 
     /**
      * 获取邀请码记录
+     *
      * @param cellphone 手机号
      * @param pageIndex 页码，从0开始
      * @param pageSize  页大小
@@ -283,6 +293,7 @@ public class DnakeAppApiService {
 
     /**
      * 获取我的钥匙
+     *
      * @param communityCode 小区code
      * @return 我的钥匙信息
      * @author Mr.Deng
@@ -319,6 +330,7 @@ public class DnakeAppApiService {
 
     /**
      * 更新用户手机号
+     *
      * @param householdId    住户id
      * @param communityCode  小区code
      * @param householdName  住户姓名
@@ -357,6 +369,7 @@ public class DnakeAppApiService {
 
     /**
      * 通用获取DnakeAppUser对象，通过手机号码
+     *
      * @param cellphone 手机号码
      * @return DnakeAppUser
      * @author Mr.Deng
@@ -374,6 +387,7 @@ public class DnakeAppApiService {
 
     /**
      * 判断狄耐克请求是否成功
+     *
      * @param invoke json
      * @return boolean true成功，false失败
      * @author Mr.Deng
@@ -386,5 +400,62 @@ public class DnakeAppApiService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 保存住户
+     *
+     * @param communityCode 小区code
+     * @param mobile        手机号
+     * @param householdName 住户名
+     * @param residenceTime 居住期限
+     * @param houseList     房产列表
+     * @author shuyy
+     * @date 2018/12/18 20:02
+     * @company mitesofor
+     */
+    public JSONObject saveHousehold(String communityCode, String mobile, String householdName,
+                                    String residenceTime, List<Map<String, Object>> houseList) {
+        String url = "/v1/household/saveOrUpdateHouseholdMore";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
+        map.put("communityCode", communityCode);
+//        map.put("id", "52833");
+//        Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
+//        h.put("zoneId", "363");
+//        h.put("buildingId", "423");
+//        h.put("unitId", "565");
+//        h.put("roomId", "15448");
+//        houseList.add(h);
+        String s = JSON.toJSONString(houseList);
+        map.put("houseList", s);
+        map.put("mobile", mobile);
+        map.put("residenceTime", residenceTime);
+        map.put("householdName", householdName);
+        String result = DnakeWebApiUtil.invoke(url, map);
+        return JSON.parseObject(result);
+    }
+
+    /**
+     * 授权用户设备组
+     *
+     * @param communityCode  小区code
+     * @param householdId 用户id
+     * @param expiryDate 过期时间
+     * @param deviceGroupList 设备组id，逗号分隔
+     * @author shuyy
+     * @date 2018/12/19 9:31
+     * @company mitesofor
+     */
+    public void authorizeHousehold(String communityCode, Integer householdId, String expiryDate, List<String> deviceGroupList) {
+        String url = "/v1/household/authorizeHousehold";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(5);
+        map.put("householdId", householdId);
+        map.put("communityCode", communityCode);
+        map.put("expiryDate", expiryDate);
+        String join = String.join(",", deviceGroupList);
+        map.put("deviceGroups", join);
+        map.put("appOperateType", "1");
+        String invoke = DnakeWebApiUtil.invoke(url, map);
+        log.info(invoke);
     }
 }

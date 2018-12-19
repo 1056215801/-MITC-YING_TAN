@@ -132,4 +132,22 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         sysUser.setGmtModified(LocalDateTime.now());
         sysUserMapper.insert(sysUser);
     }
+
+    /**
+     * 获取用户， 根据用户名
+     * @param username 用户名
+     * @return com.mit.community.entity.SysUser
+     * @author shuyy
+     * @date 2018/12/18 19:25
+     * @company mitesofor
+    */
+    public SysUser getByUsername(String username) {
+        EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("username", username);
+        List<SysUser> sysUsers = sysUserMapper.selectList(wrapper);
+        if (sysUsers.isEmpty()) {
+            return null;
+        }
+        return sysUsers.get(0);
+    }
 }

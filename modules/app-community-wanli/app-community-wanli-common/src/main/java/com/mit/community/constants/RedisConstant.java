@@ -42,7 +42,10 @@ public class RedisConstant {
     /**
      * 用户
      */
-    public final static String USER = "USER";
+    public final static String USER = "USER:";
+
+    /**session id*/
+    public final static String SESSION_ID = "SESSION_ID:";
 
     /**
      * mac地址

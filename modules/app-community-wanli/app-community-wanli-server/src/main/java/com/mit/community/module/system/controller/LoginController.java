@@ -22,6 +22,7 @@ import java.util.Objects;
 
 /**
  * 注册登陆
+ *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -76,6 +77,7 @@ public class LoginController {
 
     /**
      * 快捷登录或密码登录
+     *
      * @param cellphone        手机号
      * @param verificationCode 手机号验证码
      * @param password         密码
@@ -131,6 +133,8 @@ public class LoginController {
         user.setHouseholdRoomList(householdRooms);
         Integer authorizeStatus = houseHold.getAuthorizeStatus();
         String s = Integer.toBinaryString(authorizeStatus);
+        StringBuilder stringBuilder = new StringBuilder(s);
+        s = stringBuilder.reverse().toString();
         if (s.charAt(1) != '1') {
             return Result.success(user, "没有授权app");
         } else {
@@ -144,6 +148,7 @@ public class LoginController {
 
     /**
      * 登出
+     *
      * @param cellphone 用户登录手机号
      * @return result
      * @author Mr.Deng
@@ -163,6 +168,7 @@ public class LoginController {
 
     /**
      * 选择标签
+     *
      * @param cellphone 电话号码
      * @param labelList label列表
      * @return com.mit.community.util.Result
@@ -182,6 +188,7 @@ public class LoginController {
 
     /**
      * 选择性别
+     *
      * @param cellphone 电话号码
      * @param gender    性别
      * @return com.mit.community.util.Result
@@ -204,6 +211,7 @@ public class LoginController {
 
     /**
      * 选择出生日期和昵称
+     *
      * @param cellphone 手机号
      * @param birthday  出生日期
      * @param nickName  昵称
@@ -229,6 +237,7 @@ public class LoginController {
 
     /**
      * 选择地区
+     *
      * @param cellphone 手机号
      * @param region    地区 （省+市）
      * @return result
@@ -250,6 +259,7 @@ public class LoginController {
 
     /**
      * 手机验证码验证
+     *
      * @param cellphone        手机号
      * @param verificationCode 手机号验证码
      * @return com.mit.community.util.Result
@@ -273,6 +283,7 @@ public class LoginController {
 
     /**
      * 注册
+     *
      * @param cellphone 手机号
      * @param password  密码
      * @return com.mit.community.util.Result
@@ -300,6 +311,7 @@ public class LoginController {
 
     /**
      * 查询用户授权的所有小区
+     *
      * @param cellphone 手机号
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -340,6 +352,7 @@ public class LoginController {
 
     /**
      * 修改用户信息
+     *
      * @param cellphone     手机号
      * @param nickname      昵称
      * @param gender        性别1、男。0、女。
@@ -369,6 +382,7 @@ public class LoginController {
 
     /**
      * 修改头像
+     *
      * @param cellphone 手机号
      * @param image     头像图片
      * @return result
@@ -395,6 +409,7 @@ public class LoginController {
 
     /**
      * 修改密码
+     *
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @param oldPassword 旧密码
@@ -420,6 +435,7 @@ public class LoginController {
 
     /**
      * 重置密码
+     *
      * @param cellphone   手机号
      * @param newPassword 新密码
      * @return com.mit.community.util.Result
@@ -460,13 +476,13 @@ public class LoginController {
      * @author shuyy
      * @date 2018/12/18 10:34
      * @company mitesofor
-    */
+     */
     @GetMapping("/haveLogin")
     @ApiOperation(value = "用户是否登录", notes = "传参：cellphone 用户手机号")
-    public Result haveLogin(String cellphone) {
+    public Result haveLogin(String mac, String cellphone) {
         if (StringUtils.isNotBlank(cellphone)) {
-            boolean b = userService.haveLogin(cellphone);
-            if(b){
+            boolean b = userService.haveLogin(mac, cellphone);
+            if (b) {
                 return Result.success("已经登录");
             }
             return Result.error("未登录");
@@ -474,7 +490,7 @@ public class LoginController {
         return Result.error("参数不能为空");
     }
 
-   @PatchMapping("/updateCellphone")
+    @PatchMapping("/updateCellphone")
     @ApiOperation(value = "修改手机号", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
     public Result updateCellphone(String mac, String cellphone, String newCellphone) {
         Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + newCellphone);
@@ -483,7 +499,7 @@ public class LoginController {
         }
         try {
             userService.updateHouseholdCellphone(cellphone, newCellphone);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.error("修改失败");
         }
