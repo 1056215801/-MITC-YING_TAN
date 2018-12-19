@@ -1,7 +1,6 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.google.common.collect.Lists;
 import com.mit.community.entity.LostFound;
 import com.mit.community.entity.LostFountContent;
 import com.mit.community.entity.LostFountReadUser;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 失物招领业务处理层
@@ -35,10 +33,12 @@ public class LostFoundService {
      * @author Mr.Deng
      * @date 9:19 2018/12/18
      */
-    public List<Map<String, Object>> list() {
+    public List<LostFound> list(String communityCode) {
         EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("id,title,img_url as imgUrl,receiver_address as receiverAddress,receiver_status as receiverStatus");
-        return lostFoundMapper.selectMaps(wrapper);
+        wrapper.orderBy("gmt_create", false);
+        wrapper.eq("community_code", communityCode);
+        return lostFoundMapper.selectList(wrapper);
     }
 
     /**
@@ -48,10 +48,10 @@ public class LostFoundService {
      * @author Mr.Deng
      * @date 9:32 2018/12/18
      */
-    public Map<String, Object> getById(Integer id) {
+    public LostFound getById(Integer id) {
         EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
         wrapper.eq("id", id);
-        List<Map<String, Object>> list = lostFoundMapper.selectMaps(wrapper);
+        List<LostFound> list = lostFoundMapper.selectList(wrapper);
         if (list.isEmpty()) {
             return null;
         }
@@ -65,17 +65,17 @@ public class LostFoundService {
      * @author Mr.Deng
      * @date 9:44 2018/12/18
      */
-    public Map<String, Object> getLostFountInfo(Integer id) {
-        Map<String, Object> map = this.getById(id);
+    public LostFound getLostFountInfo(Integer id) {
+        LostFound lostFound = this.getById(id);
         LostFountContent lostFountContent = lostFountContentService.listByLostFountId(id);
         String content = StringUtils.EMPTY;
         if (lostFountContent != null) {
             content = lostFountContent.getContent();
         }
-        map.put("content", content);
-        Integer integer = lostFountReadUserService.countByLostFountId(id);
-        map.put("readNum", integer);
-        return map;
+        lostFound.setContent(content);
+        Integer readNum = lostFountReadUserService.countByLostFountId(id);
+        lostFound.setReadNum(readNum);
+        return lostFound;
     }
 
     /**
@@ -85,22 +85,19 @@ public class LostFoundService {
      * @author Mr.Deng
      * @date 10:02 2018/12/18
      */
-    public List<Map<String, Object>> listAll(Integer userId) {
-        List<Map<String, Object>> mapList = Lists.newArrayListWithExpectedSize(100);
-        List<Map<String, Object>> list = this.list();
+    public List<LostFound> listAll(Integer userId, String communityCode) {
+        List<LostFound> list = this.list(communityCode);
         if (!list.isEmpty()) {
-            for (Map<String, Object> map : list) {
-                String id = map.get("id").toString();
-                LostFountReadUser lostFountReadUser = lostFountReadUserService.getByUserIdByLostFountId(userId, Integer.parseInt(id));
-                if (lostFountReadUser != null) {
-                    map.put("readStatus", true);
+            for (LostFound lostFound : list) {
+                List<LostFountReadUser> lostFountReadUsers = lostFountReadUserService.getByUserIdByLostFountId(userId, lostFound.getId());
+                if (lostFountReadUsers.isEmpty()) {
+                    lostFound.setReadStatus(false);
                 } else {
-                    map.put("readStatus", false);
+                    lostFound.setReadStatus(true);
                 }
-                mapList.add(map);
             }
         }
-        return mapList;
+        return list;
     }
 
 }

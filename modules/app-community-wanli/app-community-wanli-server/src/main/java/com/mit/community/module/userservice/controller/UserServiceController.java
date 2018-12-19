@@ -45,6 +45,11 @@ public class UserServiceController {
     private final ExpressReadUserService expressReadUserService;
     private final RedisService redisService;
     private final LostFountReadUserService lostFountReadUserService;
+    private final PromotionService promotionService;
+    private final PromotionReadUserService promotionReadUserService;
+    private final OldMedicalReadUserService oldMedicalReadUserService;
+    private final OldMedicalService oldMedicalService;
+    private final SysMessagesService sysMessagesService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -55,7 +60,9 @@ public class UserServiceController {
                                  DictionaryService dictionaryService, LostFoundService lostFoundService,
                                  ExpressAddressService expressAddressService, ExpressInfoService expressInfoService,
                                  ExpressReadUserService expressReadUserService, RedisService redisService,
-                                 LostFountReadUserService lostFountReadUserService) {
+                                 LostFountReadUserService lostFountReadUserService, PromotionService promotionService,
+                                 PromotionReadUserService promotionReadUserService,
+                                 OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService, SysMessagesService sysMessagesService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -70,6 +77,11 @@ public class UserServiceController {
         this.expressReadUserService = expressReadUserService;
         this.redisService = redisService;
         this.lostFountReadUserService = lostFountReadUserService;
+        this.promotionService = promotionService;
+        this.promotionReadUserService = promotionReadUserService;
+        this.oldMedicalReadUserService = oldMedicalReadUserService;
+        this.oldMedicalService = oldMedicalService;
+        this.sysMessagesService = sysMessagesService;
     }
 
     /**
@@ -469,11 +481,11 @@ public class UserServiceController {
     @GetMapping("/listLostFount")
     @ApiOperation(value = "查询所有的失物招领信息", notes = "返回参数：readStatus 是否已读，id 失物招领id，" +
             "title 标题,imgUrl 图片url,receiverAddress 领取地址,receiverStatus 领取状态（1、未领取；2、已领取）")
-    public Result listLostFount(String cellphone) {
-        if (StringUtils.isNotBlank(cellphone)) {
+    public Result listLostFount(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<Map<String, Object>> list = lostFoundService.listAll(user.getId());
+                List<LostFound> list = lostFoundService.listAll(user.getId(), communityCode);
                 return Result.success(list);
             }
             return Result.error("请登录");
@@ -496,19 +508,167 @@ public class UserServiceController {
         if (lostFountId != null && StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                Map<String, Object> lostFountInfo = lostFoundService.getLostFountInfo(lostFountId);
-                if (!lostFountInfo.isEmpty()) {
+                LostFound lostFount = lostFoundService.getLostFountInfo(lostFountId);
+                if (lostFount != null) {
                     //标记已读
-                    LostFountReadUser lostFountReadUser = lostFountReadUserService.getByUserIdByLostFountId(user.getId(), lostFountId);
-                    if (lostFountReadUser == null) {
-                        LostFountReadUser lostFountReadUser1 = new LostFountReadUser(user.getId(), lostFountId);
-                        lostFountReadUserService.save(lostFountReadUser1);
-                    }
+                    LostFountReadUser lostFountReadUser1 = new LostFountReadUser(user.getId(), lostFountId);
+                    lostFountReadUserService.save(lostFountReadUser1);
                     //添加足迹
-                    String title = lostFountInfo.get("title").toString();
-                    userTrackService.addUserTrack(cellphone, "查询失物招领", "查询" + title + "成功");
+                    userTrackService.addUserTrack(cellphone, "查询失物招领", "查询" + lostFount.getTitle() + "成功");
                 }
-                return Result.success(lostFountInfo);
+                return Result.success(lostFount);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询所有的促销信息
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return result
+     * @author Mr.Deng
+     * @date 17:42 2018/12/18
+     */
+    @GetMapping("/listPromotion")
+    @ApiOperation(value = "查询所有的促销信息", notes = "返回参数：promotionType 促销类型，关联数据字典code promotion_type；" +
+            " title 标题；imgUrl封面url ;issuer 发布者；issuerPhone 发布者手机号；promotionAddress 促销地点；issueTime 发布时间" +
+            " discount 折扣;activityContent 活动内容；startTime 活动开始时间；endTime 活动结束时间；communityCode 小区code；" +
+            " promotionStatus 促销状态；content 促销详情；id 促销id ；readStatus 已读状态")
+    public Result listPromotion(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<Promotion> list = promotionService.listAll(user.getId(), communityCode);
+                return Result.success(list);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询促销详情信息,通过促销信息id
+     * @param cellphone   手机号
+     * @param promotionId 促销id
+     * @return result
+     * @author Mr.Deng
+     * @date 17:54 2018/12/18
+     */
+    @GetMapping("/getPromotionInfo")
+    @ApiOperation(value = "查询促销详情信息,通过促销信息id", notes = "输出参数：promotionType 促销类型，关联数据字典code promotion_type；" +
+            "title 标题；imgUrl封面url ;issuer 发布者；issuerPhone 发布者手机号；promotionAddress 促销地点；issueTime 发布时间" +
+            "discount 折扣;activityContent 活动内容；startTime 活动开始时间；endTime 活动结束时间；communityCode 小区code；" +
+            "promotionStatus 促销状态；content 促销详情；id 促销id ；readNum 浏览量")
+    public Result getPromotionInfo(String cellphone, Integer promotionId) {
+        if (StringUtils.isNotBlank(cellphone) && promotionId != null) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                Promotion promotion = promotionService.getPromotionInfo(promotionId);
+                //添加已读
+                PromotionReadUser promotionReadUser = new PromotionReadUser(user.getId(), promotionId);
+                promotionReadUserService.save(promotionReadUser);
+                //添加足迹
+                if (promotion != null) {
+                    userTrackService.addUserTrack(cellphone, "查询促销信息", "促销信息" + promotion.getTitle() + "查询成功");
+                }
+                return Result.success(promotion);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询所有老人体检信息，通过小区code
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return result
+     * @author Mr.Deng
+     * @date 20:16 2018/12/18
+     */
+    @GetMapping("/listOldMedical")
+    @ApiOperation(value = "查询所有老人体检信息，通过小区code", notes = "返回参数：communityCode小区code,title标题，issuer发布人，" +
+            "issuerTime发布时间，contacts联系人，phone联系电话，address 登记地址，startTime 开始时间，endTime 结束时间，" +
+            "oldMedicalStatus 活动状态，readStatus 已读状态")
+    public Result listOldMedical(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<OldMedical> oldMedicals = oldMedicalService.listAll(user.getId(), communityCode);
+                return Result.success(oldMedicals);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询老人体检详情信息，老人体检id
+     * @param cellphone    手机号
+     * @param oldMedicalId 老人体检id
+     * @return result
+     * @author Mr.Deng
+     * @date 20:23 2018/12/18
+     */
+    @GetMapping("/getOldMedical")
+    @ApiOperation(value = "查询老人体检详情信息，老人体检id", notes = "输入参数：oldMedicalId 老人体检id;<br/>" +
+            "返回参数：communityCode小区code,title标题，issuer发布人，issuerTime发布时间，contacts联系人，phone联系电话，" +
+            "address 登记地址，startTime 开始时间，endTime 结束时间，oldMedicalStatus 活动状态，content详情，readNum浏览量")
+    public Result getOldMedical(String cellphone, Integer oldMedicalId) {
+        if (StringUtils.isNotBlank(cellphone) && oldMedicalId != null) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                OldMedical oldMedical = oldMedicalService.getByOldMedicalId(oldMedicalId);
+                //添加已读
+                OldMedicalReadUser oldMedicalReadUser = new OldMedicalReadUser(user.getId(), oldMedicalId);
+                oldMedicalReadUserService.save(oldMedicalReadUser);
+                //记录足迹
+                if (oldMedical != null) {
+                    userTrackService.addUserTrack(cellphone, "查看老人体检", "查询老人体检-" + oldMedical.getTitle() + "成功");
+                }
+            }
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 我的足迹
+     * @param cellphone 手机号
+     * @returnc result
+     * @author Mr.Deng
+     * @date 11:33 2018/12/19
+     */
+    @GetMapping("/listUserTrackInfo")
+    @ApiOperation(value = "我的足迹", notes = "输出参数：userId用户id，title 标题，content 内容，gmtVisit 访问时间")
+    public Result listUserTrackInfo(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<UserTrack> userTracks = userTrackService.listByUserId(user.getId());
+                return Result.success(userTracks);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询所有系统消息
+     * @param cellphone 手机号
+     * @return result
+     * @author Mr.Deng
+     * @date 11:23 2018/12/19
+     */
+    @GetMapping("/listSysMessages")
+    @ApiOperation(value = "查询所有系统消息", notes = "返回参数：userId 用户id；title 标题；details 详情；addTime 添加时间")
+    public Result listSysMessages(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                List<SysMessages> sysMessages = sysMessagesService.listByUserId(user.getId());
+                return Result.success(sysMessages);
             }
             return Result.error("请登录");
         }

@@ -9,17 +9,22 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * 失物招领
+ * 促销表
  * @author Mr.Deng
- * @date 2018/12/17 20:17
+ * @date 2018/12/18 15:41
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("lost_found")
-public class LostFound extends BaseEntity {
+@TableName("promotion")
+public class Promotion extends BaseEntity {
+    /**
+     * 促销类型，关联数据字典code   promotion_type
+     */
+    @TableField("promotion_type")
+    private String promotionType;
     /**
      * 标题
      */
@@ -39,44 +44,42 @@ public class LostFound extends BaseEntity {
     @TableField("issuer_phone")
     private String issuerPhone;
     /**
-     * 拾取地址
+     * 促销地址
      */
-    @TableField("pick_address")
-    private String pickAddress;
+    @TableField("promotion_address")
+    private String promotionAddress;
     /**
      * 发布时间
      */
     @TableField("issue_time")
     private LocalDateTime issueTime;
     /**
-     * 领取人
+     * 折扣
      */
-    private String receiver;
+    private Float discount;
     /**
-     * 领取人联系电话
+     * 活动内容
      */
-    @TableField("receive_phone")
-    private String receivePhone;
+    @TableField("activity_content")
+    private String activityContent;
     /**
-     * 领取地点
+     * 活动开始时间
      */
-    @TableField("receiver_address")
-    private String receiverAddress;
+    @TableField("start_time")
+    private LocalDateTime startTime;
     /**
-     * 领取时间
+     * 活动结束时间
      */
-    @TableField("receiver_time")
-    private LocalDateTime receiverTime;
-    /**
-     * 领取状态（1、未领取；2、已领取）
-     */
-    @TableField("receiver_status")
-    private Integer receiverStatus;
+    @TableField("end_time")
+    private LocalDateTime endTime;
     /**
      * 小区code
      */
     @TableField("community_code")
     private String communityCode;
+
+    @TableField(exist = false, value = "促销状态")
+    private String promotionStatus;
 
     @TableField(exist = false, value = "已读状态")
     private Boolean readStatus;

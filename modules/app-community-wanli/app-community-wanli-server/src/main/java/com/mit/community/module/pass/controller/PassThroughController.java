@@ -36,7 +36,6 @@ import java.util.Objects;
 @Api(tags = "住户-通行模块接口")
 public class PassThroughController {
 
-    private final RegionService regionService;
     private final NoticeService noticeService;
     private final ApplyKeyService applyKeyService;
     private final VisitorService visitorService;
@@ -55,9 +54,10 @@ public class PassThroughController {
     private final UserTrackService userTrackService;
     private final DictionaryService dictionaryService;
     private final NoticeReadUserService noticeReadUserService;
+    private final SysMessagesService sysMessagesService;
 
     @Autowired
-    public PassThroughController(RegionService regionService, NoticeService noticeService, ApplyKeyService applyKeyService,
+    public PassThroughController(NoticeService noticeService, ApplyKeyService applyKeyService,
                                  VisitorService visitorService,
                                  DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                                  ZoneService zoneService, UnitService unitService, RoomService roomService,
@@ -65,8 +65,8 @@ public class PassThroughController {
                                  DeviceGroupService deviceGroupService, WeatherService weatherService,
                                  RedisService redisService, ClusterCommunityService clusterCommunityService,
                                  DeviceService deviceService, UserTrackService userTrackService,
-                                 DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService) {
-        this.regionService = regionService;
+                                 DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService,
+                                 SysMessagesService sysMessagesService) {
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
         this.visitorService = visitorService;
@@ -85,6 +85,7 @@ public class PassThroughController {
         this.userTrackService = userTrackService;
         this.dictionaryService = dictionaryService;
         this.noticeReadUserService = noticeReadUserService;
+        this.sysMessagesService = sysMessagesService;
     }
 
     /**
@@ -300,7 +301,7 @@ public class PassThroughController {
      * @param contactPerson    申请人
      * @param contactCellphone 申请人电话
      * @param content          描述
-     * @param cellphone        手机号
+     * @param idCard           身份证号
      * @return result
      * @author Mr.Deng
      * @date 15:01 2018/12/3
@@ -308,7 +309,7 @@ public class PassThroughController {
     @PostMapping(value = "/applyKey", produces = {"application/json"})
     @ApiOperation(value = "申请钥匙", notes = "输入参数：cellphone 手机号，communityCode 小区code;communityName 小区名；zoneId 分区id;" +
             "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
-            "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；cellphone 手机号；" +
+            "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；idCard 身份证号；" +
             "images 图片列表（可不传）")
     public Result applyKey(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
@@ -331,6 +332,9 @@ public class PassThroughController {
                     unitName, roomId, roomNum, contactPerson, contactCellphone, content, user.getId(), idCard, imageUrls);
             //记录足迹
             userTrackService.addUserTrack(cellphone, "申请钥匙", "开门钥匙申请成功");
+            //添加系统消息
+            String str = communityName + zoneName + buildingName + unitName;
+            sysMessagesService.addSysMessages(cellphone, "申请钥匙成功", "申请" + str + "单元门钥匙，申请已提交成功");
             return Result.success("发布成功");
         }
         return Result.error("参数不能为空");

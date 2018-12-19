@@ -128,6 +128,7 @@ public class ApplyKeyService {
         if (status != null) {
             wrapper.eq("status", status);
         }
+        wrapper.orderBy("gmt_create", false);
         if (pageNum != null && pageSize != null) {
             Page<ApplyKey> page = new Page<>(pageNum, pageSize);
             return applyKeyMapper.selectPage(page, wrapper);
