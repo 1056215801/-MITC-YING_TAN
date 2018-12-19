@@ -70,7 +70,9 @@ public class HouseholdSchedule {
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        // 先删除本地数据库，再插入
+//        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("南昌市");
+
+        //
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
         updateAuth(houseHolds);
         List<HouseHold> list = houseHoldService.list();
@@ -100,7 +102,7 @@ public class HouseholdSchedule {
         // 删除
         if(!removeHousehold.isEmpty()){
             List<Integer> deleteId = removeHousehold.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
-            houseHoldService.deleteBatchIds(deleteId);
+            houseHoldService.removeByhouseholdIdList(deleteId);
         }
         // 更新
         if(!updateHousehold.isEmpty()){

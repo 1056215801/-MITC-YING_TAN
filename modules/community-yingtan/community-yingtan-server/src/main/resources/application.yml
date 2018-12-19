@@ -94,8 +94,9 @@ mybatis:
 
 server:
   port: 8764
-#  servlet:
-#    context-path: /api/communityyingtan/
+
+  servlet:
+    context-path: /api/communityyingtan/
 
 
 eureka:

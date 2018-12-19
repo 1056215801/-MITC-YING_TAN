@@ -28,7 +28,7 @@ public class HouseHold extends BaseEntity {
     @TableField("community_code")
     private String communityCode;
     /**
-     * 星座
+     * 星 座
      */
     private String constellation;
     /*

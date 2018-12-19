@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * 天气定时同步
+ *
  * @author Mr.Deng
  * @date 2018/12/11 14:41
  * <p>Copyright: Copyright (c) 2018</p>
@@ -34,10 +35,12 @@ public class WeatherSchedule {
 
     /**
      * 同步获取天气信息
+     *
      * @author Mr.Deng
      * @date 15:01 2018/12/11
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {
         String[] regions = {"nanchang", "yingtan"};
@@ -47,6 +50,9 @@ public class WeatherSchedule {
             for (Region region : regionList) {
                 String url = "http://api.help.bj.cn/apis/weather/?id=" + region.getCityCode();
                 String result = HttpUtil.sendGet(url);
+                if(result == null){
+                    continue;
+                }
                 JSONObject json = JSONObject.parseObject(result);
                 Weather weather = new Weather();
                 weather.setCity(json.getString("city"));

@@ -21,7 +21,8 @@ public class FastDFSClient {
     /**
      * client.conf的地址
      */
-    private static final String CLIENT_URL = "classpath:config/FastDFS/client.conf";
+//    private static final String CLIENT_URL = "classpath:config/FastDFS/client.conf";
+    private static final String CLIENT_URL = "/config/FastDFS/client.conf";
 
     public static FastDFSClient getInstance() {
         try {
@@ -33,10 +34,10 @@ public class FastDFSClient {
     }
 
     public FastDFSClient(String conf) throws Exception {
-        String classpathHead = "classpath:";
-        if (conf.contains(classpathHead)) {
-            conf = conf.replace("classpath:", this.getClass().getResource("/").getPath());
-        }
+//        String classpathHead = "classpath:";
+//        if (conf.contains(classpathHead)) {
+//            conf = conf.replace("classpath:", this.getClass().getResource("/").getPath());
+//        }
         ClientGlobal.init(conf);
         trackerClient = new TrackerClient();
         trackerServer = trackerClient.getConnection();

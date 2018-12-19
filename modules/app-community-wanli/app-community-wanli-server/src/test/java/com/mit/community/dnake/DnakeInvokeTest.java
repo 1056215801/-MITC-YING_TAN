@@ -173,4 +173,21 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
+    @Test
+    public void authorizeHousehold(){
+        long startTime = System.currentTimeMillis();
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/v1/household/authorizeHousehold";
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("householdId", "56303");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("expiryDate", "2020-10-01");
+        map.put("deviceGroups", "735");
+        map.put("appOperateType", "1");
+        String result = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(result);
+        long end = System.currentTimeMillis();
+        System.out.println(end - startTime);
+    }
+
 }

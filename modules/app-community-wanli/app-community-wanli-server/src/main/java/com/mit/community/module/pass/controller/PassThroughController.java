@@ -341,28 +341,6 @@ public class PassThroughController {
     }
 
     /**
-     * 审批钥匙
-     * @param cellphone   手机号
-     * @param applyKeyId  申请钥匙id
-     * @param checkPerson 审批人
-     * @return Result
-     * @author Mr.Deng
-     * @date 15:36 2018/12/3
-     */
-    @PatchMapping("/approveKey")
-    @ApiOperation(value = "审批钥匙", notes = "传参：cellphone 手机号，applyKeyId 申请钥匙id，checkPerson 审批人 ")
-    public Result approveKey(String cellphone, Integer applyKeyId, String checkPerson) {
-        applyKeyService.updateByCheckPerson(applyKeyId, checkPerson);
-        //记录足迹
-        ApplyKey applyKey = applyKeyService.selectById(applyKeyId);
-        if (applyKey != null) {
-            String contactPerson = applyKey.getContactPerson();
-            userTrackService.addUserTrack(cellphone, "审批钥匙", contactPerson + "钥匙审批成功");
-        }
-        return Result.success("审批成功");
-    }
-
-    /**
      * 查询申请钥匙信息，通过钥匙申请状态
      * @param cellphone 手机号
      * @param status    钥匙申请状态

@@ -614,5 +614,19 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         return false;
     }
 
+    /**
+     * 删除，通过住户id列表
+     * @param householdIdList 住户id列表
+     * @author shuyy
+     * @date 2018/12/18 18:40
+     * @company mitesofor
+    */
+    public void removeByhouseholdIdList(List<Integer> householdIdList){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("household_id", householdIdList);
+        houseHoldMapper.delete(wrapper);
+
+    }
+
 
 }

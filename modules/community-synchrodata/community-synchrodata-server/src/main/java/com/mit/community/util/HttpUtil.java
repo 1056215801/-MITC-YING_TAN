@@ -4,6 +4,7 @@ import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -39,6 +40,10 @@ public class HttpUtil {
     public static String sendGet(String url) {
 
         HttpGet httpget = new HttpGet(url);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(1000).setConnectionRequestTimeout(1000)
+                .setSocketTimeout(1000).build();
+        httpget.setConfig(requestConfig);
         CloseableHttpResponse response = null;
         try {
             response = HTTP_CLIENT.execute(httpget);
