@@ -146,6 +146,24 @@ public class UserServiceController {
     }
 
     /**
+     * 查询报事报修详情信息，通告报事报修id
+     * @param reportThingsRepairId 报事报修id
+     * @return result
+     * @author Mr.Deng
+     * @date 19:01 2018/12/19
+     */
+    @GetMapping("/getReportThingsRepairById")
+    @ApiOperation(value = "查询报事报修详情信息，通告报事报修id", notes = "输入参数：reportThingsRepairId 报事报修id<br/>" +
+            "返回参数:")
+    public Result getReportThingsRepairById(Integer reportThingsRepairId) {
+        if (reportThingsRepairId != null) {
+            ReportThingsRepair reportThingsRepair = reportThingsRepairService.getReportThingsRepair(reportThingsRepairId);
+            return Result.success(reportThingsRepair);
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
      * 报事报修评价
      * @param applyReportId             报事报修id
      * @param evaluateResponseSpeed     响应速度评价
@@ -292,6 +310,23 @@ public class UserServiceController {
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询业务办理数据", "查询办理状态" + st + "业务数据成功");
             return Result.success(listBusinessHandling);
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询业务办理详情信息，通告业务办理id
+     * @param businessHandlingId 业务办理id
+     * @return result
+     * @author Mr.Deng
+     * @date 19:41 2018/12/19
+     */
+    @GetMapping("/getByBusinessHandlingId")
+    @ApiOperation(value = "查询业务办理详情信息，通告业务办理id", notes = "")
+    public Result getByBusinessHandlingId(Integer businessHandlingId) {
+        if (businessHandlingId != null) {
+            BusinessHandling businessHanding = businessHandlingService.getByBusinessHandlingId(businessHandlingId);
+            return Result.success(businessHanding);
         }
         return Result.error("参数不能为空");
     }
@@ -646,7 +681,8 @@ public class UserServiceController {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<UserTrack> userTracks = userTrackService.listByUserId(user.getId(), startTime, endTime);
+                List<UserTrack> userTracks = userTrackService.listByUserId(user.getId(), startTime + "00:00:00",
+                        endTime + "00:00:00");
                 return Result.success(userTracks);
             }
             return Result.error("请登录");

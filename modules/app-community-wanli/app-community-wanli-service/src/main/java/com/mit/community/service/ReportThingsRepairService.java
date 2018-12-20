@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.common.collect.Lists;
+import com.mit.community.constants.Constants;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.entity.ReportThingRepairImg;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 报事报修业务层
@@ -145,7 +147,9 @@ public class ReportThingsRepairService {
                         householdRoom.getZoneId(), householdRoom.getZoneName(), householdRoom.getBuildingId(), householdRoom.getBuildingName(),
                         householdRoom.getUnitId(), householdRoom.getUnitName(), roomId, roomNum, householdId,
                         content, status, reportUser, reportCellphone, LocalDateTime.now(), 0, 0,
-                        0, 0, StringUtils.EMPTY, maintainType, creatorUserId);
+                        0, 0, StringUtils.EMPTY, maintainType, creatorUserId, StringUtils.EMPTY,
+                        Constants.NULL_LOCAL_DATE_TIME, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
+                        Constants.NULL_LOCAL_DATE_TIME, null);
                 this.save(reportThingsRepair);
                 if (!images.isEmpty()) {
                     for (String image : images) {
@@ -155,6 +159,25 @@ public class ReportThingsRepairService {
                 }
             }
         }
+    }
+
+    /**
+     * 查询报事报修详情，通告报事报修id
+     * @param reportThingsRepairId 报事报修id
+     * @return 报事报修详情信息
+     * @author Mr.Deng
+     * @date 19:00 2018/12/19
+     */
+    public ReportThingsRepair getReportThingsRepair(Integer reportThingsRepairId) {
+        ReportThingsRepair reportThingsRepair = this.getById(reportThingsRepairId);
+        if (reportThingsRepair != null) {
+            List<ReportThingRepairImg> reportThingRepairImgs = reportThingRepairImgService.getByReportThingsRepairId(reportThingsRepairId);
+            if (!reportThingRepairImgs.isEmpty()) {
+                List<String> images = reportThingRepairImgs.stream().map(ReportThingRepairImg::getImgUrl).collect(Collectors.toList());
+                reportThingsRepair.setImages(images);
+            }
+        }
+        return reportThingsRepair;
     }
 
     /**
