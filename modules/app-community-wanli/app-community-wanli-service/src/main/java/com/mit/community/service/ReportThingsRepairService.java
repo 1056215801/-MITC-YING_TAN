@@ -72,6 +72,12 @@ public class ReportThingsRepairService {
         return reportThingsRepairMapper.updateById(reportThingsRepair);
     }
 
+    public void receive(Integer id){
+//        ReportThingsRepair reportThingsRepair = this.getById(id);
+//        reportThingsRepair.setre
+//        ReportThingsRepair
+    }
+
     /**
      * 查询报事报修状态数据，通过住户id
      * @param householdId 住户id
