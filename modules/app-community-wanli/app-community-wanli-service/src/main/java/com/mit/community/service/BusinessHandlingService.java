@@ -155,6 +155,17 @@ public class BusinessHandlingService {
         return businessHandlingMapper.selectList(wrapper);
     }
 
+    /*public void receive(Integer id, String receiverName) {
+        ReportThingsRepair reportThingsRepair = this.getById(id);
+        reportThingsRepair.setStatus("acceptance");
+        reportThingsRepair.setReceiverTime(LocalDateTime.now());
+        reportThingsRepair.setReceiver(receiverName);
+//        this.update(reportThingsRepair);
+
+        BusinessHandling businessHandling = this.getById(id);
+//        businessHandling.setStatus();
+    }*/
+
     /**
      * 业务办理评价
      * @param businessHandlingId        业务办理id

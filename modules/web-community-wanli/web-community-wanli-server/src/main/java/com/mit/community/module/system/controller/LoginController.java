@@ -38,28 +38,30 @@ public class LoginController {
 
     /**
      * 初始化cookie
+     *
      * @param session session
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 10:55
      * @company mitesofor
-    */
+     */
     @PostMapping("/initCookie")
     @ApiOperation(value = "初始化cookie")
     public Result initCookie(HttpSession session) {
         return Result.success("初始化cookie成功");
     }
 
-        /**
-         * 登录
-         * @param username
-         * @param password
-         * @return com.mit.community.util.Result
-         * @throws
-         * @author shuyy
-         * @date 2018/12/18 19:32
-         * @company mitesofor
-        */
+    /**
+     * 登录
+     *
+     * @param username
+     * @param password
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/18 19:32
+     * @company mitesofor
+     */
     @PostMapping("/login")
     @ApiOperation(value = "登录", notes = "传参：username 用户名，password 密码")
     public Result login(String username, String password, HttpSession session, HttpServletRequest request) {
@@ -69,9 +71,9 @@ public class LoginController {
         }
         if (sysUser.getPassword().equals(password)) {
             Cookie[] cookies = request.getCookies();
-            for (int i = 0; i < cookies.length;i++){
+            for (int i = 0; i < cookies.length; i++) {
                 Cookie cookie = cookies[i];
-                if(cookie.getName().equals("JSESSIONID")){
+                if (cookie.getName().equals("JSESSIONID")) {
                     redisService.set(RedisConstant.SESSION_ID + cookie.getValue(),
                             sysUser, RedisConstant.LOGIN_EXPIRE_TIME);
                     break;
@@ -81,5 +83,4 @@ public class LoginController {
         }
         return Result.error("用户密码错误");
     }
-
 }
