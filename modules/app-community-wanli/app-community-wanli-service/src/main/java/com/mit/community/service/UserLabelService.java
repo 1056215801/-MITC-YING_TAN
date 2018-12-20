@@ -1,7 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.mit.community.entity.Dictionary;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.UserLabel;
 import com.mit.community.mapper.UserLabelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.List;
  * @company mitesofor
  */
 @Service
-public class UserLabelService {
+public class UserLabelService extends ServiceImpl<UserLabelMapper, UserLabel> {
 
     private final UserLabelMapper userLabelMapper;
 
@@ -29,26 +29,21 @@ public class UserLabelService {
         this.dictionaryService = dictionaryService;
     }
 
-
     /**
-     * 查询用户标签，通过用户id
+     * 删除用户标签，通过用户id
      * @param userId 用户id
-     * @return java.util.List<com.mit.community.entity.UserLabel>
      * @author shuyy
-     * @date 2018/12/12 16:57
+     * @date 2018/12/19 19:23
      * @company mitesofor
     */
-    public List<UserLabel> listByUserId(Integer userId){
+    public void removeByUserId(Integer userId){
         EntityWrapper<UserLabel> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
-        List<UserLabel> userLabels = userLabelMapper.selectList(wrapper);
-        userLabels.forEach(item -> {
-            String labelCode = item.getLabelCode();
-            Dictionary dictionary = dictionaryService.getByCode(labelCode);
-            item.setLableName(dictionary.getName());
-        });
-        return userLabels;
+        userLabelMapper.delete(wrapper);
     }
+
+
+
 
     /**
      * 保存
@@ -60,6 +55,20 @@ public class UserLabelService {
         userLabel.setGmtCreate(LocalDateTime.now());
         userLabel.setGmtModified(LocalDateTime.now());
         userLabelMapper.insert(userLabel);
+    }
+
+    /**
+     * 查询用户标签关联
+     * @param userId 用户id
+     * @return java.util.List<com.mit.community.entity.UserLabel>
+     * @author shuyy
+     * @date 2018/12/19 19:43
+     * @company mitesofor
+    */
+    public List<UserLabel> listByUserId(Integer userId){
+        EntityWrapper<UserLabel> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        return userLabelMapper.selectList(wrapper);
     }
 
 

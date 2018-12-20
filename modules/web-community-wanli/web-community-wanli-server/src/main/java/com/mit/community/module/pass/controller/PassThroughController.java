@@ -6,7 +6,7 @@ import com.mit.community.entity.SysUser;
 import com.mit.community.service.ApplyKeyService;
 import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.service.RedisService;
-import com.mit.community.service.UserService;
+import com.mit.community.service.AppUserService;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -36,12 +36,12 @@ public class PassThroughController {
 
     private final RedisService redisService;
 
-    private final UserService userService;
+    private final AppUserService userService;
 
     private final DnakeAppApiService dnakeAppApiService;
 
     @Autowired
-    public PassThroughController(ApplyKeyService applyKeyService, RedisService redisService, UserService userService, DnakeAppApiService dnakeAppApiService) {
+    public PassThroughController(ApplyKeyService applyKeyService, RedisService redisService, AppUserService userService, DnakeAppApiService dnakeAppApiService) {
         this.applyKeyService = applyKeyService;
         this.redisService = redisService;
         this.userService = userService;

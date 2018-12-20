@@ -45,6 +45,12 @@
             <version>0.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.mit</groupId>
+            <artifactId>app-community-wanli-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -429,4 +429,20 @@ public class DnakeAppApiService {
         String invoke = DnakeWebApiUtil.invoke(url, map);
         log.info(invoke);
     }
+
+    /**
+     * 注销用户
+     * @author shuyy
+     * @date 2018/12/19 16:15
+     * @company mitesofor
+    */
+    public void operateHousehold(Integer householdId, String communityCode) {
+        String url = "/v1//household/operateHousehold";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
+        map.put("id", householdId);
+        map.put("operateType", "0");
+        map.put("communityCode", communityCode);
+        String result = DnakeWebApiUtil.invoke(url, map);
+        log.info(result);
+    }
 }

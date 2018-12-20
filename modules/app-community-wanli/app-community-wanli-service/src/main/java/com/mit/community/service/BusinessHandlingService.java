@@ -156,6 +156,22 @@ public class BusinessHandlingService {
     }
 
     /**
+     * 受理
+     * @param id id
+     * @param receiverName 受理人
+     * @author shuyy
+     * @date 2018/12/20 15:44
+     * @company mitesofor
+    */
+    public void receive(Integer id, String receiverName) {
+        BusinessHandling businessHandling = this.getById(id);
+        businessHandling.setStatus("acceptance");
+        businessHandling.setReceiverTime(LocalDateTime.now());
+        businessHandling.setReceiver(receiverName);
+        this.update(businessHandling);
+    }
+
+    /**
      * 业务办理评价
      * @param businessHandlingId        业务办理id
      * @param evaluateResponseSpeed     响应速度评价

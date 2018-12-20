@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.HouseHold;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 /**
  * 报事报修业务层
+ *
  * @author Mr.Deng
  * @date 2018/12/3 19:39
  * <p>Copyright: Copyright (c) 2018</p>
@@ -40,6 +42,7 @@ public class ReportThingsRepairService {
 
     /**
      * 添加保修报修数据
+     *
      * @param reportThingsRepair 报事报修数据
      * @return 添加条数
      * @author Mr.Deng
@@ -53,6 +56,7 @@ public class ReportThingsRepairService {
 
     /**
      * 查询报事报修信息，通过报事报修id
+     *
      * @param id 报事报修id
      * @return 报事报修信息
      * @author Mr.Deng
@@ -64,6 +68,7 @@ public class ReportThingsRepairService {
 
     /**
      * 更新报事报修数据
+     *
      * @param reportThingsRepair 更新的数据
      * @return 更新条数
      * @author Mr.Deng
@@ -75,7 +80,61 @@ public class ReportThingsRepairService {
     }
 
     /**
+     * 受理
+     *
+     * @param id           报事报修id
+     * @param receiverName 受理人
+     * @author shuyy
+     * @date 2018/12/20 10:42
+     * @company mitesofor
+     */
+    public void receive(Integer id, String receiverName) {
+        ReportThingsRepair reportThingsRepair = this.getById(id);
+        reportThingsRepair.setStatus("acceptance");
+        reportThingsRepair.setReceiverTime(LocalDateTime.now());
+        reportThingsRepair.setReceiver(receiverName);
+        this.update(reportThingsRepair);
+    }
+
+    /**
+     * 处理
+     *
+     * @param id             id
+     * @param processor      处理人
+     * @param processorPhone 处理人手机号
+     * @author shuyy
+     * @date 2018/12/20 10:55
+     * @company mitesofor
+     */
+    public void processor(Integer id, String processor, String processorPhone) {
+        ReportThingsRepair reportThingsRepair = this.getById(id);
+        reportThingsRepair.setStatus("being_processed");
+        reportThingsRepair.setProcessorStartTime(LocalDateTime.now());
+        reportThingsRepair.setProcessor(processor);
+        reportThingsRepair.setProcessorPhone(processorPhone);
+        this.update(reportThingsRepair);
+    }
+
+    /**
+     * 待评价
+     *
+     * @param id
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2018/12/20 11:02
+     * @company mitesofor
+     */
+    public void remailEvaluated(Integer id) {
+        ReportThingsRepair reportThingsRepair = this.getById(id);
+        reportThingsRepair.setStatus("remain_evaluated");
+        reportThingsRepair.setProcessorEndTime(LocalDateTime.now());
+        this.update(reportThingsRepair);
+    }
+
+    /**
      * 查询报事报修状态数据，通过住户id
+     *
      * @param householdId 住户id
      * @param status      保修状态 0、未完成。1、已完成
      * @return 报事报修数据列表
@@ -97,7 +156,64 @@ public class ReportThingsRepairService {
     }
 
     /**
+     * 查询报事报修列表
+     * @param communityCode 小区code
+     * @param zoneId 分区id
+     * @param buildingId 楼栋id
+     * @param unitId 单元id
+     * @param roomId 房间id
+     * @param cellphone 电话号码
+     * @param status 状态
+     * @param appointmentTimeStart 预约开始时间
+     * @param appointmentTimeEnd 预约结束时间
+     * @param maintainType 维修类型
+     * @param pageNum 当前页
+     * @param pageSize 分页大小
+     * @return java.util.List<com.mit.community.entity.ReportThingsRepair>
+     * @author shuyy
+     * @date 2018/12/20 11:20
+     * @company mitesofor
+    */
+    public List<ReportThingsRepair> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
+                                               Integer roomId, String cellphone, String status,
+                                               String appointmentTimeStart, String appointmentTimeEnd, String maintainType,
+                                               Integer pageNum, Integer pageSize) {
+        EntityWrapper<ReportThingsRepair> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        if (zoneId != null) {
+            wrapper.eq("zone_id", zoneId);
+        }
+        if (buildingId != null) {
+            wrapper.eq("building_id", buildingId);
+        }
+        if (unitId != null) {
+            wrapper.eq("unit_id", unitId);
+        }
+        if (roomId != null) {
+            wrapper.eq("room_id", roomId);
+        }
+        if (StringUtils.isNotBlank(cellphone)) {
+            wrapper.eq("cellphone", cellphone);
+        }
+        if (StringUtils.isNotBlank(status)) {
+            wrapper.eq("status", status);
+        }
+        if(StringUtils.isNotBlank(appointmentTimeStart)){
+            wrapper.ge("appointment_time", appointmentTimeStart);
+        }
+        if(StringUtils.isNotBlank(appointmentTimeEnd)){
+            wrapper.le("appointment_time", appointmentTimeEnd);
+        }
+        if(StringUtils.isNotBlank(maintainType)){
+            wrapper.eq("maintain_type", maintainType);
+        }
+        Page<Object> page = new Page<>(pageNum, pageSize);
+        return reportThingsRepairMapper.selectPage(page, wrapper);
+    }
+
+    /**
      * 查询报事报修状态数据，通过手机号
+     *
      * @param cellphone 手机号
      * @param status    保修状态 0、未完成。1、已完成
      * @return List<ReportThingsRepair>
@@ -114,6 +230,7 @@ public class ReportThingsRepairService {
 
     /**
      * 申请报事报修
+     *
      * @param communityCode   小区code
      * @param roomId          房间id
      * @param roomNum         房间号
@@ -157,6 +274,7 @@ public class ReportThingsRepairService {
 
     /**
      * 查询报事报修详情，通告报事报修id
+     *
      * @param reportThingsRepairId 报事报修id
      * @return 报事报修详情信息
      * @author Mr.Deng
@@ -176,6 +294,7 @@ public class ReportThingsRepairService {
 
     /**
      * 报事报修评价
+     *
      * @param applyReportId             报事报修id
      * @param evaluateResponseSpeed     响应速度评价
      * @param evaluateResponseAttitude  响应态度评价
