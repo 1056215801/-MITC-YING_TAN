@@ -36,6 +36,7 @@ import java.util.Objects;
 @Api(tags = "住户-通行模块接口")
 public class PassThroughController {
 
+    private final RegionService regionService;
     private final NoticeService noticeService;
     private final ApplyKeyService applyKeyService;
     private final VisitorService visitorService;
@@ -57,7 +58,7 @@ public class PassThroughController {
     private final SysMessagesService sysMessagesService;
 
     @Autowired
-    public PassThroughController(NoticeService noticeService, ApplyKeyService applyKeyService,
+    public PassThroughController(RegionService regionService, NoticeService noticeService, ApplyKeyService applyKeyService,
                                  VisitorService visitorService,
                                  DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                                  ZoneService zoneService, UnitService unitService, RoomService roomService,
@@ -67,6 +68,7 @@ public class PassThroughController {
                                  DeviceService deviceService, UserTrackService userTrackService,
                                  DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService,
                                  SysMessagesService sysMessagesService) {
+        this.regionService = regionService;
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
         this.visitorService = visitorService;
@@ -90,17 +92,22 @@ public class PassThroughController {
 
     /**
      * 查询当地当前天气信息，通过城市英文名
-     * @param region 城市英文名
+     * @param cityName 城市code
      * @return result
      * @author Mr.Deng
      * @date 15:17 2018/11/29
      */
     @GetMapping("/getWeather")
-    @ApiOperation(value = "天气", notes = "输入参数：region为城市英文名")
-    public Result getWeather(String mac, String cellphone, String region) {
-        if (StringUtils.isNotBlank(region) && StringUtils.isNotBlank(mac) && StringUtils.isNotBlank(cellphone)) {
-            Weather weather = weatherService.ByCityeEnglish(region);
-            return Result.success(weather);
+    @ApiOperation(value = "天气", notes = "输入参数：region为城市code")
+    public Result getWeather(String mac, String cellphone, String cityName) {
+        if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(cellphone)) {
+            Region region = regionService.getByCityCode(cityName);
+            if (region != null) {
+                String eng = region.getEnglishName();
+                Weather weather = weatherService.ByCityeEnglish(eng);
+                return Result.success(weather);
+            }
+            return Result.error("输入城市code有误");
         }
         return Result.error("参数不能为空");
     }

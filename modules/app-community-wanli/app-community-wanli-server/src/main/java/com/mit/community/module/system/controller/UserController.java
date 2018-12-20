@@ -24,7 +24,6 @@ import java.util.List;
 
 /**
  * 用户
- *
  * @author shuyy
  * @date 2018/12/12
  * @company mitesofor
@@ -36,15 +35,13 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
     private final HouseHoldService houseHoldService;
-
     private final ClusterCommunityService clusterCommunityService;
-
     private final UserLabelService userLabelService;
 
     @Autowired
-    public UserController(UserService userService, HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService, UserLabelService userLabelService) {
+    public UserController(UserService userService, HouseHoldService houseHoldService,
+                          ClusterCommunityService clusterCommunityService, UserLabelService userLabelService) {
         this.userService = userService;
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
@@ -52,31 +49,31 @@ public class UserController {
     }
 
     /**
-     * @param mac
-     * @param cellphone
+     * @param mac       mac
+     * @param cellphone 手机号
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/12/12 16:58
      * @company mitesofor
-    */
+     */
     @GetMapping("/getDetail")
     @ApiOperation(value = "查询用户详情", notes = "传参：cellphone 手机号")
     public Result getDetail(String mac, String cellphone) {
+        HashMap<Object, Object> map = Maps.newHashMapWithExpectedSize(4);
         User user = userService.getByCellphone(cellphone);
         user.setPassword(StringUtils.EMPTY);
-        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
-        String communityCode = houseHold.getCommunityCode();
-        ClusterCommunity community = clusterCommunityService.getByCommunityCode(communityCode);
-        HashMap<Object, Object> map = Maps.newHashMapWithExpectedSize(2);
+        ClusterCommunity community = null;
         List<UserLabel> userLabels = userLabelService.listByUserId(user.getId());
+        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
+        if (houseHold != null) {
+            String communityCode = houseHold.getCommunityCode();
+            community = clusterCommunityService.getByCommunityCode(communityCode);
+        }
         map.put("user", user);
         map.put("household", houseHold);
         map.put("community", community);
         map.put("label", userLabels);
         return Result.success(map);
     }
-
-
 
 }

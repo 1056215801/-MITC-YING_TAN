@@ -6,6 +6,8 @@ import com.mit.community.mapper.WeatherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 天气业务处理层
  * @author Mr.Deng
@@ -28,6 +30,10 @@ public class WeatherService {
     public Weather ByCityeEnglish(String cityEnglish) {
         EntityWrapper<Weather> wrapper = new EntityWrapper<>();
         wrapper.eq("cityen", cityEnglish);
-        return weatherMapper.selectList(wrapper).get(0);
+        List<Weather> weathers = weatherMapper.selectList(wrapper);
+        if (weathers.isEmpty()) {
+            return null;
+        }
+        return weathers.get(0);
     }
 }
