@@ -60,17 +60,25 @@ public class OldMedical extends BaseEntity {
      */
     @TableField("end_time")
     private LocalDateTime endTime;
-
-    @TableField(exist = false, value = "活动状态")
+    /**
+     * 活动状态
+     */
+    @TableField(exist = false)
     private String oldMedicalStatus;
-
-    @TableField(exist = false, value = "已读状态")
+    /**
+     * 活动状态
+     */
+    @TableField(exist = false)
     private Boolean readStatus;
-
-    @TableField(exist = false, value = "详情")
+    /**
+     * 详情
+     */
+    @TableField(exist = false)
     private String content;
-
-    @TableField(exist = false, value = "浏览量")
+    /**
+     * 浏览量
+     */
+    @TableField(exist = false)
     private Integer readNum;
 
 }

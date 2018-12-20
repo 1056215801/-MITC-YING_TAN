@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 报事报修表
@@ -97,7 +98,7 @@ public class ReportThingsRepair extends BaseEntity {
      */
     private String cellphone;
     /**
-     * 预约时间
+     * 报事时间
      */
     @TableField("appointment_time")
     private LocalDateTime appointmentTime;
@@ -136,4 +137,39 @@ public class ReportThingsRepair extends BaseEntity {
      */
     @TableField("creator_user_id")
     private Integer creatorUserId;
+
+    /**
+     * 受理人
+     */
+    private String receiver;
+    /**
+     * 受理时间
+     */
+    @TableField("receiver_time")
+    private LocalDateTime receiverTime;
+    /**
+     * 处理人
+     */
+    private String processor;
+    /**
+     * 处理人电话
+     */
+    @TableField("processor_phone")
+    private String processorPhone;
+    /**
+     * 开始处理时间
+     */
+    @TableField("processor_start_time")
+    private LocalDateTime processorStartTime;
+    /**
+     * 处理完成时间
+     */
+    @TableField("processor_end_time")
+    private LocalDateTime processorEndTime;
+
+    /**
+     * 报事报修图片地址列表
+     */
+    @TableField(exist = false)
+    private List<String> images;
 }

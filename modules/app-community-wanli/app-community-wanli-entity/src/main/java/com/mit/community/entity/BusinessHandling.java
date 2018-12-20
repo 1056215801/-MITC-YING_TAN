@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
  * 业务办理表
  * @author Mr.Deng
@@ -131,4 +134,39 @@ public class BusinessHandling extends BaseEntity {
      */
     @TableField("evaluate_content")
     private String evaluateContent;
+
+    /**
+     * 受理人
+     */
+    private String receiver;
+    /**
+     * 受理时间
+     */
+    @TableField("receiver_time")
+    private LocalDateTime receiverTime;
+    /**
+     * 处理人
+     */
+    private String processor;
+    /**
+     * 处理人电话
+     */
+    @TableField("processor_phone")
+    private String processorPhone;
+    /**
+     * 开始处理时间
+     */
+    @TableField("processor_start_time")
+    private LocalDateTime processorStartTime;
+    /**
+     * 处理完成时间
+     */
+    @TableField("processor_end_time")
+    private LocalDateTime processorEndTime;
+
+    /**
+     * 报事报修图片地址列表
+     */
+    @TableField(exist = false)
+    private List<String> images;
 }

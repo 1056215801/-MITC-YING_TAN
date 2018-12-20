@@ -1,11 +1,13 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.ReportThingRepairImg;
 import com.mit.community.mapper.ReportThingRepairImgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 报事报修图片业务处理层
@@ -30,6 +32,19 @@ public class ReportThingRepairImgService {
         reportThingRepairImg.setGmtCreate(LocalDateTime.now());
         reportThingRepairImg.setGmtModified(LocalDateTime.now());
         return reportThingRepairImgMapper.insert(reportThingRepairImg);
+    }
+
+    /**
+     * 查找报事报修图片，通告报事报修id
+     * @param ReportThingsRepairId 报事报修id
+     * @return 报事报修图片信息
+     * @author Mr.Deng
+     * @date 18:49 2018/12/19
+     */
+    public List<ReportThingRepairImg> getByReportThingsRepairId(Integer ReportThingsRepairId) {
+        EntityWrapper<ReportThingRepairImg> wrapper = new EntityWrapper<>();
+        wrapper.eq("report_thing_repair_id", ReportThingsRepairId);
+        return reportThingRepairImgMapper.selectList(wrapper);
     }
 
 }

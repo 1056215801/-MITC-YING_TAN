@@ -1,11 +1,13 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.BusinessHandlingImg;
 import com.mit.community.mapper.BusinessHandlingImgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 业务办理图片业务处理层
@@ -30,6 +32,19 @@ public class BusinessHandlingImgService {
         bussinessHandingImg.setGmtCreate(LocalDateTime.now());
         bussinessHandingImg.setGmtModified(LocalDateTime.now());
         return bussinessHandingImgMapper.insert(bussinessHandingImg);
+    }
+
+    /**
+     * 查询业务办理图片信息
+     * @param businessHandlingId 业务办理id
+     * @return 业务办理图片信息
+     * @author Mr.Deng
+     * @date 19:33 2018/12/19
+     */
+    public List<BusinessHandlingImg> getByBusinessHandlingId(Integer businessHandlingId) {
+        EntityWrapper<BusinessHandlingImg> wrapper = new EntityWrapper<>();
+        wrapper.eq("business_handling_id", businessHandlingId);
+        return bussinessHandingImgMapper.selectList(wrapper);
     }
 
 }

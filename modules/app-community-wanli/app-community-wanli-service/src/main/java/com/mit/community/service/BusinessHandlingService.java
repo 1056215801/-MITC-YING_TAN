@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
 import com.mit.community.mapper.BusinessHandlingMapper;
 import com.mit.community.util.MakeOrderNumUtil;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 业务办理业务处理层
@@ -25,10 +27,6 @@ public class BusinessHandlingService {
     private BusinessHandlingMapper businessHandlingMapper;
     @Autowired
     private BusinessHandlingImgService businessHandlingImgService;
-    @Autowired
-    private DictionaryService dictionaryService;
-    @Autowired
-    private UserTrackService userTrackService;
     @Autowired
     private HouseHoldService houseHoldService;
     @Autowired
@@ -102,7 +100,9 @@ public class BusinessHandlingService {
                         householdRoom.getBuildingName(), householdRoom.getUnitId(), householdRoom.getUnitName(),
                         roomId, roomNum, contactPerson, contactCellphone, content,
                         status, type, creatorUserId, 0, 0, 0,
-                        0, StringUtils.EMPTY);
+                        0, StringUtils.EMPTY, StringUtils.EMPTY,
+                        Constants.NULL_LOCAL_DATE_TIME, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
+                        Constants.NULL_LOCAL_DATE_TIME, null);
                 this.save(businessHandling);
                 if (!images.isEmpty()) {
                     for (String image : images) {
@@ -112,6 +112,25 @@ public class BusinessHandlingService {
                 }
             }
         }
+    }
+
+    /**
+     * 查询业务办理详情信息，通过业务办理id
+     * @param businessHandlingId 业务办理id
+     * @return 业务办理
+     * @author Mr.Deng
+     * @date 19:36 2018/12/19
+     */
+    public BusinessHandling getByBusinessHandlingId(Integer businessHandlingId) {
+        BusinessHandling businessHandling = this.getById(businessHandlingId);
+        if (businessHandling != null) {
+            List<BusinessHandlingImg> businessHandlingImgs = businessHandlingImgService.getByBusinessHandlingId(businessHandlingId);
+            if (!businessHandlingImgs.isEmpty()) {
+                List<String> images = businessHandlingImgs.stream().map(BusinessHandlingImg::getImgUrl).collect(Collectors.toList());
+                businessHandling.setImages(images);
+            }
+        }
+        return businessHandling;
     }
 
     /**
