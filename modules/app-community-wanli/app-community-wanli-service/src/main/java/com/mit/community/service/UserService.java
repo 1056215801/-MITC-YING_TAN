@@ -149,24 +149,6 @@ public class UserService {
     }
 
     /**
-     * 选择标签
-     *
-     * @param cellphone 电话号码
-     * @param labelList label列表
-     * @author shuyy
-     * @date 2018/11/30 9:41
-     * @company mitesofor
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void chooseLabelList(String cellphone, String[] labelList) {
-        User user = (User) redisService.get(RedisConstant.USER + cellphone);
-        for (String labelCode : labelList) {
-            UserLabel userLabel = new UserLabel(labelCode, user.getId(), null);
-            userLabelService.save(userLabel);
-        }
-    }
-
-    /**
      * 修改用户信息
      *
      * @param cellphone     手机号

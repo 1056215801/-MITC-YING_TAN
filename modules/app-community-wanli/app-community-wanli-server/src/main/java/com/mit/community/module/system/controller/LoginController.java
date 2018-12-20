@@ -171,26 +171,6 @@ public class LoginController {
     }
 
     /**
-     * 选择标签
-     *
-     * @param cellphone 电话号码
-     * @param labelList label列表
-     * @return com.mit.community.util.Result
-     * @author shuyy
-     * @date 2018/11/30 9:39
-     * @company mitesofor
-     */
-    @PostMapping("/chooseLabelList")
-    @ApiOperation(value = "选择标签", notes = "传参;cellphone 手机号：labelList 多个标签。标签来自于数据字典parentCode为label")
-    public Result chooseLabelList(String cellphone, String[] labelList) {
-        if (StringUtils.isNotBlank(cellphone)) {
-            userService.chooseLabelList(cellphone, labelList);
-            return Result.success("成功");
-        }
-        return Result.error("参数不能为空");
-    }
-
-    /**
      * 选择性别
      *
      * @param cellphone 电话号码

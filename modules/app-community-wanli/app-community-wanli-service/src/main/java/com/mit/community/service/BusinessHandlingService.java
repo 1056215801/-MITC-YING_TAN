@@ -155,16 +155,21 @@ public class BusinessHandlingService {
         return businessHandlingMapper.selectList(wrapper);
     }
 
-    /*public void receive(Integer id, String receiverName) {
-        ReportThingsRepair reportThingsRepair = this.getById(id);
-        reportThingsRepair.setStatus("acceptance");
-        reportThingsRepair.setReceiverTime(LocalDateTime.now());
-        reportThingsRepair.setReceiver(receiverName);
-//        this.update(reportThingsRepair);
-
+    /**
+     * 受理
+     * @param id id
+     * @param receiverName 受理人
+     * @author shuyy
+     * @date 2018/12/20 15:44
+     * @company mitesofor
+    */
+    public void receive(Integer id, String receiverName) {
         BusinessHandling businessHandling = this.getById(id);
-//        businessHandling.setStatus();
-    }*/
+        businessHandling.setStatus("acceptance");
+        businessHandling.setReceiverTime(LocalDateTime.now());
+        businessHandling.setReceiver(receiverName);
+        this.update(businessHandling);
+    }
 
     /**
      * 业务办理评价
