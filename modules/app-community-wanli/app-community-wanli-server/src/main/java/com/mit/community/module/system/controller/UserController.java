@@ -1,14 +1,8 @@
 package com.mit.community.module.system.controller;
 
 import com.google.common.collect.Maps;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.User;
-import com.mit.community.entity.UserLabel;
-import com.mit.community.service.ClusterCommunityService;
-import com.mit.community.service.HouseHoldService;
-import com.mit.community.service.UserLabelService;
-import com.mit.community.service.UserService;
+import com.mit.community.entity.*;
+import com.mit.community.service.*;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,14 +32,16 @@ public class UserController {
     private final HouseHoldService houseHoldService;
     private final ClusterCommunityService clusterCommunityService;
     private final UserLabelService userLabelService;
+    private final HouseholdRoomService householdRoomService;
 
     @Autowired
     public UserController(UserService userService, HouseHoldService houseHoldService,
-                          ClusterCommunityService clusterCommunityService, UserLabelService userLabelService) {
+                          ClusterCommunityService clusterCommunityService, UserLabelService userLabelService, HouseholdRoomService householdRoomService) {
         this.userService = userService;
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.userLabelService = userLabelService;
+        this.householdRoomService = householdRoomService;
     }
 
     /**
@@ -64,15 +60,18 @@ public class UserController {
         user.setPassword(StringUtils.EMPTY);
         ClusterCommunity community = null;
         List<UserLabel> userLabels = userLabelService.listByUserId(user.getId());
+        List<HouseholdRoom> householdRooms = null;
         HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
         if (houseHold != null) {
             String communityCode = houseHold.getCommunityCode();
             community = clusterCommunityService.getByCommunityCode(communityCode);
+            householdRooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
         }
         map.put("user", user);
         map.put("household", houseHold);
         map.put("community", community);
         map.put("label", userLabels);
+        map.put("householdRooms", householdRooms);
         return Result.success(map);
     }
 
