@@ -136,7 +136,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
                 device.setUnitCode(StringUtils.EMPTY);
             }else{
                 String unitCode = device.getUnitCode();
-                int addZero = 4 - unitCode.length();
+                int addZero = 2 - unitCode.length();
                 for (int i = 0; i < addZero; i++) {
                     unitCode = "0" + unitCode;
                 }
