@@ -33,5 +33,24 @@ public class UnitService {
         wrapper.eq("unit_status", 1);
         return unitMapper.selectList(wrapper);
     }
-    
+
+    /**
+     * 查询单元信息，通过单元code
+     * @param unitCode 单元code
+     * @return 单元信息
+     * @author Mr.Deng
+     * @date 14:30 2018/12/21
+     */
+    public Unit getByUnitCode(String unitCode, String communityCode) {
+        EntityWrapper<Unit> wrapper = new EntityWrapper<>();
+        wrapper.eq("unit_code", unitCode);
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("unit_status", 1);
+        List<Unit> units = unitMapper.selectList(wrapper);
+        if (units.isEmpty()) {
+            return null;
+        }
+        return units.get(0);
+    }
+
 }

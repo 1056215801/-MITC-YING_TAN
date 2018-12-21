@@ -53,4 +53,21 @@ public class MyKey {
      * 单元号
      */
     private String unitCode;
+
+    /**
+     * 小区名称
+     */
+    private String communityName;
+    /**
+     * 楼栋名称
+     */
+    private String buildingName;
+    /**
+     * 单元名称
+     */
+    private String unitName;
+    /**
+     * 分区名称
+     */
+    private String zoneName;
 }

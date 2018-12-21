@@ -33,4 +33,23 @@ public class ZoneService {
         wrapper.eq("zone_status", 1);
         return zoneMapper.selectList(wrapper);
     }
+
+    /**
+     * 查询分区信息，通过分区
+     * @param zoneId 分区Id
+     * @return 分区信息
+     * @author Mr.Deng
+     * @date 14:09 2018/12/21
+     */
+    public Zone getByZoneId(String communityCode, Integer zoneId) {
+        EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+        wrapper.eq("zone_id", zoneId);
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("zone_status", 1);
+        List<Zone> zones = zoneMapper.selectList(wrapper);
+        if (zones.isEmpty()) {
+            return null;
+        }
+        return zones.get(0);
+    }
 }
