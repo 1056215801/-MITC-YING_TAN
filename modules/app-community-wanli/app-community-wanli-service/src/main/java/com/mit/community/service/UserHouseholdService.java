@@ -38,4 +38,7 @@ public class UserHouseholdService {
         wrapper.eq("user_id", userId);
         return userHouseholdMapper.selectList(wrapper);
     }
+
+
+
 }

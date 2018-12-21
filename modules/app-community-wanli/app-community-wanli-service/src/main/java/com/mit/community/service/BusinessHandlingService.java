@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
 import com.mit.community.mapper.BusinessHandlingMapper;
@@ -172,6 +173,40 @@ public class BusinessHandlingService {
     }
 
     /**
+     * 处理
+     *
+     * @param id             id
+     * @param processor      处理人
+     * @param processorPhone 处理人手机号
+     * @author shuyy
+     * @date 2018/12/20 10:55
+     * @company mitesofor
+     */
+    public void processor(Integer id, String processor, String processorPhone) {
+        BusinessHandling businessHandling = this.getById(id);
+        businessHandling.setStatus("being_processed");
+        businessHandling.setProcessorStartTime(LocalDateTime.now());
+        businessHandling.setProcessor(processor);
+        businessHandling.setProcessorPhone(processorPhone);
+        this.update(businessHandling);
+    }
+
+    /**
+     * 待评价
+     *
+     * @param id id
+     * @author shuyy
+     * @date 2018/12/20 11:02
+     * @company mitesofor
+     */
+    public void remailEvaluated(Integer id) {
+        BusinessHandling businessHandling = this.getById(id);
+        businessHandling.setStatus("remain_evaluated");
+        businessHandling.setProcessorEndTime(LocalDateTime.now());
+        this.update(businessHandling);
+    }
+
+    /**
      * 业务办理评价
      * @param businessHandlingId        业务办理id
      * @param evaluateResponseSpeed     响应速度评价
@@ -196,6 +231,62 @@ public class BusinessHandlingService {
             this.update(businessHandling);
 
         }
+    }
+
+    /**
+     * 查询业务办理列表
+     * @param communityCode 小区code
+     * @param zoneId 分区id
+     * @param buildingId 楼栋id
+     * @param unitId 单元id
+     * @param roomId 房间id
+     * @param cellphone 电话号码
+     * @param status 状态
+     * @param appointmentTimeStart 预约开始时间
+     * @param appointmentTimeEnd 预约结束时间
+     * @param type 业务类型
+     * @param pageNum 当前页
+     * @param pageSize 分页大小
+     * @return java.util.List<com.mit.community.entity.BusinessHandling>
+     * @author shuyy
+     * @date 2018/12/20 11:20
+     * @company mitesofor
+     */
+    public List<BusinessHandling> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
+                                             Integer roomId, String cellphone, String status,
+                                             String appointmentTimeStart, String appointmentTimeEnd, String type,
+                                             Integer pageNum, Integer pageSize) {
+        EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        if (zoneId != null) {
+            wrapper.eq("zone_id", zoneId);
+        }
+        if (buildingId != null) {
+            wrapper.eq("building_id", buildingId);
+        }
+        if (unitId != null) {
+            wrapper.eq("unit_id", unitId);
+        }
+        if (roomId != null) {
+            wrapper.eq("room_id", roomId);
+        }
+        if (StringUtils.isNotBlank(cellphone)) {
+            wrapper.eq("cellphone", cellphone);
+        }
+        if (StringUtils.isNotBlank(status)) {
+            wrapper.eq("status", status);
+        }
+        if(StringUtils.isNotBlank(appointmentTimeStart)){
+            wrapper.ge("appointment_time", appointmentTimeStart);
+        }
+        if(StringUtils.isNotBlank(appointmentTimeEnd)){
+            wrapper.le("appointment_time", appointmentTimeEnd);
+        }
+        if(StringUtils.isNotBlank(type)){
+            wrapper.eq("type", type);
+        }
+        Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
+        return businessHandlingMapper.selectPage(page, wrapper);
     }
 
 }

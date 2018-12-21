@@ -41,10 +41,10 @@ public class SmsCommunityAppUtil {
         param.put("code", code);
         try {
             if (type == TYPE_REGISTER) {
-                SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXZN, SmsConstants.MODEL_CODE_REGISTER,
+                SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_NORMAL_VERIFICATION,
                         param);
             } else if (type == TYPE_LOGIN_CONFIRM) {
-                SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXZN, SmsConstants.MODEL_CODE_LOGIN_CONFIRM,
+                SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_NORMAL_VERIFICATION,
                         param);
             }
         } catch (ClientException e) {

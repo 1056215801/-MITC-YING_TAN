@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 社区服务表
+ *
  * @author Mr.Deng
  * @date 2018/12/5 11:27
  * <p>Copyright: Copyright (c) 2018</p>
@@ -28,6 +29,15 @@ public class CommunityServiceInfo extends BaseEntity {
      */
     private String name;
     /**
+     * 简介
+     */
+    private String intro;
+    /**
+     * 营业时间
+     */
+    @TableField("business_hours")
+    private String businessHours;
+    /**
      * 地址
      */
     private String address;
@@ -39,6 +49,10 @@ public class CommunityServiceInfo extends BaseEntity {
      * 距离
      */
     private Integer distance;
+    /**
+     * 浏览量
+     */
+    private Integer views;
     /**
      * 经度
      */
@@ -62,5 +76,11 @@ public class CommunityServiceInfo extends BaseEntity {
      */
     @TableField("creator_user_id")
     private Integer creatorUserId;
+
+    /**
+     * 详情
+     */
+    @TableField(exist = false)
+    private String detail;
 
 }
