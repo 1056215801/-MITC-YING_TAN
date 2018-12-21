@@ -271,37 +271,38 @@ public class DnakeAppApiService {
     /**
      * 获取我的钥匙
      * @param communityCode 小区code
+     * @param cellphone     手机号
      * @return 我的钥匙信息
      * @author Mr.Deng
      * @date 14:08 2018/12/4
      */
-    public Map<String, Object> getMyKey(String cellphone, String communityCode) {
-        List<MyKey> unitKeys = Lists.newArrayListWithExpectedSize(10);
-        List<MyKey> communityKeys = Lists.newArrayListWithExpectedSize(10);
-        Map<String, Object> maps = Maps.newHashMapWithExpectedSize(2);
+    public List<MyKey> getMyKey(String cellphone, String communityCode) {
+        List<MyKey> list = Lists.newArrayListWithExpectedSize(20);
+//        List<MyKey> unitKeys = Lists.newArrayListWithExpectedSize(10);
+//        List<MyKey> communityKeys = Lists.newArrayListWithExpectedSize(10);
+//        Map<String, Object> maps = Maps.newHashMapWithExpectedSize(2);
         String url = "/auth/api/user/myKey";
         DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
         map.put("appUserId", dnakeAppUser.getAppUserId());
         map.put("communityCode", communityCode);
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
-        if (StringUtils.isNotBlank(invoke)) {
+        if (dnakeReponseStatus(invoke)) {
             JSONObject jsonObject = JSON.parseObject(invoke);
             JSONArray devices = jsonObject.getJSONArray("devices");
             for (Object json : devices) {
                 MyKey myKey = JSONObject.parseObject(json.toString(), MyKey.class);
-                String buildingCode = myKey.getBuildingCode();
-                //判断是否为单元机和门口机
-                if (StringUtils.isNotBlank(buildingCode)) {
-                    unitKeys.add(myKey);
-                } else {
-                    communityKeys.add(myKey);
-                }
+//                String buildingCode = myKey.getBuildingCode();
+//                //判断是否为单元机和门口机
+//                if (StringUtils.isNotBlank(buildingCode)) {
+//                    unitKeys.add(myKey);
+//                } else {
+//                    communityKeys.add(myKey);
+//                }
+                list.add(myKey);
             }
-            maps.put("unitKeys", unitKeys);
-            maps.put("CommunityKeys", communityKeys);
         }
-        return maps;
+        return list;
     }
 
     /**
