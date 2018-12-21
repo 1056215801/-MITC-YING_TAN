@@ -12,13 +12,13 @@ public class SmsConstants {
     /**
      * 签名
      */
-    public static final String SIGN_MXZN = "珉轩智能";
+    public static final String SIGN_MXKJ = "珉轩科技";
 
     /**
-     * 模板code-注册：
+     * 模板code-统一验证码：
      * 验证码${code}，您正在注册成为新用户，感谢您的支持！
      */
-    public static final String MODEL_CODE_REGISTER = "SMS_152470940";
+    public static final String MODEL_CODE_NORMAL_VERIFICATION = "SMS_152506558";
 
     /**
      * 模板code-修改密码：
