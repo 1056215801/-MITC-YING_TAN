@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Service
 public class BuildingService {
-    
+
     @Autowired
     private BuildingMapper buildingMapper;
 
@@ -33,5 +33,24 @@ public class BuildingService {
         wrapper.eq("zone_id", zoneId);
         wrapper.eq("building_status", 1);
         return buildingMapper.selectList(wrapper);
+    }
+
+    /**
+     * 查询楼栋信息，通过楼栋code
+     * @param buildingCode 楼栋code
+     * @return 楼栋信息
+     * @author Mr.Deng
+     * @date 14:23 2018/12/21
+     */
+    public Building getBybuildingCode(String buildingCode, String communityCode) {
+        EntityWrapper<Building> wrapper = new EntityWrapper<>();
+        wrapper.eq("building_code", buildingCode);
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("building_status", 1);
+        List<Building> buildings = buildingMapper.selectList(wrapper);
+        if (buildings.isEmpty()) {
+            return null;
+        }
+        return buildings.get(0);
     }
 }

@@ -1,6 +1,7 @@
 package com.mit.community.module.pass.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
@@ -421,13 +422,31 @@ public class PassThroughController {
      */
     @PostMapping("/getMyKey")
     @ApiOperation(value = "获取我的钥匙", notes = "输入参数：cellphone 手机号。communityCode 小区code \n" +
-            "返回参数: unitKeys 单元钥匙、 CommunityKeys 小区钥匙 ")
+            "返回参数: unitKeys 单元钥匙、 CommunityKeys 小区钥匙")
     public Result getMyKey(String cellphone, String communityCode) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
-            Map<String, Object> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            List<MyKey> myKeys = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            if (!myKeys.isEmpty()) {
+                for (MyKey myKey : myKeys) {
+                    Device device = deviceService.getByDeviceNumAndCommunityCode(communityCode, myKey.getDeviceNum());
+                    if (device != null) {
+                        ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(device.getCommunityCode());
+                        Building building = buildingService.getBybuildingCode(communityCode, device.getBuildingCode());
+                        Unit unit = unitService.getByUnitCode(communityCode, device.getUnitCode());
+                        Zone zone = null;
+                        if (building != null) {
+                            zone = zoneService.getByZoneId(communityCode, building.getZoneId());
+                        }
+                        myKey.setCommunityName(clusterCommunity == null ? StringUtils.EMPTY : clusterCommunity.getCommunityName());
+                        myKey.setBuildingName(building == null ? StringUtils.EMPTY : building.getBuildingName());
+                        myKey.setUnitName(unit == null ? StringUtils.EMPTY : unit.getUnitName());
+                        myKey.setZoneName(zone == null ? StringUtils.EMPTY : zone.getZoneName());
+                    }
+                }
+            }
             //添加足迹
             userTrackService.addUserTrack(cellphone, "查询我的钥匙", "钥匙查询成功");
-            return Result.success(myKey);
+            return Result.success(myKeys);
         }
         return Result.error("参数不能为空");
     }
@@ -711,26 +730,13 @@ public class PassThroughController {
      */
     @GetMapping("/listAccessControlByHouseHoldId")
     @ApiOperation(value = "查询门禁记录，通过手机号", notes = "传参：cellphone 手机号，communityCode 社区code,type M：单元机；W：门口机；")
-    public Result listAccessControlByHouseHoldId(String cellphone, String communityCode, String type) {
-        List<AccessControl> list = Lists.newArrayListWithExpectedSize(100);
-        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
-            List<AccessControl> accessControls = accessControlService.listByUserId(communityCode, cellphone);
-            if (!accessControls.isEmpty()) {
-                for (AccessControl accessControl : accessControls) {
-                    Device device = deviceService.getByDeviceNumAndCommunityCode(communityCode, accessControl.getDeviceNum());
-                    if (device != null) {
-                        String deviceType = device.getDeviceType();
-                        if (type.equals(deviceType)) {
-                            list.add(accessControl);
-                        }
-                    } else {
-                        continue;
-                    }
-                }
-                //添加足迹
-                userTrackService.addUserTrack(cellphone, "查询门禁记录", "门禁记录查询成功");
-                return Result.success(list);
-            }
+    public Result listAccessControlByHouseHoldId(String cellphone, String communityCode, String type, Integer pageNum, Integer pageSize) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(type)
+                && pageNum != null && pageSize != null) {
+            Page<AccessControl> mapPage = accessControlService.listToHouseholdAccessControl(communityCode, cellphone, type, pageNum, pageSize);
+            //添加足迹
+            userTrackService.addUserTrack(cellphone, "查询门禁记录", "门禁记录查询成功");
+            return Result.success(mapPage);
         }
         return Result.error("参数不能为空");
     }

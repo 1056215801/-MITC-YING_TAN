@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.Device;
 import com.mit.community.mapper.DeviceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.List;
  * @company mitesofor
  */
 @Service
-public class DeviceService {
+public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
     @Autowired
     private DeviceMapper deviceMapper;
     @Autowired
@@ -99,6 +100,21 @@ public class DeviceService {
             return null;
         }
         return devices.get(0);
+    }
+
+    /**
+     * 查询设备信息，通过小区code和设备类型
+     * @param communityCode 小区code
+     * @param deviceType    设备类型（M：单元门口机；W：围墙机；）
+     * @return 设备信息
+     * @author Mr.Deng
+     * @date 10:44 2018/12/21
+     */
+    public List<Device> getByDeviceTypeAndCommunityCode(String communityCode, String deviceType) {
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("device_type", deviceType);
+        return deviceMapper.selectList(wrapper);
     }
 
     /**
