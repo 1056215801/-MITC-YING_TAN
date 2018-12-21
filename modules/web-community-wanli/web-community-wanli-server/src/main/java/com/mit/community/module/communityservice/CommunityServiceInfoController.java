@@ -1,5 +1,6 @@
 package com.mit.community.module.communityservice;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.CommunityServiceInfo;
 import com.mit.community.entity.SysUser;
@@ -12,14 +13,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 小区服务
@@ -92,7 +89,7 @@ public class CommunityServiceInfoController {
     @ApiOperation(value = "修改小区服务", notes = "传参：id 社区服务id， name 名， intro 简介， businessHours 营业时间，" +
             "address 地址， cellphone 号码， longitude 经度，latitude 维度，  image 图片， detail 详情")
     public Result update(HttpServletRequest request, Integer id, String name, String intro, String businessHours, String address, String cellphone,
-                         Double longitude, Double latitude, MultipartFile image, String type, String detail) throws Exception {
+                         Double longitude, Double latitude, MultipartFile image, String detail) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String imageUrl = null;
@@ -107,7 +104,6 @@ public class CommunityServiceInfoController {
 
     /**
      * 分页查询
-     *
      * @param request       request
      * @param communityCode 小区code
      * @param type          类型
@@ -126,8 +122,8 @@ public class CommunityServiceInfoController {
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = user.getCommunityCode();
         }
-        List<CommunityServiceInfo> communityServiceInfos = communityServiceInfoService.listPage(communityCode, type, pageNum, pageSize);
-        return Result.success(communityServiceInfos);
+        Page<CommunityServiceInfo> communityServiceInfoPage = communityServiceInfoService.listPage(communityCode, type, pageNum, pageSize);
+        return Result.success(communityServiceInfoPage);
     }
 
     /**
@@ -147,6 +143,26 @@ public class CommunityServiceInfoController {
         CommunityServiceInfo communityServiceInfo = communityServiceInfoService.getDetailById(id);
         return Result.success(communityServiceInfo);
     }
+
+    /**
+     * @param id 社区服务id
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/21 15:29
+     * @company mitesofor
+    */
+    @DeleteMapping("/removeById")
+    @ApiOperation(value = "删除社区服务", notes = "传参：id 社区服务id")
+    public Result removeById(Integer id) {
+        if (id == null) {
+            Result.error("参数错误");
+        }
+        communityServiceInfoService.remove(id);
+        return Result.success("操作成功");
+    }
+
+
+
 
 
 }

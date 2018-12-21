@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
-import com.dnake.constant.DnakeConstants;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.Device;
 import com.mit.community.mapper.DeviceMapper;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * 设备业务层
+ *
  * @author Mr.Deng
  * @date 2018/11/15 10:08
  * <p>Copyright: Copyright (c) 2018</p>
@@ -37,6 +37,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 
     /**
      * 添加设备信息
+     *
      * @param device 设备信息
      * @author Mr.Deng
      * @date 10:09 2018/11/15
@@ -47,6 +48,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 
     /**
      * 获取所有设备信息
+     *
      * @return 设备信息列表
      * @author Mr.Deng
      * @date 10:10 2018/11/15
@@ -119,12 +121,26 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
             device.setGmtModified(LocalDateTime.now());
             if (device.getBuildingCode() == null) {
                 device.setBuildingCode(StringUtils.EMPTY);
+            } else {
+                String buildingCode = device.getBuildingCode();
+                int addZero = 4 - buildingCode.length();
+                for (int i = 0; i < addZero; i++) {
+                    buildingCode = "0" + buildingCode;
+                }
+                device.setBuildingCode(buildingCode);
             }
             if (device.getBuildingId() == null) {
                 device.setBuildingId(StringUtils.EMPTY);
             }
             if (device.getUnitCode() == null) {
                 device.setUnitCode(StringUtils.EMPTY);
+            }else{
+                String unitCode = device.getUnitCode();
+                int addZero = 4 - unitCode.length();
+                for (int i = 0; i < addZero; i++) {
+                    unitCode = "0" + unitCode;
+                }
+                device.setUnitCode(unitCode);
             }
             if (device.getUnitId() == null) {
                 device.setUnitId(StringUtils.EMPTY);

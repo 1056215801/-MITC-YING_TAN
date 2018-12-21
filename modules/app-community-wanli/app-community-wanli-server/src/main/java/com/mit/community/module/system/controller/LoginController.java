@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -443,18 +442,6 @@ public class LoginController {
         }
         userTrackService.addUserTrack(cellphone, "修改密码", "修改密码成功");
         return Result.success("重置成功");
-    }
-
-    @GetMapping("/myProfile")
-    @ApiOperation(value = "我的资料", notes = "反回参数：nickName 昵称，gender 性别；bloodType 血型；birthday 出生日期yyyy-mm-dd;" +
-            "constellation 星座；region 地区；profession 职业，role 身份；coordinates 小区位置；signature 签名；userLabels 用户标签")
-    public Result myProfile(String cellphone, String communityCode) {
-        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
-            Map<String, Object> map = userService.mapProfile(cellphone, communityCode);
-            return Result.success(map);
-        }
-        return Result.error("参数不能为空");
-
     }
 
     /**

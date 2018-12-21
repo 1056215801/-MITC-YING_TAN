@@ -270,50 +270,6 @@ public class UserService {
     }
 
     /**
-     * 我的资料
-     *
-     * @return 资料
-     * @author Mr.Deng
-     * @date 11:29 2018/12/13
-     */
-    public Map<String, Object> mapProfile(String cellphone, String communityCode) {
-        User user = this.getByCellphone(cellphone);
-        Map<String, Object> map = Maps.newHashMapWithExpectedSize(12);
-        if (user != null) {
-            user.setPassword(StringUtils.EMPTY);
-            HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
-            if (houseHold != null) {
-                List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
-                List<String> communityRegion = Lists.newArrayListWithExpectedSize(5);
-                if (!householdRooms.isEmpty()) {
-                    for (HouseholdRoom householdRoom : householdRooms) {
-                        String str = householdRoom.getCommunityName() + "-" + householdRoom.getZoneName() +
-                                "-" + householdRoom.getBuildingName() + "-" + householdRoom.getUnitName() +
-                                "-" + householdRoom.getRoomNum();
-                        communityRegion.add(str);
-                    }
-                }
-                List<UserLabel> userLabels = userLabelService.listByUserId(user.getId());
-                List<String> userLabelNameList = userLabels.parallelStream().map(UserLabel::getLableName).collect(Collectors.toList());
-                Short gender = user.getGender();
-                map.put("nickName", user.getNickname());
-                map.put("gender", gender == 0 ? "未知" : (gender == 1 ? "男" : "女"));
-                map.put("bloodType", user.getBloodType());
-                map.put("birthday", user.getBirthday());
-                map.put("constellation", houseHold.getConstellation());
-                map.put("region", user.getRegion());
-                map.put("profession", user.getProfession());
-                map.put("role", user.getRole());
-                map.put("coordinates", communityRegion);
-                map.put("signature", user.getSignature());
-                map.put("userLabels", userLabelNameList);
-
-            }
-        }
-        return map;
-    }
-
-    /**
      * 更新用户手机号
      *
      * @param cellPhone    旧手机号

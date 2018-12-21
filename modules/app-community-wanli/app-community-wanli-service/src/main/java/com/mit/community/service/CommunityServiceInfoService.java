@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -122,8 +123,12 @@ public class CommunityServiceInfoService {
                      Double longitude, Double latitude, String image, String type, Integer creatorUserId, String detail) {
         CommunityServiceInfo communityServiceInfo = new CommunityServiceInfo(communityCode, name, intro, businessHours, address,
                 cellphone, 0, 0, longitude, latitude, image, type, creatorUserId, null);
+        communityServiceInfo.setGmtCreate(LocalDateTime.now());
+        communityServiceInfo.setGmtModified(LocalDateTime.now());
         communityServiceInfoMapper.insert(communityServiceInfo);
         CommunityServiceInfoDetail communityServiceInfoDetail = new CommunityServiceInfoDetail(communityServiceInfo.getId(), detail);
+        communityServiceInfoDetail.setGmtCreate(LocalDateTime.now());
+        communityServiceInfoDetail.setGmtModified(LocalDateTime.now());
         communityServiceInfoDetailService.save(communityServiceInfoDetail);
     }
 
@@ -198,7 +203,7 @@ public class CommunityServiceInfoService {
      * @date 2018/12/20 17:25
      * @company mitesofor
      */
-    public List<CommunityServiceInfo> listPage(String communityCode, String type, Integer pageNum, Integer pageSize) {
+    public Page<CommunityServiceInfo> listPage(String communityCode, String type, Integer pageNum, Integer pageSize) {
         EntityWrapper<CommunityServiceInfo> wrapper = new EntityWrapper<>();
 
         if (StringUtils.isNotBlank(communityCode)) {
@@ -209,7 +214,9 @@ public class CommunityServiceInfoService {
 
         }
         Page<CommunityServiceInfo> page = new Page<>(pageNum, pageSize);
-        return communityServiceInfoMapper.selectPage(page, wrapper);
+        List<CommunityServiceInfo> communityServiceInfos = communityServiceInfoMapper.selectPage(page, wrapper);
+        page.setRecords(communityServiceInfos);
+        return page;
     }
 
     /**
@@ -228,4 +235,16 @@ public class CommunityServiceInfoService {
         return communityServiceInfo;
     }
 
+    /**
+     * 删除
+     * @param id 社区服务id
+     * @author shuyy
+     * @date 2018/12/21 15:28
+     * @company mitesofor
+    */
+    @Transactional(rollbackFor = Exception.class)
+    public void remove(Integer id) {
+        communityServiceInfoMapper.deleteById(id);
+        communityServiceInfoDetailService.removeByCommunityServiceId(id);
+    }
 }

@@ -34,13 +34,13 @@ public class CommunityServiceInfoDetailService {
 
     /**
      * 查询，通过社区服务id
-     * @param communityServiceInfoId
+     *
+     * @param communityServiceInfoId 社区服务id
      * @return com.mit.community.entity.CommunityServiceInfoDetail
-     * @throws
      * @author shuyy
      * @date 2018/12/20 17:15
      * @company mitesofor
-    */
+     */
     public CommunityServiceInfoDetail getByCommunityServiceInfoId(Integer communityServiceInfoId) {
         EntityWrapper<CommunityServiceInfoDetail> wrapper = new EntityWrapper<>();
         wrapper.eq("community_service_info_id", communityServiceInfoId);
@@ -52,13 +52,27 @@ public class CommunityServiceInfoDetailService {
     }
 
     /**
+     * 删除,通过社区服务id
+     * @param communityServiceInfoId 社区服务id
+     * @author shuyy
+     * @date 2018/12/21 15:27
+     * @company mitesofor
+     */
+    public void removeByCommunityServiceId(Integer communityServiceInfoId) {
+        EntityWrapper<CommunityServiceInfoDetail> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_service_info_id", communityServiceInfoId);
+        communityServiceInfoDetailMapper.delete(wrapper);
+    }
+
+    /**
      * 更新
+     *
      * @param communityServiceInfoDetail 社区服务详情
      * @author shuyy
      * @date 2018/12/20 17:16
      * @company mitesofor
-    */
-    public void update(CommunityServiceInfoDetail communityServiceInfoDetail){
+     */
+    public void update(CommunityServiceInfoDetail communityServiceInfoDetail) {
         communityServiceInfoDetailMapper.updateById(communityServiceInfoDetail);
     }
 }
