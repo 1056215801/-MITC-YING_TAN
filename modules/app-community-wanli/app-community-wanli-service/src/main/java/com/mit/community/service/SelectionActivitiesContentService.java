@@ -23,7 +23,7 @@ public class SelectionActivitiesContentService {
     /**
      * 查询精品活动详情信息
      * @param selectionActivitiesId 精品活动id
-     * @return
+     * @return 精品活动信息
      * @author Mr.Deng
      * @date 20:47 2018/12/19
      */

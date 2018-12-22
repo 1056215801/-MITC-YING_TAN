@@ -50,6 +50,7 @@ public class UserServiceController {
     private final OldMedicalReadUserService oldMedicalReadUserService;
     private final OldMedicalService oldMedicalService;
     private final SysMessagesService sysMessagesService;
+    private final SelectionActivitiesService selectionActivitiesService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -62,7 +63,8 @@ public class UserServiceController {
                                  ExpressReadUserService expressReadUserService, RedisService redisService,
                                  LostFountReadUserService lostFountReadUserService, PromotionService promotionService,
                                  PromotionReadUserService promotionReadUserService,
-                                 OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService, SysMessagesService sysMessagesService) {
+                                 OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService,
+                                 SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -82,6 +84,7 @@ public class UserServiceController {
         this.oldMedicalReadUserService = oldMedicalReadUserService;
         this.oldMedicalService = oldMedicalService;
         this.sysMessagesService = sysMessagesService;
+        this.selectionActivitiesService = selectionActivitiesService;
     }
 
     /**
@@ -709,6 +712,40 @@ public class UserServiceController {
             return Result.error("请登录");
         }
         return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询所有的精品活动信息
+     * @return result
+     * @author Mr.Deng
+     * @date 14:13 2018/12/22
+     */
+    @GetMapping("/listSelectionActivities")
+    @ApiOperation(value = "查询所有的精品活动信息", notes = "输出参数：title 标题,introduce 活动介绍,externalUrl 外部URL," +
+            "validTime 有效时间,issueTime 发布时间,issuer 发布人，readNum 浏览量，image 图片地址，notes 备注")
+    public Result listSelectionActivities() {
+        List<SelectionActivities> list = selectionActivitiesService.list();
+        return Result.success(list);
+    }
+
+    /**
+     * 查询精品活动详情，通过精品活动id
+     * @param selectionActivitiesId 精品活动id
+     * @return result
+     * @author Mr.Deng
+     * @date 14:29 2018/12/22
+     */
+    @GetMapping("/getBySelectionActivitiesId")
+    @ApiOperation(value = "查询精品活动详情，通过精品活动id", notes = "输入参数：selectionActivitiesId 精品活动id<br/>" +
+            "输出参数：title 标题,introduce 活动介绍,externalUrl 外部URL," +
+            "validTime 有效时间,issueTime 发布时间,issuer 发布人，readNum 浏览量，image 图片地址，notes 备注，content 信息详情")
+    public Result getBySelectionActivitiesId(Integer selectionActivitiesId) {
+        SelectionActivities selectionActivities = selectionActivitiesService.getBySelectionActivitiesId(selectionActivitiesId);
+        if (selectionActivities != null) {
+            //记录浏览量
+            selectionActivitiesService.AddSelectionActivitiesReadNum(selectionActivities);
+        }
+        return Result.success(selectionActivities);
     }
 
 }
