@@ -10,20 +10,14 @@ import java.util.List;
 
 /**
  * 用户住户关联
- *
  * @author shuyy
  * @date 2018/11/30
  * @company mitesofor
  */
 @Service
 public class UserHouseholdService {
-
-    private final UserHouseholdMapper userHouseholdMapper;
-
     @Autowired
-    public UserHouseholdService(UserHouseholdMapper userHouseholdMapper) {
-        this.userHouseholdMapper = userHouseholdMapper;
-    }
+    private UserHouseholdMapper userHouseholdMapper;
 
     /**
      * 查询用户住户关联，通过用户id
@@ -32,13 +26,28 @@ public class UserHouseholdService {
      * @author shuyy
      * @date 2018/11/30 10:37
      * @company mitesofor
-    */
-    public List<UserHousehold> listByUserId(Integer userId){
+     */
+    public List<UserHousehold> listByUserId(Integer userId) {
         EntityWrapper<UserHousehold> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return userHouseholdMapper.selectList(wrapper);
     }
 
-
+    /**
+     * 查询住户-用户关联信息，通过住户id
+     * @param householdId 住户id
+     * @return 用户住户关联信息
+     * @author Mr.Deng
+     * @date 13:46 2018/12/24
+     */
+    public UserHousehold getByHouseholdId(Integer householdId) {
+        EntityWrapper<UserHousehold> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        List<UserHousehold> userHouseholds = userHouseholdMapper.selectList(wrapper);
+        if (userHouseholds.isEmpty()) {
+            return null;
+        }
+        return userHouseholds.get(0);
+    }
 
 }

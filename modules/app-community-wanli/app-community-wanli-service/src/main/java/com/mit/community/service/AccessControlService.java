@@ -47,6 +47,38 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     }
 
     /**
+     * 统计门禁总数，通过住户id和小区code
+     * @param communityCode 小区code
+     * @param householdId   住户id
+     * @return 门禁总数
+     * @author Mr.Deng
+     * @date 11:47 2018/12/24
+     */
+    public Integer countByHouseHoldIdAndCommunityCode(String communityCode, Integer householdId) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("household_id", householdId);
+        return accessControlMapper.selectCount(wrapper);
+    }
+
+    /**
+     * 统计门禁总数
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return 门禁总数
+     * @author Mr.Deng
+     * @date 11:49 2018/12/24
+     */
+    public Integer countByCellphoneAndCommunityCode(String cellphone, String communityCode) {
+        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
+        Integer accessControlNum = 0;
+        if (houseHold != null) {
+            accessControlNum = this.countByHouseHoldIdAndCommunityCode(communityCode, houseHold.getHouseholdId());
+        }
+        return accessControlNum;
+    }
+
+    /**
      * 查询门禁记录
      * @param householdId 住户id
      * @param deviceNum   设备编号列表

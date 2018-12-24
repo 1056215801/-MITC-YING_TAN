@@ -1,6 +1,8 @@
 package com.mit.community.module.userservice.controller;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,6 +54,9 @@ public class UserServiceController {
     private final OldMedicalReadUserService oldMedicalReadUserService;
     private final OldMedicalService oldMedicalService;
     private final SysMessagesService sysMessagesService;
+    private final SelectionActivitiesService selectionActivitiesService;
+    private final AccessControlService accessControlService;
+    private final DnakeAppApiService dnakeAppApiService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -62,7 +69,9 @@ public class UserServiceController {
                                  ExpressReadUserService expressReadUserService, RedisService redisService,
                                  LostFountReadUserService lostFountReadUserService, PromotionService promotionService,
                                  PromotionReadUserService promotionReadUserService,
-                                 OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService, SysMessagesService sysMessagesService) {
+                                 OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService,
+                                 SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService,
+                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -82,6 +91,9 @@ public class UserServiceController {
         this.oldMedicalReadUserService = oldMedicalReadUserService;
         this.oldMedicalService = oldMedicalService;
         this.sysMessagesService = sysMessagesService;
+        this.selectionActivitiesService = selectionActivitiesService;
+        this.accessControlService = accessControlService;
+        this.dnakeAppApiService = dnakeAppApiService;
     }
 
     /**
@@ -103,26 +115,36 @@ public class UserServiceController {
     @ApiOperation(value = "申请报事报修", notes = "输入参数：输入参数：communityCode 小区code;cellphone 登录用户手机号；roomId 房间id;" +
             "roomNum 房间编号；content 报事内容；reportUser 报事人；reportCellphone 报事人手机号；" +
             "maintainType 维修类型.关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他；" +
-            "creatorUserId 创建用户id；images 图片（可不传）")
+            "creatorUserId 创建用户id；images 图片（可不传），appointmentTime 预约时间（yyyy-MM-dd HH:mm:ss）")
     public Result applyReportThingsRepair(String communityCode, String cellphone, Integer roomId, String roomNum, String content,
                                           String reportUser, String reportCellphone, String maintainType,
-                                          Integer creatorUserId, MultipartFile[] images) throws Exception {
-        //上传图片路径
-        List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
-        if (images != null) {
-            for (MultipartFile image : images) {
-                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
-                imageUrls.add(imageUrl);
+                                          Integer creatorUserId, String appointmentTime, MultipartFile[] images) throws Exception {
+        if (StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(cellphone) && roomId != null && StringUtils.isNotBlank(roomNum)
+                && StringUtils.isNotBlank(content) && StringUtils.isNotBlank(reportUser) && StringUtils.isNotBlank(reportCellphone)
+                && StringUtils.isNotBlank(maintainType) && creatorUserId != null && StringUtils.isNotBlank(appointmentTime)) {
+            if (appointmentTime.length() == 19) {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime appointmentTimes = LocalDateTime.parse(appointmentTime, df);
+                //上传图片路径
+                List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
+                if (images != null) {
+                    for (MultipartFile image : images) {
+                        String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                        imageUrls.add(imageUrl);
+                    }
+                }
+                reportThingsRepairService.applyReportThingsRepair(communityCode, cellphone, roomId, roomNum, content,
+                        reportUser, reportCellphone, maintainType, creatorUserId, appointmentTimes, imageUrls);
+                //记录足迹
+                Dictionary dictionary = dictionaryService.getByCode(maintainType);
+                if (dictionary != null) {
+                    userTrackService.addUserTrack(cellphone, "申请报事报修", "维修类型" + dictionary.getName() + "申请报事报修成功");
+                }
+                return Result.success("申请成功");
             }
+            return Result.error("预约时间格式不对");
         }
-        reportThingsRepairService.applyReportThingsRepair(communityCode, cellphone, roomId, roomNum, content,
-                reportUser, reportCellphone, maintainType, creatorUserId, imageUrls);
-        //记录足迹
-        Dictionary dictionary = dictionaryService.getByCode(maintainType);
-        if (dictionary != null) {
-            userTrackService.addUserTrack(cellphone, "申请报事报修", "维修类型" + dictionary.getName() + "申请报事报修成功");
-        }
-        return Result.success("申请成功");
+        return Result.error("参数不能为空");
     }
 
     /**
@@ -135,9 +157,9 @@ public class UserServiceController {
      */
     @GetMapping("/listReportThingsRepairByStatus")
     @ApiOperation(value = "查询相应状态的报事报修数据", notes = "输入参数：cellphone 手机号，status 0、未完成。1、已完成")
-    public Result listReportThingsRepairByStatus(String cellphone, Integer status) {
+    public Result listReportThingsRepairByStatus(String cellphone, Integer status, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && status != null) {
-            List<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listReportThingsRepairByStatus(cellphone, status);
+            Page<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listReportThingsRepairByStatus(cellphone, status, pageNum, pageSize);
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询报事报修", "查询状态" + st + "报事报修成功");
             return Result.success(reportThingsRepairs);
@@ -304,9 +326,9 @@ public class UserServiceController {
     @GetMapping("/listBusinessHandlingByStatus")
     @ApiOperation(value = "查询业务办理状态数据，通过用户id", notes = "输入参数：creatorUserId 用户id；" +
             "业务办理状态 0、未完成。1、已完成")
-    public Result listBusinessHandlingByStatus(String cellphone, Integer creatorUserId, Integer status) {
+    public Result listBusinessHandlingByStatus(String cellphone, Integer creatorUserId, Integer status, Integer pageNum, Integer pageSize) {
         if (creatorUserId != null && status != null && StringUtils.isNotBlank(cellphone)) {
-            List<BusinessHandling> listBusinessHandling = businessHandlingService.listByStatus(creatorUserId, status);
+            Page<BusinessHandling> listBusinessHandling = businessHandlingService.pageByStatus(creatorUserId, status, pageNum, pageSize);
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询业务办理数据", "查询办理状态" + st + "业务数据成功");
             return Result.success(listBusinessHandling);
@@ -322,7 +344,13 @@ public class UserServiceController {
      * @date 19:41 2018/12/19
      */
     @GetMapping("/getByBusinessHandlingId")
-    @ApiOperation(value = "查询业务办理详情信息，通告业务办理id", notes = "")
+    @ApiOperation(value = "查询业务办理详情信息，通告业务办理id", notes = "输出参数：number 工单号；communityCode 小区code;" +
+            "communityName 小区名称；zoneId 分区id；zoneName 分区name;buildingId 楼栋id；buildingName 楼栋名称；unitId 单元id；" +
+            "unitName 单元名称；roomId 房间id; roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 申请内容" +
+            "type 业务类型：(关联字典表，code为business_handling_type。)；creatorUserId  创建人用户id;" +
+            "evaluateResponseSpeed 响应速度评价；evaluateResponseAttitude 响应态度评价；evaluateTotal 总体评价；" +
+            "evaluateServiceProfession 服务专业度评价；evaluateContent 评价内容；receiver 受理人；receiverTime 受理时间；" +
+            "processor 处理人；processorPhone 处理电话；processorStartTime 开始处理时间；processorEndTime 处理完成时间；images 图片")
     public Result getByBusinessHandlingId(Integer businessHandlingId) {
         if (businessHandlingId != null) {
             BusinessHandling businessHanding = businessHandlingService.getByBusinessHandlingId(businessHandlingId);
@@ -707,6 +735,69 @@ public class UserServiceController {
                 return Result.success(sysMessages);
             }
             return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
+     * 查询所有的精品活动信息
+     * @return result
+     * @author Mr.Deng
+     * @date 14:13 2018/12/22
+     */
+    @GetMapping("/listSelectionActivities")
+    @ApiOperation(value = "查询所有的精品活动信息", notes = "输出参数：title 标题,introduce 活动介绍,externalUrl 外部URL," +
+            "validTime 有效时间,issueTime 发布时间,issuer 发布人，readNum 浏览量，image 图片地址，notes 备注")
+    public Result listSelectionActivities() {
+        List<SelectionActivities> list = selectionActivitiesService.list();
+        return Result.success(list);
+    }
+
+    /**
+     * 查询精品活动详情，通过精品活动id
+     * @param selectionActivitiesId 精品活动id
+     * @return result
+     * @author Mr.Deng
+     * @date 14:29 2018/12/22
+     */
+    @GetMapping("/getBySelectionActivitiesId")
+    @ApiOperation(value = "查询精品活动详情，通过精品活动id", notes = "输入参数：selectionActivitiesId 精品活动id<br/>" +
+            "输出参数：title 标题,introduce 活动介绍,externalUrl 外部URL," +
+            "validTime 有效时间,issueTime 发布时间,issuer 发布人，readNum 浏览量，image 图片地址，notes 备注，content 信息详情")
+    public Result getBySelectionActivitiesId(Integer selectionActivitiesId) {
+        SelectionActivities selectionActivities = selectionActivitiesService.getBySelectionActivitiesId(selectionActivitiesId);
+        if (selectionActivities != null) {
+            //记录浏览量
+            selectionActivitiesService.AddSelectionActivitiesReadNum(selectionActivities);
+        }
+        return Result.success(selectionActivities);
+    }
+
+    /**
+     * 我的-统计数据
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @author Mr.Deng
+     * @date 10:41 2018/12/24
+     */
+    @GetMapping("/getTotal")
+    @ApiOperation(value = "我的-统计数据", notes = "输入参数：cellphone 手机号；communityCode小区code")
+    public Result getTotal(String cellphone, String communityCode) {
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
+            int myKeyNum = 0;
+            Integer reportThingsRepairNum = reportThingsRepairService.countReportThingsRepair(cellphone, communityCode);
+            Integer handlingNum = businessHandlingService.countByCellphoneAndCommunityCode(cellphone, communityCode);
+            Integer accessControlNum = accessControlService.countByCellphoneAndCommunityCode(cellphone, communityCode);
+            List<MyKey> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            if (!myKey.isEmpty()) {
+                myKeyNum = myKey.size();
+            }
+            map.put("myKeyNum", myKeyNum);
+            map.put("reportThingsRepairNum", reportThingsRepairNum);
+            map.put("handlingNum", handlingNum);
+            map.put("accessControlNum", accessControlNum);
+            return Result.success(map);
         }
         return Result.error("参数不能为空");
     }
