@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @company mitesofor
  */
 @RestController
-@RequestMapping(value = "/communityServiceInfo")
+@RequestMapping(value = "/communityServiceInfo/yellow")
 @Slf4j
 @Api(tags = "黄页")
 public class YellowPageController {

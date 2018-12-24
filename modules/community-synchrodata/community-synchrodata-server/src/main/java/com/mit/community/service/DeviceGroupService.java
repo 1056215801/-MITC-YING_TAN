@@ -51,9 +51,7 @@ public class DeviceGroupService extends ServiceImpl<DeviceGroupMapper, DeviceGro
 
     public List<DeviceGroup> listFromDnakeByCommunityCodeList(List<String> communityCodeList) {
         List<DeviceGroup> result = Lists.newCopyOnWriteArrayList();
-        CountDownLatch countDownLatch = new CountDownLatch(communityCodeList.size());
-        communityCodeList.forEach(item -> ThreadPoolUtil.execute(() -> {
-            try {
+        communityCodeList.forEach(item -> {
                 // 一个小区，最多的设备组不会超过20，所以这里不管小区设备组有多少，都发送20个分页请求去查询。
                 CountDownLatch pageCountDownLatch = new CountDownLatch(20);
                 for (int index = 0; index < 20; index++) {
@@ -70,18 +68,12 @@ public class DeviceGroupService extends ServiceImpl<DeviceGroupMapper, DeviceGro
                         }
                     });
                 }
+            try {
                 pageCountDownLatch.await();
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            } finally {
-                countDownLatch.countDown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }));
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        });
         return result;
     }
 

@@ -7,11 +7,13 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
-import com.dnake.constant.DnakeWebConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
-import com.mit.community.entity.*;
+import com.mit.community.entity.AccessControl;
+import com.mit.community.entity.ActivePeople;
+import com.mit.community.entity.Device;
+import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -80,15 +82,13 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/16 16:43
      */
-    private List<AccessControl> listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
+    private static List<AccessControl>  listFromDnakeByCommunityCodePage(String communityCode, Integer pageNum,
                                                                  Integer pageSize, Map<String, Object> param) {
         String url = "/v1/device/getAccessControlList";
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
         map.put("pageSize", pageSize);
         map.put("pageNum", pageNum);
-        map.put("pageNum", pageNum);
-        map.put("accountId", DnakeWebConstants.ACCOUNT_ID);
         if (param != null && !param.isEmpty()) {
             map.putAll(param);
         }
@@ -139,8 +139,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
             }
             int index = 1;
             while (true) {
-                List<AccessControl> accessControls = this
-                        .listFromDnakeByCommunityCodePage(item,
+                List<AccessControl> accessControls = this.listFromDnakeByCommunityCodePage(item,
                                 index, 100, param);
                 boolean isEnd = false;
                 if (accessControls.size() < 100) {

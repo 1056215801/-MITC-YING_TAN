@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/22
  * @company mitesofor
  */
-//@Component
+@Component
 public class BigDataSchedule {
 
 
