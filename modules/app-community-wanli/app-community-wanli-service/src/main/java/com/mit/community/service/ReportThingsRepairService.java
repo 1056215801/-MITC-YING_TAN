@@ -2,7 +2,6 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
@@ -133,7 +132,8 @@ public class ReportThingsRepairService {
      * @author Mr.Deng
      * @date 20:49 2018/12/3
      */
-    public List<ReportThingsRepair> listByStatus(Integer householdId, Integer status) {
+    public Page<ReportThingsRepair> listByStatus(Integer householdId, Integer status, Integer pageNum, Integer pageSize) {
+        Page<ReportThingsRepair> page = new Page<>(pageNum, pageSize);
         EntityWrapper<ReportThingsRepair> wrapper = new EntityWrapper<>();
         String[] s;
         //未完成
@@ -144,7 +144,8 @@ public class ReportThingsRepairService {
         }
         wrapper.in("status", s);
         wrapper.eq("household_id", householdId);
-        return reportThingsRepairMapper.selectList(wrapper);
+        List<ReportThingsRepair> reportThingsRepairList = reportThingsRepairMapper.selectPage(page, wrapper);
+        return page.setRecords(reportThingsRepairList);
     }
 
     /**
@@ -211,14 +212,13 @@ public class ReportThingsRepairService {
      * @author Mr.Deng
      * @date 17:01 2018/12/11
      */
-    public List<ReportThingsRepair> listReportThingsRepairByStatus(String cellphone, Integer status) {
-        List<ReportThingsRepair> reportThingsRepairList = Lists.newArrayListWithExpectedSize(10);
+    public Page<ReportThingsRepair> listReportThingsRepairByStatus(String cellphone, Integer status, Integer pageNum, Integer pageSize) {
+        Page<ReportThingsRepair> page = new Page<>(pageNum, pageSize);
         HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
         if (houseHold != null) {
-            List<ReportThingsRepair> reportThingsRepairs = listByStatus(houseHold.getHouseholdId(), status);
-            reportThingsRepairList.addAll(reportThingsRepairs);
+            page = listByStatus(houseHold.getHouseholdId(), status, pageNum, pageSize);
         }
-        return reportThingsRepairList;
+        return page;
     }
 
     /**

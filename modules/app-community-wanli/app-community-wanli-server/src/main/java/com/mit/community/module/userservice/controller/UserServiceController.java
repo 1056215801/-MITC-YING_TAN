@@ -1,5 +1,6 @@
 package com.mit.community.module.userservice.controller;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
@@ -138,9 +139,9 @@ public class UserServiceController {
      */
     @GetMapping("/listReportThingsRepairByStatus")
     @ApiOperation(value = "查询相应状态的报事报修数据", notes = "输入参数：cellphone 手机号，status 0、未完成。1、已完成")
-    public Result listReportThingsRepairByStatus(String cellphone, Integer status) {
+    public Result listReportThingsRepairByStatus(String cellphone, Integer status, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && status != null) {
-            List<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listReportThingsRepairByStatus(cellphone, status);
+            Page<ReportThingsRepair> reportThingsRepairs = reportThingsRepairService.listReportThingsRepairByStatus(cellphone, status, pageNum, pageSize);
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询报事报修", "查询状态" + st + "报事报修成功");
             return Result.success(reportThingsRepairs);
@@ -325,7 +326,13 @@ public class UserServiceController {
      * @date 19:41 2018/12/19
      */
     @GetMapping("/getByBusinessHandlingId")
-    @ApiOperation(value = "查询业务办理详情信息，通告业务办理id", notes = "")
+    @ApiOperation(value = "查询业务办理详情信息，通告业务办理id", notes = "输出参数：number 工单号；communityCode 小区code;" +
+            "communityName 小区名称；zoneId 分区id；zoneName 分区name;buildingId 楼栋id；buildingName 楼栋名称；unitId 单元id；" +
+            "unitName 单元名称；roomId 房间id; roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 申请内容" +
+            "type 业务类型：(关联字典表，code为business_handling_type。)；creatorUserId  创建人用户id;" +
+            "evaluateResponseSpeed 响应速度评价；evaluateResponseAttitude 响应态度评价；evaluateTotal 总体评价；" +
+            "evaluateServiceProfession 服务专业度评价；evaluateContent 评价内容；receiver 受理人；receiverTime 受理时间；" +
+            "processor 处理人；processorPhone 处理电话；processorStartTime 开始处理时间；processorEndTime 处理完成时间；images 图片")
     public Result getByBusinessHandlingId(Integer businessHandlingId) {
         if (businessHandlingId != null) {
             BusinessHandling businessHanding = businessHandlingService.getByBusinessHandlingId(businessHandlingId);
@@ -746,6 +753,22 @@ public class UserServiceController {
             selectionActivitiesService.AddSelectionActivitiesReadNum(selectionActivities);
         }
         return Result.success(selectionActivities);
+    }
+
+    /**
+     * 我的-统计数据
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @author Mr.Deng
+     * @date 10:41 2018/12/24
+     */
+    @GetMapping("/getTotal")
+    @ApiOperation(value = "我的-统计数据", notes = "输入参数：cellphone 手机号；communityCode小区code")
+    public Result getTotal(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
+
+        }
+        return Result.error("参数不能为空");
     }
 
 }
