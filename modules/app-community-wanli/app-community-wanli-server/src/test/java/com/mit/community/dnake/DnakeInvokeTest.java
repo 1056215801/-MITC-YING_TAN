@@ -15,7 +15,6 @@ import java.util.Map;
 
 /**
  * dnake 调用测试
- *
  * @author shuyy
  * @date 2018/11/13
  * @company mitesofor
@@ -28,7 +27,7 @@ public class DnakeInvokeTest {
      * @date 2018/11/16 15:26
      * @company mitesofor
      */
-    // @Test
+    @Test
     public void getAccessControlList() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -37,8 +36,8 @@ public class DnakeInvokeTest {
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
 //        map.put("deviceName", "凯翔演示-进门");
 //        map.put("deviceNum", "AB900DX8880285879170");
-        map.put("pageSize", "10");
-        map.put("pageNum", "1");
+//        map.put("pageSize", "10");
+//        map.put("pageNum", "1");
         map.put("accountId", DnakeWebConstants.ACCOUNT_ID);
         String result = DnakeWebApiUtil.invoke(url, map);
         System.out.println(result);
@@ -184,7 +183,6 @@ public class DnakeInvokeTest {
 
     /**
      * 住户授权
-     *
      * @author shuyy
      * @date 2018/12/19 16:13
      * @company mitesofor
@@ -208,7 +206,6 @@ public class DnakeInvokeTest {
 
     /**
      * 注销用户
-     *
      * @author shuyy
      * @date 2018/12/19 16:13
      * @company mitesofor

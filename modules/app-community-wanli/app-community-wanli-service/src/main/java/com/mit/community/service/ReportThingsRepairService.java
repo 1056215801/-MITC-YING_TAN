@@ -29,10 +29,8 @@ import java.util.stream.Collectors;
 public class ReportThingsRepairService {
     @Autowired
     private ReportThingsRepairMapper reportThingsRepairMapper;
-
     @Autowired
     private ReportThingRepairImgService reportThingRepairImgService;
-
     @Autowired
     private HouseHoldService houseHoldService;
     @Autowired
@@ -70,7 +68,7 @@ public class ReportThingsRepairService {
      * @date 11:03 2018/12/5
      */
     public Integer update(ReportThingsRepair reportThingsRepair) {
-        reportThingsRepair.setGmtModified(LocalDateTime.now());
+        reportThingsRepair.setGmtCreate(LocalDateTime.now());
         return reportThingsRepairMapper.updateById(reportThingsRepair);
     }
 
@@ -132,7 +130,7 @@ public class ReportThingsRepairService {
      * @author Mr.Deng
      * @date 20:49 2018/12/3
      */
-    public Page<ReportThingsRepair> listByStatus(Integer householdId, Integer status, Integer pageNum, Integer pageSize) {
+    public Page<ReportThingsRepair> pageByStatus(Integer householdId, Integer status, Integer pageNum, Integer pageSize) {
         Page<ReportThingsRepair> page = new Page<>(pageNum, pageSize);
         EntityWrapper<ReportThingsRepair> wrapper = new EntityWrapper<>();
         String[] s;
@@ -145,7 +143,10 @@ public class ReportThingsRepairService {
         wrapper.in("status", s);
         wrapper.eq("household_id", householdId);
         List<ReportThingsRepair> reportThingsRepairList = reportThingsRepairMapper.selectPage(page, wrapper);
-        return page.setRecords(reportThingsRepairList);
+        if (!reportThingsRepairList.isEmpty()) {
+            page.setRecords(reportThingsRepairList);
+        }
+        return page;
     }
 
     /**
@@ -216,7 +217,7 @@ public class ReportThingsRepairService {
         Page<ReportThingsRepair> page = new Page<>(pageNum, pageSize);
         HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
         if (houseHold != null) {
-            page = listByStatus(houseHold.getHouseholdId(), status, pageNum, pageSize);
+            page = pageByStatus(houseHold.getHouseholdId(), status, pageNum, pageSize);
         }
         return page;
     }
@@ -306,6 +307,38 @@ public class ReportThingsRepairService {
         reportThingsRepair.setEvaluateTotal(evaluateTotal);
         reportThingsRepair.setStatus(status);
         this.update(reportThingsRepair);
+    }
+
+    /**
+     * 统计报事报修数量,通过住户id和小区code
+     * @param householdId   住户id
+     * @param communityCode 小区code
+     * @return 总数
+     * @author Mr.Deng
+     * @date 11:40 2018/12/24
+     */
+    public Integer countByhouseholdIdAndCommunityCode(Integer householdId, String communityCode) {
+        EntityWrapper<ReportThingsRepair> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        wrapper.eq("community_code", communityCode);
+        return reportThingsRepairMapper.selectCount(wrapper);
+    }
+
+    /**
+     * 统计报事报修数量，通过手机号和小区code
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return 总数
+     * @author Mr.Deng
+     * @date 11:35 2018/12/24
+     */
+    public Integer countReportThingsRepair(String cellphone, String communityCode) {
+        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
+        Integer reportThingsRepairNum = 0;
+        if (houseHold != null) {
+            reportThingsRepairNum = this.countByhouseholdIdAndCommunityCode(houseHold.getHouseholdId(), communityCode);
+        }
+        return reportThingsRepairNum;
     }
 
 }

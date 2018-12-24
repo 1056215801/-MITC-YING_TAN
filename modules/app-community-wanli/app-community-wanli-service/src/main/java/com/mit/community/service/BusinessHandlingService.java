@@ -32,6 +32,8 @@ public class BusinessHandlingService {
     private HouseHoldService houseHoldService;
     @Autowired
     private HouseholdRoomService householdRoomService;
+    @Autowired
+    private UserHouseholdService userHouseholdService;
 
     /**
      * 添加业务办理数据
@@ -142,7 +144,8 @@ public class BusinessHandlingService {
      * @author Mr.Deng
      * @date 14:40 2018/12/5
      */
-    public List<BusinessHandling> listByStatus(Integer creatorUserId, Integer status) {
+    public Page<BusinessHandling> pageByStatus(Integer creatorUserId, Integer status, Integer pageNum, Integer pageSize) {
+        Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
         EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
         String[] s;
         //未完成
@@ -153,17 +156,21 @@ public class BusinessHandlingService {
         }
         wrapper.in("status", s);
         wrapper.eq("creator_user_id", creatorUserId);
-        return businessHandlingMapper.selectList(wrapper);
+        List<BusinessHandling> businessHandlings = businessHandlingMapper.selectPage(page, wrapper);
+        if (!businessHandlings.isEmpty()) {
+            page.setRecords(businessHandlings);
+        }
+        return page;
     }
 
     /**
      * 受理
-     * @param id id
+     * @param id           id
      * @param receiverName 受理人
      * @author shuyy
      * @date 2018/12/20 15:44
      * @company mitesofor
-    */
+     */
     public void receive(Integer id, String receiverName) {
         BusinessHandling businessHandling = this.getById(id);
         businessHandling.setStatus("acceptance");
@@ -174,7 +181,6 @@ public class BusinessHandlingService {
 
     /**
      * 处理
-     *
      * @param id             id
      * @param processor      处理人
      * @param processorPhone 处理人手机号
@@ -193,7 +199,6 @@ public class BusinessHandlingService {
 
     /**
      * 待评价
-     *
      * @param id id
      * @author shuyy
      * @date 2018/12/20 11:02
@@ -235,27 +240,27 @@ public class BusinessHandlingService {
 
     /**
      * 查询业务办理列表
-     * @param communityCode 小区code
-     * @param zoneId 分区id
-     * @param buildingId 楼栋id
-     * @param unitId 单元id
-     * @param roomId 房间id
-     * @param cellphone 电话号码
-     * @param status 状态
+     * @param communityCode        小区code
+     * @param zoneId               分区id
+     * @param buildingId           楼栋id
+     * @param unitId               单元id
+     * @param roomId               房间id
+     * @param cellphone            电话号码
+     * @param status               状态
      * @param appointmentTimeStart 预约开始时间
-     * @param appointmentTimeEnd 预约结束时间
-     * @param type 业务类型
-     * @param pageNum 当前页
-     * @param pageSize 分页大小
+     * @param appointmentTimeEnd   预约结束时间
+     * @param type                 业务类型
+     * @param pageNum              当前页
+     * @param pageSize             分页大小
      * @return java.util.List<com.mit.community.entity.BusinessHandling>
      * @author shuyy
      * @date 2018/12/20 11:20
      * @company mitesofor
      */
     public List<BusinessHandling> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
-                                             Integer roomId, String cellphone, String status,
-                                             String appointmentTimeStart, String appointmentTimeEnd, String type,
-                                             Integer pageNum, Integer pageSize) {
+                                           Integer roomId, String cellphone, String status,
+                                           String appointmentTimeStart, String appointmentTimeEnd, String type,
+                                           Integer pageNum, Integer pageSize) {
         EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         if (zoneId != null) {
@@ -276,17 +281,51 @@ public class BusinessHandlingService {
         if (StringUtils.isNotBlank(status)) {
             wrapper.eq("status", status);
         }
-        if(StringUtils.isNotBlank(appointmentTimeStart)){
+        if (StringUtils.isNotBlank(appointmentTimeStart)) {
             wrapper.ge("appointment_time", appointmentTimeStart);
         }
-        if(StringUtils.isNotBlank(appointmentTimeEnd)){
+        if (StringUtils.isNotBlank(appointmentTimeEnd)) {
             wrapper.le("appointment_time", appointmentTimeEnd);
         }
-        if(StringUtils.isNotBlank(type)){
+        if (StringUtils.isNotBlank(type)) {
             wrapper.eq("type", type);
         }
         Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
         return businessHandlingMapper.selectPage(page, wrapper);
     }
 
+    /**
+     * 查询业务办理总数，通过用户id和小区code
+     * @param creatorUserId 用户id
+     * @param communityCode 小区code
+     * @return 统计总数
+     * @author Mr.Deng
+     * @date 13:40 2018/12/24
+     */
+    public Integer countByCreatorUserIdAndCommunityCode(Integer creatorUserId, String communityCode) {
+        EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
+        wrapper.eq("creator_user_id", creatorUserId);
+        wrapper.eq("community_code", communityCode);
+        return businessHandlingMapper.selectCount(wrapper);
+    }
+
+    /**
+     * 查询业务办理总数，通过手机号和小区code
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return 统计总数
+     * @author Mr.Deng
+     * @date 13:49 2018/12/24
+     */
+    public Integer countByCellphoneAndCommunityCode(String cellphone, String communityCode) {
+        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
+        Integer handlingNum = 0;
+        if (houseHold != null) {
+            UserHousehold userHousehold = userHouseholdService.getByHouseholdId(houseHold.getHouseholdId());
+            if (userHousehold != null) {
+                handlingNum = this.countByCreatorUserIdAndCommunityCode(userHousehold.getUserId(), communityCode);
+            }
+        }
+        return handlingNum;
+    }
 }

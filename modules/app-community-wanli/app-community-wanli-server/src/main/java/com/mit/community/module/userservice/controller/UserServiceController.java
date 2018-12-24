@@ -2,6 +2,7 @@ package com.mit.community.module.userservice.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
@@ -52,6 +53,8 @@ public class UserServiceController {
     private final OldMedicalService oldMedicalService;
     private final SysMessagesService sysMessagesService;
     private final SelectionActivitiesService selectionActivitiesService;
+    private final AccessControlService accessControlService;
+    private final DnakeAppApiService dnakeAppApiService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -65,7 +68,7 @@ public class UserServiceController {
                                  LostFountReadUserService lostFountReadUserService, PromotionService promotionService,
                                  PromotionReadUserService promotionReadUserService,
                                  OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService,
-                                 SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService) {
+                                 SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService, AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -86,6 +89,8 @@ public class UserServiceController {
         this.oldMedicalService = oldMedicalService;
         this.sysMessagesService = sysMessagesService;
         this.selectionActivitiesService = selectionActivitiesService;
+        this.accessControlService = accessControlService;
+        this.dnakeAppApiService = dnakeAppApiService;
     }
 
     /**
@@ -308,9 +313,9 @@ public class UserServiceController {
     @GetMapping("/listBusinessHandlingByStatus")
     @ApiOperation(value = "查询业务办理状态数据，通过用户id", notes = "输入参数：creatorUserId 用户id；" +
             "业务办理状态 0、未完成。1、已完成")
-    public Result listBusinessHandlingByStatus(String cellphone, Integer creatorUserId, Integer status) {
+    public Result listBusinessHandlingByStatus(String cellphone, Integer creatorUserId, Integer status, Integer pageNum, Integer pageSize) {
         if (creatorUserId != null && status != null && StringUtils.isNotBlank(cellphone)) {
-            List<BusinessHandling> listBusinessHandling = businessHandlingService.listByStatus(creatorUserId, status);
+            Page<BusinessHandling> listBusinessHandling = businessHandlingService.pageByStatus(creatorUserId, status, pageNum, pageSize);
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询业务办理数据", "查询办理状态" + st + "业务数据成功");
             return Result.success(listBusinessHandling);
@@ -765,8 +770,21 @@ public class UserServiceController {
     @GetMapping("/getTotal")
     @ApiOperation(value = "我的-统计数据", notes = "输入参数：cellphone 手机号；communityCode小区code")
     public Result getTotal(String cellphone, String communityCode) {
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
-
+            int myKeyNum = 0;
+            Integer reportThingsRepairNum = reportThingsRepairService.countReportThingsRepair(cellphone, communityCode);
+            Integer handlingNum = businessHandlingService.countByCellphoneAndCommunityCode(cellphone, communityCode);
+            Integer accessControlNum = accessControlService.countByCellphoneAndCommunityCode(cellphone, communityCode);
+            List<MyKey> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            if (!myKey.isEmpty()) {
+                myKeyNum = myKey.size();
+            }
+            map.put("myKeyNum", myKeyNum);
+            map.put("reportThingsRepairNum", reportThingsRepairNum);
+            map.put("handlingNum", handlingNum);
+            map.put("accessControlNum", accessControlNum);
+            return Result.success(map);
         }
         return Result.error("参数不能为空");
     }
