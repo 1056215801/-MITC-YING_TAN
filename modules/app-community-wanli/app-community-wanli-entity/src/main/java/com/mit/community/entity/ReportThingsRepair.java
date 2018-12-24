@@ -98,7 +98,7 @@ public class ReportThingsRepair extends BaseEntity {
      */
     private String cellphone;
     /**
-     * 报事时间
+     * 预约时间
      */
     @TableField("appointment_time")
     private LocalDateTime appointmentTime;

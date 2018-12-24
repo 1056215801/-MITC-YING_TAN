@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -112,26 +114,31 @@ public class UserServiceController {
     @ApiOperation(value = "申请报事报修", notes = "输入参数：输入参数：communityCode 小区code;cellphone 登录用户手机号；roomId 房间id;" +
             "roomNum 房间编号；content 报事内容；reportUser 报事人；reportCellphone 报事人手机号；" +
             "maintainType 维修类型.关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他；" +
-            "creatorUserId 创建用户id；images 图片（可不传）")
+            "creatorUserId 创建用户id；images 图片（可不传），appointmentTime 预约时间（yyyy-MM-dd HH:mm:ss）")
     public Result applyReportThingsRepair(String communityCode, String cellphone, Integer roomId, String roomNum, String content,
                                           String reportUser, String reportCellphone, String maintainType,
-                                          Integer creatorUserId, MultipartFile[] images) throws Exception {
-        //上传图片路径
-        List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
-        if (images != null) {
-            for (MultipartFile image : images) {
-                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
-                imageUrls.add(imageUrl);
+                                          Integer creatorUserId, String appointmentTime, MultipartFile[] images) throws Exception {
+        if (appointmentTime.length() == 19) {
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime appointmentTimes = LocalDateTime.parse(appointmentTime, df);
+            //上传图片路径
+            List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
+            if (images != null) {
+                for (MultipartFile image : images) {
+                    String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                    imageUrls.add(imageUrl);
+                }
             }
+            reportThingsRepairService.applyReportThingsRepair(communityCode, cellphone, roomId, roomNum, content,
+                    reportUser, reportCellphone, maintainType, creatorUserId, appointmentTimes, imageUrls);
+            //记录足迹
+            Dictionary dictionary = dictionaryService.getByCode(maintainType);
+            if (dictionary != null) {
+                userTrackService.addUserTrack(cellphone, "申请报事报修", "维修类型" + dictionary.getName() + "申请报事报修成功");
+            }
+            return Result.success("申请成功");
         }
-        reportThingsRepairService.applyReportThingsRepair(communityCode, cellphone, roomId, roomNum, content,
-                reportUser, reportCellphone, maintainType, creatorUserId, imageUrls);
-        //记录足迹
-        Dictionary dictionary = dictionaryService.getByCode(maintainType);
-        if (dictionary != null) {
-            userTrackService.addUserTrack(cellphone, "申请报事报修", "维修类型" + dictionary.getName() + "申请报事报修成功");
-        }
-        return Result.success("申请成功");
+        return Result.error("预约时间格式对");
     }
 
     /**

@@ -238,7 +238,7 @@ public class ReportThingsRepairService {
     @Transactional(rollbackFor = Exception.class)
     public void applyReportThingsRepair(String communityCode, String cellphone, Integer roomId, String roomNum, String content,
                                         String reportUser, String reportCellphone, String maintainType, Integer creatorUserId,
-                                        List<String> images) {
+                                        LocalDateTime appointmentTime, List<String> images) {
         String number = "B" + MakeOrderNumUtil.makeOrderNum();
         //报事成功code
         String status = "business_success";
@@ -250,7 +250,7 @@ public class ReportThingsRepairService {
                 ReportThingsRepair reportThingsRepair = new ReportThingsRepair(number, communityCode, householdRoom.getCommunityName(),
                         householdRoom.getZoneId(), householdRoom.getZoneName(), householdRoom.getBuildingId(), householdRoom.getBuildingName(),
                         householdRoom.getUnitId(), householdRoom.getUnitName(), roomId, roomNum, householdId,
-                        content, status, reportUser, reportCellphone, LocalDateTime.now(), 0, 0,
+                        content, status, reportUser, reportCellphone, appointmentTime, 0, 0,
                         0, 0, StringUtils.EMPTY, maintainType, creatorUserId, StringUtils.EMPTY,
                         Constants.NULL_LOCAL_DATE_TIME, StringUtils.EMPTY, StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
                         Constants.NULL_LOCAL_DATE_TIME, null);
