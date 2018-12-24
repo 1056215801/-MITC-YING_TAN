@@ -119,27 +119,32 @@ public class UserServiceController {
     public Result applyReportThingsRepair(String communityCode, String cellphone, Integer roomId, String roomNum, String content,
                                           String reportUser, String reportCellphone, String maintainType,
                                           Integer creatorUserId, String appointmentTime, MultipartFile[] images) throws Exception {
-        if (appointmentTime.length() == 19) {
-            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime appointmentTimes = LocalDateTime.parse(appointmentTime, df);
-            //上传图片路径
-            List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
-            if (images != null) {
-                for (MultipartFile image : images) {
-                    String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
-                    imageUrls.add(imageUrl);
+        if (StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(cellphone) && roomId != null && StringUtils.isNotBlank(roomNum)
+                && StringUtils.isNotBlank(content) && StringUtils.isNotBlank(reportUser) && StringUtils.isNotBlank(reportCellphone)
+                && StringUtils.isNotBlank(maintainType) && creatorUserId != null && StringUtils.isNotBlank(appointmentTime)) {
+            if (appointmentTime.length() == 19) {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime appointmentTimes = LocalDateTime.parse(appointmentTime, df);
+                //上传图片路径
+                List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
+                if (images != null) {
+                    for (MultipartFile image : images) {
+                        String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                        imageUrls.add(imageUrl);
+                    }
                 }
+                reportThingsRepairService.applyReportThingsRepair(communityCode, cellphone, roomId, roomNum, content,
+                        reportUser, reportCellphone, maintainType, creatorUserId, appointmentTimes, imageUrls);
+                //记录足迹
+                Dictionary dictionary = dictionaryService.getByCode(maintainType);
+                if (dictionary != null) {
+                    userTrackService.addUserTrack(cellphone, "申请报事报修", "维修类型" + dictionary.getName() + "申请报事报修成功");
+                }
+                return Result.success("申请成功");
             }
-            reportThingsRepairService.applyReportThingsRepair(communityCode, cellphone, roomId, roomNum, content,
-                    reportUser, reportCellphone, maintainType, creatorUserId, appointmentTimes, imageUrls);
-            //记录足迹
-            Dictionary dictionary = dictionaryService.getByCode(maintainType);
-            if (dictionary != null) {
-                userTrackService.addUserTrack(cellphone, "申请报事报修", "维修类型" + dictionary.getName() + "申请报事报修成功");
-            }
-            return Result.success("申请成功");
+            return Result.error("预约时间格式不对");
         }
-        return Result.error("预约时间格式对");
+        return Result.error("参数不能为空");
     }
 
     /**

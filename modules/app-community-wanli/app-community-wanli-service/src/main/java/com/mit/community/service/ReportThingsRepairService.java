@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class ReportThingsRepairService {
+public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMapper, ReportThingsRepair> {
     @Autowired
     private ReportThingsRepairMapper reportThingsRepairMapper;
     @Autowired
