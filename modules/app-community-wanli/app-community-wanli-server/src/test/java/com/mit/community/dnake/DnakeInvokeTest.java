@@ -59,13 +59,15 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
-    // @Test
+     @Test
     public void getHouseholdList() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/household/getHouseholdList";
         HashMap<String, Object> map = new HashMap<>();
-        map.put("communityCode", "2c58fbed7bce49778da3b1717241df25");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("mobile", "13064102937");
+        map.put("householdStatus", "1");
         map.put("pageNum", "1");
         map.put("pageSize", "10");
         String result = DnakeWebApiUtil.invoke(url, map);

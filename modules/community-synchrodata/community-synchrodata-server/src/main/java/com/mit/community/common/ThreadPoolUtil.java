@@ -21,9 +21,9 @@ public class ThreadPoolUtil implements CommandLineRunner {
     private static void init(){
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("custom-pool-%d").build();
-        threadPoolExecutor = new ThreadPoolExecutor(100, Integer.MAX_VALUE,
+        threadPoolExecutor = new ThreadPoolExecutor(3, 3,
                 60L, TimeUnit.SECONDS,
-                new SynchronousQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+                new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
 
     /***
@@ -34,10 +34,24 @@ public class ThreadPoolUtil implements CommandLineRunner {
      * @company mitesofor
     */
     public static void execute(Runnable thread){
+        if(threadPoolExecutor  == null){
+            synchronized (threadPoolExecutor){
+                if(threadPoolExecutor == null){
+                    init();
+                }
+            }
+        }
         threadPoolExecutor.execute(thread);
     }
 
     public static Future<?> submit(Callable thread){
+        if(threadPoolExecutor  == null){
+            synchronized (threadPoolExecutor){
+                if(threadPoolExecutor == null){
+                    init();
+                }
+            }
+        }
         return threadPoolExecutor.submit(thread);
     }
 

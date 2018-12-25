@@ -21,7 +21,7 @@ import java.util.List;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
-@Component
+//@Component
 public class WeatherSchedule {
 
     private final WeatherService weatherService;

@@ -2,7 +2,10 @@ package com.mit.community.schedule;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mit.community.entity.*;
+import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
+import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
+import com.mit.community.entity.HouseHold;
+import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -65,8 +68,8 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-//    @Scheduled(cron = "0 */2 * * * ?")
-    @Scheduled(cron = "*/2 * * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
@@ -78,9 +81,7 @@ public class HouseholdSchedule {
         List<HouseHold> list = houseHoldService.list();
         // 对比出三种类型的数据
         Map<Integer, HouseHold> map = Maps.newHashMapWithExpectedSize(list.size());
-        list.forEach(l -> {
-            map.put(l.getHouseholdId(), l);
-        });
+        list.forEach(l -> map.put(l.getHouseholdId(), l));
         List<HouseHold> updateHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
         List<HouseHold> addHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
         List<HouseHold> removeHousehold = Lists.newArrayListWithCapacity(houseHolds.size());

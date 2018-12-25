@@ -70,7 +70,8 @@ public class UserServiceController {
                                  LostFountReadUserService lostFountReadUserService, PromotionService promotionService,
                                  PromotionReadUserService promotionReadUserService,
                                  OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService,
-                                 SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService, AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService) {
+                                 SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService,
+                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;

@@ -36,4 +36,10 @@ public class Constants {
     public static final Short LABEL_TYPE_SYSTEM = 1;
     /**标签类型-自定义*/
     public static final Short LABEL_TYPE_CUSTOMER = 2;
+
+    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    /** 默认日期格式 */
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    /** 默认时间格式 */
+    public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
 }

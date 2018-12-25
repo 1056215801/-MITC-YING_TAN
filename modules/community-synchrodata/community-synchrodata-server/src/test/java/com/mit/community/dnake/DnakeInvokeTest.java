@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
+import org.junit.Test;
 
 import java.util.HashMap;
 
@@ -23,7 +24,7 @@ public class DnakeInvokeTest {
      * @date 2018/11/16 15:26
      * @company mitesofor
     */
-//    @Test
+    @Test
     public void getAccessControlList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -53,7 +54,7 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
-//    @Test
+    @Test
     public void getHouseholdList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
