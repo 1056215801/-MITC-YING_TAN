@@ -40,6 +40,22 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
     }
 
     /**
+     * 查询房屋列表，通过住户id列表
+     * @param householdIdList 住户id列表
+     * @return java.util.List<com.mit.community.entity.HouseholdRoom>
+     * @author shuyy
+     * @date 2018/12/12 9:04
+     * @company mitesofor
+     */
+    public List<HouseholdRoom> listByHouseholdIdlList(List<Integer> householdIdList) {
+        EntityWrapper<HouseholdRoom> wrapper = new EntityWrapper<>();
+        wrapper.in("household_id", householdIdList);
+        return householdRoomMapper.selectList(wrapper);
+    }
+
+
+
+    /**
      * 查询房间信息，通过住户id和房号
      * @param householdId 住户id
      * @param roomNum     房号

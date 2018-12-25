@@ -1,15 +1,12 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.entity.User;
-import com.mit.community.entity.UserLabel;
 import com.mit.community.mapper.UserMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 用户
@@ -168,8 +163,8 @@ public class UserService {
                                String profession, String signature, String constellation, String cellphone) {
         LocalDate birthdayTime = DateUtils.parseStringToLocalDate(birthday, null);
         User user = this.getById(userId);
-        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
-        if (user != null && houseHold != null) {
+        List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
+        if (user != null && !houseHoldList.isEmpty()) {
             user.setNickname(nickname);
             user.setGender(gender);
             user.setBirthday(birthdayTime);
@@ -177,8 +172,10 @@ public class UserService {
             user.setProfession(profession);
             user.setSignature(signature);
             this.update(user);
-            houseHold.setConstellation(constellation);
-            houseHoldService.update(houseHold);
+            houseHoldList.forEach(item -> {
+                item.setConstellation(constellation);
+                houseHoldService.update(item);
+            });
         }
     }
 

@@ -1,14 +1,20 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.google.common.collect.Lists;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.*;
+import com.mit.community.entity.ClusterCommunity;
+import com.mit.community.entity.HouseHold;
+import com.mit.community.entity.HouseholdRoom;
+import com.mit.community.entity.User;
 import com.mit.community.mapper.ClusterCommunityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -81,15 +87,17 @@ public class ClusterCommunityService {
      */
     public List<ClusterCommunity> listClusterCommunityByUserCellphone(String userCellphone) {
         User user = (User) redisService.get(RedisConstant.USER + userCellphone);
-        List<UserHousehold> userHouseholds = userHouseholdService.listByUserId(user.getId());
 //        List<HouseHold> households = houseHoldService.listByUserId(user.getId());
-        HouseHold household = houseHoldService.getByCellphone(user.getCellphone());
-        if (household == null) {
+        List<HouseHold> householdList = houseHoldService.getByCellphone(user.getCellphone());
+        if (householdList.isEmpty()) {
             return null;
         }
-        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(household.getHouseholdId());
-        List<String> communityCodeList = householdRooms.parallelStream().map(HouseholdRoom::getCommunityCode).collect(Collectors.toList());
-        return clusterCommunityService.listByCommunityCodeList(communityCodeList);
+        List<HouseholdRoom> householdRooms = Lists.newArrayListWithCapacity(10);
+        householdList.forEach(item -> {
+            householdRooms.addAll(householdRoomService.listByHouseholdId(item.getHouseholdId()));
+        });
+        Set<String> communityCodeList = householdRooms.parallelStream().map(HouseholdRoom::getCommunityCode).collect(Collectors.toSet());
+        return clusterCommunityService.listByCommunityCodeList(new ArrayList<>(communityCodeList));
     }
 
     /**

@@ -1,13 +1,13 @@
 package com.mit.community.module.system.controller;
 
 import com.google.common.collect.Maps;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,15 +33,17 @@ public class UserController {
     private final ClusterCommunityService clusterCommunityService;
     private final UserLabelService userLabelService;
     private final HouseholdRoomService householdRoomService;
+    private final RedisService redisService;
 
     @Autowired
     public UserController(UserService userService, HouseHoldService houseHoldService,
-                          ClusterCommunityService clusterCommunityService, UserLabelService userLabelService, HouseholdRoomService householdRoomService) {
+                          ClusterCommunityService clusterCommunityService, UserLabelService userLabelService, HouseholdRoomService householdRoomService, RedisService redisService) {
         this.userService = userService;
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.userLabelService = userLabelService;
         this.householdRoomService = householdRoomService;
+        this.redisService = redisService;
     }
 
     /**
@@ -56,12 +58,11 @@ public class UserController {
     @ApiOperation(value = "查询用户详情", notes = "传参：cellphone 手机号")
     public Result getDetail(String mac, String cellphone) {
         HashMap<Object, Object> map = Maps.newHashMapWithExpectedSize(4);
-        User user = userService.getByCellphone(cellphone);
-        user.setPassword(StringUtils.EMPTY);
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
         ClusterCommunity community = null;
         List<UserLabel> userLabels = userLabelService.listByUserId(user.getId());
         List<HouseholdRoom> householdRooms = null;
-        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
+        HouseHold houseHold = houseHoldService.getByHouseholdId(user.getHouseholdId());
         if (houseHold != null) {
             String communityCode = houseHold.getCommunityCode();
             community = clusterCommunityService.getByCommunityCode(communityCode);

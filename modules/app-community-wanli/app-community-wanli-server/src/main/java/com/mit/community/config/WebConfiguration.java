@@ -39,7 +39,7 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(getServiceAuthRestInterceptor()).
                 addPathPatterns(getIncludePathPatterns());
         // 拦截只有一台设备可以登录
-        registry.addInterceptor(loginInterceptor).excludePathPatterns("/login/**").addPathPatterns("/**");
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
         //这里的拦截，只是拦截是否有登录过，request头部有没有token,并且把token中分析的信息放入threadLocal
         registry.addInterceptor(getUserAuthRestInterceptor()).
                 addPathPatterns(getIncludePathPatterns());

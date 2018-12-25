@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 注册登陆
@@ -119,22 +120,23 @@ public class LoginController {
         }
         String psd = user.getPassword();
         user.setPassword(null);
-        // redis中保存用户
-        redisService.set(RedisConstant.USER + user.getCellphone(), user);
-        redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
-        HouseHold houseHold = houseHoldService.getByCellphone(user.getCellphone());
-        if (houseHold == null) {
+        List<HouseHold> houseHoldList = houseHoldService.getByCellphone(user.getCellphone());
+        if (houseHoldList.isEmpty()) {
             return Result.success(user, "没有关联住户");
         } else {
             if (user.getHouseholdId() == 0) {
-                user.setHouseholdId(houseHold.getHouseholdId());
+                user.setHouseholdId(houseHoldList.get(0).getHouseholdId());
                 user.setPassword(psd);
                 userService.update(user);
             }
         }
-        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
+        // redis中保存用户
+        redisService.set(RedisConstant.USER + user.getCellphone(), user);
+        redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
+        List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
+        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdIdlList(householdIdList);
         user.setHouseholdRoomList(householdRooms);
-        Integer authorizeStatus = houseHold.getAuthorizeStatus();
+        Integer authorizeStatus = houseHoldList.get(0).getAuthorizeStatus();
         String s = Integer.toBinaryString(authorizeStatus);
         StringBuilder stringBuilder = new StringBuilder(s);
         s = stringBuilder.reverse().toString();
@@ -478,6 +480,32 @@ public class LoginController {
             return Result.error("修改失败");
         }
         return Result.success("修改成功");
+    }
+    /**
+     * @param mac mac
+     * @param cellphone 电话号码
+     * @param communityCode 小区code
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/25 17:14
+     * @company mitesofor
+    */
+    @PatchMapping("/chooseCommunity")
+    @ApiOperation(value = "选择小区", notes = "输入参数：cellPhone 电话号码；communityCode 小区code")
+    public Result chooseCommunity(String mac, String cellphone, String communityCode) {
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        List<HouseHold> houseHolds = houseHoldService.getByCellphone(cellphone);
+        for (HouseHold item : houseHolds) {
+            String c = item.getCommunityCode();
+            if(c.equals(communityCode)){
+                Integer householdId = item.getHouseholdId();
+                user.setHouseholdId(householdId);
+                userService.update(user);
+                redisService.set(RedisConstant.USER + user.getCellphone(), user);
+                return Result.success("选择成功");
+            }
+        }
+        return Result.error("失败");
     }
 
 }

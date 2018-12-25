@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.constants.Constants;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.HouseholdRoom;
-import com.mit.community.entity.ReportThingRepairImg;
-import com.mit.community.entity.ReportThingsRepair;
+import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.ReportThingsRepairMapper;
 import com.mit.community.util.MakeOrderNumUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +19,7 @@ import java.util.stream.Collectors;
 
 /**
  * 报事报修业务层
+ *
  * @author Mr.Deng
  * @date 2018/12/3 19:39
  * <p>Copyright: Copyright (c) 2018</p>
@@ -36,9 +35,14 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
     private HouseHoldService houseHoldService;
     @Autowired
     private HouseholdRoomService householdRoomService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private RedisService redisService;
 
     /**
      * 添加保修报修数据
+     *
      * @param reportThingsRepair 报事报修数据
      * @return 添加条数
      * @author Mr.Deng
@@ -52,6 +56,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 查询报事报修信息，通过报事报修id
+     *
      * @param id 报事报修id
      * @return 报事报修信息
      * @author Mr.Deng
@@ -63,6 +68,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 更新报事报修数据
+     *
      * @param reportThingsRepair 更新的数据
      * @return 更新条数
      * @author Mr.Deng
@@ -75,6 +81,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 受理
+     *
      * @param id           报事报修id
      * @param receiverName 受理人
      * @author shuyy
@@ -91,6 +98,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 处理
+     *
      * @param id             id
      * @param processor      处理人
      * @param processorPhone 处理人手机号
@@ -109,6 +117,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 待评价
+     *
      * @param id
      * @return void
      * @throws
@@ -125,6 +134,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 查询报事报修状态数据，通过住户id
+     *
      * @param householdId 住户id
      * @param status      保修状态 0、未完成。1、已完成
      * @return 报事报修数据列表
@@ -152,6 +162,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 查询报事报修列表
+     *
      * @param communityCode        小区code
      * @param zoneId               分区id
      * @param buildingId           楼栋id
@@ -208,6 +219,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 查询报事报修状态数据，通过手机号
+     *
      * @param cellphone 手机号
      * @param status    保修状态 0、未完成。1、已完成
      * @return List<ReportThingsRepair>
@@ -216,15 +228,13 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
      */
     public Page<ReportThingsRepair> listReportThingsRepairByStatus(String cellphone, Integer status, Integer pageNum, Integer pageSize) {
         Page<ReportThingsRepair> page = new Page<>(pageNum, pageSize);
-        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
-        if (houseHold != null) {
-            page = pageByStatus(houseHold.getHouseholdId(), status, pageNum, pageSize);
-        }
-        return page;
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        return pageByStatus(user.getHouseholdId(), status, pageNum, pageSize);
     }
 
     /**
      * 申请报事报修
+     *
      * @param communityCode   小区code
      * @param roomId          房间id
      * @param roomNum         房间号
@@ -268,6 +278,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 查询报事报修详情，通告报事报修id
+     *
      * @param reportThingsRepairId 报事报修id
      * @return 报事报修详情信息
      * @author Mr.Deng
@@ -287,6 +298,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 报事报修评价
+     *
      * @param applyReportId             报事报修id
      * @param evaluateResponseSpeed     响应速度评价
      * @param evaluateResponseAttitude  响应态度评价
@@ -312,6 +324,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 统计报事报修数量,通过住户id和小区code
+     *
      * @param householdId   住户id
      * @param communityCode 小区code
      * @return 总数
@@ -327,6 +340,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
 
     /**
      * 统计报事报修数量，通过手机号和小区code
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @return 总数

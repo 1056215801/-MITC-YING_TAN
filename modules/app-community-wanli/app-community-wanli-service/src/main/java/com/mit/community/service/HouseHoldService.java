@@ -74,14 +74,14 @@ public class HouseHoldService {
      * @date 2018/12/10 15:35
      * @company mitesofor
      */
-    public HouseHold getByCellphone(String cellphone) {
+    public List<HouseHold> getByCellphone(String cellphone) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
         if (houseHolds.isEmpty()) {
             return null;
         }
-        return houseHolds.get(0);
+        return houseHolds;
     }
 
     /**
