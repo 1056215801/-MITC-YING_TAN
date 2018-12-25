@@ -37,4 +37,40 @@ public class SelectionActivitiesContentService {
         return selectionActivitiesContents.get(0);
     }
 
+    /**
+     * 删除
+     * @param selectionActivitiesId 精品活动id
+     * @return 精品活动信息
+     * @author Mr.Deng
+     * @date 20:47 2018/12/19
+     */
+    public void removeByselectionActivitiesId(Integer selectionActivitiesId) {
+        EntityWrapper<SelectionActivitiesContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("selection_activities_id", selectionActivitiesId);
+        selectionActivitiesContentMapper.delete(wrapper);
+    }
+
+    /**
+     * 保存
+     * @param selectionActivitiesContent
+     * @author shuyy
+     * @date 2018/12/25 11:09
+     * @company mitesofor
+    */
+    public void save(SelectionActivitiesContent selectionActivitiesContent){
+        selectionActivitiesContentMapper.insert(selectionActivitiesContent);
+    }
+
+    /**
+     * 更新
+     * @param selectionActivitiesContent
+     * @author shuyy
+     * @date 2018/12/25 11:16
+     * @company mitesofor
+    */
+    public void update(SelectionActivitiesContent selectionActivitiesContent){
+        selectionActivitiesContentMapper.updateById(selectionActivitiesContent);
+    }
+
+
 }
