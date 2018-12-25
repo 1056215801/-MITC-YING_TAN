@@ -233,6 +233,7 @@ public class BusinessHandlingService {
             businessHandling.setEvaluateResponseSpeed(evaluateResponseSpeed);
             businessHandling.setEvaluateServiceProfession(evaluateServiceProfession);
             businessHandling.setEvaluateTotal(evaluateTotal);
+            businessHandling.setStatus("have_evaluation");
             this.update(businessHandling);
 
         }
