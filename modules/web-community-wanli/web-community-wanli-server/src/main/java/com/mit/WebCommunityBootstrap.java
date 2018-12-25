@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableEurekaClient
 @EnableCircuitBreaker
 @SpringBootApplication
-@EnableFeignClients({"com.mit.auth.client.feign"})
+@EnableFeignClients
 @EnableScheduling
 @EnableAceAuthClient
 @EnableAceCache

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.SelectionActivities;
 import com.mit.community.entity.SysUser;
+import com.mit.community.feigin.SelectionActivitiesFeigin;
 import com.mit.community.service.RedisService;
 import com.mit.community.service.SelectionActivitiesService;
 import com.mit.community.util.CookieUtils;
@@ -13,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +39,9 @@ public class SelectionActivesController {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private SelectionActivitiesFeigin selectionActivitiesFeigin;
+
     /**
      * 保存
      * @param request request
@@ -55,7 +60,9 @@ public class SelectionActivesController {
     */
     @PostMapping("/save")
     @ApiOperation(value = "保存", notes = "输入参数：title 标题， introduce 简介， externalUrl 外接url， validTime 2018-01-01 00:00:00，issueTime 2018-01-01 00:00:00, image 图片, notes 备注，content 内容  ")
-    public Result save(HttpServletRequest request, String title, String introduce, String externalUrl, LocalDateTime validTime, LocalDateTime issueTime, MultipartFile image, String notes, String content) throws Exception {
+    public Result save(HttpServletRequest request, String title, String introduce,
+                       String externalUrl,@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime validTime,
+                       @RequestParam  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime, MultipartFile image, String notes, String content) throws Exception {
         String s = FastDFSClient.getInstance().uploadFile(image);
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
@@ -82,7 +89,10 @@ public class SelectionActivesController {
      */
     @PatchMapping("/update")
     @ApiOperation(value = "修改", notes = "输入参数：id id, title 标题， introduce 简介， externalUrl 外接url， validTime 2018-01-01 00:00:00，issueTime 2018-01-01 00:00:00, image 图片, notes 备注，content 内容  ")
-    public Result update(HttpServletRequest request, Integer id, String title, String introduce, String externalUrl, LocalDateTime validTime, LocalDateTime issueTime, MultipartFile image, String notes, String content) throws Exception {
+    public Result update(HttpServletRequest request, Integer id, String title, String introduce, String externalUrl,
+                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTime,
+                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime, MultipartFile image,
+                         String notes, String content) throws Exception {
         String s = null;
         if(image != null){
             s = FastDFSClient.getInstance().uploadFile(image);
@@ -122,12 +132,22 @@ public class SelectionActivesController {
     */
     @GetMapping("/listPage")
     @ApiOperation(value = "分页查询", notes = "输入参数：validTimeStart 过期开始时间、 validTimeEnd 过期结束时间、issueTimeStart 发布开始时间，issueTimeEnd 发布结束时间 ")
-    public Result listPage(LocalDateTime validTimeStart, LocalDateTime validTimeEnd, LocalDateTime issueTimeStart,
-                         LocalDateTime issueTimeEnd, Integer pageNum, Integer pageSize){
+    public Result listPage(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTimeStart,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTimeEnd,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTimeStart,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTimeEnd, Integer pageNum, Integer pageSize){
         Page<SelectionActivities> page = selectionActivitiesService.listPage(validTimeStart,
                 validTimeEnd, issueTimeStart,
                 issueTimeEnd, pageNum, pageSize);
         return Result.success(page);
+    }
+
+
+    @GetMapping("/getBySelectionActivitiesId")
+    @ApiOperation(value = "查询详情", notes = "输入参数：selectionActivitiesId")
+    public Result getBySelectionActivitiesId(Integer selectionActivitiesId){
+        Result result = selectionActivitiesFeigin.getBySelectionActivitiesId(selectionActivitiesId);
+        return result;
     }
 
 
