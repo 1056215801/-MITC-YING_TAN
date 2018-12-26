@@ -5,7 +5,6 @@ import com.mit.community.service.ClusterCommunityService;
 import com.mit.community.service.RoomTypeConstructionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  * @creatTime 2018-11-23 11:17
  * @company mitesofor
  */
-@Component
+//@Component
 public class RoomTypeConstructionSchedule {
 
     private final RoomTypeConstructionService roomTypeConstructionService;

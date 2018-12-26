@@ -97,7 +97,8 @@ public class LoginController {
             "2、resultStatus:false, message: 用户不存在。<br/>" +
             "3、resultStatus: true, message: 没有关联住户, object:user。<br/>" +
             "4、resultStatus: true, message: 没有授权app, object:user。<br/>" +
-            "5、resultStatus: true, message: 已授权app, object:user。")
+            "5、resultStatus: true, message: 已授权app, object:user。<br/>" +
+            "householdType 与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)")
     public Result login(String mac, String cellphone, String verificationCode, String password) {
         User user;
         if (verificationCode != null) {
@@ -113,10 +114,16 @@ public class LoginController {
             }
         } else {
             // 密码登陆
-            user = userService.getByCellphoneAndPassword(cellphone, password);
-            if (user == null) {
+            user = userService.getByCellphone(cellphone);
+            if (user == null || !password.equals(user.getPassword())) {
                 return Result.error("用户名或密码错误");
             }
+        }
+        // 判断是否有密码
+        if (user.getPassword().equals(StringUtils.EMPTY)) {
+            user.setHavePassword(false);
+        } else {
+            user.setHavePassword(true);
         }
         String psd = user.getPassword();
         user.setPassword(null);
@@ -135,6 +142,11 @@ public class LoginController {
         redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
         List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
         List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdIdlList(householdIdList);
+        householdRooms.forEach(item -> {
+            String communityCode = item.getCommunityCode();
+            ClusterCommunity community = clusterCommunityService.getByCommunityCode(communityCode);
+            item.setClusterCommunity(community);
+        });
         user.setHouseholdRoomList(householdRooms);
         Integer authorizeStatus = houseHoldList.get(0).getAuthorizeStatus();
         String s = Integer.toBinaryString(authorizeStatus);
@@ -481,15 +493,16 @@ public class LoginController {
         }
         return Result.success("修改成功");
     }
+
     /**
-     * @param mac mac
-     * @param cellphone 电话号码
+     * @param mac           mac
+     * @param cellphone     电话号码
      * @param communityCode 小区code
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/25 17:14
      * @company mitesofor
-    */
+     */
     @PatchMapping("/chooseCommunity")
     @ApiOperation(value = "选择小区", notes = "输入参数：cellPhone 电话号码；communityCode 小区code")
     public Result chooseCommunity(String mac, String cellphone, String communityCode) {
@@ -497,7 +510,7 @@ public class LoginController {
         List<HouseHold> houseHolds = houseHoldService.getByCellphone(cellphone);
         for (HouseHold item : houseHolds) {
             String c = item.getCommunityCode();
-            if(c.equals(communityCode)){
+            if (c.equals(communityCode)) {
                 Integer householdId = item.getHouseholdId();
                 user.setHouseholdId(householdId);
                 userService.update(user);

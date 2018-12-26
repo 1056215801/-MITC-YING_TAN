@@ -1,5 +1,6 @@
 package com.mit.community.schedule;
 
+import com.ace.cache.annotation.CacheClear;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
@@ -68,8 +69,9 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 */10 * * * ?")
-//    @Scheduled(cron = "*/5 * * * * ?")
+//    @Scheduled(cron = "0 */10 * * * ?")
+    @CacheClear(pre = "household")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
@@ -77,7 +79,10 @@ public class HouseholdSchedule {
 
         //
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
-        updateAuth(houseHolds);
+        if(houseHolds.isEmpty()){
+            return;
+        }
+        updateAuthAndHouseholdRoom(houseHolds);
         List<HouseHold> list = houseHoldService.list();
         // 对比出三种类型的数据
         Map<Integer, HouseHold> map = Maps.newHashMapWithExpectedSize(list.size());
@@ -128,7 +133,7 @@ public class HouseholdSchedule {
      * @date 2018/12/12 10:45
      * @company mitesofor
     */
-    private void updateAuth(List<HouseHold> houseHolds){
+    private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds){
         authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
         householdRoomService.remove();

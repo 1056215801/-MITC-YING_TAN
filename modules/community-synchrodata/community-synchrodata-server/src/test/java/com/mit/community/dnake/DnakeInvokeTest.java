@@ -66,9 +66,9 @@ public class DnakeInvokeTest {
         map.put("pageNum", "1");
         map.put("pageSize", "10");
         String result = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(result);
         JSONArray jsonArray = JSON.parseObject(result).getJSONArray("householdList");
         System.out.println(jsonArray.size());
-        System.out.println(result);
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }

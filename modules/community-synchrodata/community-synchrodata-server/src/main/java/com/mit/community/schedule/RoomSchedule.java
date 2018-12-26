@@ -50,7 +50,6 @@ public class RoomSchedule {
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        roomService.remove();
         List<Zone> zones = zoneService.listByCommunityCodeList(communityCodeList);
         List<Integer> zoneIdList = zones.parallelStream().map(Zone::getZoneId).collect(Collectors.toList());
         List<Building> buildings = buildingService.listByZoneIdList(zoneIdList);
@@ -63,7 +62,8 @@ public class RoomSchedule {
             roomList.addAll(rooms);
         });
         if(!roomList.isEmpty()) {
-        	roomService.insertBatch(roomList);
+            roomService.remove();
+            roomService.insertBatch(roomList);
         }
 
     }

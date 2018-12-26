@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.User;
 import com.mit.community.mapper.UserMapper;
@@ -77,6 +78,7 @@ public class UserService {
      * @date 2018/12/12 11:04
      * @company mitesofor
     */
+    @CacheClear(key = "user:cellphone:{0}")
     public void updateCellphoneByHouseholdId(String cellphone, Integer householdId){
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);

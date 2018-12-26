@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.RedisConstant;
@@ -52,6 +53,7 @@ public class ClusterCommunityService {
      * @date 2018/12/12 16:46
      * @company mitesofor
     */
+    @Cache(key = "community:communityCode:{1}")
     public ClusterCommunity getByCommunityCode(String communityCode){
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);

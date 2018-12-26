@@ -114,8 +114,8 @@ public class CommunityPhoneController {
     */
     @DeleteMapping("/list")
     @ApiOperation(value = "社区电话列表")
-    public Result list( ) {
-        List<CommunityPhone> list = communityPhoneService.list();
+    public Result list(String communityCode) {
+        List<CommunityPhone> list = communityPhoneService.listByCommunityCode(communityCode);
         return Result.success(list);
     }
 

@@ -44,11 +44,11 @@ public class ZoneSchedule {
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        // 先删除，再添加
-        zoneService.remove();
         List<Zone> zones = zoneService.listFromDnakeByCommunityCodeList(communityCodeList);
         if(!zones.isEmpty()) {
-        	zoneService.insertBatch(zones);
+            // 先删除，再添加
+            zoneService.remove();
+            zoneService.insertBatch(zones);
         }
     }
 }

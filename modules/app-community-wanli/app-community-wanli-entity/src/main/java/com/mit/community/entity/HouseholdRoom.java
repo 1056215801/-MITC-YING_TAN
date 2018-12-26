@@ -82,4 +82,7 @@ public class HouseholdRoom extends BaseEntity {
     /**住户*/
     @TableField("household_id")
     private Integer householdId;
+    /**小区信息*/
+    @TableField(exist = false)
+    private ClusterCommunity clusterCommunity;
 }

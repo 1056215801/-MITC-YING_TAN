@@ -1,5 +1,7 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
+import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
@@ -58,6 +60,7 @@ public class UserService {
      * @param user 用户信息
      * @date 10:56 2018/12/7
      */
+    @CacheClear(key = "user:cellphone:{1.cellphone}")
     public void update(User user) {
         user.setGmtModified(LocalDateTime.now());
         userMapper.updateById(user);
@@ -71,6 +74,7 @@ public class UserService {
      * @date 2018/11/29 11:25
      * @company mitesofor
      */
+    @CacheClear(key = "user:cellphone:{1.cellphone}")
     public void save(User user) {
         user.setGmtCreate(LocalDateTime.now());
         user.setGmtModified(LocalDateTime.now());
@@ -87,6 +91,7 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
+   /*
     public User getByCellphoneAndPassword(String cellphone, String password) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
@@ -97,7 +102,7 @@ public class UserService {
         } else {
             return users.get(0);
         }
-    }
+    }*/
 
     /**
      * 获取User，通过cellphone
@@ -108,6 +113,7 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
+    @Cache(key = "user:cellphone:{1}")
     public User getByCellphone(String cellphone) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
@@ -128,6 +134,7 @@ public class UserService {
      * @date 2018/12/07 16:52
      * @company mitesofor
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer register(String cellphone, String password) {
         int status = 1;
@@ -138,7 +145,7 @@ public class UserService {
         }
         user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                "普通业主", StringUtils.EMPTY, null);
+                "普通业主", StringUtils.EMPTY, null, null);
         this.save(user);
         return status;
     }
@@ -275,6 +282,7 @@ public class UserService {
      * @date 2018/12/13 16:15
      * @company mitesofor
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public void updateHouseholdCellphone(String cellPhone, String newCellPhone) {
         User user = this.getByCellphone(cellPhone);

@@ -40,7 +40,9 @@ public class DeviceSchedule {
             List<Device> devices = deviceService.listFromDnakeByCommunityCode(item);
             deviceList.addAll(devices);
         });
-        deviceService.remove();
-        deviceService.insertBatch(deviceList);
+        if(!deviceList.isEmpty()){
+            deviceService.remove();
+            deviceService.insertBatch(deviceList);
+        }
     }
 }

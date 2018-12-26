@@ -105,9 +105,10 @@ public class CommunityPhoneService {
      * @date 2018/12/21 20:14
      * @company mitesofor
      */
-    public List<CommunityPhone> list() {
-        return communityPhoneMapper.selectList(null);
+    public List<CommunityPhone> listByCommunityCode(String communityCode) {
+        EntityWrapper<CommunityPhone> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return communityPhoneMapper.selectList(wrapper);
     }
-
 
 }

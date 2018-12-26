@@ -56,6 +56,9 @@ public class BigDataSchedule {
     @Transactional(rollbackFor = Exception.class)
     public void countActivePeopleNum (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        if(communityCodeList.isEmpty()){
+            return;
+        }
         activePeopleService.remove();
         communityCodeList.forEach(item -> {
             List<Device> devices = deviceService.listInOrOutByCommunityCode(item, "进");
@@ -79,8 +82,8 @@ public class BigDataSchedule {
     public void  countAgeConstruction (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         List<AgeConstruction> ageConstructions = houseHoldService.countAgeConstructionByCommuintyCodeList(communityCodeList);
-        ageConstructionService.remove();
         if(!ageConstructions.isEmpty()){
+            ageConstructionService.remove();
             ageConstructionService.insertBatch(ageConstructions);
         }
     }
