@@ -125,7 +125,7 @@ public class HouseholdSchedule {
     }
 
     /**
-     * 更新授权设备
+     * 更新授权设备和关联房屋
      * @param houseHolds
      * @return void
      * @throws
@@ -133,6 +133,7 @@ public class HouseholdSchedule {
      * @date 2018/12/12 10:45
      * @company mitesofor
     */
+    @CacheClear(pre = "householdRoom")
     private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds){
         authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();

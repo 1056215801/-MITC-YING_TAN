@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.HouseholdRoom;
@@ -46,6 +47,7 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
      * @date 2018/12/11 20:24
      * @company mitesofor
     */
+    @CacheClear(pre = "householdRoom")
     public void remove(){
         householdRoomMapper.delete(null);
     }

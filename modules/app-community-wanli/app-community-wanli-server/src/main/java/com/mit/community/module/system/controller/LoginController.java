@@ -1,5 +1,6 @@
 package com.mit.community.module.system.controller;
 
+import com.google.common.collect.Lists;
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
@@ -7,6 +8,7 @@ import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
 import com.mit.community.util.SmsCommunityAppUtil;
+import com.mit.community.util.ThreadPoolUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -131,17 +133,22 @@ public class LoginController {
         if (houseHoldList.isEmpty()) {
             return Result.success(user, "没有关联住户");
         } else {
+            // 设置默认操作小区对应的用户
             if (user.getHouseholdId() == 0) {
                 user.setHouseholdId(houseHoldList.get(0).getHouseholdId());
-                user.setPassword(psd);
                 userService.update(user);
             }
         }
         // redis中保存用户
         redisService.set(RedisConstant.USER + user.getCellphone(), user);
         redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
+        // 查询用户对应的住户和房屋
         List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
-        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdIdlList(householdIdList);
+        List<HouseholdRoom> householdRooms = Lists.newArrayListWithCapacity(10);
+        householdIdList.forEach(item -> {
+            householdRooms.addAll(householdRoomService.listByHouseholdId(item));
+        });
+//        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdIdlList(householdIdList);
         householdRooms.forEach(item -> {
             String communityCode = item.getCommunityCode();
             ClusterCommunity community = clusterCommunityService.getByCommunityCode(communityCode);
@@ -156,9 +163,11 @@ public class LoginController {
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
-            DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
-            redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
-                    dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
+            ThreadPoolUtil.execute(new Thread(() -> {
+                DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
+                        dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
+            }));
             return Result.success(user, "已授权app");
         }
     }
