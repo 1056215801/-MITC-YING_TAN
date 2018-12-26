@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Unit;
 import com.mit.community.mapper.UnitMapper;
@@ -41,6 +42,7 @@ public class UnitService {
      * @author Mr.Deng
      * @date 14:30 2018/12/21
      */
+    @Cache(key = "unit:unitCode:communityCode:{1}:{2}")
     public Unit getByUnitCode(String unitCode, String communityCode) {
         EntityWrapper<Unit> wrapper = new EntityWrapper<>();
         wrapper.eq("unit_code", unitCode);

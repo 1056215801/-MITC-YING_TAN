@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Building;
 import com.mit.community.mapper.BuildingMapper;
@@ -42,6 +43,7 @@ public class BuildingService {
      * @author Mr.Deng
      * @date 14:23 2018/12/21
      */
+    @Cache(key = "building:buildingCode:communityCode:{1}:{2}")
     public Building getBybuildingCode(String buildingCode, String communityCode) {
         EntityWrapper<Building> wrapper = new EntityWrapper<>();
         wrapper.eq("building_code", buildingCode);

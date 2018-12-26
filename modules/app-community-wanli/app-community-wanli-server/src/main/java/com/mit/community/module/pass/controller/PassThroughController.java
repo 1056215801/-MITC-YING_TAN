@@ -10,6 +10,7 @@ import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
+import com.mit.community.util.ThreadPoolUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -446,7 +447,7 @@ public class PassThroughController {
                 }
             }
             //添加足迹
-            userTrackService.addUserTrack(cellphone, "查询我的钥匙", "钥匙查询成功");
+            ThreadPoolUtil.execute(new Thread(() -> userTrackService.addUserTrack(cellphone, "查询我的钥匙", "钥匙查询成功")));
             return Result.success(myKeys);
         }
         return Result.error("参数不能为空");
