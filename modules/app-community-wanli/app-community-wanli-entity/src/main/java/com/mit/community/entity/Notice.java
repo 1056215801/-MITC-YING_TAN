@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 通知通告表
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:35
  * <p>Copyright: Copyright (c) 2018</p>
@@ -20,6 +21,13 @@ import java.time.LocalDateTime;
 @TableName("notice")
 @Data
 public class Notice extends BaseEntity {
+
+    /**
+     * 小区
+     */
+    @TableField("community_code")
+    private String communityCode;
+
     /**
      * 标题
      */
@@ -34,6 +42,15 @@ public class Notice extends BaseEntity {
     @TableField("release_time")
     private LocalDateTime releaseTime;
     /**
+     * 过期时间
+     */
+    @TableField("validate_time")
+    private LocalDateTime validateTime;
+    /**
+     * 浏览量
+     */
+    private Integer views;
+    /**
      * 简介
      */
     private String synopsis;
@@ -44,10 +61,14 @@ public class Notice extends BaseEntity {
     /**
      * 创建人
      */
-    private String creator;
+    private Integer creator;
     /**
      * 修改人
      */
-    private String modifier;
+    private Integer modifier;
+
+    /**用户是否已读*/
+    @TableField(exist = false)
+    private Boolean status;
 
 }

@@ -78,9 +78,6 @@ public class HouseHoldService {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
-        if (houseHolds.isEmpty()) {
-            return null;
-        }
         return houseHolds;
     }
 
