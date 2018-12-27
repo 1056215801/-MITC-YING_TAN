@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.constants.Constants;
 import com.mit.community.entity.LostFound;
 import com.mit.community.entity.LostFountContent;
 import com.mit.community.entity.LostFountReadUser;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -49,13 +51,7 @@ public class LostFoundService {
      * @date 9:32 2018/12/18
      */
     public LostFound getById(Integer id) {
-        EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
-        wrapper.eq("id", id);
-        List<LostFound> list = lostFoundMapper.selectList(wrapper);
-        if (list.isEmpty()) {
-            return null;
-        }
-        return list.get(0);
+        return lostFoundMapper.selectById(id);
     }
 
     /**
@@ -98,6 +94,21 @@ public class LostFoundService {
             }
         }
         return list;
+    }
+
+    public void save(String title, String imgUrl, String issuer, String issuerPhone,
+                     String picAddress, LocalDateTime issueTime, String communityCode, String content
+                     ){
+        LostFound lostFound = new LostFound(title,
+                imgUrl, issuer, issuerPhone, picAddress,
+                issueTime, StringUtils.EMPTY, StringUtils.EMPTY,
+                StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
+                1, communityCode, null, null, null);
+        LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
+//        LostFountContentService.
+        lostFound.setGmtCreate(LocalDateTime.now());
+        lostFound.setGmtModified(LocalDateTime.now());
+        lostFoundMapper.insert(lostFound);
     }
 
 }

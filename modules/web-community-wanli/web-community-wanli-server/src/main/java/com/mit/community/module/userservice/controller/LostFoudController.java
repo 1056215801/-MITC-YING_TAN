@@ -1,7 +1,10 @@
 package com.mit.community.module.userservice.controller;
 
+import com.mit.community.service.LostFoundService;
+import com.netflix.discovery.converters.Auto;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "业务办理")
 public class LostFoudController {
 
+    @Autowired
+    private LostFoundService lostFoundService;
 
 }
