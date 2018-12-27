@@ -196,6 +196,7 @@ public class UserService {
      * @author Mr.Deng
      * @date 14:19 2018/12/8
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer modifyPwd(String cellPhone, String newPassword, String oldPassword) {
         User user = this.getByCellphone(cellPhone);
@@ -224,6 +225,7 @@ public class UserService {
      * @author Mr.Deng
      * @date 14:19 2018/12/8
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer resetPwd(String cellPhone, String newPassword) {
         User user = this.getByCellphone(cellPhone);
