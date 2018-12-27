@@ -6,6 +6,7 @@ import com.mit.community.mapper.LostFountContentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,4 +37,18 @@ public class LostFountContentService {
         }
         return lostFountContents.get(0);
     }
+
+    /**
+     * 保存
+     * @param lostFountContent
+     * @author shuyy
+     * @date 2018/12/27 10:05
+     * @company mitesofor
+    */
+    public void save(LostFountContent lostFountContent){
+        lostFountContent.setGmtCreate(LocalDateTime.now());
+        lostFountContent.setGmtModified(LocalDateTime.now());
+        lostFountContentMapper.insert(lostFountContent);
+    }
+
 }

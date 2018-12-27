@@ -9,6 +9,7 @@ import com.mit.community.mapper.LostFoundMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -96,6 +97,23 @@ public class LostFoundService {
         return list;
     }
 
+    /**
+     * 保存
+     * @param title 标题
+     * @param imgUrl 图片地址
+     * @param issuer 发布人
+     * @param issuerPhone 发布电话
+     * @param picAddress 捡到地址
+     * @param issueTime 发布时间
+     * @param communityCode 小区code
+     * @param content 内容
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2018/12/27 10:06
+     * @company mitesofor
+    */
+    @Transactional(rollbackFor = Exception.class)
     public void save(String title, String imgUrl, String issuer, String issuerPhone,
                      String picAddress, LocalDateTime issueTime, String communityCode, String content
                      ){
@@ -105,9 +123,9 @@ public class LostFoundService {
                 StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
                 1, communityCode, null, null, null);
         LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
-//        LostFountContentService.
         lostFound.setGmtCreate(LocalDateTime.now());
         lostFound.setGmtModified(LocalDateTime.now());
+        lostFountContentService.save(lostFountContent);
         lostFoundMapper.insert(lostFound);
     }
 
