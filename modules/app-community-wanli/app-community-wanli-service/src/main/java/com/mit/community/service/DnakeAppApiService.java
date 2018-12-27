@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -276,6 +277,7 @@ public class DnakeAppApiService {
      * @author Mr.Deng
      * @date 14:08 2018/12/4
      */
+    @Cache(key = "key:cellphone:communityCode:{1}:{2}", expire = 1440)
     public List<MyKey> getMyKey(String cellphone, String communityCode) {
         List<MyKey> list = Lists.newArrayListWithExpectedSize(20);
 //        List<MyKey> unitKeys = Lists.newArrayListWithExpectedSize(10);
