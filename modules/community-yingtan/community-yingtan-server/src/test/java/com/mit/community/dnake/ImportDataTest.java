@@ -3,7 +3,6 @@ package com.mit.community.dnake;
 import com.alibaba.fastjson.JSON;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeConstants;
-import com.dnake.entity.DnakeAppUser;
 import com.mit.community.entity.modelTest.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -22,26 +21,26 @@ import java.util.Map;
  */
 public class ImportDataTest {
 
-    /**
-     * 获取集群所有小区
-     *
-     * @author Mr.Deng
-     * @date 16:37 2018/11/13
-     */
-    @Test
-    public void queryClusterCommunity() {
-        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
-        String url = "/v1/community/queryClusterCommunity";
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
-        String invoke = DnakeWebApiUtil.invoke(url, map);
-        //处理返回json数据
-        JSONObject jsonObject = JSONObject.fromObject(invoke);
-        JSONArray jsonArray = jsonObject.getJSONArray("communityList");
-        List<ClusterCommunityTest> clusterCommunities = JSON.parseArray(jsonArray.toString(), ClusterCommunityTest.class);
-        for (ClusterCommunityTest c : clusterCommunities) {
-        }
-    }
+//    /**
+//     * 获取集群所有小区
+//     *
+//     * @author Mr.Deng
+//     * @date 16:37 2018/11/13
+//     */
+//    @Test
+//    public void queryClusterCommunity() {
+//        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+//        String url = "/v1/community/queryClusterCommunity";
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
+//        String invoke = DnakeWebApiUtil.invoke(url, map);
+//        //处理返回json数据
+//        JSONObject jsonObject = JSONObject.fromObject(invoke);
+//        JSONArray jsonArray = jsonObject.getJSONArray("communityList");
+//        List<ClusterCommunityTest> clusterCommunities = JSON.parseArray(jsonArray.toString(), ClusterCommunityTest.class);
+//        for (ClusterCommunityTest c : clusterCommunities) {
+//        }
+//    }
 
     /**
      * 获取分区列表

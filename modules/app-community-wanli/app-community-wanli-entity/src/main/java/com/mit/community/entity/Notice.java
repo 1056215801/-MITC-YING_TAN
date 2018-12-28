@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 /**
  * 通知通告表
- *
  * @author Mr.Deng
  * @date 2018/12/3 14:35
  * <p>Copyright: Copyright (c) 2018</p>
@@ -67,8 +66,9 @@ public class Notice extends BaseEntity {
      */
     private Integer modifier;
 
-    /**用户是否已读*/
+    /**
+     * 用户是否已读
+     */
     @TableField(exist = false)
     private Boolean status;
-
 }

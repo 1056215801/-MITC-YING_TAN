@@ -408,7 +408,7 @@ public class UserServiceController {
     @GetMapping("/listAllYellowPages")
     @ApiOperation(value = "查询所有的黄页菜单", notes = "返回参数：submenuNames 子菜单列表，parent_name 父菜单")
     public Result listAllYellowPages() {
-        List<Object> allYellowPages = yellowPagesService.listAllYellowPages();
+        List<Map<String, Object>> allYellowPages = yellowPagesService.listAllYellowPages();
         return Result.success(allYellowPages);
     }
 
@@ -421,9 +421,10 @@ public class UserServiceController {
      * @date 9:23 2018/12/6
      */
     @GetMapping("/listByYellowPagesTypeId")
-    @ApiOperation(value = "查询生活黄页信息，通过黄页类型id", notes = "输入参数：cellphone  手机号；yellowPagesTypeId 黄页菜单id" +
-            "(传入参数查询某一个子菜单的号码，不传入查询所有菜单号码)")
-    public Result listByYellowPagesTypeId(String cellphone, Integer yellowPagesTypeId) {
+    @ApiOperation(value = "查询生活黄页信息，通过黄页类型id", notes = "输入参数：cellphone  手机号；<br/>" +
+            "单个查询输入（yellowPagesTypeId 黄页菜单id）(传入参数查询某一个子菜单的号码) <br/>" +
+            "点击更多时输入（parentName 黄页父菜单名（银行/生活服务））<br/>")
+    public Result listByYellowPagesTypeId(String cellphone, Integer yellowPagesTypeId, String parentName) {
         if (StringUtils.isNotBlank(cellphone)) {
             if (null != yellowPagesTypeId) {
                 Map<String, Object> map = yellowPagesService.mapToPhoneByYellowPagesTypeId(yellowPagesTypeId);
@@ -432,11 +433,13 @@ public class UserServiceController {
                 }
                 return Result.success(map);
             } else {
-                List<Map<String, Object>> list = yellowPagesService.listToPhone();
-                if (!list.isEmpty()) {
-                    userTrackService.addUserTrack(cellphone, "查询生活黄页", "查询全部生活黄页成功");
+                if (StringUtils.isNotBlank(parentName)) {
+                    List<Map<String, Object>> list = yellowPagesService.listToPhoneByParentName(parentName);
+                    if (!list.isEmpty()) {
+                        userTrackService.addUserTrack(cellphone, "查询生活黄页", "查询全部生活黄页成功");
+                    }
+                    return Result.success(list);
                 }
-                return Result.success(list);
             }
         }
         return Result.error("参数不能为空");
