@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * 设备表
- *
  * @author Mr.Deng
  * @date 2018/11/15 9:51
  * <p>Copyright: Copyright (c) 2018</p>
@@ -16,7 +15,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("device")
-public class Device extends BaseEntity{
+public class Device extends BaseEntity {
     /**
      * 小区Code
      */

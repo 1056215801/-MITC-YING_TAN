@@ -6,6 +6,7 @@ import com.mit.community.mapper.SelectionActivitiesContentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -56,8 +57,8 @@ public class SelectionActivitiesContentService {
      * @author shuyy
      * @date 2018/12/25 11:09
      * @company mitesofor
-    */
-    public void save(SelectionActivitiesContent selectionActivitiesContent){
+     */
+    public void save(SelectionActivitiesContent selectionActivitiesContent) {
         selectionActivitiesContentMapper.insert(selectionActivitiesContent);
     }
 
@@ -67,10 +68,10 @@ public class SelectionActivitiesContentService {
      * @author shuyy
      * @date 2018/12/25 11:16
      * @company mitesofor
-    */
-    public void update(SelectionActivitiesContent selectionActivitiesContent){
+     */
+    public void update(SelectionActivitiesContent selectionActivitiesContent) {
+        selectionActivitiesContent.setGmtModified(LocalDateTime.now());
         selectionActivitiesContentMapper.updateById(selectionActivitiesContent);
     }
-
 
 }

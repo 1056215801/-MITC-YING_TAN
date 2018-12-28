@@ -28,7 +28,7 @@ public class DnakeInvokeTest {
      * @date 2018/11/16 15:26
      * @company mitesofor
     */
-    // @Test
+     @Test
     public void getAccessControlList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -58,7 +58,7 @@ public class DnakeInvokeTest {
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
-    // @Test
+     @Test
     public void getHouseholdList(){
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -68,9 +68,9 @@ public class DnakeInvokeTest {
         map.put("pageNum", "1");
         map.put("pageSize", "10");
         String result = DnakeWebApiUtil.invoke(url, map);
-        JSONArray jsonArray = JSON.parseObject(result).getJSONArray("householdList");
-        System.out.println(jsonArray.size());
-        System.out.println(result);
+         System.out.println(result);
+         JSONArray jsonArray = JSON.parseObject(result).getJSONArray("householdList");
+         System.out.println(jsonArray.size());
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
     }
