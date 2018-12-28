@@ -81,4 +81,8 @@ public class User extends BaseEntity {
     @TableField(exist = false)
     private List<HouseholdRoom> householdRoomList;
 
+    /**是否有密码*/
+    @TableField(exist = false)
+    private Boolean havePassword;
+
 }

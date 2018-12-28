@@ -143,6 +143,16 @@ public class SelectionActivesController {
         return Result.success(page);
     }
 
+
+    /**
+     *
+     * @param selectionActivitiesId
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/25 16:30
+     * @company mitesofor
+    */
     @GetMapping("/getBySelectionActivitiesId")
     @ApiOperation(value = "查询详情", notes = "输入参数：selectionActivitiesId")
     public Result getBySelectionActivitiesId(Integer selectionActivitiesId) {

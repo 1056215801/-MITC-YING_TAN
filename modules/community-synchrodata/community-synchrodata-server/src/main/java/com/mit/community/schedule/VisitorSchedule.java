@@ -35,10 +35,10 @@ public class VisitorSchedule {
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        // 删除所有访客，再插入
-        visitorService.remove();
         List<Visitor> visitors = visitorService.listFromDnakeByCommunityCodeList(communityCodeList);
         if(!visitors.isEmpty()) {
+            // 删除所有访客，再插入
+            visitorService.remove();
         	visitorService.insertBatch(visitors);
         }
     }

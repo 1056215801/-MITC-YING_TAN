@@ -3,6 +3,7 @@ package com.mit.community.feigin;
 import com.mit.community.util.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 精选活动
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient("app-community-wanli")
 public interface SelectionActivitiesFeigin {
 
-    @GetMapping("/getBySelectionActivitiesId")
-    Result getBySelectionActivitiesId(Integer selectionActivitiesId);
+    @GetMapping("/api/app/communitywanli/userService/getBySelectionActivitiesId")
+    Result getBySelectionActivitiesId(@RequestParam("selectionActivitiesId") Integer selectionActivitiesId);
 
 }

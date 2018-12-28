@@ -50,29 +50,30 @@
         (SELECT
         SUM(
         CASE
-        WHEN s.`household_type` = 7
+        WHEN h.`household_type` = 7
         THEN 1
         ELSE 0
         END
         ) zl,
         SUM(
         CASE
-        WHEN s.`household_type` != 7
-        AND s.household_type != 8
+        WHEN h.`household_type` != 7
+        AND h.household_type != 8
         THEN 1
         ELSE 0
         END
         ) zz,
         SUM(
         CASE
-        WHEN s.`household_type` = 8
+        WHEN h.`household_type` = 8
         THEN 1
         ELSE 0
         END
         ) qt
         FROM
-        household s WHERE s.`community_code` = #{0} AND s.`city`!= '鹰潭市'
-        GROUP BY s.`room_num`) tmp ;
+        household_room h left join
+        household s on h.household_id = s.household_id WHERE h.`community_code` = #{0} AND s.`city`!= '鹰潭市'
+        GROUP BY h.`room_num`) tmp ;
     </select>
     <select id="getInnerRoomTypeConstructionByCommunityCode" resultMap="innerRoomTypeConstruction"
             parameterType="java.lang.String">
@@ -84,29 +85,30 @@
         (SELECT
         SUM(
         CASE
-        WHEN s.`household_type` = 7
+        WHEN h.`household_type` = 7
         THEN 1
         ELSE 0
         END
         ) zl,
         SUM(
         CASE
-        WHEN s.`household_type` != 7
-        AND s.household_type != 8
+        WHEN h.`household_type` != 7
+        AND h.household_type != 8
         THEN 1
         ELSE 0
         END
         ) zz,
         SUM(
         CASE
-        WHEN s.`household_type` = 8
+        WHEN h.`household_type` = 8
         THEN 1
         ELSE 0
         END
         ) qt
-        FROM
-        household s WHERE s.`community_code` = #{0} AND s.`city`= '鹰潭市'
-        GROUP BY s.`room_num`) tmp;
+        FROMh
+        household_room h left joinh
+        household s on h.household_id = s.household_id WHERE .`community_code` = #{0} AND s.`city`= '鹰潭市'
+        GROUP BY .`room_num`) tmp;
     </select>
     <select id="getForeignInnerPopulationRoomTypeConstrctionByCommunityCode" resultMap="foreignInnerPopulation"
             parameterType="java.lang.String">
@@ -119,11 +121,12 @@
             SUM( CASE WHEN s.city != '鹰潭市' THEN 1 ELSE 0 END ) f,
             SUM( CASE WHEN s.city = '鹰潭市' THEN 1 ELSE 0 END ) i
         FROM
-            household s
+            household_room h left join
+        household s on h.household_id = s.household_id
         WHERE
-            s.community_code = #{0}
+            h.community_code = #{0}
         GROUP BY
-            s.room_num
+            h.room_num
             ) tmp;
     </select>
 </mapper>

@@ -37,15 +37,14 @@ public class DeviceGroupSchedule {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "0 */15 * * * ?")
 //    @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        deviceGroupService.remove();
-        deviceDeviceGroupService.remove();
         List<DeviceGroup> deviceGroups = deviceGroupService.listFromDnakeByCommunityCodeList(communityCodeList);
         if(!deviceGroups.isEmpty()){
+            deviceGroupService.remove();
             deviceGroupService.insertBatch(deviceGroups);
         }
         List<DeviceDeviceGroup> list = Lists.newArrayListWithCapacity(200);
@@ -56,6 +55,7 @@ public class DeviceGroupSchedule {
             }
         });
         if(!list.isEmpty()){
+            deviceDeviceGroupService.remove();
             deviceDeviceGroupService.insertBatch(list);
         }
     }

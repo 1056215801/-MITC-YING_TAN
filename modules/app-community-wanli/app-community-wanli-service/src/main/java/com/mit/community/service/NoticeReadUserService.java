@@ -65,4 +65,24 @@ public class NoticeReadUserService {
         return noticeReadUsers.get(0);
     }
 
+    /**
+     * 查询通知阅读信息，通过用户id和通知id
+     * @param userId   用户id
+     * @param noticeIdList 通知id
+     * @return 通知阅读信息
+     * @author Mr.Deng
+     * @date 14:24 2018/12/14
+     */
+    public List<NoticeReadUser> listNoticeReadUserByUserIdAndNoticeIdList(Integer userId, List<Integer> noticeIdList) {
+        EntityWrapper<NoticeReadUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        wrapper.in("notice_id", noticeIdList);
+        List<NoticeReadUser> noticeReadUsers = noticeReadUserMapper.selectList(wrapper);
+        if (noticeReadUsers.isEmpty()) {
+            return null;
+        }
+        return noticeReadUsers;
+    }
+
+
 }

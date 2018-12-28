@@ -198,8 +198,8 @@ public class ApplyKeyService {
         Integer creatorUserId = applyKey.getCreatorUserId();
         User user = userService.getById(creatorUserId);
         String cellphone = user.getCellphone();
-        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
-        if (houseHold != null) {
+        List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
+        if (houseHoldList.isEmpty()) {
             return "数据还没同步，已有钥匙,5分钟后重新查看";
         }
         // 更新申请钥匙记录

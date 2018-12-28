@@ -18,7 +18,7 @@ import com.mit.community.service.VisitorService;
  * @date 2018/11/21
  * @company mitesofor
  */
-@Component
+//@Component
 public class VisitorSchedule {
 
     private final VisitorService visitorService;

@@ -1,6 +1,7 @@
 package com.mit.community.schedule;
 
 import com.ace.cache.annotation.CacheClear;
+import com.google.common.collect.Lists;
 import com.mit.community.entity.Building;
 import com.mit.community.entity.Zone;
 import com.mit.community.service.BuildingService;
@@ -40,17 +41,19 @@ public class BuildingSchedule {
     public void remoteAndImport(){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-        // 先删除，在插入
-        buildingService.remove();
+        List<Building> buildingsList = Lists.newArrayListWithCapacity(100);
         communityCodeList.forEach(item -> {
             // 查询分区
             List<Zone> zones = zoneService.listByCommunityCode(item);
             zones.forEach(zone -> {
                 List<Building> buildings = buildingService.listFormDnakeByCommunityCodeAndZoneId(item, zone.getZoneId());
-                if(!buildings.isEmpty()){
-                    buildingService.insertBatch(buildings);
-                }
+                buildingsList.addAll(buildings);
             });
         });
+        if(!buildingsList.isEmpty()){
+            // 先删除，在插入
+            buildingService.remove();
+            buildingService.insertBatch(buildingsList);
+        }
     }
 }

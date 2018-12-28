@@ -29,6 +29,16 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        String servletPath = request.getServletPath();
+        if (servletPath.contains("swagger") || servletPath.contains(".html") ||
+                servletPath.contains(".js") || servletPath.contains(".css")
+                || servletPath.contains(".jpg") || servletPath.contains(".png") ||
+                servletPath.contains(".gif") || servletPath.contains("/error") ||
+                servletPath.contains("/login/getMobileVerificationCode") ||
+                servletPath.contains("/login/login") || servletPath.contains("/login/cellphoneVerification")
+                || servletPath.contains("/login/register") || servletPath.contains("/login/haveLogin")) {
+            return true;
+        }
         String mac = request.getParameter("mac");
         String cellphone = request.getParameter("cellphone");
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(mac)) {

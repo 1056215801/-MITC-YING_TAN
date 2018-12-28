@@ -73,7 +73,6 @@ public class CommunityPhoneController {
      * @param id id
      * @param name 姓名
      * @param phone 电话
-     * @param type 类型
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/21 20:18
@@ -85,7 +84,7 @@ public class CommunityPhoneController {
             "type 类型 电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话，" +
             "")
     public Result update(HttpServletRequest request, Integer id,
-                       String name, String phone, String type) {
+                       String name, String phone) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         communityPhoneService.update(id,
@@ -108,7 +107,6 @@ public class CommunityPhoneController {
     }
 
     /**
-     * @param id id
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/21 20:23
@@ -116,8 +114,8 @@ public class CommunityPhoneController {
     */
     @DeleteMapping("/list")
     @ApiOperation(value = "社区电话列表")
-    public Result list( ) {
-        List<CommunityPhone> list = communityPhoneService.list();
+    public Result list(String communityCode) {
+        List<CommunityPhone> list = communityPhoneService.listByCommunityCode(communityCode);
         return Result.success(list);
     }
 

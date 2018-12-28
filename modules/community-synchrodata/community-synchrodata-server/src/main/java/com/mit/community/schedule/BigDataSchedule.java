@@ -1,5 +1,6 @@
 package com.mit.community.schedule;
 
+import com.google.common.collect.Lists;
 import com.mit.community.entity.ActivePeople;
 import com.mit.community.entity.AgeConstruction;
 import com.mit.community.entity.Device;
@@ -53,10 +54,14 @@ public class BigDataSchedule {
      * @company mitesofor
     */
     @Scheduled(cron = "0 45 3 * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void countActivePeopleNum (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
-        activePeopleService.remove();
+        if(communityCodeList.isEmpty()){
+            return;
+        }
+        List<ActivePeople> list = Lists.newArrayListWithCapacity(communityCodeList.size());
         communityCodeList.forEach(item -> {
             List<Device> devices = deviceService.listInOrOutByCommunityCode(item, "进");
             List<String> deviceNameList = devices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
@@ -64,8 +69,12 @@ public class BigDataSchedule {
             ActivePeople activePeople = new ActivePeople(item, num);
             activePeople.setGmtCreate(LocalDateTime.now());
             activePeople.setGmtModified(LocalDateTime.now());
-            activePeopleService.save(activePeople);
+            list.add(activePeople);
         });
+        if(!list.isEmpty()){
+            activePeopleService.remove();
+            activePeopleService.insertBatch(list);
+        }
     }
 
     /***
@@ -79,8 +88,8 @@ public class BigDataSchedule {
     public void  countAgeConstruction (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         List<AgeConstruction> ageConstructions = houseHoldService.countAgeConstructionByCommuintyCodeList(communityCodeList);
-        ageConstructionService.remove();
         if(!ageConstructions.isEmpty()){
+            ageConstructionService.remove();
             ageConstructionService.insertBatch(ageConstructions);
         }
     }

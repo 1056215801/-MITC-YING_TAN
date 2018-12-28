@@ -1,5 +1,6 @@
 package com.mit.community.module.system.controller;
 
+import com.google.common.collect.Lists;
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
@@ -7,6 +8,7 @@ import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
 import com.mit.community.util.SmsCommunityAppUtil;
+import com.mit.community.util.ThreadPoolUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 注册登陆
@@ -96,7 +99,8 @@ public class LoginController {
             "2、resultStatus:false, message: 用户不存在。<br/>" +
             "3、resultStatus: true, message: 没有关联住户, object:user。<br/>" +
             "4、resultStatus: true, message: 没有授权app, object:user。<br/>" +
-            "5、resultStatus: true, message: 已授权app, object:user。")
+            "5、resultStatus: true, message: 已授权app, object:user。<br/>" +
+            "householdType 与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)")
     public Result login(String mac, String cellphone, String verificationCode, String password) {
         User user;
         if (verificationCode != null) {
@@ -112,29 +116,47 @@ public class LoginController {
             }
         } else {
             // 密码登陆
-            user = userService.getByCellphoneAndPassword(cellphone, password);
-            if (user == null) {
+            user = userService.getByCellphone(cellphone);
+            if (user == null || !password.equals(user.getPassword())) {
                 return Result.error("用户名或密码错误");
             }
         }
+        // 判断是否有密码
+        if (user.getPassword().equals(StringUtils.EMPTY)) {
+            user.setHavePassword(false);
+        } else {
+            user.setHavePassword(true);
+        }
         String psd = user.getPassword();
         user.setPassword(null);
-        // redis中保存用户
-        redisService.set(RedisConstant.USER + user.getCellphone(), user);
-        redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
-        HouseHold houseHold = houseHoldService.getByCellphone(user.getCellphone());
-        if (houseHold == null) {
+        List<HouseHold> houseHoldList = houseHoldService.getByCellphone(user.getCellphone());
+        if (houseHoldList.isEmpty()) {
+            redisService.set(RedisConstant.USER + user.getCellphone(), user);
             return Result.success(user, "没有关联住户");
         } else {
+            // 设置默认操作小区对应的用户
             if (user.getHouseholdId() == 0) {
-                user.setHouseholdId(houseHold.getHouseholdId());
-                user.setPassword(psd);
+                user.setHouseholdId(houseHoldList.get(0).getHouseholdId());
                 userService.update(user);
             }
         }
-        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
+        // redis中保存用户
+        redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
+        redisService.set(RedisConstant.USER + user.getCellphone(), user);
+        // 查询用户对应的住户和房屋
+        List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
+        List<HouseholdRoom> householdRooms = Lists.newArrayListWithCapacity(10);
+        householdIdList.forEach(item -> {
+            householdRooms.addAll(householdRoomService.listByHouseholdId(item));
+        });
+//        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdIdlList(householdIdList);
+        householdRooms.forEach(item -> {
+            String communityCode = item.getCommunityCode();
+            ClusterCommunity community = clusterCommunityService.getByCommunityCode(communityCode);
+            item.setClusterCommunity(community);
+        });
         user.setHouseholdRoomList(householdRooms);
-        Integer authorizeStatus = houseHold.getAuthorizeStatus();
+        Integer authorizeStatus = houseHoldList.get(0).getAuthorizeStatus();
         String s = Integer.toBinaryString(authorizeStatus);
         StringBuilder stringBuilder = new StringBuilder(s);
         s = stringBuilder.reverse().toString();
@@ -142,9 +164,11 @@ public class LoginController {
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
-            DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
-            redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
-                    dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
+            ThreadPoolUtil.execute(new Thread(() -> {
+                DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
+                        dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
+            }));
             return Result.success(user, "已授权app");
         }
     }
@@ -478,6 +502,33 @@ public class LoginController {
             return Result.error("修改失败");
         }
         return Result.success("修改成功");
+    }
+
+    /**
+     * @param mac           mac
+     * @param cellphone     电话号码
+     * @param communityCode 小区code
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/25 17:14
+     * @company mitesofor
+     */
+    @PatchMapping("/chooseCommunity")
+    @ApiOperation(value = "选择小区", notes = "输入参数：cellPhone 电话号码；communityCode 小区code")
+    public Result chooseCommunity(String mac, String cellphone, String communityCode) {
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        List<HouseHold> houseHolds = houseHoldService.getByCellphone(cellphone);
+        for (HouseHold item : houseHolds) {
+            String c = item.getCommunityCode();
+            if (c.equals(communityCode)) {
+                Integer householdId = item.getHouseholdId();
+                user.setHouseholdId(householdId);
+                userService.update(user);
+                redisService.set(RedisConstant.USER + user.getCellphone(), user);
+                return Result.success("选择成功");
+            }
+        }
+        return Result.error("失败");
     }
 
 }

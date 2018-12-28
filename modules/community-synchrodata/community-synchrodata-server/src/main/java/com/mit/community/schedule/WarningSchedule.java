@@ -34,9 +34,9 @@ public class WarningSchedule {
     @Scheduled(cron = "0 */15 * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void saveWaring() {
-        warningService.remove();
         List<Warning> warningList = warningService.listFromDnake();
         if(!warningList.isEmpty()){
+            warningService.remove();
             warningService.insertBatch(warningList);
         }
     }

@@ -1,12 +1,11 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.ActivePeople;
 import com.mit.community.mapper.ActivePeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 活跃人数
@@ -16,7 +15,7 @@ import java.util.List;
  * @company mitesofor
  */
 @Service
-public class ActivePeopleService {
+public class ActivePeopleService extends ServiceImpl<ActivePeopleMapper, ActivePeople> {
 
     private final ActivePeopleMapper activePeopleMapper;
 

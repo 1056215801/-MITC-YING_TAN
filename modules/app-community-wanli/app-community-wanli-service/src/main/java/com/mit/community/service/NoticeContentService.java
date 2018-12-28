@@ -36,6 +36,36 @@ public class NoticeContentService {
     }
 
     /**
+     * 更新
+     * @param noticeId 通知id
+     * @param content 通知内容
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/12/26 9:27
+     * @company mitesofor
+    */
+    public Integer updateByNoticeId(Integer noticeId, String content){
+        EntityWrapper<NoticeContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("notice_id", noticeId);
+        NoticeContent noticeContent = new NoticeContent(noticeId, content);
+        noticeContent.setGmtModified(LocalDateTime.now());
+        return noticeContentMapper.update(noticeContent, wrapper);
+    }
+
+    /**
+     * 删除, 通过通知通告id
+     * @param noticeId 通知id
+     * @author shuyy
+     * @date 2018/12/26 9:36
+     * @company mitesofor
+    */
+    public void removeByNoticeId(Integer noticeId){
+        EntityWrapper<NoticeContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("notice_id", noticeId);
+        noticeContentMapper.delete(wrapper);
+    }
+
+    /**
      * 查找通知内容,通过通知id
      * @param noticId 通知id
      * @return

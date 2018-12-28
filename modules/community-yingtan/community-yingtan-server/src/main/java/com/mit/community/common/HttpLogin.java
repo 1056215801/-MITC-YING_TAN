@@ -128,7 +128,10 @@ public class HttpLogin implements CommandLineRunner {
      */
     public String post(String url, NameValuePair[] data, String cookie) {
         HttpClient httpClient = new HttpClient();
+        httpClient.getParams().setBooleanParameter( "http.protocol.expect-continue" , false );
+        httpClient.getParams().setContentCharset("utf-8");
         PostMethod postMethod = new PostMethod(url);
+        postMethod.addRequestHeader( "Connection", "close");
         postMethod.setRequestBody(data);
         if (StringUtils.isNotBlank(cookie)) {
             postMethod.setRequestHeader("cookie", cookie);

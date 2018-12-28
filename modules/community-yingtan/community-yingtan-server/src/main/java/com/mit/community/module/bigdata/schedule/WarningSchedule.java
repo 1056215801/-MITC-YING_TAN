@@ -25,7 +25,7 @@ import java.util.List;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
-@Component
+//@Component
 public class WarningSchedule {
 
     private final WarningService warningService;
@@ -38,7 +38,7 @@ public class WarningSchedule {
         this.sysUserService = sysUserService;
     }
 
-    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "0 0 */1 * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void saveWaring() {
         warningService.remove();

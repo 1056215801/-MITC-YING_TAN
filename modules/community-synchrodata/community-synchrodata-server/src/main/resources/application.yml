@@ -25,6 +25,7 @@ spring:
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 300000
       validationQuery: select 'x'
+      validation-query-timeout: 6000
       testWhileIdle: true
       testOnBorrow: false
       testOnReturn: false
@@ -62,6 +63,7 @@ spring:
           statement-close-after-log-enabled: false
           result-set-open-after-log-enabled: false
           result-set-close-after-log-enabled: false
+
   #    rabbitmq:
   #        host: ${RABBIT_MQ_HOST:localhost}
   #        host: localhost

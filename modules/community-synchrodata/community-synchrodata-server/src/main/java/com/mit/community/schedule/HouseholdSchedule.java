@@ -1,5 +1,6 @@
 package com.mit.community.schedule;
 
+import com.ace.cache.annotation.CacheClear;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
@@ -69,6 +70,7 @@ public class HouseholdSchedule {
      */
     @Transactional(rollbackFor = Exception.class)
     @Scheduled(cron = "0 */10 * * * ?")
+    @CacheClear(pre = "household")
 //    @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
@@ -77,7 +79,10 @@ public class HouseholdSchedule {
 
         //
         List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
-        updateAuth(houseHolds);
+        if(houseHolds.isEmpty()){
+            return;
+        }
+        updateAuthAndHouseholdRoom(houseHolds);
         List<HouseHold> list = houseHoldService.list();
         // 对比出三种类型的数据
         Map<Integer, HouseHold> map = Maps.newHashMapWithExpectedSize(list.size());
@@ -120,7 +125,7 @@ public class HouseholdSchedule {
     }
 
     /**
-     * 更新授权设备
+     * 更新授权设备和关联房屋
      * @param houseHolds
      * @return void
      * @throws
@@ -128,7 +133,8 @@ public class HouseholdSchedule {
      * @date 2018/12/12 10:45
      * @company mitesofor
     */
-    private void updateAuth(List<HouseHold> houseHolds){
+    @CacheClear(pre = "householdRoom")
+    private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds){
         authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
         householdRoomService.remove();
@@ -176,8 +182,9 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Scheduled(cron = "0 0 1 * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void parseIdentityType() {
-        List<Map<String, Object>> maps = houseHoldService.listActiveRoomId();
+        List<Map<String, Object>> maps = householdRoomService.listActiveRoomId();
         maps.forEach(item -> {
             Integer roomId = (Integer) item.get("room_id");
             List<HouseHold> houseHolds = houseHoldService.listByRoomId(roomId);

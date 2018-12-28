@@ -10,6 +10,7 @@ import com.mit.community.service.*;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
+import com.mit.community.util.ThreadPoolUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +197,6 @@ public class PassThroughController {
      * @param code      类型(查询字典notice_type)
      * @param synopsis  简介
      * @param publisher 发布人
-     * @param creator   创建人
      * @param content   发布内容
      * @return Result
      * @author Mr.Deng
@@ -203,13 +204,14 @@ public class PassThroughController {
      */
     @PostMapping("/insertByNotice")
     @ApiOperation(value = "发布通知通告信息", notes = "输入参数：cellphone 手机号；title 标题、code 类型(查询字典notice_type)、" +
-            "releaseTime 发布时间；synopsis 简介、publisher 发布人、creator 创建人")
-    public Result insertByNotice(String cellphone, String title, String code, String synopsis,
-                                 String publisher, String creator, String content) {
+            "releaseTime 发布时间；synopsis 简介、publisher 发布人 validateTime 过期时间")
+    public Result insertByNotice(String cellphone, String communityCode, String title, String code, String synopsis,
+                                 String publisher, String content, LocalDateTime releaseTime, LocalDateTime validateTime) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(title) && StringUtils.isNotBlank(code)
-                && StringUtils.isNotBlank(synopsis) && StringUtils.isNotBlank(publisher) && StringUtils.isNotBlank(creator)
+                && StringUtils.isNotBlank(synopsis) && StringUtils.isNotBlank(publisher)
                 && StringUtils.isNotBlank(content)) {
-            noticeService.releaseNotice(title, code, synopsis, publisher, creator, content);
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            noticeService.releaseNotice(communityCode, title, code, synopsis, publisher, user.getId(), content, releaseTime, validateTime);
             //记录足迹
             Dictionary dictionary = dictionaryService.getByCode(code);
             if (dictionary != null) {
@@ -232,12 +234,12 @@ public class PassThroughController {
     @ApiOperation(value = "查询所有的通知信息", notes = "返回参数：title 标题；" +
             "type 通知类型。关联数据字典code为notice_type。：1、政策性通知。2、人口普查。3、入学通知。4、物业公告。" +
             "releaseTime 发布时间；synopsis 简介；publisher 发布人；creator 创建人；modifier 修改人")
-    public Result listNotices(String cellphone) {
+    public Result listNotices(String cellphone, String communityCode) {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<Map<String, Object>> list = noticeService.listNotices(user.getId());
-                return Result.success(list);
+                List<Notice> notices = noticeService.listNotices(communityCode, user.getId());
+                return Result.success(notices);
             }
             return Result.error("请登录");
         }
@@ -445,7 +447,7 @@ public class PassThroughController {
                 }
             }
             //添加足迹
-            userTrackService.addUserTrack(cellphone, "查询我的钥匙", "钥匙查询成功");
+            ThreadPoolUtil.execute(new Thread(() -> userTrackService.addUserTrack(cellphone, "查询我的钥匙", "钥匙查询成功")));
             return Result.success(myKeys);
         }
         return Result.error("参数不能为空");

@@ -1,6 +1,9 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.mit.community.constants.Constants;
 import com.mit.community.entity.LostFound;
 import com.mit.community.entity.LostFountContent;
 import com.mit.community.entity.LostFountReadUser;
@@ -8,7 +11,9 @@ import com.mit.community.mapper.LostFoundMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -49,13 +54,7 @@ public class LostFoundService {
      * @date 9:32 2018/12/18
      */
     public LostFound getById(Integer id) {
-        EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
-        wrapper.eq("id", id);
-        List<LostFound> list = lostFoundMapper.selectList(wrapper);
-        if (list.isEmpty()) {
-            return null;
-        }
-        return list.get(0);
+        return lostFoundMapper.selectById(id);
     }
 
     /**
@@ -98,6 +97,183 @@ public class LostFoundService {
             }
         }
         return list;
+    }
+
+    /**
+     * 保存
+     * @param title 标题
+     * @param imgUrl 图片地址
+     * @param issuer 发布人
+     * @param issuerPhone 发布电话
+     * @param picAddress 捡到地址
+     * @param issueTime 发布时间
+     * @param communityCode 小区code
+     * @param content 内容
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2018/12/27 10:06
+     * @company mitesofor
+    */
+    @Transactional(rollbackFor = Exception.class)
+    public void save(String title, String imgUrl, String issuer, String issuerPhone,
+                     String picAddress, LocalDateTime issueTime, String communityCode, String content
+                     ){
+        LostFound lostFound = new LostFound(title,
+                imgUrl, issuer, issuerPhone, picAddress,
+                issueTime, StringUtils.EMPTY, StringUtils.EMPTY,
+                StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
+                1, communityCode, null, null, null);
+        lostFound.setGmtCreate(LocalDateTime.now());
+        lostFound.setGmtModified(LocalDateTime.now());
+        lostFoundMapper.insert(lostFound);
+        LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
+        lostFountContentService.save(lostFountContent);
+    }
+
+    /**
+     * 更新
+     * @param title 标题
+     * @param imgUrl 图片地址
+     * @param issuer 发布人
+     * @param issuerPhone 发布电话
+     * @param picAddress 捡到地址
+     * @param issueTime 发布时间
+     * @param receiver 领取人
+     * @param receivePhone 领取电话
+     * @param receiverAddress 领取地址
+     * @param receiverTime 领取时间
+     * @param receiverStatus 领取状态
+     * @param content 内容
+     * @author shuyy
+     * @date 2018/12/27 10:06
+     * @company mitesofor
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Integer id, String title, String imgUrl, String issuer, String issuerPhone,
+                     String picAddress, LocalDateTime issueTime, String receiver, String receivePhone,
+                       String receiverAddress, LocalDateTime receiverTime, Boolean receiverStatus,  String content
+    ){
+
+        LostFound lostFound = new LostFound();
+        lostFound.setId(id);
+        if(StringUtils.isNotBlank(title)){
+            lostFound.setTitle(title);
+        }
+        if(StringUtils.isNotBlank(imgUrl)){
+            lostFound.setImgUrl(imgUrl);
+        }
+        if(StringUtils.isNotBlank(issuer)){
+            lostFound.setIssuer(issuer);
+        }
+        if(StringUtils.isNotBlank(issuerPhone)){
+            lostFound.setIssuerPhone(issuerPhone);
+        }
+        if(StringUtils.isNotBlank(picAddress)){
+            lostFound.setPickAddress(picAddress);
+        }
+        if(issueTime != null){
+            lostFound.setIssueTime(issueTime);
+        }
+        if(StringUtils.isNotBlank(receiver)){
+            lostFound.setReceiver(receiver);
+        }
+        if(StringUtils.isNotBlank(receivePhone)){
+            lostFound.setReceivePhone(receivePhone);
+        }
+        if(StringUtils.isNotBlank(receiverAddress)){
+            lostFound.setReceiverAddress(receiverAddress);
+        }
+        if(null != receiverTime){
+            lostFound.setReceiverTime(receiverTime);
+        }
+        if(receiverStatus != null){
+            lostFound.setReadStatus(receiverStatus);
+        }
+        lostFound.setGmtModified(LocalDateTime.now());
+        lostFoundMapper.updateById(lostFound);
+        if(StringUtils.isNotBlank(content)){
+            LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
+            lostFountContentService.updateByLostFoudId(lostFountContent);
+        }
+    }
+
+    /**
+     * 删除
+     * @param id id
+     * @author shuyy
+     * @date 2018/12/27 11:04
+     * @company mitesofor
+    */
+    public void remove(Integer id){
+        lostFoundMapper.deleteById(id);
+        lostFountContentService.removeByLostFoudId(id);
+    }
+
+    /**
+     * 分页查询
+     * @param communityCode 小区code
+     * @param title 标题
+     * @param issuer 发布人
+     * @param issuerPhone 发布电话
+     * @param issueTimeStart 发布开始时间
+     * @param issueTimeEnd 发布结束时间
+     * @param receiver 领取人
+     * @param receivePhone 领取人电话
+     * @param receiverTimeStart 领取开始时间
+     * @param receiverTimeEnd 领取结束时间
+     * @param receiverStatus 领取状态
+     * @param pageNum 当前页
+     * @param pageSize 分页大小
+     * @return com.baomidou.mybatisplus.plugins.Page<com.mit.community.entity.LostFound>
+     * @author shuyy
+     * @date 2018/12/27 11:16
+     * @company mitesofor
+    */
+    public Page<LostFound> listPage(String communityCode, String title, String issuer, String issuerPhone, LocalDateTime issueTimeStart,
+                                    LocalDateTime issueTimeEnd, String receiver, String receivePhone,
+                                    LocalDateTime receiverTimeStart,LocalDateTime receiverTimeEnd,
+                                    Integer receiverStatus, Integer pageNum, Integer pageSize){
+        Page<LostFound> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
+        if(StringUtils.isNotBlank(title)){
+            wrapper.like("title", title, SqlLike.RIGHT);
+        }
+        if(StringUtils.isNotBlank(issuer)){
+            wrapper.like("issuer", issuer, SqlLike.RIGHT);
+        }
+        if(StringUtils.isNotBlank(issuerPhone)){
+            wrapper.like("issuer_phone", issuerPhone, SqlLike.RIGHT);
+        }
+        if(issueTimeStart != null){
+            wrapper.ge("issue_time", issueTimeStart);
+        }
+        if(issueTimeEnd != null){
+            wrapper.le("issue_time", issueTimeEnd);
+        }
+        if(StringUtils.isNotBlank(receiver)){
+            wrapper.like("receiver", receiver, SqlLike.RIGHT);
+        }
+        if(StringUtils.isNotBlank(receivePhone)){
+            wrapper.like("receive_phone", receivePhone, SqlLike.RIGHT);
+        }
+        if(receiverTimeStart != null){
+            wrapper.ge("receiver_time", receiverTimeStart);
+        }
+        if(receiverTimeEnd != null){
+            wrapper.le("receiver_time", receiverTimeEnd);
+        }
+        if(receiverStatus != null){
+            wrapper.eq("receiver_status", receiverStatus);
+        }
+        if(StringUtils.isNotBlank(communityCode)){
+            wrapper.eq("community_code", communityCode);
+        }
+        wrapper.orderBy("issue_time", false);
+        List<LostFound> lostFounds = lostFoundMapper.selectPage(page, wrapper);
+        page.setRecords(lostFounds);
+        return page;
+
     }
 
 }

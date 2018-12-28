@@ -31,8 +31,11 @@ public class ClusterCommunitySchedule {
     @CacheClear(pre="community")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport(){
-        clusterCommunityService.remove();
         List<ClusterCommunity> clusterCommunities = clusterCommunityService.listFromDnake();
+        if(clusterCommunities.isEmpty()){
+           return;
+        }
+        clusterCommunityService.remove();
         clusterCommunities.forEach(item -> {
             clusterCommunityService.save(item);
         });

@@ -59,6 +59,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     private final RoomService roomService;
 
     private final IdCardInfoExtractorUtil idCardInfoExtractorUtil;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
 
     @Autowired
     private AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceGroupService;
@@ -175,24 +177,22 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         List<HouseHold> result = Lists.newCopyOnWriteArrayList();
         communityCodeList.forEach(item -> {
             CountDownLatch pageCountDownLatch = new CountDownLatch(100);
-            ThreadPoolUtil.execute(() -> {
-                // 一个小区，最多的用户不会超过10000，所以这里不管小区用户有多少，都发送100个分页请求去查询。
-                for (int index = 0; index < 100; index++) {
-                    int tmp = index;
-                    ThreadPoolUtil.execute(() -> {
-                        try {
-                            int pageSize = 100;
-                            List<HouseHold> houseHoldList = listFromDnakeByCommunityCodePage(item, tmp, pageSize,
-                                    param);
-                            result.addAll(houseHoldList);
-                        } catch (Exception e) {
-                            log.error(e.getMessage(), e);
-                        } finally {
-                            pageCountDownLatch.countDown();
-                        }
-                    });
-                }
-            });
+            // 一个小区，最多的用户不会超过10000，所以这里不管小区用户有多少，都发送100个分页请求去查询。
+            for (int index = 0; index < 100; index++) {
+                int tmp = index;
+                ThreadPoolUtil.execute(() -> {
+                    try {
+                        int pageSize = 100;
+                        List<HouseHold> houseHoldList = listFromDnakeByCommunityCodePage(item, tmp, pageSize,
+                                param);
+                        result.addAll(houseHoldList);
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                    } finally {
+                        pageCountDownLatch.countDown();
+                    }
+                });
+            }
             try {
                 pageCountDownLatch.await();
             } catch (InterruptedException e) {
@@ -307,73 +307,55 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @date 2018/12/08 15:32
      */
     public List<HouseHold> getIdCardInfoFromDnake(List<HouseHold> list) {
-        List<HouseHold> result = Lists.newCopyOnWriteArrayList();
-        // 准备最大跑100个线程
-        int threadSize = list.size() > 100 ? 100 : list.size();
-        int preThreadDutyNum = list.size() / threadSize + 1;
-        List<String> numList = Lists.newCopyOnWriteArrayList();
-        CountDownLatch countDownLatch = new CountDownLatch(threadSize);
-        for (int i = 0; i < threadSize; i++) {
-            int tmp = i;
-            ThreadPoolUtil.execute(() -> {
+        List<HouseHold> result = Lists.newArrayListWithCapacity(list.size());
+        int tmp = 200;
+        for (int i = 0; i < list.size(); i++) {
+            if (i > tmp) {
+                tmp += 200;
                 try {
-                    for (int index = tmp * preThreadDutyNum, num = 0; num < preThreadDutyNum; index++) {
-                        if (index >= list.size()) {
-                            num++;
-                            continue;
-                        }
-                        HouseHold item = list.get(index);
-                        // 查询身份证号
-                        String credentialNum = getCredentialNumFromDnake(item.getHouseholdId());
-                        if (credentialNum.equals(StringUtils.EMPTY)) {
-                            num++;
-                            numList.add("a");
-                            continue;
-                        }
-                        result.add(item);
-                        item.setCredentialNum(credentialNum);
-                        item.setIdentityType(HouseHold.NORMAL);
-                        // 通过身份证号，分析省、市、区县、出生日期、年龄
-                        IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(credentialNum);
-                        LocalDate birthday = idCardInfo.getBirthday();
-                        if (birthday != null) {
-                            item.setBirthday(birthday);
-                            String constellation = ConstellationUtil.calc(birthday);
-                            item.setConstellation(constellation);
-                        } else {
-                            item.setConstellation(StringUtils.EMPTY);
-                        }
-                        String city = idCardInfo.getCity();
-                        if (city != null) {
-                            item.setCity(city);
-                        }
-                        String province = idCardInfo.getProvince();
-                        if (province != null) {
-                            item.setProvince(province);
-                        }
-                        String region = idCardInfo.getRegion();
-                        if (region != null) {
-                            item.setRegion(region);
-                        }
-                        Integer gender = idCardInfo.getGender();
-                        if (gender != null) {
-                            item.setGender(gender);
-                        }
-                        num++;
-                    }
-                } catch (Exception e) {
-                    log.error("获取身份证号码错误", e);
-                } finally {
-                    countDownLatch.countDown();
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
+            System.out.println(i);
+            HouseHold item = list.get(i);
+            // 查询身份证号
+            String credentialNum = getCredentialNumFromDnake(item.getHouseholdId());
+            if (credentialNum.equals(StringUtils.EMPTY)) {
+                continue;
+            }
+            result.add(item);
+            item.setCredentialNum(credentialNum);
+            item.setIdentityType(HouseHold.NORMAL);
+            // 通过身份证号，分析省、市、区县、出生日期、年龄
+            IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(credentialNum);
+            LocalDate birthday = idCardInfo.getBirthday();
+            if (birthday != null) {
+                item.setBirthday(birthday);
+                String constellation = ConstellationUtil.calc(birthday);
+                item.setConstellation(constellation);
+            } else {
+                item.setConstellation(StringUtils.EMPTY);
+            }
+            String city = idCardInfo.getCity();
+            if (city != null) {
+                item.setCity(city);
+            }
+            String province = idCardInfo.getProvince();
+            if (province != null) {
+                item.setProvince(province);
+            }
+            String region = idCardInfo.getRegion();
+            if (region != null) {
+                item.setRegion(region);
+            }
+            Integer gender = idCardInfo.getGender();
+            if (gender != null) {
+                item.setGender(gender);
+            }
+
         }
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            log.error("countDownLatch.await() 报错了", e);
-        }
-        System.out.println(numList.size() + result.size());
         return result;
     }
 
@@ -518,20 +500,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     }
 
     /***
-     * 查询有住户的所有房间id
-     *
-     * @return java.util.List<java.util.Map                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               java.lang.String                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               java.lang.Object>>
-     * @author shuyy
-     * @date 2018/11/24 9:38
-     */
-    public List<Map<String, Object>> listActiveRoomId() {
-        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
-        wrapper.groupBy("room_id");
-        wrapper.setSqlSelect("room_id");
-        return houseHoldMapper.selectMaps(wrapper);
-    }
-
-    /***
      * 查询所有住户， 通过房间id
      *
      * @param roomId 房间号
@@ -540,8 +508,10 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @date 2018/11/24 9:42
      */
     public List<HouseHold> listByRoomId(Integer roomId) {
+        List<HouseholdRoom> householdRooms = householdRoomService.listByRoomId(roomId);
+        List<Integer> list = householdRooms.parallelStream().map(HouseholdRoom::getHouseholdId).collect(Collectors.toList());
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
-        wrapper.eq("room_id", roomId);
+        wrapper.in("household_id", list);
         return houseHoldMapper.selectList(wrapper);
     }
 
@@ -591,6 +561,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @date 2018/12/18 18:40
      * @company mitesofor
      */
+    @CacheClear(pre = "household")
     public void removeByhouseholdIdList(List<Integer> householdIdList) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("household_id", householdIdList);

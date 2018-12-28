@@ -1,5 +1,7 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
+import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.UserHousehold;
@@ -74,14 +76,12 @@ public class HouseHoldService {
      * @date 2018/12/10 15:35
      * @company mitesofor
      */
-    public HouseHold getByCellphone(String cellphone) {
+    @Cache(key = "household:cellphone:{1}")
+    public List<HouseHold> getByCellphone(String cellphone) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
-        if (houseHolds.isEmpty()) {
-            return null;
-        }
-        return houseHolds.get(0);
+        return houseHolds;
     }
 
     /**
@@ -122,6 +122,7 @@ public class HouseHoldService {
      * @author Mr.Deng
      * @date 14:11 2018/12/13
      */
+    @CacheClear(key = "household:cellphone:{1.mobile}")
     public void update(HouseHold houseHold) {
         houseHoldMapper.updateById(houseHold);
     }

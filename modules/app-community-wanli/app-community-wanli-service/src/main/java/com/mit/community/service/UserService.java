@@ -1,15 +1,14 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
+import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.entity.User;
-import com.mit.community.entity.UserLabel;
 import com.mit.community.mapper.UserMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 用户
@@ -63,6 +60,7 @@ public class UserService {
      * @param user 用户信息
      * @date 10:56 2018/12/7
      */
+    @CacheClear(key = "user:cellphone:{1.cellphone}")
     public void update(User user) {
         user.setGmtModified(LocalDateTime.now());
         userMapper.updateById(user);
@@ -76,6 +74,7 @@ public class UserService {
      * @date 2018/11/29 11:25
      * @company mitesofor
      */
+    @CacheClear(key = "user:cellphone:{1.cellphone}")
     public void save(User user) {
         user.setGmtCreate(LocalDateTime.now());
         user.setGmtModified(LocalDateTime.now());
@@ -92,6 +91,7 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
+   /*
     public User getByCellphoneAndPassword(String cellphone, String password) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
@@ -102,7 +102,7 @@ public class UserService {
         } else {
             return users.get(0);
         }
-    }
+    }*/
 
     /**
      * 获取User，通过cellphone
@@ -113,6 +113,7 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
+    @Cache(key = "user:cellphone:{1}")
     public User getByCellphone(String cellphone) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
@@ -133,6 +134,7 @@ public class UserService {
      * @date 2018/12/07 16:52
      * @company mitesofor
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer register(String cellphone, String password) {
         int status = 1;
@@ -143,7 +145,7 @@ public class UserService {
         }
         user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                "普通业主", StringUtils.EMPTY, null);
+                "普通业主", StringUtils.EMPTY, null, null);
         this.save(user);
         return status;
     }
@@ -168,8 +170,8 @@ public class UserService {
                                String profession, String signature, String constellation, String cellphone) {
         LocalDate birthdayTime = DateUtils.parseStringToLocalDate(birthday, null);
         User user = this.getById(userId);
-        HouseHold houseHold = houseHoldService.getByCellphone(cellphone);
-        if (user != null && houseHold != null) {
+        List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
+        if (user != null && !houseHoldList.isEmpty()) {
             user.setNickname(nickname);
             user.setGender(gender);
             user.setBirthday(birthdayTime);
@@ -177,8 +179,10 @@ public class UserService {
             user.setProfession(profession);
             user.setSignature(signature);
             this.update(user);
-            houseHold.setConstellation(constellation);
-            houseHoldService.update(houseHold);
+            houseHoldList.forEach(item -> {
+                item.setConstellation(constellation);
+                houseHoldService.update(item);
+            });
         }
     }
 
@@ -192,6 +196,7 @@ public class UserService {
      * @author Mr.Deng
      * @date 14:19 2018/12/8
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer modifyPwd(String cellPhone, String newPassword, String oldPassword) {
         User user = this.getByCellphone(cellPhone);
@@ -220,6 +225,7 @@ public class UserService {
      * @author Mr.Deng
      * @date 14:19 2018/12/8
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer resetPwd(String cellPhone, String newPassword) {
         User user = this.getByCellphone(cellPhone);
@@ -278,6 +284,7 @@ public class UserService {
      * @date 2018/12/13 16:15
      * @company mitesofor
      */
+    @CacheClear(key = "user:cellphone:{1}")
     @Transactional(rollbackFor = Exception.class)
     public void updateHouseholdCellphone(String cellPhone, String newCellPhone) {
         User user = this.getByCellphone(cellPhone);

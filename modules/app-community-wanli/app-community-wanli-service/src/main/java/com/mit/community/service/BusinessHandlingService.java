@@ -291,6 +291,7 @@ public class BusinessHandlingService {
         if (StringUtils.isNotBlank(type)) {
             wrapper.eq("type", type);
         }
+        wrapper.orderBy("gmt_create", false);
         Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
         return businessHandlingMapper.selectPage(page, wrapper);
     }

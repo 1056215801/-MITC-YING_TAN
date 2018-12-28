@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Zone;
 import com.mit.community.mapper.ZoneMapper;
@@ -41,6 +42,7 @@ public class ZoneService {
      * @author Mr.Deng
      * @date 14:09 2018/12/21
      */
+    @Cache(key = "zone:communityCode:zoneId:{1}:{2}")
     public Zone getByZoneId(String communityCode, Integer zoneId) {
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("zone_id", zoneId);
