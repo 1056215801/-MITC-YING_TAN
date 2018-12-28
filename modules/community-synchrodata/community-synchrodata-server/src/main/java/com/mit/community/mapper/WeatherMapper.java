@@ -1,7 +1,7 @@
 package com.mit.community.mapper;
 
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.mit.community.entity.Weather;
-import tk.mybatis.mapper.common.BaseMapper;
 
 /**
  * @author Mr.Deng

@@ -1,11 +1,12 @@
 package com.mit.community.schedule;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import com.mit.common.util.HttpClientUtil;
 import com.mit.community.entity.Region;
 import com.mit.community.entity.Weather;
 import com.mit.community.service.RegionService;
 import com.mit.community.service.WeatherService;
-import com.mit.community.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ import java.util.List;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
-//@Component
+@Component
 public class WeatherSchedule {
 
     private final WeatherService weatherService;
@@ -39,18 +40,29 @@ public class WeatherSchedule {
      * @author Mr.Deng
      * @date 15:01 2018/12/11
      */
-    @Scheduled(cron = "0 */30 * * * ?")
+    @Scheduled(cron = "0 0 */6 * * ?")
 //    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {
-        String[] regions = {"nanchang", "yingtan"};
-        List<Region> regionList = regionService.getByEnglishName(regions);
-        weatherService.remove();
+        List<Region> regionList = regionService.list();
+        List<Weather> weathers = Lists.newArrayListWithCapacity(regionList.size());
         if (!regionList.isEmpty()) {
-            for (Region region : regionList) {
+            int tmp = 200;
+            for (int i = 0; i < regionList.size(); i++) {
+                if (i > tmp) {
+                    tmp += 200;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println(i);
+                Region region = regionList.get(i);
                 String url = "http://api.help.bj.cn/apis/weather/?id=" + region.getCityCode();
-                String result = HttpUtil.sendGet(url);
-                if(result == null){
+                String result = HttpClientUtil.getMethodRequestResponse(url);
+//                 HttpUtil.sendGet(url);
+                if (result == null) {
                     continue;
                 }
                 JSONObject json = JSONObject.parseObject(result);
@@ -67,8 +79,12 @@ public class WeatherSchedule {
                 weather.setUptime(json.getString("uptime"));
                 weather.setWeather(json.getString("weather"));
                 weather.setWeatherImg(json.getString("weatherimg"));
-                weatherService.save(weather);
+                weathers.add(weather);
             }
+        }
+        if (!weathers.isEmpty()) {
+            weatherService.remove();
+            weatherService.insertBatch(weathers);
         }
 
     }

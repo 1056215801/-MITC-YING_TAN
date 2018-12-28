@@ -35,4 +35,15 @@ public class RegionService extends ServiceImpl<RegionMapper, Region> {
         return regionMapper.selectList(wrapper);
     }
 
+    /**
+     * 查询所有地区
+     * @return java.util.List<com.mit.community.entity.Region>
+     * @author shuyy
+     * @date 2018/12/28 11:15
+     * @company mitesofor
+    */
+    public List<Region> list() {
+        return regionMapper.selectList(null);
+    }
+
 }
