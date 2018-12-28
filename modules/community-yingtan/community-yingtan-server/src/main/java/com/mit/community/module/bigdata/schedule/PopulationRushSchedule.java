@@ -17,7 +17,7 @@ import java.util.List;
  * @date 2018/11/23
  * @company mitesofor
  */
-@Component
+//@Component
 public class PopulationRushSchedule {
 
     private final PopulationRushService populationRushService;

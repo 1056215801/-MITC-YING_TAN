@@ -9,13 +9,10 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
 import com.dnake.constant.DnakeWebConstants;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mit.common.util.DateUtils;
 import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.ActivePeople;
 import com.mit.community.entity.Device;
-import com.mit.community.entity.HouseHold;
 import com.mit.community.module.pass.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -118,72 +115,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         } else {
             return null;
         }
-    }
-
-    /**
-     * 查询增量门禁数据。（依据是门禁时间）
-     * @param communityCodeList 小区code列表
-     * @return List<AccessControl>
-     * @author shuyy
-     * @date 2018/11/16 17:37
-     */
-    public List<AccessControl> listIncrementByCommunityCodeList(List<String> communityCodeList) {
-        List<AccessControl> allAccessControlsList = Lists.newArrayListWithCapacity(500);
-        communityCodeList.forEach(item -> {
-            AccessControl newestAccessControl = this.getNewestAccessControlByCommunityCode(item);
-            HashMap<String, Object> param = Maps.newHashMapWithExpectedSize(5);
-            if (newestAccessControl != null) {
-                LocalDateTime accessTime = newestAccessControl.getAccessTime();
-                // startDate过滤条件查出的结果是包含startDate的记录。所以这里加1秒
-                accessTime = accessTime.plusSeconds(1);
-                String accessTimeStr = DateUtils.format(accessTime, null);
-                param.put("startDate", accessTimeStr);
-            }
-            int index = 1;
-            while (true) {
-                List<AccessControl> accessControls = this
-                        .listFromDnakeByCommunityCodePage(item,
-                                index, 100, param);
-                boolean isEnd = false;
-                if (accessControls.size() < 100) {
-                    isEnd = true;
-                }
-                String communityName = StringUtils.EMPTY;
-                if (!accessControls.isEmpty()) {
-                    communityName = clusterCommunityService.getByCommunityCode(item).getCommunityName();
-                }
-                for (int i = 0; i < accessControls.size(); i++) {
-                    AccessControl accessControl = accessControls.get(i);
-                    if (StringUtils.isBlank(accessControl.getZoneName()) || StringUtils.isBlank(accessControl.getBuildingName())) {
-                        accessControls.remove(i);
-                        i--;
-                    } else {
-                        accessControl.setAccessControlId(accessControl.getId());
-                        accessControl.setId(null);
-                        accessControl.setCommunityCode(item);
-                        accessControl.setCommunityName(communityName);
-                        if (accessControl.getCardNum() == null) {
-                            accessControl.setCardNum(StringUtils.EMPTY);
-                        }
-                        Integer zoneId = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item).getZoneId();
-                        accessControl.setZoneId(zoneId);
-                        // 查询房号
-                        HouseHold household = houseHoldService.getByHouseholdId(accessControl.getHouseholdId());
-                        accessControl.setRoomNum(household == null ? StringUtils.EMPTY : household.getRoomNum());
-                        accessControl.setGmtCreate(LocalDateTime.now());
-                        accessControl.setGmtModified(LocalDateTime.now());
-                    }
-                    accessControl.setCommunityCode(item);
-                }
-                allAccessControlsList.addAll(accessControls);
-                if (isEnd) {
-                    break;
-                } else {
-                    index++;
-                }
-            }
-        });
-        return allAccessControlsList;
     }
 
     /**
