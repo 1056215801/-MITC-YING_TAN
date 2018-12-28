@@ -21,6 +21,11 @@ import java.time.LocalDateTime;
 @TableName("selection_activities")
 public class SelectionActivities extends BaseEntity {
     /**
+     * 小区code
+     */
+    @TableField("community_code")
+    private String communityCode;
+    /**
      * 标题
      */
     private String title;

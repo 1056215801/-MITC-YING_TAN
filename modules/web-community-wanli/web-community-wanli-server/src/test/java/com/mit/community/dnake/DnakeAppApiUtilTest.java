@@ -83,6 +83,6 @@ public class DnakeAppApiUtilTest {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
     }
-    
+
 
 }

@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 
 /**
  * 精选活动
- *
  * @author shuyy
  * @date 2018/12/25
  * @company mitesofor
@@ -38,13 +37,12 @@ public class SelectionActivesController {
     private SelectionActivitiesService selectionActivitiesService;
     @Autowired
     private RedisService redisService;
-
     @Autowired
     private SelectionActivitiesFeigin selectionActivitiesFeigin;
 
     /**
      * 保存
-     * @param request request
+     * @param request     request
      * @param title       标题
      * @param introduce   简介
      * @param externalUrl 外接地址
@@ -57,23 +55,22 @@ public class SelectionActivesController {
      * @author shuyy
      * @date 2018/12/25 11:52
      * @company mitesofor
-    */
+     */
     @PostMapping("/save")
     @ApiOperation(value = "保存", notes = "输入参数：title 标题， introduce 简介， externalUrl 外接url， validTime 2018-01-01 00:00:00，issueTime 2018-01-01 00:00:00, image 图片, notes 备注，content 内容  ")
     public Result save(HttpServletRequest request, String title, String introduce,
-                       String externalUrl,@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime validTime,
-                       @RequestParam  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime, MultipartFile image, String notes, String content) throws Exception {
+                       String externalUrl, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTime,
+                       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime, MultipartFile image, String notes, String content) throws Exception {
         String s = FastDFSClient.getInstance().uploadFile(image);
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        selectionActivitiesService.save(title, introduce, externalUrl, validTime, issueTime,
+        selectionActivitiesService.save(user.getCommunityCode(), title, introduce, externalUrl, validTime, issueTime,
                 user.getName(), s, notes, content);
         return Result.success("保存成功");
     }
 
-
     /**
-     * @param request request
+     * @param request     request
      * @param title       标题
      * @param introduce   简介
      * @param externalUrl 外接地址
@@ -93,15 +90,18 @@ public class SelectionActivesController {
                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTime,
                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime, MultipartFile image,
                          String notes, String content) throws Exception {
-        String s = null;
-        if(image != null){
-            s = FastDFSClient.getInstance().uploadFile(image);
+        if (id != null) {
+            String s = null;
+            if (image != null) {
+                s = FastDFSClient.getInstance().uploadFile(image);
+            }
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            selectionActivitiesService.update(id, title, introduce, externalUrl, validTime, issueTime,
+                    user.getName(), s, notes, content);
+            return Result.success("修改成功");
         }
-        String sessionId = CookieUtils.getSessionId(request);
-        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        selectionActivitiesService.update(id, title, introduce, externalUrl, validTime, issueTime,
-                user.getName(), s, notes, content);
-        return Result.success("修改成功");
+        return Result.error("id 不能为空");
     }
 
     /**
@@ -110,33 +110,34 @@ public class SelectionActivesController {
      * @author shuyy
      * @date 2018/12/25 11:58
      * @company mitesofor
-    */
+     */
     @DeleteMapping("/remove")
     @ApiOperation(value = "删除", notes = "输入参数：id id")
-    public Result remove(Integer id){
+    public Result remove(Integer id) {
         selectionActivitiesService.remove(id);
         return Result.success("删除成功");
     }
 
     /**
      * @param validTimeStart 过期开始时间
-     * @param validTimeEnd 过期结束时间
+     * @param validTimeEnd   过期结束时间
      * @param issueTimeStart 发布开始时间
-     * @param issueTimeEnd 发布结束时间
-     * @param pageNum 当前页
-     * @param pageSize 分页大小
+     * @param issueTimeEnd   发布结束时间
+     * @param pageNum        当前页
+     * @param pageSize       分页大小
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/25 13:39
      * @company mitesofor
-    */
+     */
     @GetMapping("/listPage")
     @ApiOperation(value = "分页查询", notes = "输入参数：validTimeStart 过期开始时间、 validTimeEnd 过期结束时间、issueTimeStart 发布开始时间，issueTimeEnd 发布结束时间 ")
     public Result listPage(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTimeStart,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTimeEnd,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTimeStart,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTimeEnd, Integer pageNum, Integer pageSize){
-        Page<SelectionActivities> page = selectionActivitiesService.listPage(validTimeStart,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTimeEnd,
+                           Integer pageNum, Integer pageSize, String communityCode) {
+        Page<SelectionActivities> page = selectionActivitiesService.listPage(communityCode, validTimeStart,
                 validTimeEnd, issueTimeStart,
                 issueTimeEnd, pageNum, pageSize);
         return Result.success(page);
@@ -147,17 +148,15 @@ public class SelectionActivesController {
      *
      * @param selectionActivitiesId
      * @return com.mit.community.util.Result
-     * @throws 
+     * @throws
      * @author shuyy
      * @date 2018/12/25 16:30
      * @company mitesofor
     */
     @GetMapping("/getBySelectionActivitiesId")
     @ApiOperation(value = "查询详情", notes = "输入参数：selectionActivitiesId")
-    public Result getBySelectionActivitiesId(Integer selectionActivitiesId){
-        Result result = selectionActivitiesFeigin.getBySelectionActivitiesId(selectionActivitiesId);
-        return result;
+    public Result getBySelectionActivitiesId(Integer selectionActivitiesId) {
+        return selectionActivitiesFeigin.getBySelectionActivitiesId(selectionActivitiesId);
     }
-
 
 }

@@ -2,7 +2,9 @@ package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,9 +15,16 @@ import java.time.LocalDateTime;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @TableName("express_info")
 public class ExpressInfo extends BaseEntity {
+    /**
+     * 小区code
+     */
+    @TableField("community_code")
+    private String communityCode;
     /**
      * 关联user用户表id
      */

@@ -101,9 +101,9 @@ public class PassThroughController {
      * @date 15:17 2018/11/29
      */
     @GetMapping("/getWeather")
-    @ApiOperation(value = "天气", notes = "输入参数：region为城市code")
+    @ApiOperation(value = "天气", notes = "输入参数：cityName 城市名")
     public Result getWeather(String mac, String cellphone, String cityName) {
-        if (StringUtils.isNotBlank(cityName) && StringUtils.isNotBlank(cellphone)) {
+        if (StringUtils.isNotBlank(cityName)) {
             Region region = regionService.getByCityCode(cityName);
             if (region != null) {
                 String eng = region.getEnglishName();

@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * 精选活动业务处理层
- *
  * @author Mr.Deng
  * @date 2018/12/19 20:42
  * <p>Copyright: Copyright (c) 2018</p>
@@ -31,7 +30,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 查询精品活动信息列表
-     *
      * @return 精品活动信息
      * @author Mr.Deng
      * @date 14:03 2018/12/22
@@ -45,7 +43,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 查询精品活动信息，通过id
-     *
      * @param id id
      * @return 精品活动信息
      * @author Mr.Deng
@@ -57,7 +54,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 更新精品活动数据数据
-     *
      * @param selectionActivities 精品活动数据
      * @author Mr.Deng
      * @date 14:10 2018/12/22
@@ -68,7 +64,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 增加浏览量信息
-     *
      * @param selectionActivities 精品活动信息
      * @author Mr.Deng
      * @date 15:18 2018/12/22
@@ -88,7 +83,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 记录浏览量
-     *
      * @param selectionActivities 精品活动
      * @author Mr.Deng
      * @date 14:34 2018/12/22
@@ -105,7 +99,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 查询精品活动详情信息，通过精品活动信息
-     *
      * @param selectionActivitiesId 精品活动信息id
      * @return 精品活动给详情信息
      * @author Mr.Deng
@@ -122,7 +115,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 保存
-     *
      * @param title       标题
      * @param introduce   简介
      * @param externalUrl 外接地址
@@ -137,10 +129,10 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void save(String title, String introduce, String externalUrl, LocalDateTime validTime,
+    public void save(String communityCode, String title, String introduce, String externalUrl, LocalDateTime validTime,
                      LocalDateTime issueTime, String issuer, String image, String notes, String content) {
 
-        SelectionActivities selectionActivitie = new SelectionActivities(title, introduce,
+        SelectionActivities selectionActivitie = new SelectionActivities(communityCode, title, introduce,
                 externalUrl, validTime, issueTime,
                 issuer, 0, image, notes, null);
         selectionActivitie.setGmtCreate(LocalDateTime.now());
@@ -155,7 +147,6 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 更新
-     *
      * @param id          id
      * @param title       标题
      * @param introduce   简介
@@ -204,14 +195,13 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
         selectionActivitiesMapper.updateById(selectionActivitie);
         if (StringUtils.isNotBlank(content)) {
             SelectionActivitiesContent selectionActivitiesContent = selectionActivitiesContentService.getByselectionActivitiesId(id);
-            selectionActivitiesContent.setGmtModified(LocalDateTime.now());
+            selectionActivitiesContent.setContent(content);
             selectionActivitiesContentService.update(selectionActivitiesContent);
         }
     }
 
     /**
      * 删除
-     *
      * @param id
      * @return void
      * @throws
@@ -229,22 +219,23 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
     /**
      * 分页查询
      * @param validTimeStart 过期开始时间
-     * @param validTimeEnd 过期结束时间
+     * @param validTimeEnd   过期结束时间
      * @param issueTimeStart 发布开始时间
-     * @param issueTimeEnd 发布结束时间
-     * @param pageNum 当前页
-     * @param pageSize 分页大小
+     * @param issueTimeEnd   发布结束时间
+     * @param pageNum        当前页
+     * @param pageSize       分页大小
      * @return com.baomidou.mybatisplus.plugins.Page<com.mit.community.entity.SelectionActivities>
      * @author shuyy
      * @date 2018/12/25 11:44
      * @company mitesofor
-    */
-    public Page<SelectionActivities> listPage(LocalDateTime validTimeStart,
+     */
+    public Page<SelectionActivities> listPage(String communityCode, LocalDateTime validTimeStart,
                                               LocalDateTime validTimeEnd,
                                               LocalDateTime issueTimeStart,
                                               LocalDateTime issueTimeEnd,
                                               Integer pageNum, Integer pageSize) {
         EntityWrapper<SelectionActivities> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
         if (validTimeStart != null) {
             wrapper.ge("valid_time", validTimeStart);
         }
@@ -262,6 +253,5 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
         page.setRecords(selectionActivities);
         return page;
     }
-
 
 }
