@@ -52,7 +52,7 @@ public class BigDataSchedule {
      * @date 2018/11/22 11:35
      * @company mitesofor
     */
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "0 0 0 */29 * ?")
     @Transactional(rollbackFor = Exception.class)
     public void countActivePeopleNum (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
@@ -75,6 +75,7 @@ public class BigDataSchedule {
      * @company mitesofor
     */
     @Scheduled(cron = "0 0 0 */29 * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void  countAgeConstruction (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

@@ -6,6 +6,7 @@ import com.mit.community.mapper.PromotionContentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -37,4 +38,43 @@ public class PromotionContentService {
         return promotionContents.get(0);
     }
 
+    /**
+     * 保存
+     * @param promotionContent 促销内容
+     * @author shuyy
+     * @date 2018/12/27 14:10
+     * @company mitesofor
+    */
+    public void save(PromotionContent promotionContent){
+        promotionContent.setGmtCreate(LocalDateTime.now());
+        promotionContent.setGmtModified(LocalDateTime.now());
+        promotionContentMapper.insert(promotionContent);
+    }
+
+    /**
+     * 更新
+     * @param promotionContent 促销内容
+     * @author shuyy
+     * @date 2018/12/27 14:21
+     * @company mitesofor
+    */
+    public void update(PromotionContent promotionContent){
+        EntityWrapper<PromotionContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("promotion_id", promotionContent.getPromotionId());
+        promotionContent.setGmtModified(LocalDateTime.now());
+        promotionContentMapper.update(promotionContent, wrapper);
+    }
+
+    /**
+     * 删除，通过促销id
+     * @param promotionId 促销id
+     * @author shuyy
+     * @date 2018/12/27 14:36
+     * @company mitesofor
+    */
+    public void removeByPromotionId(Integer promotionId){
+        EntityWrapper<PromotionContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("promotion_id", promotionId);
+        promotionContentMapper.delete(wrapper);
+    }
 }

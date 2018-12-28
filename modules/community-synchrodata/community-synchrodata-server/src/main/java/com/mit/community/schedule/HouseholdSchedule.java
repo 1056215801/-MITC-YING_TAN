@@ -182,8 +182,9 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Scheduled(cron = "0 0 1 * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void parseIdentityType() {
-        List<Map<String, Object>> maps = houseHoldService.listActiveRoomId();
+        List<Map<String, Object>> maps = householdRoomService.listActiveRoomId();
         maps.forEach(item -> {
             Integer roomId = (Integer) item.get("room_id");
             List<HouseHold> houseHolds = houseHoldService.listByRoomId(roomId);

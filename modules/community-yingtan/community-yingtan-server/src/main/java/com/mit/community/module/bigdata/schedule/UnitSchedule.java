@@ -25,7 +25,7 @@ import com.mit.community.service.ZoneService;
  * @date 2018/11/21
  * @company mitesofor
  */
-@Component
+//@Component
 public class UnitSchedule {
 
     private final BuildingService buildingService;

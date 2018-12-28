@@ -5,7 +5,6 @@ import com.mit.community.service.AccessControlService;
 import com.mit.community.service.ClusterCommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * @date 2018/11/16
  * @company mitesofor
  */
-@Component
+//@Component
 public class AccessControlSchedule {
     
     private final AccessControlService accessControlService;

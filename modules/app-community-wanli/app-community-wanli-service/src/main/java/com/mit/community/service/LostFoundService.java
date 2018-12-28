@@ -124,11 +124,11 @@ public class LostFoundService {
                 issueTime, StringUtils.EMPTY, StringUtils.EMPTY,
                 StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
                 1, communityCode, null, null, null);
-        LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
         lostFound.setGmtCreate(LocalDateTime.now());
         lostFound.setGmtModified(LocalDateTime.now());
-        lostFountContentService.save(lostFountContent);
         lostFoundMapper.insert(lostFound);
+        LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
+        lostFountContentService.save(lostFountContent);
     }
 
     /**
@@ -139,6 +139,11 @@ public class LostFoundService {
      * @param issuerPhone 发布电话
      * @param picAddress 捡到地址
      * @param issueTime 发布时间
+     * @param receiver 领取人
+     * @param receivePhone 领取电话
+     * @param receiverAddress 领取地址
+     * @param receiverTime 领取时间
+     * @param receiverStatus 领取状态
      * @param content 内容
      * @author shuyy
      * @date 2018/12/27 10:06
@@ -146,7 +151,8 @@ public class LostFoundService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void update(Integer id, String title, String imgUrl, String issuer, String issuerPhone,
-                     String picAddress, LocalDateTime issueTime, String content
+                     String picAddress, LocalDateTime issueTime, String receiver, String receivePhone,
+                       String receiverAddress, LocalDateTime receiverTime, Boolean receiverStatus,  String content
     ){
 
         LostFound lostFound = new LostFound();
@@ -168,6 +174,21 @@ public class LostFoundService {
         }
         if(issueTime != null){
             lostFound.setIssueTime(issueTime);
+        }
+        if(StringUtils.isNotBlank(receiver)){
+            lostFound.setReceiver(receiver);
+        }
+        if(StringUtils.isNotBlank(receivePhone)){
+            lostFound.setReceivePhone(receivePhone);
+        }
+        if(StringUtils.isNotBlank(receiverAddress)){
+            lostFound.setReceiverAddress(receiverAddress);
+        }
+        if(null != receiverTime){
+            lostFound.setReceiverTime(receiverTime);
+        }
+        if(receiverStatus != null){
+            lostFound.setReadStatus(receiverStatus);
         }
         lostFound.setGmtModified(LocalDateTime.now());
         lostFoundMapper.updateById(lostFound);

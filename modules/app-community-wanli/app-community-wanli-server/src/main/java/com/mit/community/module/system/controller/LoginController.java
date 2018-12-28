@@ -132,7 +132,6 @@ public class LoginController {
         List<HouseHold> houseHoldList = houseHoldService.getByCellphone(user.getCellphone());
         if (houseHoldList.isEmpty()) {
             redisService.set(RedisConstant.USER + user.getCellphone(), user);
-            redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
             return Result.success(user, "没有关联住户");
         } else {
             // 设置默认操作小区对应的用户
@@ -142,6 +141,7 @@ public class LoginController {
             }
         }
         // redis中保存用户
+        redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
         redisService.set(RedisConstant.USER + user.getCellphone(), user);
         // 查询用户对应的住户和房屋
         List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
