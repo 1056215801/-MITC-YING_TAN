@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.Weather;
 import com.mit.community.mapper.WeatherMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class WeatherService {
+public class WeatherService extends ServiceImpl<WeatherMapper, Weather> {
 
     @Autowired
     private WeatherMapper weatherMapper;

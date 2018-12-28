@@ -11,4 +11,4 @@ eureka:
     preferIpAddress: true
 spring:
   application:
-    name: ace-center
+    name: center

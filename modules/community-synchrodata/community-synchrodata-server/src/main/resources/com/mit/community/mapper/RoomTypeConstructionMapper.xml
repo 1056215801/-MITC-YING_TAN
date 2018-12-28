@@ -105,10 +105,10 @@
         ELSE 0
         END
         ) qt
-        FROMh
-        household_room h left joinh
-        household s on h.household_id = s.household_id WHERE .`community_code` = #{0} AND s.`city`= '鹰潭市'
-        GROUP BY .`room_num`) tmp;
+        FROM
+        household_room h left join
+        household s on h.household_id = s.household_id WHERE h.`community_code` = #{0} AND s.`city`= '鹰潭市'
+        GROUP BY h.`room_num`) tmp;
     </select>
     <select id="getForeignInnerPopulationRoomTypeConstrctionByCommunityCode" resultMap="foreignInnerPopulation"
             parameterType="java.lang.String">

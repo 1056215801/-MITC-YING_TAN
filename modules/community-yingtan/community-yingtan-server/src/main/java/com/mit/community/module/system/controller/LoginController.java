@@ -3,6 +3,7 @@ package com.mit.community.module.system.controller;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import com.google.common.collect.Maps;
+import com.mit.common.util.HttpClientUtil;
 import com.mit.community.common.HttpLogin;
 import com.mit.community.entity.SysUser;
 import com.mit.community.service.SysUserService;
@@ -167,10 +168,13 @@ public class LoginController {
                     map.put("session", httpLogin.getCookie());
                     if (menuUser.equals(role)) {
                         menu = "0";
+                        request.getSession().setAttribute("role", 0);
                     }
                     if (menuAdmin.equals(role)) {
+                        request.getSession().setAttribute("role", 1);
                         menu = "1";
                     }
+                    request.getSession().setAttribute("session", httpLogin.getCookie());
                     map.put("isAdmin", menu);
                     return Result.success(map, "登录成功");
                 } else {
@@ -179,5 +183,33 @@ public class LoginController {
             }
         }
         return Result.error("登录失败");
+    }
+
+    /**
+     * 是否登录
+     * @param session
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/28 16:28
+     * @company mitesofor
+    */
+    @RequestMapping(value = "/isLogin", method = RequestMethod.GET)
+    @ApiOperation(value = "是否登录")
+    public Result isLogin(HttpSession session){
+        Integer role = (Integer) session.getAttribute("role");
+        String cookie = (String) session.getAttribute("session");
+        String result;
+
+        if(role == 0){
+            result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/cmp/index?menuId=indexManageLi", cookie);
+        }else{
+            result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
+        }
+        if(result.contains(" <title>登录</title>")){
+            return Result.success(false);
+        }else {
+            return Result.success(true);
+        }
     }
 }
