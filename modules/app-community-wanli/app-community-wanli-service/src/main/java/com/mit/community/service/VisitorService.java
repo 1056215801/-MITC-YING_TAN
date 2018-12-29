@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.Visitor;
 import com.mit.community.entity.VisitorImg;
 import com.mit.community.mapper.VisitorMapper;
@@ -30,10 +31,13 @@ public class VisitorService {
      * @author Mr.Deng
      * @date 17:16 2018/12/3
      */
-    public List<Visitor> list(String cellphone) {
+    public Page<Visitor> listPage(String cellphone, Integer pageNum, Integer pageSize) {
         EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
         wrapper.eq("invite_mobile", cellphone);
-        return visitorMapper.selectList(wrapper);
+        Page<Visitor> page = new Page<>(pageNum, pageSize);
+        List<Visitor> visitors = visitorMapper.selectPage(page, wrapper);
+        page.setRecords(visitors);
+        return page;
     }
 
     /**

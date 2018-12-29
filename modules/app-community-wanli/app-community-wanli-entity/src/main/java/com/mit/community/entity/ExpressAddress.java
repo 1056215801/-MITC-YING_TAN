@@ -37,4 +37,10 @@ public class ExpressAddress extends BaseEntity {
      */
     @TableField("create_user_name")
     private String createUserName;
+
+    @TableField(exist = false)
+    private Boolean readStatus;
+
+    @TableField(exist = false)
+    private Integer expressNum;
 }

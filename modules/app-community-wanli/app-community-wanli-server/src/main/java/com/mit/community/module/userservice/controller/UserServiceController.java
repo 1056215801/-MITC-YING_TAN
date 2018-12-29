@@ -495,13 +495,13 @@ public class UserServiceController {
     @GetMapping("/listExpressAddress")
     @ApiOperation(value = "查询快递位置信息", notes = "输出参数：imgUrl 图标；address 地址；name 快递名称；expressNum 未领快递数；" +
             "communityCode 小区code;id 快递地址id；createUserName 创建人名称,readStatus 是否已读")
-    public Result listExpressAddress(String cellphone, String communityCode) {
+    public Result listExpressAddress(String cellphone, String communityCode, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<Map<String, Object>> list = expressAddressService.listExpressAddress(user.getId(), communityCode);
+                Page<ExpressAddress> page = expressAddressService.listExpressAddressPage(user.getId(), communityCode, pageNum, pageSize);
                 userTrackService.addUserTrack(cellphone, "查看我的快递", "未领取快递信息查看成功");
-                return Result.success(list);
+                return Result.success(page);
             }
             return Result.error("请登录");
         }
@@ -550,12 +550,12 @@ public class UserServiceController {
     @GetMapping("/listLostFount")
     @ApiOperation(value = "查询所有的失物招领信息", notes = "返回参数：readStatus 是否已读，id 失物招领id，" +
             "title 标题,imgUrl 图片url,receiverAddress 领取地址,receiverStatus 领取状态（1、未领取；2、已领取）")
-    public Result listLostFount(String cellphone, String communityCode) {
+    public Result listLostFount(String cellphone, String communityCode, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<LostFound> list = lostFoundService.listAll(user.getId(), communityCode);
-                return Result.success(list);
+                Page<LostFound> page = lostFoundService.listPage(user.getId(), communityCode, pageNum, pageSize);
+                return Result.success(page);
             }
             return Result.error("请登录");
         }
@@ -605,12 +605,12 @@ public class UserServiceController {
             " title 标题；imgUrl封面url ;issuer 发布者；issuerPhone 发布者手机号；promotionAddress 促销地点；issueTime 发布时间" +
             " discount 折扣;activityContent 活动内容；startTime 活动开始时间；endTime 活动结束时间；communityCode 小区code；" +
             " promotionStatus 促销状态；content 促销详情；id 促销id ；readStatus 已读状态")
-    public Result listPromotion(String cellphone, String communityCode) {
+    public Result listPromotion(String cellphone, String communityCode, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<Promotion> list = promotionService.listAll(user.getId(), communityCode);
-                return Result.success(list);
+                Page<Promotion> page = promotionService.listPage(user.getId(), communityCode, pageNum, pageSize);
+                return Result.success(page);
             }
             return Result.error("请登录");
         }
@@ -735,15 +735,16 @@ public class UserServiceController {
      */
     @GetMapping("/listSysMessages")
     @ApiOperation(value = "查询所有系统消息", notes = "返回参数：userId 用户id；title 标题；details 详情；addTime 添加时间")
-    public Result listSysMessages(String cellphone) {
+    public Result listSysMessages(String cellphone, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<SysMessages> sysMessages = sysMessagesService.listByUserId(user.getId());
+                Page<SysMessages> page = sysMessagesService.listByUserIdPage(user.getId(), pageNum, pageSize);
+                List<SysMessages> sysMessages = page.getRecords();
                 // 记录系统消息已读
                 List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
                 sysMessageReadService.saveNotRead(user.getId(), list);
-                return Result.success(sysMessages);
+                return Result.success(page);
             }
             return Result.error("请登录");
         }

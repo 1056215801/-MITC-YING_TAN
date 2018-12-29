@@ -47,6 +47,23 @@ public class LostFoundService {
     }
 
     /**
+     * 查询所有失物招领简介信息
+     * @return 放回失物招领简介信息
+     * @author Mr.Deng
+     * @date 9:19 2018/12/18
+     */
+    public Page<LostFound> listPage(String communityCode, Integer pageNum, Integer pageSize) {
+        EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("id,title,img_url as imgUrl,receiver_address as receiverAddress,receiver_status as receiverStatus");
+        wrapper.orderBy("gmt_create", false);
+        wrapper.eq("community_code", communityCode);
+        Page<LostFound> page = new Page<>(pageNum, pageSize);
+        List<LostFound> lostFounds = lostFoundMapper.selectPage(page, wrapper);
+        page.setRecords(lostFounds);
+        return page;
+    }
+
+    /**
      * 查询失物招领信息 通过失物招领id
      * @param id 失物招领id
      * @return 失物招领信息
@@ -97,6 +114,30 @@ public class LostFoundService {
             }
         }
         return list;
+    }
+
+    /**
+     * 查询所有的失物招领信息
+     * @param userId 用户id
+     * @return 失物招领信息
+     * @author Mr.Deng
+     * @date 10:02 2018/12/18
+     */
+    public Page<LostFound> listPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
+        Page<LostFound> lostFoundPage = this.listPage(communityCode, pageNum, pageSize);
+        List<LostFound> list = lostFoundPage.getRecords();
+        if (!list.isEmpty()) {
+            for (LostFound lostFound : list) {
+                List<LostFountReadUser> lostFountReadUsers = lostFountReadUserService.
+                        getByUserIdByLostFountId(userId, lostFound.getId());
+                if (lostFountReadUsers.isEmpty()) {
+                    lostFound.setReadStatus(false);
+                } else {
+                    lostFound.setReadStatus(true);
+                }
+            }
+        }
+        return lostFoundPage;
     }
 
     /**

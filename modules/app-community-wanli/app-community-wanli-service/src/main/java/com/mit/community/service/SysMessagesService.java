@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.SysMessages;
 import com.mit.community.entity.User;
 import com.mit.community.mapper.SysMessagesMapper;
@@ -51,6 +52,22 @@ public class SysMessagesService {
         EntityWrapper<SysMessages> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return sysMessagesMapper.selectList(wrapper);
+    }
+
+    /**
+     * 分页查询系统消息，通过用户id
+     * @param userId 用户id
+     * @return 系统消息
+     * @author Mr.Deng
+     * @date 10:34 2018/12/19
+     */
+    public  Page<SysMessages> listByUserIdPage(Integer userId, Integer pageNum, Integer pageSize) {
+        EntityWrapper<SysMessages> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        Page<SysMessages> page = new Page<>(pageNum, pageSize);
+        List<SysMessages> sysMessages = sysMessagesMapper.selectPage(page, wrapper);
+        page.setRecords(sysMessages);
+        return page;
     }
 
     /**

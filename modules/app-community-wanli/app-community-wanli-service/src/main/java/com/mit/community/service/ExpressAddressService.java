@@ -2,7 +2,6 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.google.common.collect.Lists;
 import com.mit.community.entity.ExpressAddress;
 import com.mit.community.entity.ExpressReadUser;
 import com.mit.community.mapper.ExpressAddressMapper;
@@ -107,6 +106,21 @@ public class ExpressAddressService {
         wrapper.eq("community_code", communityCode);
         return expressAddressMapper.selectMaps(wrapper);
     }
+    /**
+     * 查询快递位置信息，通过小区code
+     * @param communityCode 小区code
+     * @return 快递位置信息
+     * @author Mr.Deng
+     * @date 17:02 2018/12/14
+     */
+    public Page<ExpressAddress> listByCommunityCodePage(String communityCode, Integer pageNum, Integer pageSize) {
+        EntityWrapper<ExpressAddress> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        Page<ExpressAddress> page = new Page<>(pageNum, pageSize);
+        List<ExpressAddress> expressAddresses = expressAddressMapper.selectPage(page, wrapper);
+        page.setRecords(expressAddresses);
+        return page;
+    }
 
     /**
      * 查询快递位置信息，通过用户id和小区code
@@ -116,22 +130,22 @@ public class ExpressAddressService {
      * @author Mr.Deng
      * @date 17:15 2018/12/14
      */
-    public List<Map<String, Object>> listExpressAddress(Integer userId, String communityCode) {
-        List<Map<String, Object>> list = Lists.newArrayListWithExpectedSize(30);
-        List<Map<String, Object>> expressAddresses = this.listByCommunityCode(communityCode);
+    public Page<ExpressAddress> listExpressAddressPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
+        Page<ExpressAddress> page = this.listByCommunityCodePage(communityCode, pageNum, pageSize);
+        List<ExpressAddress> expressAddresses = page.getRecords();
         if (!expressAddresses.isEmpty()) {
-            for (Map<String, Object> expressAddress : expressAddresses) {
-                Integer integer = expressInfoService.countNotExpressNum(userId, Integer.parseInt(expressAddress.get("id").toString()));
-                ExpressReadUser expressReadUser = expressReadUserService.ByUserIdAndExpressAddressId(userId, Integer.parseInt(expressAddress.get("id").toString()));
+            for (ExpressAddress expressAddress : expressAddresses) {
+                Integer integer = expressInfoService.countNotExpressNum(userId, expressAddress.getId());
+                ExpressReadUser expressReadUser = expressReadUserService.ByUserIdAndExpressAddressId(userId, expressAddress.getId());
                 if (expressReadUser == null) {
-                    expressAddress.put("readStatus", false);
+                    expressAddress.setReadStatus(false);
+                }else {
+                    expressAddress.setReadStatus(true);
                 }
-                expressAddress.put("readStatus", true);
-                expressAddress.put("expressNum", integer);
-                list.add(expressAddress);
+                expressAddress.setExpressNum(integer);
             }
         }
-        return list;
+        return page;
     }
 
     /**

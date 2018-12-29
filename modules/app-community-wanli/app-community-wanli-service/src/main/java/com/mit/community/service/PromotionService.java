@@ -47,6 +47,24 @@ public class PromotionService {
     }
 
     /**
+     * 查询所有的促销活动 ，通过小区code
+     *
+     * @param communityCode 小区code
+     * @return
+     * @author Mr.Deng
+     * @date 16:21 2018/12/18
+     */
+    public Page<Promotion> listPage(String communityCode, Integer pageNum, Integer pageSize) {
+        EntityWrapper<Promotion> wrapper = new EntityWrapper<>();
+        wrapper.orderBy("gmt_create", false);
+        wrapper.eq("community_code", communityCode);
+        Page<Promotion> page = new Page<>(pageNum, pageSize);
+        List<Promotion> promotions = promotionMapper.selectPage(page, wrapper);
+        page.setRecords(promotions);
+        return page;
+    }
+
+    /**
      * 查询促销信息，通过id
      *
      * @param promotionId 促销id
@@ -67,8 +85,9 @@ public class PromotionService {
      * @author Mr.Deng
      * @date 17:25 2018/12/18
      */
-    public List<Promotion> listAll(Integer userId, String communityCode) {
-        List<Promotion> promotions = this.list(communityCode);
+    public Page<Promotion> listPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
+        Page<Promotion> page = this.listPage(communityCode, pageNum, pageSize);
+        List<Promotion> promotions = page.getRecords();
         if (!promotions.isEmpty()) {
             for (Promotion promotion : promotions) {
                 //查询状态
@@ -83,7 +102,7 @@ public class PromotionService {
                 }
             }
         }
-        return promotions;
+        return page;
     }
 
     /**

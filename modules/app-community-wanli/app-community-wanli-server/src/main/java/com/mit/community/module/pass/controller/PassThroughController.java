@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -234,11 +235,12 @@ public class PassThroughController {
     @ApiOperation(value = "查询所有的通知信息", notes = "返回参数：title 标题；" +
             "type 通知类型。关联数据字典code为notice_type。：1、政策性通知。2、人口普查。3、入学通知。4、物业公告。" +
             "releaseTime 发布时间；synopsis 简介；publisher 发布人；creator 创建人；modifier 修改人")
-    public Result listNotices(String cellphone, String communityCode) {
+    public Result listNotices(String cellphone, String communityCode, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDay,
+                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDay) {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<Notice> notices = noticeService.listNotices(communityCode, user.getId());
+                List<Notice> notices = noticeService.listNoticesAndTime(communityCode, user.getId(), startDay, endDay);
                 return Result.success(notices);
             }
             return Result.error("请登录");
@@ -576,12 +578,13 @@ public class PassThroughController {
      */
     @GetMapping("/listVistor")
     @ApiOperation(value = "查询所有访客信息", notes = "传参：cellphone 手机号")
-    public Result listVistor(String cellphone) {
+    public Result listVistor(String cellphone, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone)) {
-            List<Visitor> list = visitorService.list(cellphone);
+            Page<Visitor> page = visitorService.listPage(cellphone, pageNum, pageSize);
+            List<Visitor> list = page.getRecords();
             //添加足迹
             userTrackService.addUserTrack(cellphone, "查询所有访客信息", "查询所有访客信息成功");
-            return Result.success(list);
+            return Result.success(page);
         }
         return Result.error("参数不能为空");
     }

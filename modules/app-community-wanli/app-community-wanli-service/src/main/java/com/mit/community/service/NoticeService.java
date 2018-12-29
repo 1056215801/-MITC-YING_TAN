@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,22 @@ public class NoticeService {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.le("release_time", LocalDateTime.now());
+        wrapper.ge("validate_time", LocalDateTime.now());
+        wrapper.orderBy("validate_time", false);
+        return noticeMapper.selectList(wrapper);
+    }
+
+    /**
+     * 查询所有的通知通告信息
+     * @return 通知通告信息列表
+     * @author Mr.Deng
+     * @date 16:26 2018/12/3
+     */
+    public List<Notice> listValidNoticeAndTime(String communityCode, LocalDate startDay, LocalDate endDay) {
+        EntityWrapper<Notice> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.le("release_time", startDay);
+        wrapper.ge("release_time", endDay);
         wrapper.ge("validate_time", LocalDateTime.now());
         wrapper.orderBy("validate_time", false);
         return noticeMapper.selectList(wrapper);
@@ -196,6 +213,34 @@ public class NoticeService {
      */
     public List<Notice> listNotices(String communityCode, Integer userId) {
         List<Notice> notices = this.listValidNotice(communityCode);
+        if (!notices.isEmpty()) {
+            Map<Integer, Notice> map = Maps.newHashMapWithExpectedSize(notices.size());
+            List<Integer> noticeIdList = notices.parallelStream().map(Notice::getId).collect(Collectors.toList());
+            notices.forEach(item -> {
+                item.setStatus(false);
+                map.put(item.getId(), item);
+            });
+            List<NoticeReadUser> noticeReadUsers = noticeReadUserService.listNoticeReadUserByUserIdAndNoticeIdList(userId, noticeIdList);
+            if (!noticeReadUsers.isEmpty()) {
+                noticeReadUsers.forEach(item -> {
+                    Integer noticeId = item.getNoticeId();
+                    Notice notice = map.get(noticeId);
+                    notice.setStatus(true);
+                });
+            }
+        }
+        return notices;
+    }
+
+    /**
+     * 查询所有通知信息和读取状态
+     * @param userId 用户id
+     * @return 通知信息
+     * @author Mr.Deng
+     * @date 14:34 2018/12/14
+     */
+    public List<Notice> listNoticesAndTime(String communityCode, Integer userId, LocalDate startDay, LocalDate endDay) {
+        List<Notice> notices  = this.listValidNoticeAndTime(communityCode, startDay, endDay);
         if (!notices.isEmpty()) {
             Map<Integer, Notice> map = Maps.newHashMapWithExpectedSize(notices.size());
             List<Integer> noticeIdList = notices.parallelStream().map(Notice::getId).collect(Collectors.toList());
