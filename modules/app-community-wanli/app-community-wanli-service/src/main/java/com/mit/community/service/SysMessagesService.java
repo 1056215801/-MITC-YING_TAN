@@ -25,6 +25,8 @@ public class SysMessagesService {
     private SysMessagesMapper sysMessagesMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SysMessageReadService sysMessageReadService;
 
     /**
      * 添加系统消息
@@ -49,6 +51,34 @@ public class SysMessagesService {
         EntityWrapper<SysMessages> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return sysMessagesMapper.selectList(wrapper);
+    }
+
+    /**
+     * 统计数量
+     * @param userId userId
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/12/29 10:09
+     * @company mitesofor
+    */
+    public Integer countNum(Integer userId){
+        EntityWrapper<SysMessages> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        return sysMessagesMapper.selectCount(wrapper);
+    }
+
+    /**
+     * 统计未独数量
+     * @param userId userId
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2018/12/29 10:10
+     * @company mitesofor
+    */
+    public Integer countNotReadNum(Integer userId){
+        Integer num = sysMessageReadService.countNum(userId);
+        Integer sum = this.countNum(userId);
+        return sum - num;
     }
 
     /**

@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 住户-服务控制类
@@ -57,6 +58,7 @@ public class UserServiceController {
     private final SelectionActivitiesService selectionActivitiesService;
     private final AccessControlService accessControlService;
     private final DnakeAppApiService dnakeAppApiService;
+    private final SysMessageReadService sysMessageReadService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -71,7 +73,7 @@ public class UserServiceController {
                                  PromotionReadUserService promotionReadUserService,
                                  OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService,
                                  SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService,
-                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService) {
+                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService, SysMessageReadService sysMessageReadService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -94,6 +96,7 @@ public class UserServiceController {
         this.selectionActivitiesService = selectionActivitiesService;
         this.accessControlService = accessControlService;
         this.dnakeAppApiService = dnakeAppApiService;
+        this.sysMessageReadService = sysMessageReadService;
     }
 
     /**
@@ -721,6 +724,8 @@ public class UserServiceController {
         return Result.error("参数不能为空");
     }
 
+
+
     /**
      * 查询所有系统消息
      * @param cellphone 手机号
@@ -735,6 +740,9 @@ public class UserServiceController {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
                 List<SysMessages> sysMessages = sysMessagesService.listByUserId(user.getId());
+                // 记录系统消息已读
+                List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
+                sysMessageReadService.saveNotRead(user.getId(), list);
                 return Result.success(sysMessages);
             }
             return Result.error("请登录");
@@ -743,11 +751,34 @@ public class UserServiceController {
     }
 
     /**
-     * 查询所有的精品活动信息
-     * @return result
-     * @author Mr.Deng
-     * @date 14:13 2018/12/22
-     */
+     * 统计未读数量
+     * @param cellphone
+     * @return com.mit.community.util.Result
+     * @throws
+     * @author shuyy
+     * @date 2018/12/29 10:17
+     * @company mitesofor
+    */
+    @GetMapping("/countNotReadNum")
+    @ApiOperation(value = "统计未读系统消息", notes = "传参：cellphone 电话")
+    public Result countNotReadNum(String cellphone) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            if (user != null) {
+                Integer num = sysMessagesService.countNotReadNum(user.getId());
+                return Result.success(num);
+            }
+            return Result.error("请登录");
+        }
+        return Result.error("参数不能为空");
+    }
+
+        /**
+         * 查询所有的精品活动信息
+         * @return result
+         * @author Mr.Deng
+         * @date 14:13 2018/12/22
+         */
     @GetMapping("/listSelectionActivities")
     @ApiOperation(value = "查询所有的精品活动信息", notes = "输出参数：title 标题,introduce 活动介绍,externalUrl 外部URL," +
             "validTime 有效时间,issueTime 发布时间,issuer 发布人，readNum 浏览量，image 图片地址，notes 备注")
