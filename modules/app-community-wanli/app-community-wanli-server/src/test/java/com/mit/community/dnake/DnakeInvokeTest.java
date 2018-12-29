@@ -59,7 +59,7 @@ public class DnakeInvokeTest {
         System.out.println(end - startTime);
     }
 
-     @Test
+    @Test
     public void getHouseholdList() {
         long startTime = System.currentTimeMillis();
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
@@ -225,5 +225,19 @@ public class DnakeInvokeTest {
         System.out.println(result);
         long end = System.currentTimeMillis();
         System.out.println(end - startTime);
+    }
+
+    @Test
+    public void getDeviceCallList() {
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/v1/device/getDeviceCallList";
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(6);
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+
+        map.put("roomNum", "0101");
+        map.put("pageSize", 10);
+        map.put("pageNum", 1);
+        String invoke = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(invoke);
     }
 }

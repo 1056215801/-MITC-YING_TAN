@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
  * @date 2018/12/27
  * @company mitesofor
  */
-@RequestMapping(value = "/lostFound")
+@RequestMapping(value = "/promotion")
 @RestController
 @Slf4j
 @Api(tags = "促销")

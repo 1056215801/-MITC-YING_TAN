@@ -14,7 +14,6 @@ import java.util.Map;
 
 /**
  * 黄页类型业务处理层
- *
  * @author Mr.Deng
  * @date 2018/12/6 20:22
  * <p>Copyright: Copyright (c) 2018</p>
@@ -27,7 +26,6 @@ public class YellowPagesTypeService {
 
     /**
      * 查询黄页信息，通过id
-     *
      * @param id id
      * @return 黄页信息
      * @author Mr.Deng
@@ -39,7 +37,6 @@ public class YellowPagesTypeService {
 
     /**
      * 查询父菜单
-     *
      * @return 父菜单集合
      * @author Mr.Deng
      * @date 19:33 2018/12/6
@@ -53,18 +50,18 @@ public class YellowPagesTypeService {
 
     /**
      * 查询所有的黄页类型菜单
-     *
      * @return 黄页类型菜单列表
      * @author Mr.Deng
      * @date 20:44 2018/12/6
      */
-    public List<YellowPagesType> list() {
-        return yellowPagesTypeMapper.selectList(null);
+    public List<YellowPagesType> listByParentName(String parentName) {
+        EntityWrapper<YellowPagesType> wrapper = new EntityWrapper<>();
+        wrapper.eq("parent_name", parentName);
+        return yellowPagesTypeMapper.selectList(wrapper);
     }
 
     /**
      * 查询子菜单，通过父菜单
-     *
      * @param parentName 父菜单名称
      * @return 子菜单集合
      * @author Mr.Deng
@@ -74,12 +71,12 @@ public class YellowPagesTypeService {
         EntityWrapper<YellowPagesType> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("id,submenu_name,image");
         wrapper.eq("parent_name", parentName);
+        wrapper.orderBy("LENGTH(submenu_name)");
         return yellowPagesTypeMapper.selectMaps(wrapper);
     }
 
     /**
      * 保存
-     *
      * @param parentName  父类型
      * @param image       图片地址
      * @param submenuName 子类型
@@ -96,14 +93,14 @@ public class YellowPagesTypeService {
 
     /**
      * 更新
-     * @param id id
+     * @param id          id
      * @param parentName  父类型
      * @param image       图片地址
      * @param submenuName 子类型
      * @author shuyy
      * @date 2018/12/21 19:33
      * @company mitesofor
-    */
+     */
     public void update(Integer id, String parentName, String image, String submenuName) {
         YellowPagesType yellowPagesType = new YellowPagesType();
         yellowPagesType.setId(id);
@@ -126,21 +123,21 @@ public class YellowPagesTypeService {
      * @author shuyy
      * @date 2018/12/21 19:36
      * @company mitesofor
-    */
-    public void remove(Integer id){
+     */
+    public void remove(Integer id) {
         yellowPagesTypeMapper.deleteById(id);
     }
 
     /**
      * 列表
-     * @param pageNum 当前页
+     * @param pageNum  当前页
      * @param pageSize 分页大小
      * @return com.baomidou.mybatisplus.plugins.Page<com.mit.community.entity.YellowPagesType>
      * @author shuyy
      * @date 2018/12/21 19:40
      * @company mitesofor
-    */
-    public Page<YellowPagesType> listPage(Integer pageNum, Integer pageSize){
+     */
+    public Page<YellowPagesType> listPage(Integer pageNum, Integer pageSize) {
         Page<YellowPagesType> page = new Page<>(pageNum, pageSize);
         List<YellowPagesType> yellowPagesTypes = yellowPagesTypeMapper.selectPage(page, null);
         page.setRecords(yellowPagesTypes);

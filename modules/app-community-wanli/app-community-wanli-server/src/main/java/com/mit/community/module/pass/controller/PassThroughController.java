@@ -278,6 +278,25 @@ public class PassThroughController {
     }
 
     /**
+     * 通知通告未读数
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return result
+     * @author Mr.Deng
+     * @date 16:37 2018/12/28
+     */
+    @GetMapping("/getNotReadNotice")
+    @ApiOperation(value = "通知通告未读数")
+    public Result getNotReadNotice(String cellphone, String communityCode) {
+        if (StringUtils.isNotBlank(cellphone)) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            Integer notReadNotice = noticeService.getNotReadNotice(communityCode, user.getId());
+            return Result.success(notReadNotice);
+        }
+        return Result.error("参数不能为空");
+    }
+
+    /**
      * 查询通知信息浏览量
      * @param cellphone 手机号
      * @param noticeId  通知id

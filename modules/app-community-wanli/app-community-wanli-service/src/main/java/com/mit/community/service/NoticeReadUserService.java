@@ -66,8 +66,22 @@ public class NoticeReadUserService {
     }
 
     /**
+     * 查询已读信息，通过用户id
+     * @param userId 用户id
+     * @return 已读数列表
+     * @author Mr.Deng
+     * @date 16:20 2018/12/28
+     */
+    public List<NoticeReadUser> getReadNoticByUserIdAndNoticId(Integer userId) {
+        EntityWrapper<NoticeReadUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        wrapper.groupBy("notice_id");
+        return noticeReadUserMapper.selectList(wrapper);
+    }
+
+    /**
      * 查询通知阅读信息，通过用户id和通知id
-     * @param userId   用户id
+     * @param userId       用户id
      * @param noticeIdList 通知id
      * @return 通知阅读信息
      * @author Mr.Deng
@@ -83,6 +97,7 @@ public class NoticeReadUserService {
         }
         return noticeReadUsers;
     }
+
 
 
 }
