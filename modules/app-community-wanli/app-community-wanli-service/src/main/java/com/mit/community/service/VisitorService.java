@@ -1,6 +1,8 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Visitor;
+import com.mit.community.entity.VisitorImg;
 import com.mit.community.mapper.VisitorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class VisitorService {
 
     @Autowired
     private VisitorMapper visitorMapper;
+    @Autowired
+    private VisitorImgService visitorImgService;
 
     /**
      * 查询所有访客信息
@@ -26,8 +30,29 @@ public class VisitorService {
      * @author Mr.Deng
      * @date 17:16 2018/12/3
      */
-    public List<Visitor> list() {
-        return visitorMapper.selectList(null);
+    public List<Visitor> list(String cellphone) {
+        EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
+        wrapper.eq("invite_mobile", cellphone);
+        return visitorMapper.selectList(wrapper);
+    }
+
+    /**
+     * 获取访客详情
+     * @param id
+     * @return com.mit.community.entity.Visitor
+     * @throws
+     * @author shuyy
+     * @date 2018/12/29 10:44
+     * @company mitesofor
+    */
+    public Visitor getById(Integer id){
+        Visitor visitor = visitorMapper.selectById(id);
+        if(visitor != null){
+            List<VisitorImg> visitorImgs = visitorImgService.listByVisitorId(id);
+            visitor.setVisitorImgList(visitorImgs);
+            return visitor;
+        }
+        return null;
     }
 
 }

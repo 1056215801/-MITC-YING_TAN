@@ -33,8 +33,6 @@ public class ClusterCommunityService {
     @Autowired
     private HouseHoldService houseHoldService;
     @Autowired
-    private UserHouseholdService userHouseholdService;
-    @Autowired
     private UserService userService;
     @Autowired
     private ClusterCommunityService clusterCommunityService;

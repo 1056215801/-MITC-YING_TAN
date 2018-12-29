@@ -21,8 +21,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
     private DeviceMapper deviceMapper;
     @Autowired
     private UserService userService;
-    @Autowired
-    private UserHouseholdService userHouseholdService;
+
     @Autowired
     private HouseHoldService houseHoldService;
     @Autowired

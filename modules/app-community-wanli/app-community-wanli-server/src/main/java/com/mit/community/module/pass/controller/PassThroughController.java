@@ -254,9 +254,9 @@ public class PassThroughController {
      * @author Mr.Deng
      * @date 13:49 2018/12/14
      */
-    @GetMapping("/selectNotices")
+    @GetMapping("/getNotices")
     @ApiOperation(value = "查询通知详情，通过手机号和通告id", notes = "传参：cellphone 手机号 ；noticeId 通知id")
-    public Result selectNotices(String cellphone, Integer noticeId) {
+    public Result getNotices(String cellphone, Integer noticeId) {
         if (StringUtils.isNotBlank(cellphone) && noticeId != null) {
             List<Object> notice = noticeService.getNoticInfoByNotiveId(noticeId);
             if (!notice.isEmpty()) {
@@ -574,17 +574,30 @@ public class PassThroughController {
      * @author Mr.Deng
      * @date 18:28 2018/12/3
      */
-    @GetMapping("/listSelectNotice")
+    @GetMapping("/listVistor")
     @ApiOperation(value = "查询所有访客信息", notes = "传参：cellphone 手机号")
-    public Result listSelectNotice(String cellphone) {
+    public Result listVistor(String cellphone) {
         if (StringUtils.isNotBlank(cellphone)) {
-            List<Visitor> list = visitorService.list();
+            List<Visitor> list = visitorService.list(cellphone);
             //添加足迹
             userTrackService.addUserTrack(cellphone, "查询所有访客信息", "查询所有访客信息成功");
             return Result.success(list);
         }
         return Result.error("参数不能为空");
     }
+
+    @GetMapping("/getVistorDetail")
+    @ApiOperation(value = "查询访客详情", notes = "传参：id 访客id")
+    public Result getVistorDetail(String cellphone, Integer id) {
+        if (id != null) {
+            Visitor visitor = visitorService.getById(id);
+            //添加足迹
+            userTrackService.addUserTrack(cellphone, "查询访客详情", "查询访客详情成功");
+            return Result.success(visitor);
+        }
+        return Result.error("参数不能为空");
+    }
+
 
     /**
      * 设置呼叫转移号码

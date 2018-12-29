@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 访客表
@@ -101,5 +102,9 @@ public class Visitor extends BaseEntity {
      */
     @TableField("visitor_mobile")
     private String visitorMobile;
+
+    /**访客图片*/
+    @TableField(exist = false)
+    private List<VisitorImg> visitorImgList;
 
 }

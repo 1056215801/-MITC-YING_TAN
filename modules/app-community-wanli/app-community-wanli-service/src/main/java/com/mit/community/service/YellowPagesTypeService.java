@@ -43,7 +43,7 @@ public class YellowPagesTypeService {
      */
     public List<Map<String, Object>> listToParentName() {
         EntityWrapper<YellowPagesType> wrapper = new EntityWrapper<>();
-        wrapper.setSqlSelect("parent_name");
+        wrapper.setSqlSelect("parent_name, `orders`");
         wrapper.groupBy("parent_name");
         return yellowPagesTypeMapper.selectMaps(wrapper);
     }
@@ -84,8 +84,8 @@ public class YellowPagesTypeService {
      * @date 2018/12/21 19:22
      * @company mitesofor
      */
-    public void save(String parentName, String image, String submenuName) {
-        YellowPagesType yellowPagesType = new YellowPagesType(parentName, image, submenuName);
+    public void save(String parentName, String image, String submenuName, Short order) {
+        YellowPagesType yellowPagesType = new YellowPagesType(parentName, image, submenuName, order);
         yellowPagesType.setGmtCreate(LocalDateTime.now());
         yellowPagesType.setGmtModified(LocalDateTime.now());
         yellowPagesTypeMapper.insert(yellowPagesType);

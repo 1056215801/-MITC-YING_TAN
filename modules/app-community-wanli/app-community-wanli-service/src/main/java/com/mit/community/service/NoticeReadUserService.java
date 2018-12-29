@@ -28,9 +28,12 @@ public class NoticeReadUserService {
      * @date 10:36 2018/12/14
      */
     public void save(NoticeReadUser noticeReadUser) {
-        noticeReadUser.setGmtCreate(LocalDateTime.now());
-        noticeReadUser.setGmtModified(LocalDateTime.now());
-        noticeReadUserMapper.insert(noticeReadUser);
+        NoticeReadUser item = this.getNoticeReadUser(noticeReadUser.getUserId(), noticeReadUser.getUserId());
+        if(item == null){
+            noticeReadUser.setGmtCreate(LocalDateTime.now());
+            noticeReadUser.setGmtModified(LocalDateTime.now());
+            noticeReadUserMapper.insert(noticeReadUser);
+        }
     }
 
     /**
@@ -91,11 +94,7 @@ public class NoticeReadUserService {
         EntityWrapper<NoticeReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.in("notice_id", noticeIdList);
-        List<NoticeReadUser> noticeReadUsers = noticeReadUserMapper.selectList(wrapper);
-        if (noticeReadUsers.isEmpty()) {
-            return null;
-        }
-        return noticeReadUsers;
+        return noticeReadUserMapper.selectList(wrapper);
     }
 
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 生活黄页业务处理层
@@ -51,14 +52,20 @@ public class YellowPagesService {
      */
     public List<Map<String, Object>> listAllYellowPages() {
         List<Map<String, Object>> parentNames = yellowPagesTypeService.listToParentName();
+        TreeMap<Integer, Map<String, Object>> treeMap = Maps.newTreeMap();
+        List<Map<String, Object>> result = Lists.newArrayListWithCapacity(parentNames.size());
         if (!parentNames.isEmpty()) {
             for (Map<String, Object> map : parentNames) {
                 String parentName = map.get("parent_name").toString();
                 List<Map<String, Object>> submenuNames = yellowPagesTypeService.listToSubmenuName(parentName);
                 map.put("submenuNames", submenuNames);
+                treeMap.put((Integer) map.get("orders"), map);
             }
         }
-        return parentNames;
+        treeMap.forEach((key, value) -> {
+            result.add(value);
+        });
+        return result;
     }
 
     /**

@@ -821,7 +821,8 @@ public class UserServiceController {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             int myKeyNum = 0;
             Integer reportThingsRepairNum = reportThingsRepairService.countReportThingsRepair(cellphone, communityCode);
-            Integer handlingNum = businessHandlingService.countByCellphoneAndCommunityCode(cellphone, communityCode);
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            Integer handlingNum = businessHandlingService.countByCellphoneAndCommunityCode(user.getId(), communityCode);
             Integer accessControlNum = accessControlService.countByCellphoneAndCommunityCode(cellphone, communityCode);
             List<MyKey> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
             if (!myKey.isEmpty()) {

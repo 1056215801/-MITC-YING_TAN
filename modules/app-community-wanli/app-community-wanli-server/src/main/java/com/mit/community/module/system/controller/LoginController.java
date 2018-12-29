@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -379,7 +380,7 @@ public class LoginController {
     @ApiOperation(value = "修改用户信息", notes = "输入信息：cellphone 手机号；nickname 昵称；gender 性别1、男。0、女；" +
             "birthday 生日 yyyy-MM-dd；bloodType 血型；profession 职业；signature 我的签名；constellation 星座")
     @PatchMapping("/updateUserInfo")
-    public Result updateUserInfo(String nickname, Short gender, String cellphone, String birthday, String bloodType,
+    public Result updateUserInfo(String nickname, Short gender, String cellphone, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate birthday, String bloodType,
                                  String profession, String signature, String constellation) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         if (user != null) {

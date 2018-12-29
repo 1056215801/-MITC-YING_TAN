@@ -69,8 +69,8 @@ public class NoticeService {
     public List<Notice> listValidNotice(String communityCode) {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        wrapper.ge("release_time", LocalDateTime.now());
-        wrapper.le("validate_time", LocalDateTime.now());
+        wrapper.le("release_time", LocalDateTime.now());
+        wrapper.ge("validate_time", LocalDateTime.now());
         wrapper.orderBy("gmt_create", false);
         return noticeMapper.selectList(wrapper);
     }

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/19
  * @company mitesofor
  */
-@Component
+//@Component
 public class HouseholdSchedule {
 
     private final HouseHoldService houseHoldService;
@@ -69,9 +69,9 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 */10 * * * ?")
+//    @Scheduled(cron = "0 */10 * * * ?")
     @CacheClear(pre = "household")
-//    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void removeAndiImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
@@ -141,6 +141,36 @@ public class HouseholdSchedule {
         if (!houseHolds.isEmpty()) {
             houseHolds.forEach(item -> {
                 List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDevices = item.getAuthorizeAppHouseholdDeviceGroups();
+                // 对比出三种类型的数据
+                item.getHouseholdId();
+                List<AuthorizeAppHouseholdDeviceGroup> databaseAuthorizeAppHouseholdDeviceGroups = authorizeAppHouseholdDeviceGroupService.listByHouseholdId(item.getHouseholdId());
+                Map<Integer, AuthorizeAppHouseholdDeviceGroup> map = Maps.newHashMapWithExpectedSize(authorizeAppHouseholdDevices.size());
+                databaseAuthorizeAppHouseholdDeviceGroups.forEach(l -> map.put(l.getDeviceGroupId(), l));
+                List<AuthorizeAppHouseholdDeviceGroup> addAppGroup = Lists.newArrayListWithCapacity(authorizeAppHouseholdDevices.size());
+                List<AuthorizeAppHouseholdDeviceGroup> removeAppGroup = Lists.newArrayListWithCapacity(authorizeAppHouseholdDevices.size());
+                for (AuthorizeAppHouseholdDeviceGroup h : authorizeAppHouseholdDevices) {
+                    AuthorizeAppHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = map.get(h.getDeviceGroupId());
+                    if (authorizeAppHouseholdDeviceGroup == null) {
+                        addAppGroup.add(h);
+                    } else {
+                        map.remove(h.getHouseholdId());
+                    }
+                }
+                map.forEach((key, value) -> removeAppGroup.add(value));
+                // 删除
+                if(!removeAppGroup.isEmpty()){
+                    List<Integer> deleteId = removeAppGroup.parallelStream().map(AuthorizeAppHouseholdDeviceGroup::getId).collect(Collectors.toList());
+                    authorizeAppHouseholdDeviceGroupService.deleteBatchIds(deleteId);
+                }
+                if(!addAppGroup.isEmpty()){
+                    // 增加
+                    authorizeAppHouseholdDeviceGroupService.insertBatch(addAppGroup);
+                }
+
+
+
+
+
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
                     authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDevices);
                 }

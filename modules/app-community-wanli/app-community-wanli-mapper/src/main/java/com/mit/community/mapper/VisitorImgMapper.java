@@ -10,4 +10,5 @@ import com.mit.community.entity.VisitorImg;
  * <p>Company: mitesofor </p>
  */
 public interface VisitorImgMapper extends BaseMapper<VisitorImg> {
+
 }

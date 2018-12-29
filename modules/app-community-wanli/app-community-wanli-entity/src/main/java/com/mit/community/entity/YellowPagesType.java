@@ -32,4 +32,6 @@ public class YellowPagesType extends BaseEntity {
      */
     @TableField("submenu_name")
     private String submenuName;
+    /**排序*/
+    private Short orders;
 }

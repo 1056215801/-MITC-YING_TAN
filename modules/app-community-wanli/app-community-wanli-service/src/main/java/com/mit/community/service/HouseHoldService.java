@@ -24,8 +24,7 @@ public class HouseHoldService {
 
     @Autowired
     private HouseHoldMapper houseHoldMapper;
-    @Autowired
-    private UserHouseholdService userHouseholdService;
+
     @Autowired
     private UserService userService;
     @Autowired

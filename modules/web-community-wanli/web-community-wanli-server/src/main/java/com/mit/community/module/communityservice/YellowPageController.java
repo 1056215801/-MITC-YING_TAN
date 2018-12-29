@@ -44,14 +44,14 @@ public class YellowPageController {
      */
     @PostMapping("/save")
     @ApiOperation(value = "保存黄页类型", notes = "传参：parentName 黄页父类型，" +
-            " submenuName 黄页子类型， image 图标")
-    public Result save(String parentName, MultipartFile image, String submenuName) throws Exception {
+            " submenuName 黄页子类型， image 图标, order 排序")
+    public Result save(String parentName, MultipartFile image, String submenuName, Short order) throws Exception {
         if (StringUtils.isBlank(parentName) || image == null || StringUtils.isBlank(submenuName)) {
             return Result.error("参数错误");
         }
         String imageUrl = FastDFSClient.getInstance().uploadFile(image);
         yellowPagesTypeService.save(parentName,
-                imageUrl, submenuName);
+                imageUrl, submenuName, order);
         return Result.success("保存成功");
     }
 

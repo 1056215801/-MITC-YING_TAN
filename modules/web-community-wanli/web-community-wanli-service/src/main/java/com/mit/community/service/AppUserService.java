@@ -27,8 +27,6 @@ public class AppUserService {
     @Autowired
     private DnakeAppApiService dnakeAppApiService;
     @Autowired
-    private UserHouseholdService userHouseholdService;
-    @Autowired
     private HouseHoldService houseHoldService;
     @Autowired
     private UserService userService;

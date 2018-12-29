@@ -32,8 +32,7 @@ public class BusinessHandlingService {
     private HouseHoldService houseHoldService;
     @Autowired
     private HouseholdRoomService householdRoomService;
-    @Autowired
-    private UserHouseholdService userHouseholdService;
+
 
     /**
      * 添加业务办理数据
@@ -313,21 +312,13 @@ public class BusinessHandlingService {
 
     /**
      * 查询业务办理总数，通过手机号和小区code
-     * @param cellphone     手机号
+     * @param userId     用户id
      * @param communityCode 小区code
      * @return 统计总数
      * @author Mr.Deng
      * @date 13:49 2018/12/24
      */
-    public Integer countByCellphoneAndCommunityCode(String cellphone, String communityCode) {
-        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
-        Integer handlingNum = 0;
-        if (houseHold != null) {
-            UserHousehold userHousehold = userHouseholdService.getByHouseholdId(houseHold.getHouseholdId());
-            if (userHousehold != null) {
-                handlingNum = this.countByCreatorUserIdAndCommunityCode(userHousehold.getUserId(), communityCode);
-            }
-        }
-        return handlingNum;
+    public Integer countByCellphoneAndCommunityCode(Integer userId, String communityCode) {
+        return this.countByCreatorUserIdAndCommunityCode(userId, communityCode);
     }
 }

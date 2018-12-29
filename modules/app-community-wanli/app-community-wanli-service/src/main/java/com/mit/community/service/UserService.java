@@ -3,7 +3,6 @@ package com.mit.community.service;
 import com.ace.cache.annotation.Cache;
 import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.HouseHold;
@@ -166,23 +165,21 @@ public class UserService {
      * @date 14:35 2018/12/7
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserInfo(Integer userId, String nickname, Short gender, String birthday, String bloodType,
+    public void updateUserInfo(Integer userId, String nickname, Short gender, LocalDate birthday, String bloodType,
                                String profession, String signature, String constellation, String cellphone) {
-        LocalDate birthdayTime = DateUtils.parseStringToLocalDate(birthday, null);
-        User user = this.getById(userId);
+        User user = new User(null, null, null,
+                nickname, gender, null, null,
+                birthday, bloodType, profession,
+                signature, null, null, null, null);
+        user.setId(userId);
+        this.update(user);
+//        User user = this.getById(userId);
         List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
-        if (user != null && !houseHoldList.isEmpty()) {
-            user.setNickname(nickname);
-            user.setGender(gender);
-            user.setBirthday(birthdayTime);
-            user.setBloodType(bloodType);
-            user.setProfession(profession);
-            user.setSignature(signature);
-            this.update(user);
+        if (!houseHoldList.isEmpty()) {
             houseHoldList.forEach(item -> {
                 item.setConstellation(constellation);
                 houseHoldService.update(item);
-            });
+        });
         }
     }
 
