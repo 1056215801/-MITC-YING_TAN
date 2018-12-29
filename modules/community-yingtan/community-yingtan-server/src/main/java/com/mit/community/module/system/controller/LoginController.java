@@ -115,6 +115,9 @@ public class LoginController {
             boolean loginWhether = false;
             if ("ytyuehu".equals(username)) {
                 httpLogin.loginAdmin();
+                String cookie = httpLogin.getCookie();
+                String result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
+                System.out.println(result);
             } else {
                 //是小区管理账户
                 httpLogin.loginUser();
