@@ -392,6 +392,15 @@ public class LoginController {
         return Result.error("请登录");
     }
 
+    @PostMapping(value = "/updatetest", produces = {"application/json"})
+    @ApiOperation(value = "测试", notes = "传参：cellphone 手机号，image 头像图片")
+    public Result updatetest(String cellphone, MultipartFile image) throws Exception {
+        User user = new User();
+        user.setCellphone("13064102937");
+        userService.update(user);
+        return Result.success("");
+    }
+
     /**
      * 修改头像
      *

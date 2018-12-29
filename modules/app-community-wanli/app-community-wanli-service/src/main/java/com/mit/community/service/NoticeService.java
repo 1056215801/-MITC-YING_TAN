@@ -71,7 +71,7 @@ public class NoticeService {
         wrapper.eq("community_code", communityCode);
         wrapper.le("release_time", LocalDateTime.now());
         wrapper.ge("validate_time", LocalDateTime.now());
-        wrapper.orderBy("gmt_create", false);
+        wrapper.orderBy("validate_time", false);
         return noticeMapper.selectList(wrapper);
     }
 

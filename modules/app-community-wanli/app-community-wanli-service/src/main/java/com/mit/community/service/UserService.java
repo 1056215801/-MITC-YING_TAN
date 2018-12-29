@@ -40,6 +40,8 @@ public class UserService {
     private HouseholdRoomService householdRoomService;
     @Autowired
     private HouseHoldService houseHoldService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 查询用户信息，通过用户id
@@ -59,7 +61,7 @@ public class UserService {
      * @param user 用户信息
      * @date 10:56 2018/12/7
      */
-    @CacheClear(key = "user:cellphone:{1.cellphone}")
+    @CacheClear(key = "user:cellphone{1.cellphone}")
     public void update(User user) {
         user.setGmtModified(LocalDateTime.now());
         userMapper.updateById(user);
@@ -73,7 +75,7 @@ public class UserService {
      * @date 2018/11/29 11:25
      * @company mitesofor
      */
-    @CacheClear(key = "user:cellphone:{1.cellphone}")
+    @CacheClear(key = "user:cellphone{1.cellphone}")
     public void save(User user) {
         user.setGmtCreate(LocalDateTime.now());
         user.setGmtModified(LocalDateTime.now());
@@ -112,7 +114,7 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
-    @Cache(key = "user:cellphone:{1}")
+    @Cache(key = "user:cellphone{1}")
     public User getByCellphone(String cellphone) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
@@ -133,7 +135,7 @@ public class UserService {
      * @date 2018/12/07 16:52
      * @company mitesofor
      */
-    @CacheClear(key = "user:cellphone:{1}")
+    @CacheClear(key = "user:cellphone{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer register(String cellphone, String password) {
         int status = 1;
@@ -167,19 +169,21 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void updateUserInfo(Integer userId, String nickname, Short gender, LocalDate birthday, String bloodType,
                                String profession, String signature, String constellation, String cellphone) {
-        User user = new User(null, null, null,
+        User user = new User(cellphone, null, null,
                 nickname, gender, null, null,
                 birthday, bloodType, profession,
                 signature, null, null, null, null);
         user.setId(userId);
-        this.update(user);
+        userService.update(user);
 //        User user = this.getById(userId);
-        List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
-        if (!houseHoldList.isEmpty()) {
-            houseHoldList.forEach(item -> {
-                item.setConstellation(constellation);
-                houseHoldService.update(item);
-        });
+        if(StringUtils.isNotBlank(constellation)){
+            List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
+            if (!houseHoldList.isEmpty()) {
+                houseHoldList.forEach(item -> {
+                    item.setConstellation(constellation);
+                    houseHoldService.update(item);
+                });
+            }
         }
     }
 
@@ -193,7 +197,7 @@ public class UserService {
      * @author Mr.Deng
      * @date 14:19 2018/12/8
      */
-    @CacheClear(key = "user:cellphone:{1}")
+    @CacheClear(key = "user:cellphone{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer modifyPwd(String cellPhone, String newPassword, String oldPassword) {
         User user = this.getByCellphone(cellPhone);
@@ -222,7 +226,7 @@ public class UserService {
      * @author Mr.Deng
      * @date 14:19 2018/12/8
      */
-    @CacheClear(key = "user:cellphone:{1}")
+    @CacheClear(key = "user:cellphone{1}")
     @Transactional(rollbackFor = Exception.class)
     public Integer resetPwd(String cellPhone, String newPassword) {
         User user = this.getByCellphone(cellPhone);
@@ -281,7 +285,7 @@ public class UserService {
      * @date 2018/12/13 16:15
      * @company mitesofor
      */
-    @CacheClear(key = "user:cellphone:{1}")
+    @CacheClear(key = "user:cellphone{1}")
     @Transactional(rollbackFor = Exception.class)
     public void updateHouseholdCellphone(String cellPhone, String newCellPhone) {
         User user = this.getByCellphone(cellPhone);
