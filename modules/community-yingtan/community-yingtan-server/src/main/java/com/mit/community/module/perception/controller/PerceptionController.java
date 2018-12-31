@@ -43,12 +43,13 @@ public class PerceptionController {
     private final AccessControlService accessControlService;
     private final RoomTypeConstructionService roomTypeConstructionService;
     private final WarningService warningService;
+    private final HouseholdRoomService householdRoomService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
                                 HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
                                 VisitorService visitorService, AccessControlService accessControlService,
-                                RoomTypeConstructionService roomTypeConstructionService, WarningService warningService) {
+                                RoomTypeConstructionService roomTypeConstructionService, WarningService warningService, HouseholdRoomService householdRoomService) {
         this.buildingService = buildingService;
         this.roomService = roomService;
         this.houseHoldService = houseHoldService;
@@ -57,6 +58,7 @@ public class PerceptionController {
         this.accessControlService = accessControlService;
         this.roomTypeConstructionService = roomTypeConstructionService;
         this.warningService = warningService;
+        this.householdRoomService = householdRoomService;
     }
 
     /**
@@ -142,7 +144,7 @@ public class PerceptionController {
             List<String> communityCodeList = listCommunityCodes("鹰潭市");
             buildingSize = buildingService.countByCommunityCodes(communityCodeList);
             roomSize = roomService.countByCommunityCodes(communityCodeList);
-            houseHoldSize = houseHoldService.listByCommunityCodeList(communityCodeList).size();
+            houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
             visitorSize = visitorService.countByCommunityCodes(communityCodeList);
             maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
             // 车位
