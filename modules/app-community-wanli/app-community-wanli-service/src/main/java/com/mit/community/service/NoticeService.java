@@ -85,10 +85,10 @@ public class NoticeService {
     public List<Notice> listValidNoticeAndTime(String communityCode, LocalDate startDay, LocalDate endDay) {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        wrapper.le("release_time", startDay);
-        wrapper.ge("release_time", endDay);
+        wrapper.le("release_time", endDay);
+        wrapper.ge("release_time", startDay);
         wrapper.ge("validate_time", LocalDateTime.now());
-        wrapper.orderBy("validate_time", false);
+        wrapper.orderBy("release_time", false);
         return noticeMapper.selectList(wrapper);
     }
 
@@ -211,36 +211,8 @@ public class NoticeService {
      * @author Mr.Deng
      * @date 14:34 2018/12/14
      */
-    public List<Notice> listNotices(String communityCode, Integer userId) {
-        List<Notice> notices = this.listValidNotice(communityCode);
-        if (!notices.isEmpty()) {
-            Map<Integer, Notice> map = Maps.newHashMapWithExpectedSize(notices.size());
-            List<Integer> noticeIdList = notices.parallelStream().map(Notice::getId).collect(Collectors.toList());
-            notices.forEach(item -> {
-                item.setStatus(false);
-                map.put(item.getId(), item);
-            });
-            List<NoticeReadUser> noticeReadUsers = noticeReadUserService.listNoticeReadUserByUserIdAndNoticeIdList(userId, noticeIdList);
-            if (!noticeReadUsers.isEmpty()) {
-                noticeReadUsers.forEach(item -> {
-                    Integer noticeId = item.getNoticeId();
-                    Notice notice = map.get(noticeId);
-                    notice.setStatus(true);
-                });
-            }
-        }
-        return notices;
-    }
-
-    /**
-     * 查询所有通知信息和读取状态
-     * @param userId 用户id
-     * @return 通知信息
-     * @author Mr.Deng
-     * @date 14:34 2018/12/14
-     */
     public List<Notice> listNoticesAndTime(String communityCode, Integer userId, LocalDate startDay, LocalDate endDay) {
-        List<Notice> notices  = this.listValidNoticeAndTime(communityCode, startDay, endDay);
+        List<Notice> notices = this.listValidNoticeAndTime(communityCode, startDay, endDay);
         if (!notices.isEmpty()) {
             Map<Integer, Notice> map = Maps.newHashMapWithExpectedSize(notices.size());
             List<Integer> noticeIdList = notices.parallelStream().map(Notice::getId).collect(Collectors.toList());

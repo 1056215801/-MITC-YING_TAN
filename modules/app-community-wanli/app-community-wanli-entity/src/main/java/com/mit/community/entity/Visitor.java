@@ -103,8 +103,15 @@ public class Visitor extends BaseEntity {
     @TableField("visitor_mobile")
     private String visitorMobile;
 
-    /**访客图片*/
+    /**
+     * 访客图片
+     */
     @TableField(exist = false)
     private List<VisitorImg> visitorImgList;
+    /**
+     * 已读状态:已读为true;未读false
+     */
+    @TableField(exist = false)
+    private Boolean readStatus;
 
 }
