@@ -23,6 +23,8 @@ import java.util.List;
 public class ExpressInfoService {
     @Autowired
     private ExpressInfoMapper expressInfoMapper;
+    @Autowired
+    private ExpressReadUserService expressReadUserService;
 
     /**
      * 添加快递信息
@@ -173,4 +175,19 @@ public class ExpressInfoService {
         return page;
     }
 
+    /**
+     * 未读
+     * @param userId 用户id
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2019-01-02 15:40
+     * @company mitesofor
+    */
+    public Integer countNotRead(Integer userId){
+        EntityWrapper<ExpressInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        Integer num = expressInfoMapper.selectCount(wrapper);
+        Integer countNotRead = expressReadUserService.countNotRead(userId);
+        return num - countNotRead;
+    }
 }

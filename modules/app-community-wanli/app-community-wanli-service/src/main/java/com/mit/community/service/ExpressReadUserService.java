@@ -51,4 +51,19 @@ public class ExpressReadUserService {
         }
         return expressReadUsers.get(0);
     }
+
+    /**
+     * 查询已读条数
+     * @param userId
+     * @return java.lang.Integer
+     * @throws
+     * @author shuyy
+     * @date 2019-01-02 15:39
+     * @company mitesofor
+    */
+    public Integer countNotRead(Integer userId){
+        EntityWrapper<ExpressReadUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        return expressReadUserMapper.selectCount(wrapper);
+    }
 }

@@ -77,6 +77,23 @@ public class NoticeService {
     }
 
     /**
+     * 统计通知通告消息条数
+     * @param communityCode
+     * @return java.lang.Integer
+     * @throws
+     * @author shuyy
+     * @date 2019-01-02 15:05
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> selectIdByCommunityCode(String communityCode) {
+        EntityWrapper<Notice> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.ge("validate_time", LocalDateTime.now());
+        wrapper.setSqlSelect("id");
+        return noticeMapper.selectMaps(wrapper);
+    }
+
+    /**
      * 查询通知信息，通过通知信息id
      * @param noticeId 通知信息id
      * @return notic

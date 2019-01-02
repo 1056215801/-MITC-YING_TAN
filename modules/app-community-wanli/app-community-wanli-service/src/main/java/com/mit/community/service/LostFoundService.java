@@ -315,5 +315,21 @@ public class LostFoundService {
         return page;
 
     }
+    /**
+     * 统计未读
+     * @param communityCode 小区code
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2019-01-02 15:45
+     * @company mitesofor
+    */
+    public Integer countNotRead(String communityCode, Integer userId){
+        EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+
+        Integer num = lostFoundMapper.selectCount(wrapper);
+        Integer readNum = lostFountReadUserService.countByUserId(userId);
+        return num - readNum;
+    }
 
 }

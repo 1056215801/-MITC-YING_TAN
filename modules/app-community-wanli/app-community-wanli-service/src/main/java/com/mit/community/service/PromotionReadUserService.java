@@ -60,4 +60,18 @@ public class PromotionReadUserService {
         wrapper.eq("promotion_id", promotionId);
         return promotionReadUserMapper.selectList(wrapper);
     }
+
+    /**
+     * @param userId userId
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2019-01-02 16:02
+     * @company mitesofor
+    */
+    public Integer countByUserId(Integer userId){
+        EntityWrapper<PromotionReadUser>  wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        return promotionReadUserMapper.selectCount(wrapper);
+    }
+
 }

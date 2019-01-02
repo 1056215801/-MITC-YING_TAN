@@ -96,7 +96,4 @@ public class NoticeReadUserService {
         wrapper.in("notice_id", noticeIdList);
         return noticeReadUserMapper.selectList(wrapper);
     }
-
-
-
 }
