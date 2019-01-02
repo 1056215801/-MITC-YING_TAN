@@ -285,7 +285,7 @@ public class NoticeService {
      * @date 16:31 2018/12/28
      */
     public Integer getNotReadNotice(String communityCode, Integer userId) {
-        Integer size = null;
+        Integer size = 0;
         List<NoticeReadUser> noticeReadUsers = noticeReadUserService.getReadNoticByUserIdAndNoticId(userId);
         if (!noticeReadUsers.isEmpty()) {
             int noticeReadSize = noticeReadUsers.size();
