@@ -827,10 +827,16 @@ public class PassThroughController {
     @PostMapping("/changeSwitch")
     @ApiOperation(value = "免打扰", notes = "输入参数：status 免打扰开关：1关；0开")
     public Result changeSwitch(String cellphone, Integer status) {
-        boolean b = dnakeAppApiService.changeSwitch(cellphone, status);
-        if (b) {
-            return Result.success("设置成功");
+        if (StringUtils.isNotBlank(cellphone)) {
+            if (status == 0 || status == 1) {
+                boolean b = dnakeAppApiService.changeSwitch(cellphone, status);
+                if (b) {
+                    return Result.success("设置成功");
+                }
+                return Result.error("设置失败");
+            }
+            return Result.error("status免打扰开关：1关；0开");
         }
-        return Result.error("设置失败");
+        return Result.error("参数不能为空/有问题");
     }
 }
