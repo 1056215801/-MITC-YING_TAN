@@ -3,7 +3,6 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.Notice;
 import com.mit.community.entity.NoticeContent;
@@ -67,21 +66,6 @@ public class NoticeService {
      * @author Mr.Deng
      * @date 16:26 2018/12/3
      */
-    public List<Notice> listValidNotice(String communityCode) {
-        EntityWrapper<Notice> wrapper = new EntityWrapper<>();
-        wrapper.eq("community_code", communityCode);
-        wrapper.le("release_time", LocalDateTime.now());
-        wrapper.ge("validate_time", LocalDateTime.now());
-        wrapper.orderBy("validate_time", false);
-        return noticeMapper.selectList(wrapper);
-    }
-
-    /**
-     * 查询所有的通知通告信息
-     * @return 通知通告信息列表
-     * @author Mr.Deng
-     * @date 16:26 2018/12/3
-     */
     public List<Notice> listValidNoticeAndTime(String communityCode, LocalDate startDay, LocalDate endDay) {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
@@ -95,7 +79,7 @@ public class NoticeService {
     /**
      * 查询通知信息，通过通知信息id
      * @param noticeId 通知信息id
-     * @return
+     * @return notic
      * @author Mr.Deng
      * @date 11:54 2018/12/14
      */
@@ -123,15 +107,15 @@ public class NoticeService {
      * @author Mr.Deng
      * @date 12:50 2018/12/14
      */
-    public List<Object> getNoticInfoByNotiveId(Integer noticeId) {
-        List<Object> list = Lists.newArrayListWithExpectedSize(2);
+    public Notice getNoticeInfoByNoticeId(Integer noticeId) {
         Notice notice = this.getByNoticeId(noticeId);
         if (notice != null) {
             NoticeContent noticeContent = noticeContentService.getByNoticId(noticeId);
-            list.add(notice);
-            list.add(noticeContent);
+            Integer viewNum = noticeReadUserService.countViewNum(noticeId);
+            notice.setContent(noticeContent == null ? StringUtils.EMPTY : noticeContent.getContent());
+            notice.setViews(viewNum);
         }
-        return list;
+        return notice;
     }
 
     /**
@@ -148,8 +132,7 @@ public class NoticeService {
     @Transactional(rollbackFor = Exception.class)
     public void releaseNotice(String communityCode, String title, String code, String synopsis,
                               String publisher, Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime) {
-        Notice notice = new Notice(communityCode, title, code, releaseTime, validateTime, 0,
-                synopsis, publisher, creator, 0, null);
+        Notice notice = new Notice(communityCode, title, code, releaseTime, validateTime, synopsis, publisher, creator, 0, null, null, null);
         this.save(notice);
         NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
         noticeContentService.save(noticeContent);

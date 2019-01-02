@@ -263,19 +263,12 @@ public class PassThroughController {
     @ApiOperation(value = "查询通知详情，通过手机号和通告id", notes = "传参：cellphone 手机号 ；noticeId 通知id")
     public Result getNotices(String cellphone, Integer noticeId) {
         if (StringUtils.isNotBlank(cellphone) && noticeId != null) {
-            List<Object> notice = noticeService.getNoticInfoByNotiveId(noticeId);
-            if (!notice.isEmpty()) {
-                User user = (User) redisService.get(RedisConstant.USER + cellphone);
-                if (user != null) {
-                    //标记已读，如果已经读过了则不再进行标记记录
-                    NoticeReadUser noticeReadUser1 = noticeReadUserService.getNoticeReadUser(noticeId, user.getId());
-                    if (noticeReadUser1 == null) {
-                        NoticeReadUser noticeReadUser = new NoticeReadUser(noticeId, user.getId());
-                        noticeReadUserService.save(noticeReadUser);
-                    }
-                } else {
-                    return Result.error("请登录,标记已读失败");
-                }
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            Notice notice = noticeService.getNoticeInfoByNoticeId(noticeId);
+            if (notice != null) {
+                //标记已读
+                NoticeReadUser noticeReadUser = new NoticeReadUser(noticeId, user.getId());
+                noticeReadUserService.save(noticeReadUser);
             }
             return Result.success(notice);
         }

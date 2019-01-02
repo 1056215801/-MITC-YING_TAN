@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 通知通告
- *
  * @author shuyy
  * @date 2018/12/26
  * @company mitesofor
@@ -121,22 +119,21 @@ public class NoticeController {
         return Result.error("参数不能为空");
     }
 
-
     /**
      * 分页查询
-     * @param request request
-     * @param releaseTimeStart 发布开始时间
-     * @param releaseTimeEnd 发布结束时间
+     * @param request           request
+     * @param releaseTimeStart  发布开始时间
+     * @param releaseTimeEnd    发布结束时间
      * @param validateTimeStart 过期开始时间
-     * @param validateTimeEnd 过期结束时间
-     * @param publisher 发布人
-     * @param pageNum 当前页
-     * @param pageSize 分页大小
+     * @param validateTimeEnd   过期结束时间
+     * @param publisher         发布人
+     * @param pageNum           当前页
+     * @param pageSize          分页大小
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/26 11:22
      * @company mitesofor
-    */
+     */
     @GetMapping("/listPage")
     @ApiOperation(value = "分页查询通知通告信息", notes = "输入参数：releaseTimeStart 发布开始时间， releaseTimeEnd 发布结束时间，validateTimeStart 过期开始时间，validateTimeEnd 过期结束时间，publisher 发布人   ")
     public Result listPage(HttpServletRequest request, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime releaseTimeStart,
@@ -157,17 +154,15 @@ public class NoticeController {
      * @author shuyy
      * @date 2018/12/26 11:26
      * @company mitesofor
-    */
+     */
     @GetMapping("/getById")
     @ApiOperation(value = "获取通知通告信息详情", notes = "输入参数：id id")
     public Result getById(Integer id) {
-        if(id == null){
+        if (id == null) {
             return Result.error("参数错误");
         }
-        List<Object> noticInfoByNotiveId = noticeService.getNoticInfoByNotiveId(id);
-        return Result.success(noticInfoByNotiveId);
+        Notice notice = noticeService.getNoticeInfoByNoticeId(id);
+        return Result.success(notice);
     }
-
-
 
 }

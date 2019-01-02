@@ -45,10 +45,7 @@ public class Notice extends BaseEntity {
      */
     @TableField("validate_time")
     private LocalDateTime validateTime;
-    /**
-     * 浏览量
-     */
-    private Integer views;
+
     /**
      * 简介
      */
@@ -71,4 +68,14 @@ public class Notice extends BaseEntity {
      */
     @TableField(exist = false)
     private Boolean status;
+    /**
+     * 浏览量
+     */
+    @TableField(exist = false)
+    private Integer views;
+    /**
+     * 详情
+     */
+    @TableField(exist = false)
+    private String content;
 }
