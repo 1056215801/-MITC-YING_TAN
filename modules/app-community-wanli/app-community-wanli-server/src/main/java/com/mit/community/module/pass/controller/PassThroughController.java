@@ -815,4 +815,22 @@ public class PassThroughController {
         list.add(timeMap);
         return dnakeAppApiService.highGrade(cellphone, list, deviceGroupId, communityCode);
     }
+
+    /**
+     * 免打扰
+     * @param cellphone 手机号
+     * @param status    免打扰开关：1关；0开
+     * @return result
+     * @author Mr.Deng
+     * @date 15:45 2019/1/2
+     */
+    @PostMapping("/changeSwitch")
+    @ApiOperation(value = "免打扰", notes = "输入参数：status 免打扰开关：1关；0开")
+    public Result changeSwitch(String cellphone, Integer status) {
+        boolean b = dnakeAppApiService.changeSwitch(cellphone, status);
+        if (b) {
+            return Result.success("设置成功");
+        }
+        return Result.error("设置失败");
+    }
 }

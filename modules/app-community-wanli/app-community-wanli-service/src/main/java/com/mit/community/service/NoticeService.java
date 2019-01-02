@@ -217,7 +217,7 @@ public class NoticeService {
             Map<Integer, Notice> map = Maps.newHashMapWithExpectedSize(notices.size());
             List<Integer> noticeIdList = notices.parallelStream().map(Notice::getId).collect(Collectors.toList());
             notices.forEach(item -> {
-                item.setStatus(false);
+                item.setReadStatus(false);
                 map.put(item.getId(), item);
             });
             List<NoticeReadUser> noticeReadUsers = noticeReadUserService.listNoticeReadUserByUserIdAndNoticeIdList(userId, noticeIdList);
@@ -225,7 +225,7 @@ public class NoticeService {
                 noticeReadUsers.forEach(item -> {
                     Integer noticeId = item.getNoticeId();
                     Notice notice = map.get(noticeId);
-                    notice.setStatus(true);
+                    notice.setReadStatus(true);
                 });
             }
         }

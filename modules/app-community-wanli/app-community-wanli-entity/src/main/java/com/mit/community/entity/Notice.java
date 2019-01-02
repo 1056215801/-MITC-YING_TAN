@@ -67,7 +67,7 @@ public class Notice extends BaseEntity {
      * 用户是否已读
      */
     @TableField(exist = false)
-    private Boolean status;
+    private Boolean readStatus;
     /**
      * 浏览量
      */
