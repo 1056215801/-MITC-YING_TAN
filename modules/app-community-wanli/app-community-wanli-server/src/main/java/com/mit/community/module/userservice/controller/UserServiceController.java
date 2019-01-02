@@ -59,6 +59,7 @@ public class UserServiceController {
     private final AccessControlService accessControlService;
     private final DnakeAppApiService dnakeAppApiService;
     private final SysMessageReadService sysMessageReadService;
+    private final HouseHoldService houseHoldService;
 
     @Autowired
     public UserServiceController(ReportThingsRepairService reportThingsRepairService,
@@ -73,7 +74,7 @@ public class UserServiceController {
                                  PromotionReadUserService promotionReadUserService,
                                  OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService,
                                  SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService,
-                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService, SysMessageReadService sysMessageReadService) {
+                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService, SysMessageReadService sysMessageReadService, HouseHoldService houseHoldService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -97,6 +98,7 @@ public class UserServiceController {
         this.accessControlService = accessControlService;
         this.dnakeAppApiService = dnakeAppApiService;
         this.sysMessageReadService = sysMessageReadService;
+        this.houseHoldService = houseHoldService;
     }
 
     /**
@@ -330,8 +332,13 @@ public class UserServiceController {
     @ApiOperation(value = "查询业务办理状态数据，通过用户id", notes = "输入参数：creatorUserId 用户id；" +
             "业务办理状态 0、未完成。1、已完成")
     public Result listBusinessHandlingByStatus(String cellphone, Integer creatorUserId, Integer status, Integer pageNum, Integer pageSize) {
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        Integer householdId = user.getHouseholdId();
+        HouseHold household = houseHoldService.getByHouseholdId(householdId);
+        String communityCode = household.getCommunityCode();
         if (creatorUserId != null && status != null && StringUtils.isNotBlank(cellphone)) {
-            Page<BusinessHandling> listBusinessHandling = businessHandlingService.pageByStatus(creatorUserId, status, pageNum, pageSize);
+            Page<BusinessHandling> listBusinessHandling = businessHandlingService
+                    .pageByStatus(creatorUserId, status,communityCode, pageNum, pageSize);
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询业务办理数据", "查询办理状态" + st + "业务数据成功");
             return Result.success(listBusinessHandling);
@@ -554,7 +561,8 @@ public class UserServiceController {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                Page<LostFound> page = lostFoundService.listPage(user.getId(), communityCode, pageNum, pageSize);
+                Page<LostFound> page = lostFoundService.listPage(user.getId(),
+                        communityCode, pageNum, pageSize);
                 return Result.success(page);
             }
             return Result.error("请登录");

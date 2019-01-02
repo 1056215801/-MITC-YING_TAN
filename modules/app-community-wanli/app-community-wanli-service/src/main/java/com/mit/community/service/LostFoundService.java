@@ -57,6 +57,7 @@ public class LostFoundService {
         wrapper.setSqlSelect("id,title,img_url as imgUrl,receiver_address as receiverAddress,receiver_status as receiverStatus");
         wrapper.orderBy("gmt_create", false);
         wrapper.eq("community_code", communityCode);
+        wrapper.eq("receiver_status", 1);
         Page<LostFound> page = new Page<>(pageNum, pageSize);
         List<LostFound> lostFounds = lostFoundMapper.selectPage(page, wrapper);
         page.setRecords(lostFounds);
@@ -147,7 +148,7 @@ public class LostFoundService {
      * @param issuer 发布人
      * @param issuerPhone 发布电话
      * @param picAddress 捡到地址
-     * @param issueTime 发布时间
+     * @param pickTime 发布时间
      * @param communityCode 小区code
      * @param content 内容
      * @return void
@@ -158,12 +159,12 @@ public class LostFoundService {
     */
     @Transactional(rollbackFor = Exception.class)
     public void save(String title, String imgUrl, String issuer, String issuerPhone,
-                     String picAddress, LocalDateTime issueTime, String communityCode, String content
+                     String picAddress, String receiverAddress, LocalDateTime pickTime, String communityCode, String content
                      ){
         LostFound lostFound = new LostFound(title,
                 imgUrl, issuer, issuerPhone, picAddress,
-                issueTime, StringUtils.EMPTY, StringUtils.EMPTY,
-                StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME,
+                pickTime, StringUtils.EMPTY, StringUtils.EMPTY,
+                receiverAddress, Constants.NULL_LOCAL_DATE_TIME,
                 1, communityCode, null, null, null);
         lostFound.setGmtCreate(LocalDateTime.now());
         lostFound.setGmtModified(LocalDateTime.now());
@@ -179,7 +180,7 @@ public class LostFoundService {
      * @param issuer 发布人
      * @param issuerPhone 发布电话
      * @param picAddress 捡到地址
-     * @param issueTime 发布时间
+     * @param pickTime 捡到时间
      * @param receiver 领取人
      * @param receivePhone 领取电话
      * @param receiverAddress 领取地址
@@ -192,7 +193,7 @@ public class LostFoundService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void update(Integer id, String title, String imgUrl, String issuer, String issuerPhone,
-                     String picAddress, LocalDateTime issueTime, String receiver, String receivePhone,
+                     String picAddress, LocalDateTime pickTime, String receiver, String receivePhone,
                        String receiverAddress, LocalDateTime receiverTime, Boolean receiverStatus,  String content
     ){
 
@@ -213,8 +214,8 @@ public class LostFoundService {
         if(StringUtils.isNotBlank(picAddress)){
             lostFound.setPickAddress(picAddress);
         }
-        if(issueTime != null){
-            lostFound.setIssueTime(issueTime);
+        if(pickTime != null){
+            lostFound.setPickTime(pickTime);
         }
         if(StringUtils.isNotBlank(receiver)){
             lostFound.setReceiver(receiver);
@@ -257,8 +258,6 @@ public class LostFoundService {
      * @param title 标题
      * @param issuer 发布人
      * @param issuerPhone 发布电话
-     * @param issueTimeStart 发布开始时间
-     * @param issueTimeEnd 发布结束时间
      * @param receiver 领取人
      * @param receivePhone 领取人电话
      * @param receiverTimeStart 领取开始时间
@@ -271,8 +270,8 @@ public class LostFoundService {
      * @date 2018/12/27 11:16
      * @company mitesofor
     */
-    public Page<LostFound> listPage(String communityCode, String title, String issuer, String issuerPhone, LocalDateTime issueTimeStart,
-                                    LocalDateTime issueTimeEnd, String receiver, String receivePhone,
+    public Page<LostFound> listPage(String communityCode, String title, String issuer, String issuerPhone, LocalDateTime pickTimeStart,
+                                    LocalDateTime pickTimeEnd, String receiver, String receivePhone,
                                     LocalDateTime receiverTimeStart,LocalDateTime receiverTimeEnd,
                                     Integer receiverStatus, Integer pageNum, Integer pageSize){
         Page<LostFound> page = new Page<>(pageNum, pageSize);
@@ -286,11 +285,11 @@ public class LostFoundService {
         if(StringUtils.isNotBlank(issuerPhone)){
             wrapper.like("issuer_phone", issuerPhone, SqlLike.RIGHT);
         }
-        if(issueTimeStart != null){
-            wrapper.ge("issue_time", issueTimeStart);
+        if(pickTimeStart != null){
+            wrapper.ge("pick_time", pickTimeStart);
         }
-        if(issueTimeEnd != null){
-            wrapper.le("issue_time", issueTimeEnd);
+        if(pickTimeEnd != null){
+            wrapper.le("pick_time", pickTimeEnd);
         }
         if(StringUtils.isNotBlank(receiver)){
             wrapper.like("receiver", receiver, SqlLike.RIGHT);
@@ -310,7 +309,7 @@ public class LostFoundService {
         if(StringUtils.isNotBlank(communityCode)){
             wrapper.eq("community_code", communityCode);
         }
-        wrapper.orderBy("issue_time", false);
+        wrapper.orderBy("pick_time", false);
         List<LostFound> lostFounds = lostFoundMapper.selectPage(page, wrapper);
         page.setRecords(lostFounds);
         return page;

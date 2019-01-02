@@ -46,7 +46,6 @@ public class LostFoudController {
      * @param issuer      发布人
      * @param issuerPhone 发布电话
      * @param picAddress  捡到地址
-     * @param issueTime   发布时间
      * @param content     内容
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -55,13 +54,17 @@ public class LostFoudController {
      */
     @PostMapping("/save")
     @ApiOperation(value = "发布失物招领", notes = "输入参数：title 标题， img 图片， issuer 发布人， issuerPhone 发布电话，" +
-            "picAddress 捡到地址， issueTime 发布时间，content 内容 ")
-    public Result save(HttpServletRequest request, String title, MultipartFile img, String issuer, String issuerPhone,
-                       String picAddress, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime, String content) throws Exception {
+            "picAddress 捡到地址， pickTime 捡到时间，content 内容 ")
+    public Result save(HttpServletRequest request, String title, MultipartFile img, String issuer,
+                       String issuerPhone,
+                       String picAddress,
+                       String receiverAddress,
+                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTime, String content) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String imgUrl = FastDFSClient.getInstance().uploadFile(img);
-        lostFoundService.save(title, imgUrl, issuer, issuerPhone, picAddress, issueTime, user.getCommunityCode(), content);
+        lostFoundService.save(title, imgUrl, issuer, issuerPhone, picAddress,
+                receiverAddress, pickTime, user.getCommunityCode(), content);
         return Result.success("发布成功");
     }
 
@@ -73,7 +76,7 @@ public class LostFoudController {
      * @param issuer          发布人
      * @param issuerPhone     发布电话
      * @param picAddress      捡到地址
-     * @param issueTime       发布时间
+     * @param pickTime       捡到时间
      * @param receiver        领取人
      * @param receivePhone    领取电话
      * @param receiverAddress 领取地址
@@ -86,9 +89,9 @@ public class LostFoudController {
      */
     @PutMapping("/update")
     @ApiOperation(value = "修改失物招领", notes = "输入参数：title 标题， img 图片， issuer 发布人， issuerPhone 发布电话，" +
-            "picAddress 捡到地址， issueTime 发布时间， receiver 领取人，receivePhone 领取电话，receiverAddress 领取地址，receiverTime 领取时间，receiverStatus 领取状态（1、未领取；2、已领取）, content 内容 ")
+            "picAddress 捡到地址， pickTime 捡到时间， receiver 领取人，receivePhone 领取电话，receiverAddress 领取地址，receiverTime 领取时间，receiverStatus 领取状态（1、未领取；2、已领取）, content 内容 ")
     public Result update(Integer id, String title, MultipartFile img, String issuer, String issuerPhone,
-                         String picAddress, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime,
+                         String picAddress, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTime,
                          String receiver, String receivePhone,
                          String receiverAddress, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTime, Boolean receiverStatus, String content) throws Exception {
         String imgUrl = null;
@@ -96,7 +99,7 @@ public class LostFoudController {
             imgUrl = FastDFSClient.getInstance().uploadFile(img);
         }
         lostFoundService.update(id, title, imgUrl, issuer, issuerPhone, picAddress,
-                issueTime, receiver, receivePhone, receiverAddress, receiverTime, receiverStatus, content);
+                pickTime, receiver, receivePhone, receiverAddress, receiverTime, receiverStatus, content);
         return Result.success("操作成功");
     }
 
@@ -121,8 +124,6 @@ public class LostFoudController {
      * @param title 标题
      * @param issuer 发布人
      * @param issuerPhone 发布电话
-     * @param issueTimeStart 发布开始时间
-     * @param issueTimeEnd 发布结束时间
      * @param receiver 领取人
      * @param receivePhone 领取电话
      * @param receiverTimeStart 领取开始时间
@@ -136,11 +137,11 @@ public class LostFoudController {
      * @company mitesofor
     */
     @GetMapping("/listPage")
-    @ApiOperation(value = "分页查询失物招领", notes = "输入参数：title 标题，issuer 发布人， issuerPhone 发布电话，issueTimeStart 发布开始时间，issueTimeEnd 发布结束时间，" +
+    @ApiOperation(value = "分页查询失物招领", notes = "输入参数：title 标题，issuer 发布人， issuerPhone 发布电话，pickTimeStart 捡到开始时间，pickTimeEnd 捡到结束时间，" +
             "receiver 领取人，receivePhone 领取电话，receiverTimeStart 领取开始时间， receiverTimeEnd 领取结束时间  ")
     public Result listPage(HttpServletRequest request,String title, String issuer, String issuerPhone,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTimeStart,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTimeEnd,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTimeStart,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTimeEnd,
                            String receiver, String receivePhone,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTimeStart,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTimeEnd,
@@ -148,7 +149,7 @@ public class LostFoudController {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         Page<LostFound> page = lostFoundService.listPage(user.getCommunityCode(), title, issuer, issuerPhone,
-                issueTimeStart, issueTimeEnd,
+                pickTimeStart, pickTimeEnd,
                 receiver, receivePhone, receiverTimeStart, receiverTimeEnd,
                 receiverStatus, pageNum, pageSize);
         return Result.success(page);

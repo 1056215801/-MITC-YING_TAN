@@ -44,10 +44,10 @@ public class LostFound extends BaseEntity {
     @TableField("pick_address")
     private String pickAddress;
     /**
-     * 发布时间
+     * 捡到时间
      */
-    @TableField("issue_time")
-    private LocalDateTime issueTime;
+    @TableField("pick_time")
+    private LocalDateTime pickTime;
     /**
      * 领取人
      */
