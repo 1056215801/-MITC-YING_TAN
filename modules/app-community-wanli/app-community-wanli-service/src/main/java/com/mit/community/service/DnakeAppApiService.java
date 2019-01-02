@@ -279,9 +279,9 @@ public class DnakeAppApiService {
         return invoke;
     }
 
-    public String invokeProxy(String  url, Map<String, Object> map, DnakeAppUser dnakeAppUser, String cellphone){
+    public String invokeProxy(String url, Map<String, Object> map, DnakeAppUser dnakeAppUser, String cellphone) {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
-        if(invoke.equals("请登录")){
+        if (invoke.equals("请登录")) {
             User user = userService.getByCellphone(cellphone);
             DnakeLoginResponse dnakeLoginResponse = this.login(cellphone, user.getPassword());
             redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
@@ -328,6 +328,25 @@ public class DnakeAppApiService {
             }
         }
         return list;
+    }
+
+    /**
+     * 用户免打扰
+     * @param cellphone 手机号
+     * @param status    状态 1关，0开
+     * @author Mr.Deng
+     * @date 15:32 2019/1/2
+     */
+    public boolean changeSwitch(String cellphone, Integer status) {
+        String url = "/auth/api/user/changeSwitch";
+        DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(3);
+        map.put("appUserId", dnakeAppUser.getAppUserId());
+        map.put("sipSwitch", status);
+        map.put("callSwitch", status);
+        String invoke = this.invokeProxy(url, map, dnakeAppUser, cellphone);
+        Integer isSuccess = JSONObject.parseObject(invoke).getInteger("isSuccess");
+        return isSuccess == 1;
     }
 
     /**
@@ -461,9 +480,9 @@ public class DnakeAppApiService {
      * @author shuyy
      * @date 2018/12/19 16:15
      * @company mitesofor
-    */
+     */
     public void operateHousehold(Integer householdId, String communityCode) {
-        String url = "/v1//household/operateHousehold";
+        String url = "/v1/household/operateHousehold";
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
         map.put("id", householdId);
         map.put("operateType", "0");
@@ -471,4 +490,5 @@ public class DnakeAppApiService {
         String result = DnakeWebApiUtil.invoke(url, map);
         log.info(result);
     }
+
 }
