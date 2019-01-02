@@ -60,6 +60,7 @@ public class PassThroughController {
     private final DictionaryService dictionaryService;
     private final NoticeReadUserService noticeReadUserService;
     private final SysMessagesService sysMessagesService;
+    private final VisitorReadService visitorReadService;
 
     @Autowired
     public PassThroughController(RegionService regionService, NoticeService noticeService, ApplyKeyService applyKeyService,
@@ -71,7 +72,7 @@ public class PassThroughController {
                                  RedisService redisService, ClusterCommunityService clusterCommunityService,
                                  DeviceService deviceService, UserTrackService userTrackService,
                                  DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService,
-                                 SysMessagesService sysMessagesService) {
+                                 SysMessagesService sysMessagesService, VisitorReadService visitorReadService) {
         this.regionService = regionService;
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
@@ -92,6 +93,7 @@ public class PassThroughController {
         this.dictionaryService = dictionaryService;
         this.noticeReadUserService = noticeReadUserService;
         this.sysMessagesService = sysMessagesService;
+        this.visitorReadService = visitorReadService;
     }
 
     /**
@@ -235,7 +237,8 @@ public class PassThroughController {
     @ApiOperation(value = "查询所有的通知信息", notes = "返回参数：title 标题；" +
             "type 通知类型。关联数据字典code为notice_type。：1、政策性通知。2、人口普查。3、入学通知。4、物业公告。" +
             "releaseTime 发布时间；synopsis 简介；publisher 发布人；creator 创建人；modifier 修改人")
-    public Result listNotices(String cellphone, String communityCode, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDay,
+    public Result listNotices(String cellphone, String communityCode,
+                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDay,
                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDay) {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
@@ -576,12 +579,12 @@ public class PassThroughController {
      * @author Mr.Deng
      * @date 18:28 2018/12/3
      */
-    @GetMapping("/listVistor")
+    @GetMapping("/listVisitor")
     @ApiOperation(value = "查询所有访客信息", notes = "传参：cellphone 手机号")
-    public Result listVistor(String cellphone, Integer pageNum, Integer pageSize) {
+    public Result listVisitor(String cellphone, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone)) {
-            Page<Visitor> page = visitorService.listPage(cellphone, pageNum, pageSize);
-            List<Visitor> list = page.getRecords();
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            Page<Visitor> page = visitorService.listPage(user.getId(), cellphone, pageNum, pageSize);
             //添加足迹
             userTrackService.addUserTrack(cellphone, "查询所有访客信息", "查询所有访客信息成功");
             return Result.success(page);
@@ -589,18 +592,34 @@ public class PassThroughController {
         return Result.error("参数不能为空");
     }
 
-    @GetMapping("/getVistorDetail")
+    /**
+     * 查询访客详情
+     * @param cellphone 手机号
+     * @param id        访客id
+     * @return result
+     * @author Mr.Deng
+     * @date 10:11 2019/1/2
+     */
+    @GetMapping("/getVisitorDetail")
     @ApiOperation(value = "查询访客详情", notes = "传参：id 访客id")
-    public Result getVistorDetail(String cellphone, Integer id) {
-        if (id != null) {
+    public Result getVisitorDetail(String cellphone, Integer id) {
+        if (StringUtils.isNotBlank(cellphone) && id != null) {
+            User user = (User) redisService.get(RedisConstant.USER + cellphone);
             Visitor visitor = visitorService.getById(id);
+            //添加已读
+            if (visitor != null) {
+                VisitorRead visitorRead1 = visitorReadService.getVistorReadByUserIdAndVisitorId(user.getId(), visitor.getId());
+                if (visitorRead1 == null) {
+                    VisitorRead visitorRead = new VisitorRead(user.getId(), visitor.getId());
+                    visitorReadService.save(visitorRead);
+                }
+            }
             //添加足迹
             userTrackService.addUserTrack(cellphone, "查询访客详情", "查询访客详情成功");
             return Result.success(visitor);
         }
         return Result.error("参数不能为空");
     }
-
 
     /**
      * 设置呼叫转移号码

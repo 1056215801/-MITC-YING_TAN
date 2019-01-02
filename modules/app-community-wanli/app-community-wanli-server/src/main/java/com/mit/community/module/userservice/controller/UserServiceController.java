@@ -523,19 +523,16 @@ public class UserServiceController {
     public Result listExpressInfo(String cellphone, Integer expressAddressId) {
         if (StringUtils.isNotBlank(cellphone) && expressAddressId != null) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
-            if (user != null) {
-                List<ExpressInfo> expressInfos = expressInfoService.listExpressInfo(user.getId(), expressAddressId);
-                ExpressReadUser expressReadUser1 = expressReadUserService.ByUserIdAndExpressAddressId(user.getId(), expressAddressId);
-                if (expressReadUser1 == null) {
-                    //添加已读
-                    ExpressReadUser expressReadUser = new ExpressReadUser(user.getId(), expressAddressId);
-                    expressReadUserService.save(expressReadUser);
-                }
-                //记录足迹
-                userTrackService.addUserTrack(cellphone, "查看快递详情", "查看快递详情成功");
-                return Result.success(expressInfos);
+            List<ExpressInfo> expressInfos = expressInfoService.listExpressInfo(user.getId(), expressAddressId);
+            ExpressReadUser expressReadUser1 = expressReadUserService.ByUserIdAndExpressAddressId(user.getId(), expressAddressId);
+            if (expressReadUser1 == null) {
+                //添加已读
+                ExpressReadUser expressReadUser = new ExpressReadUser(user.getId(), expressAddressId);
+                expressReadUserService.save(expressReadUser);
             }
-            return Result.error("请登录");
+            //记录足迹
+            userTrackService.addUserTrack(cellphone, "查看快递详情", "查看快递详情成功");
+            return Result.success(expressInfos);
         }
         return Result.success("参数不能为空");
     }
@@ -724,8 +721,6 @@ public class UserServiceController {
         return Result.error("参数不能为空");
     }
 
-
-
     /**
      * 查询所有系统消息
      * @param cellphone 手机号
@@ -759,7 +754,7 @@ public class UserServiceController {
      * @author shuyy
      * @date 2018/12/29 10:17
      * @company mitesofor
-    */
+     */
     @GetMapping("/countNotReadNum")
     @ApiOperation(value = "统计未读系统消息", notes = "传参：cellphone 电话")
     public Result countNotReadNum(String cellphone) {
@@ -774,12 +769,12 @@ public class UserServiceController {
         return Result.error("参数不能为空");
     }
 
-        /**
-         * 查询所有的精品活动信息
-         * @return result
-         * @author Mr.Deng
-         * @date 14:13 2018/12/22
-         */
+    /**
+     * 查询所有的精品活动信息
+     * @return result
+     * @author Mr.Deng
+     * @date 14:13 2018/12/22
+     */
     @GetMapping("/listSelectionActivities")
     @ApiOperation(value = "查询所有的精品活动信息", notes = "输出参数：title 标题,introduce 活动介绍,externalUrl 外部URL," +
             "validTime 有效时间,issueTime 发布时间,issuer 发布人，readNum 浏览量，image 图片地址，notes 备注")
