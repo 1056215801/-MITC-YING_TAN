@@ -120,7 +120,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     public List<HouseHold> listByCommunityCodeList(List<String> communityCodes) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCodes);
-        wrapper.groupBy("room_id");
         return houseHoldMapper.selectList(wrapper);
     }
     /**

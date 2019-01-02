@@ -143,7 +143,9 @@ public class BusinessHandlingService {
      * @author Mr.Deng
      * @date 14:40 2018/12/5
      */
-    public Page<BusinessHandling> pageByStatus(Integer creatorUserId, Integer status, Integer pageNum, Integer pageSize) {
+    public Page<BusinessHandling> pageByStatus(Integer creatorUserId, Integer status,
+                                               String communityCode,
+                                               Integer pageNum, Integer pageSize) {
         Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
         EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
         String[] s;
@@ -155,6 +157,7 @@ public class BusinessHandlingService {
         }
         wrapper.in("status", s);
         wrapper.eq("creator_user_id", creatorUserId);
+        wrapper.eq("community_code", communityCode);
         List<BusinessHandling> businessHandlings = businessHandlingMapper.selectPage(page, wrapper);
         if (!businessHandlings.isEmpty()) {
             page.setRecords(businessHandlings);
