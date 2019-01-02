@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * 住户-服务控制类
+ *
  * @author Mr.Deng
  * @date 2018/12/5 11:19
  * <p>Copyright: Copyright (c) 2018</p>
@@ -103,6 +104,7 @@ public class UserServiceController {
 
     /**
      * 申请报事报修
+     *
      * @param cellphone       手机号
      * @param communityCode   小区code
      * @param roomId          房间id
@@ -154,6 +156,7 @@ public class UserServiceController {
 
     /**
      * 查询报事报修状态数据，通过手机号
+     *
      * @param cellphone 手机号
      * @param status    保修状态 0、未完成。1、已完成
      * @return result
@@ -174,6 +177,7 @@ public class UserServiceController {
 
     /**
      * 查询报事报修详情信息，通告报事报修id
+     *
      * @param reportThingsRepairId 报事报修id
      * @return result
      * @author Mr.Deng
@@ -192,6 +196,7 @@ public class UserServiceController {
 
     /**
      * 报事报修评价
+     *
      * @param applyReportId             报事报修id
      * @param evaluateResponseSpeed     响应速度评价
      * @param evaluateResponseAttitude  响应态度评价
@@ -222,6 +227,7 @@ public class UserServiceController {
 
     /**
      * 查询社区服务信息，通过社区code
+     *
      * @param cellphone 手机号
      * @param longitude 经度
      * @param latitude  纬度
@@ -250,6 +256,7 @@ public class UserServiceController {
 
     /**
      * 查询社区电话，通过小区code和电话类型
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @param type          社区电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话
@@ -275,6 +282,7 @@ public class UserServiceController {
 
     /**
      * 申请业务办理
+     *
      * @param cellphone        手机号码
      * @param communityCode    小区code
      * @param roomId           房间id
@@ -322,6 +330,7 @@ public class UserServiceController {
 
     /**
      * 查询业务办理状态数据，通过用户id
+     *
      * @param creatorUserId 用户id
      * @param status        业务办理状态 0、未完成。1、已完成
      * @return result
@@ -338,7 +347,7 @@ public class UserServiceController {
         String communityCode = household.getCommunityCode();
         if (creatorUserId != null && status != null && StringUtils.isNotBlank(cellphone)) {
             Page<BusinessHandling> listBusinessHandling = businessHandlingService
-                    .pageByStatus(creatorUserId, status,communityCode, pageNum, pageSize);
+                    .pageByStatus(creatorUserId, status, communityCode, pageNum, pageSize);
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询业务办理数据", "查询办理状态" + st + "业务数据成功");
             return Result.success(listBusinessHandling);
@@ -348,6 +357,7 @@ public class UserServiceController {
 
     /**
      * 查询业务办理详情信息，通告业务办理id
+     *
      * @param businessHandlingId 业务办理id
      * @return result
      * @author Mr.Deng
@@ -371,6 +381,7 @@ public class UserServiceController {
 
     /**
      * 业务办理评价
+     *
      * @param cellphone                 手机号
      * @param businessHandlingId        业务办理id
      * @param evaluateResponseSpeed     响应速度评价
@@ -411,6 +422,7 @@ public class UserServiceController {
 
     /**
      * 查询所有的黄页菜单
+     *
      * @return result
      * @author Mr.Deng
      * @date 9:18 2018/12/6
@@ -424,6 +436,7 @@ public class UserServiceController {
 
     /**
      * 查询生活黄页信息，通过黄页类型id
+     *
      * @param cellphone         手机号
      * @param yellowPagesTypeId 黄页类型id
      * @return Result
@@ -457,6 +470,7 @@ public class UserServiceController {
 
     /**
      * 提交反馈意见
+     *
      * @param cellphone 手机号
      * @param title     标题
      * @param content   反馈内容
@@ -493,6 +507,7 @@ public class UserServiceController {
 
     /**
      * 查询快递位置信息
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @return result
@@ -517,6 +532,7 @@ public class UserServiceController {
 
     /**
      * 查询快递详情信息
+     *
      * @param cellphone        手机号
      * @param expressAddressId 快递地址id
      * @return result
@@ -546,6 +562,7 @@ public class UserServiceController {
 
     /**
      * 查询所有的失物招领信息
+     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -569,6 +586,7 @@ public class UserServiceController {
 
     /**
      * 查询失物招领详情
+     *
      * @param cellphone   手机号
      * @param lostFountId 失物招领id
      * @return result
@@ -599,6 +617,7 @@ public class UserServiceController {
 
     /**
      * 查询所有的促销信息
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @return result
@@ -624,6 +643,7 @@ public class UserServiceController {
 
     /**
      * 查询促销详情信息,通过促销信息id
+     *
      * @param cellphone   手机号
      * @param promotionId 促销id
      * @return result
@@ -656,6 +676,7 @@ public class UserServiceController {
 
     /**
      * 查询所有老人体检信息，通过小区code
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @return result
@@ -680,6 +701,7 @@ public class UserServiceController {
 
     /**
      * 查询老人体检详情信息，老人体检id
+     *
      * @param cellphone    手机号
      * @param oldMedicalId 老人体检id
      * @return result
@@ -709,6 +731,7 @@ public class UserServiceController {
 
     /**
      * 我的足迹
+     *
      * @param cellphone 手机号
      * @returnc result
      * @author Mr.Deng
@@ -731,6 +754,7 @@ public class UserServiceController {
 
     /**
      * 查询所有系统消息
+     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -756,6 +780,7 @@ public class UserServiceController {
 
     /**
      * 统计未读数量
+     *
      * @param cellphone
      * @return com.mit.community.util.Result
      * @throws
@@ -779,6 +804,7 @@ public class UserServiceController {
 
     /**
      * 查询所有的精品活动信息
+     *
      * @return result
      * @author Mr.Deng
      * @date 14:13 2018/12/22
@@ -793,6 +819,7 @@ public class UserServiceController {
 
     /**
      * 查询精品活动详情，通过精品活动id
+     *
      * @param selectionActivitiesId 精品活动id
      * @return result
      * @author Mr.Deng
@@ -813,6 +840,7 @@ public class UserServiceController {
 
     /**
      * 我的-统计数据
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @author Mr.Deng
@@ -840,5 +868,6 @@ public class UserServiceController {
         }
         return Result.error("参数不能为空");
     }
+
 
 }
