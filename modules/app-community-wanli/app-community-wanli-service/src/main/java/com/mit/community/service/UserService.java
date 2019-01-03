@@ -66,6 +66,7 @@ public class UserService {
         user.setGmtModified(LocalDateTime.now());
         userMapper.updateById(user);
         User u = this.getById(user.getId());
+        u.setPassword(null);
         redisService.set(RedisConstant.USER + user.getCellphone(), u);
     }
 
