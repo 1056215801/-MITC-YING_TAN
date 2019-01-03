@@ -6,9 +6,11 @@ import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ExpressAddress;
 import com.mit.community.entity.ExpressInfo;
 import com.mit.community.entity.SysUser;
+import com.mit.community.entity.User;
 import com.mit.community.service.ExpressAddressService;
 import com.mit.community.service.ExpressInfoService;
 import com.mit.community.service.RedisService;
+import com.mit.community.service.UserService;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
@@ -42,6 +44,8 @@ public class ExpressContorller {
     private RedisService redisService;
     @Autowired
     private ExpressInfoService expressInfoService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 添加快递领取地址信息
@@ -134,7 +138,7 @@ public class ExpressContorller {
     /**
      * 添加快递信息
      * @param request          request
-     * @param userId           用户id
+     * @param cellphone        电话号码
      * @param expressAddressId 快递领取位置id
      * @param waybillNum       运单编号
      * @return result
@@ -142,15 +146,19 @@ public class ExpressContorller {
      * @date 17:26 2018/12/27
      */
     @PostMapping("/saveExpressInfo")
-    @ApiOperation(value = "添加快递信息", notes = "输入参数：userId app用户id; expressAddressId 快递位置id; waybillNum 运单编号")
-    public Result saveExpressInfo(HttpServletRequest request, Integer userId, Integer expressAddressId, String waybillNum) {
-        if (userId != null && expressAddressId != null && StringUtils.isNotBlank(waybillNum)) {
+    @ApiOperation(value = "添加快递信息", notes = "输入参数：cellphone 快递手机号; expressAddressId 快递位置id; waybillNum 运单编号")
+    public Result saveExpressInfo(HttpServletRequest request, String cellphone, Integer expressAddressId, String waybillNum) {
+        if (StringUtils.isNotBlank(cellphone) && expressAddressId != null && StringUtils.isNotBlank(waybillNum)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-            ExpressInfo expressInfo = new ExpressInfo(user.getCommunityCode(), userId, expressAddressId, waybillNum, 2, Constants.NULL_LOCAL_DATE_TIME,
-                    StringUtils.EMPTY, StringUtils.EMPTY, user.getName());
-            expressInfoService.save(expressInfo);
-            return Result.success("快递信息添加成功");
+            User user1 = userService.getByCellphone(cellphone);
+            if (user1 != null) {
+                ExpressInfo expressInfo = new ExpressInfo(user.getCommunityCode(), user1.getId(), expressAddressId, waybillNum, 2, Constants.NULL_LOCAL_DATE_TIME,
+                        StringUtils.EMPTY, StringUtils.EMPTY, user.getName());
+                expressInfoService.save(expressInfo);
+                return Result.success("快递信息添加成功");
+            }
+            return Result.error("添加失败,手机号用户没有注册账号");
         }
         return Result.error("参数不能为空");
     }
