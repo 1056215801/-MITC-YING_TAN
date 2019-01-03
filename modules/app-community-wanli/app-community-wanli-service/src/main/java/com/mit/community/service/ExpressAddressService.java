@@ -93,6 +93,17 @@ public class ExpressAddressService {
     }
 
     /**
+     * 查询快递位置信息，通告快递位置id
+     * @param id id
+     * @return 快递位置信息
+     * @author Mr.Deng
+     * @date 15:51 2019/1/3
+     */
+    public ExpressAddress getById(Integer id) {
+        return expressAddressMapper.selectById(id);
+    }
+
+    /**
      * 查询快递位置信息，通过小区code
      * @param communityCode 小区code
      * @return 快递位置信息
