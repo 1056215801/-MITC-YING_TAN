@@ -39,6 +39,7 @@ public class VisitorSchedule {
     }
 
     @Scheduled(cron = "0 */30 * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {
         List<Visitor> dataList = visitorService.list();
@@ -55,71 +56,80 @@ public class VisitorSchedule {
             Integer visitorId = dnakeVisitor.getVisitorId();
             Visitor dataVisitor = map.get(visitorId);
             if (dataVisitor == null) {
-                addList.add(dataVisitor);
+                addList.add(dnakeVisitor);
             } else {
                 if (dnakeVisitor.getVisitorStatus().equals(dataVisitor.getVisitorStatus())) {
-                    visitors.remove(i--);
+                    map.remove(visitorId);
                 } else {
-                    updateList.add(dataVisitor);
+                    updateList.add(dnakeVisitor);
+                    map.remove(visitorId);
                 }
             }
         }
-        if(!addList.isEmpty()){
+        map.forEach((key, value) -> {
+            deleteList.add(value);
+        });
+        if (!addList.isEmpty()) {
             visitorService.insertBatch(addList);
         }
-        if(!deleteList.isEmpty()){
+        if (!deleteList.isEmpty()) {
             visitorService.deleteBatchIds(deleteList.parallelStream().map(Visitor::getVisitorId).collect(Collectors.toList()));
         }
-        if(!updateList.isEmpty()){
+        if (!updateList.isEmpty()) {
             visitorService.updateBatchById(updateList);
+        }
+        updateList.addAll(addList);
+        if (!updateList.isEmpty()) {
             updateList.forEach(item -> {
                 Integer visitorStatus = item.getVisitorStatus();
                 String title = "";
-                if(visitorStatus.equals(1)){
+                if (visitorStatus.equals(1)) {
                     //已到访
                     title = item.getCommunityName() + item.getZoneName()
-                    +item.getBuildingName() + item.getUnitName() +
-                    item.getRoomNum() + item.getVisitorName() + ":已到访";
+                            + item.getBuildingName() + item.getUnitName() +
+                            item.getRoomNum() + item.getVisitorName() + ":已到访";
                 }
-                if(visitorStatus.equals(2)){
+                if (visitorStatus.equals(2)) {
                     //未到访
                     title = item.getCommunityName() + item.getZoneName()
-                            +item.getBuildingName() + item.getUnitName() +
+                            + item.getBuildingName() + item.getUnitName() +
                             item.getRoomNum() + item.getVisitorName() + ":未到访";
                 }
-                if(visitorStatus.equals(3)){
+                if (visitorStatus.equals(3)) {
                     //已离开
                     title = item.getCommunityName() + item.getZoneName()
-                            +item.getBuildingName() + item.getUnitName() +
+                            + item.getBuildingName() + item.getUnitName() +
                             item.getRoomNum() + item.getVisitorName() + ":已离开";
                 }
-                if(visitorStatus.equals(4)){
+                if (visitorStatus.equals(4)) {
                     //手动签离
                     title = item.getCommunityName() + item.getZoneName()
-                            +item.getBuildingName() + item.getUnitName() +
+                            + item.getBuildingName() + item.getUnitName() +
                             item.getRoomNum() + item.getVisitorName() + ":手动签离";
                 }
-                if(visitorStatus.equals(5)){
+                if (visitorStatus.equals(5)) {
                     //已撤销
                     title = item.getCommunityName() + item.getZoneName()
-                            +item.getBuildingName() + item.getUnitName() +
+                            + item.getBuildingName() + item.getUnitName() +
                             item.getRoomNum() + item.getVisitorName() + ":已撤销";
                 }
-                if(visitorStatus.equals(6)){
+                if (visitorStatus.equals(6)) {
                     //到访超时
                     title = item.getCommunityName() + item.getZoneName()
-                            +item.getBuildingName() + item.getUnitName() +
+                            + item.getBuildingName() + item.getUnitName() +
                             item.getRoomNum() + item.getVisitorName() + ":到访超时";
                 }
-                if(visitorStatus.equals(7)){
+                if (visitorStatus.equals(7)) {
                     //超时手动签离
                     title = item.getCommunityName() + item.getZoneName()
-                            +item.getBuildingName() + item.getUnitName() +
+                            + item.getBuildingName() + item.getUnitName() +
                             item.getRoomNum() + item.getVisitorName() + ":超时手动签离";
                 }
                 visitorMessageService.save(item.getInviteMobile(), title
-                        );
+                );
             });
         }
+
     }
 }
+

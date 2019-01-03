@@ -1,8 +1,13 @@
 package com.mit.community.service;
 
-import com.mit.community.mapper.VisitorMapper;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.mit.community.entity.VisitorMessage;
+import com.mit.community.mapper.VisitorMessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 访客消息service
@@ -15,7 +20,44 @@ import org.springframework.stereotype.Service;
 public class VisitorMessageService {
 
     @Autowired
-    private VisitorMapper visitorMapper;
+    private VisitorMessageMapper visitorMessageMapper;
 
+
+    /**
+     * 查询未读
+     *
+     * @param mobile
+     * @return java.lang.Integer
+     * @throws
+     * @author shuyy
+     * @date 2019-01-03 10:28
+     * @company mitesofor
+     */
+    public Integer countNotRead(String mobile) {
+        EntityWrapper<VisitorMessage> wrapper = new EntityWrapper<>();
+        wrapper.eq("mobile", mobile);
+        wrapper.eq("status", 1);
+        return visitorMessageMapper.selectCount(wrapper);
+    }
+
+    /**
+     * 分页查询
+     * @param cellphone
+     * @param pageNum
+     * @param pageSize
+     * @return com.baomidou.mybatisplus.plugins.Page<com.mit.community.entity.VisitorMessage>
+     * @throws
+     * @author shuyy
+     * @date 2019-01-03 10:33
+     * @company mitesofor
+    */
+    public Page<VisitorMessage> listPage(String cellphone, Integer pageNum, Integer pageSize){
+        EntityWrapper<VisitorMessage> wrapper = new EntityWrapper<>();
+        wrapper.eq("mobile", cellphone);
+        Page<VisitorMessage> page = new Page(pageNum, pageSize);
+        List<VisitorMessage> visitorMessages = visitorMessageMapper.selectPage(page, wrapper);
+        page.setRecords(visitorMessages);
+        return page;
+    }
 
 }

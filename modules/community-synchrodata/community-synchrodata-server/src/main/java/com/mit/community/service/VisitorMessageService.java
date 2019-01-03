@@ -5,6 +5,8 @@ import com.mit.community.mapper.VisitorMessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 /**
  * 访客消息service
  *
@@ -27,7 +29,9 @@ public class VisitorMessageService {
      * @company mitesofor
     */
     public void save(String mobile, String title){
-        VisitorMessage visitorMessage = new VisitorMessage(mobile, title);
+        VisitorMessage visitorMessage = new VisitorMessage(mobile, title, (short) 1);
+        visitorMessage.setGmtCreate(LocalDateTime.now());
+        visitorMessage.setGmtModified(LocalDateTime.now());
         visitorMessageMapper.insert(visitorMessage);
     }
 

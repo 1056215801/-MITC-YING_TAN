@@ -22,5 +22,7 @@ public class VisitorMessage extends BaseEntity{
     private String mobile;
     /**标题*/
     private String title;
+    /**1、未读、2、已读*/
+    private Short status;
 
 }
