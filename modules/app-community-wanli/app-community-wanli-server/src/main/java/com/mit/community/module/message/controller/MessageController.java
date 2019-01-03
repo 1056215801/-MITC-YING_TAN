@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -96,6 +97,8 @@ public class MessageController {
     public Result listVisitorMessagePage(String cellphone, Integer pageNum, Integer pageSize) {
         Page<VisitorMessage> visitorMessagePage = visitorMessageService
                 .listPage(cellphone, pageNum, pageSize);
+        List<VisitorMessage> records = visitorMessagePage.getRecords();
+        visitorMessageService.updateStatus(records);
         return Result.success(visitorMessagePage);
     }
 }

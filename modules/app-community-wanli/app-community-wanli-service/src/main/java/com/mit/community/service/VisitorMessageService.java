@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.VisitorMessage;
 import com.mit.community.mapper.VisitorMessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.List;
  * @company mitesofor
  */
 @Service
-public class VisitorMessageService {
+public class VisitorMessageService extends ServiceImpl<VisitorMessageMapper, VisitorMessage> {
 
     @Autowired
     private VisitorMessageMapper visitorMessageMapper;
@@ -60,4 +61,19 @@ public class VisitorMessageService {
         return page;
     }
 
+    /**
+     * 更新状态
+     * @param visitorMessages
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2019-01-03 10:41
+     * @company mitesofor
+    */
+    public void updateStatus(List<VisitorMessage> visitorMessages){
+        visitorMessages.forEach(item -> {
+            item.setStatus((short) 2);
+        });
+        this.updateBatchById(visitorMessages);
+    }
 }
