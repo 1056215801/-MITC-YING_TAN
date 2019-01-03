@@ -84,4 +84,17 @@ public class LostFountReadUserService {
         return lostFountReadUserMapper.selectCount(wrapper);
     }
 
+    /**
+     * 统计已读条数
+     * @param userId 用户id
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2019-01-02 15:49
+     * @company mitesofor
+    */
+    public Integer countByUserId(Integer userId){
+        EntityWrapper<LostFountReadUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        return lostFountReadUserMapper.selectCount(wrapper);
+    }
 }

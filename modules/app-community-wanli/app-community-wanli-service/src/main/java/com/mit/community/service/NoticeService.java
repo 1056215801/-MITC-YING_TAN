@@ -77,6 +77,23 @@ public class NoticeService {
     }
 
     /**
+     * 统计通知通告消息条数
+     * @param communityCode
+     * @return java.lang.Integer
+     * @throws
+     * @author shuyy
+     * @date 2019-01-02 15:05
+     * @company mitesofor
+    */
+    public List<Map<String, Object>> selectIdByCommunityCode(String communityCode) {
+        EntityWrapper<Notice> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.ge("validate_time", LocalDateTime.now());
+        wrapper.setSqlSelect("id");
+        return noticeMapper.selectMaps(wrapper);
+    }
+
+    /**
      * 查询通知信息，通过通知信息id
      * @param noticeId 通知信息id
      * @return notic
@@ -268,7 +285,7 @@ public class NoticeService {
      * @date 16:31 2018/12/28
      */
     public Integer getNotReadNotice(String communityCode, Integer userId) {
-        Integer size = null;
+        Integer size = 0;
         List<NoticeReadUser> noticeReadUsers = noticeReadUserService.getReadNoticByUserIdAndNoticId(userId);
         if (!noticeReadUsers.isEmpty()) {
             int noticeReadSize = noticeReadUsers.size();

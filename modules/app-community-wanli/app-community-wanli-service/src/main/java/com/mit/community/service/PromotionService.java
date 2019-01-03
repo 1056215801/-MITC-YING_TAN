@@ -274,4 +274,22 @@ public class PromotionService {
         return page;
     }
 
+    /**
+     * 统计未读数
+     * @param communityCode
+     * @param userId
+     * @return java.lang.Integer
+     * @throws
+     * @author shuyy
+     * @date 2019-01-02 16:04
+     * @company mitesofor
+    */
+    public Integer countNotReadNum(String communityCode, Integer userId){
+        EntityWrapper<Promotion> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        Integer num = promotionMapper.selectCount(wrapper);
+        Integer notNum = promotionReadUserService.countByUserId(userId);
+        return num - notNum;
+    }
+
 }

@@ -24,6 +24,11 @@ public class ExpressReadUser extends BaseEntity {
     @TableField("user_id")
     private Integer userId;
     /**
+     * 关联express_info快递表id
+     */
+    @TableField("express_info_id")
+    private Integer expressInfoId;
+    /**
      * 关联express_address快递位置表id
      */
     @TableField("express_address_id")

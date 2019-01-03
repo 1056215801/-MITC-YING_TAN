@@ -532,11 +532,14 @@ public class UserServiceController {
         if (StringUtils.isNotBlank(cellphone) && expressAddressId != null) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             Page<ExpressInfo> page = expressInfoService.listExpressInfoPage(user.getId(), expressAddressId, pageNum, pageSize);
-            ExpressReadUser expressReadUser1 = expressReadUserService.ByUserIdAndExpressAddressId(user.getId(), expressAddressId);
-            if (expressReadUser1 == null) {
-                //添加已读
-                ExpressReadUser expressReadUser = new ExpressReadUser(user.getId(), expressAddressId);
-                expressReadUserService.save(expressReadUser);
+            List<ExpressInfo> expressInfos = page.getRecords();
+            for (ExpressInfo expressInfo : expressInfos) {
+                ExpressReadUser expressReadUser1 = expressReadUserService.ByUserIdAndExpressInfoId(user.getId(), expressInfo.getId());
+                if (expressReadUser1 == null) {
+                    //添加已读
+                    ExpressReadUser expressReadUser = new ExpressReadUser(user.getId(), expressInfo.getId(), expressInfo.getExpressAddressId());
+                    expressReadUserService.save(expressReadUser);
+                }
             }
             //记录足迹
             userTrackService.addUserTrack(cellphone, "查看快递详情", "查看快递详情成功");

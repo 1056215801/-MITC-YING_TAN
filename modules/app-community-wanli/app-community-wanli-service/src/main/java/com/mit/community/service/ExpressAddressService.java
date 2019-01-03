@@ -3,7 +3,6 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.ExpressAddress;
-import com.mit.community.entity.ExpressReadUser;
 import com.mit.community.mapper.ExpressAddressMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,8 +108,8 @@ public class ExpressAddressService {
             for (ExpressAddress expressAddress : expressAddresses) {
                 Integer integer = expressInfoService.countNotExpressNum(userId, expressAddress.getId());
                 Integer total = expressInfoService.countExpressNum(userId, expressAddress.getId());
-                ExpressReadUser expressReadUser = expressReadUserService.ByUserIdAndExpressAddressId(userId, expressAddress.getId());
-                if (expressReadUser == null) {
+                Integer readNum = expressReadUserService.countByUserIdAndExpressAddressId(userId, expressAddress.getId());
+                if (total > readNum) {
                     expressAddress.setReadStatus(false);
                 } else {
                     expressAddress.setReadStatus(true);

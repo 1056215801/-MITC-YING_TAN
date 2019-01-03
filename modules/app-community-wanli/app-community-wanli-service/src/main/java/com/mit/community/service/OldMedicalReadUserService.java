@@ -57,4 +57,19 @@ public class OldMedicalReadUserService {
         wrapper.eq("old_medical_id", oldMedicalId);
         return oldMedicalReadUserMapper.selectCount(wrapper);
     }
+
+    /**
+     * 统计已读
+     * @param userId
+     * @return java.lang.Integer
+     * @throws
+     * @author shuyy
+     * @date 2019-01-02 16:10
+     * @company mitesofor
+    */
+    public Integer countReadNum(Integer userId){
+        EntityWrapper<OldMedicalReadUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        return oldMedicalReadUserMapper.selectCount(wrapper);
+    }
 }
