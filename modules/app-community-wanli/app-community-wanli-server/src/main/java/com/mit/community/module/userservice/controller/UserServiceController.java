@@ -645,14 +645,15 @@ public class UserServiceController {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
                 Promotion promotion = promotionService.getPromotionInfo(promotionId);
-                //添加已读
-                PromotionReadUser promotionReadUser = new PromotionReadUser(user.getId(), promotionId);
-                promotionReadUserService.save(promotionReadUser);
-                //添加足迹
                 if (promotion != null) {
+                    //添加已读
+                    PromotionReadUser promotionReadUser = new PromotionReadUser(user.getId(), promotionId);
+                    promotionReadUserService.save(promotionReadUser);
+                    //添加足迹
                     userTrackService.addUserTrack(cellphone, "查询促销信息", "促销信息" + promotion.getTitle() + "查询成功");
+                    return Result.success(promotion);
                 }
-                return Result.success(promotion);
+                return Result.error("促销活动不存在");
             }
             return Result.error("请登录");
         }
@@ -671,12 +672,12 @@ public class UserServiceController {
     @ApiOperation(value = "查询所有老人体检信息，通过小区code", notes = "返回参数：communityCode小区code,title标题，issuer发布人，" +
             "issuerTime发布时间，contacts联系人，phone联系电话，address 登记地址，startTime 开始时间，endTime 结束时间，" +
             "oldMedicalStatus 活动状态，readStatus 已读状态")
-    public Result listOldMedical(String cellphone, String communityCode) {
+    public Result listOldMedical(String cellphone, String communityCode, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<OldMedical> oldMedicals = oldMedicalService.listAll(user.getId(), communityCode);
-                return Result.success(oldMedicals);
+                Page<OldMedical> page = oldMedicalService.listPageByCommunityCode(user.getId(), communityCode, pageNum, pageSize);
+                return Result.success(page);
             }
             return Result.error("请登录");
         }
@@ -700,13 +701,15 @@ public class UserServiceController {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
                 OldMedical oldMedical = oldMedicalService.getByOldMedicalId(oldMedicalId);
-                //添加已读
-                OldMedicalReadUser oldMedicalReadUser = new OldMedicalReadUser(user.getId(), oldMedicalId);
-                oldMedicalReadUserService.save(oldMedicalReadUser);
-                //记录足迹
                 if (oldMedical != null) {
+                    //添加已读
+                    OldMedicalReadUser oldMedicalReadUser = new OldMedicalReadUser(user.getId(), oldMedicalId);
+                    oldMedicalReadUserService.save(oldMedicalReadUser);
+                    //记录足迹
                     userTrackService.addUserTrack(cellphone, "查看老人体检", "查询老人体检-" + oldMedical.getTitle() + "成功");
+                    return Result.success(oldMedical);
                 }
+                return Result.error("该老人体检活动不存在");
             }
         }
         return Result.error("参数不能为空");

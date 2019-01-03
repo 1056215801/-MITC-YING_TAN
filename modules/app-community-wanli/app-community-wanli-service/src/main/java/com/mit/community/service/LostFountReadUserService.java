@@ -28,12 +28,9 @@ public class LostFountReadUserService {
      * @date 9:47 2018/12/18
      */
     public void save(LostFountReadUser lostFountReadUser) {
-        List<LostFountReadUser> item = this.getByUserIdByLostFountId(lostFountReadUser.getUserId(), lostFountReadUser.getLostFountId());
-        if (item.isEmpty()) {
-            lostFountReadUser.setGmtCreate(LocalDateTime.now());
-            lostFountReadUser.setGmtModified(LocalDateTime.now());
-            lostFountReadUserMapper.insert(lostFountReadUser);
-        }
+        lostFountReadUser.setGmtCreate(LocalDateTime.now());
+        lostFountReadUser.setGmtModified(LocalDateTime.now());
+        lostFountReadUserMapper.insert(lostFountReadUser);
     }
 
     /**

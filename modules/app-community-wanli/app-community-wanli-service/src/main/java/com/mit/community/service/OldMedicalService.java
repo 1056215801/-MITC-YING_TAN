@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * 老人体检业务处理层
- *
  * @author Mr.Deng
  * @date 2018/12/18 19:39
  * <p>Copyright: Copyright (c) 2018</p>
@@ -182,42 +181,17 @@ public class OldMedicalService {
 
     /**
      * 查询老人体检信息，通过小区code
-     *
      * @param communityCode 小区code
      * @return 老人体检信息
      * @author Mr.Deng
      * @date 19:58 2018/12/18
      */
-    public List<OldMedical> listByCommunityCode(String communityCode) {
+    public Page<OldMedical> listPageByCommunityCode(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
         EntityWrapper<OldMedical> wrapper = new EntityWrapper<>();
+        Page<OldMedical> page = new Page<>(pageNum, pageSize);
         wrapper.eq("community_code", communityCode);
         wrapper.orderBy("gmt_create", false);
-        return oldMedicalMapper.selectList(wrapper);
-    }
-
-    /**
-     * 查询老人体检信息，通过老人体检id
-     *
-     * @param id 老人体检id
-     * @return 老人体检信息
-     * @author Mr.Deng
-     * @date 20:00 2018/12/18
-     */
-    public OldMedical getById(Integer id) {
-        return oldMedicalMapper.selectById(id);
-    }
-
-    /**
-     * 查询所有的老人体检信息
-     *
-     * @param userId        用户id
-     * @param communityCode 小区code
-     * @return 老人体检信息
-     * @author Mr.Deng
-     * @date 20:08 2018/12/18
-     */
-    public List<OldMedical> listAll(Integer userId, String communityCode) {
-        List<OldMedical> oldMedicals = this.listByCommunityCode(communityCode);
+        List<OldMedical> oldMedicals = oldMedicalMapper.selectPage(page, wrapper);
         if (!oldMedicals.isEmpty()) {
             for (OldMedical oldMedical : oldMedicals) {
                 String status = getStatus(oldMedical.getStartTime(), oldMedical.getEndTime());
@@ -230,12 +204,23 @@ public class OldMedicalService {
                 }
             }
         }
-        return oldMedicals;
+        page.setRecords(oldMedicals);
+        return page;
     }
 
     /**
      * 查询老人体检信息，通过老人体检id
-     *
+     * @param id 老人体检id
+     * @return 老人体检信息
+     * @author Mr.Deng
+     * @date 20:00 2018/12/18
+     */
+    public OldMedical getById(Integer id) {
+        return oldMedicalMapper.selectById(id);
+    }
+
+    /**
+     * 查询老人体检信息，通过老人体检id
      * @param oldMedicalId 老人体检id
      * @return 老人体检信息
      * @author Mr.Deng
@@ -258,7 +243,6 @@ public class OldMedicalService {
 
     /**
      * 判断当前活动
-     *
      * @param startTime 活动开始时间
      * @param endTime   活动结束时间
      * @return 活动状态
@@ -279,12 +263,12 @@ public class OldMedicalService {
     /**
      * 统计未读
      * @param communityCode 小区code
-     * @param userId userId
+     * @param userId        userId
      * @return java.lang.Integer
      * @author shuyy
      * @date 2019-01-02 16:11
      * @company mitesofor
-    */
+     */
     public Integer countNotRead(String communityCode, Integer userId) {
         EntityWrapper<OldMedical> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);

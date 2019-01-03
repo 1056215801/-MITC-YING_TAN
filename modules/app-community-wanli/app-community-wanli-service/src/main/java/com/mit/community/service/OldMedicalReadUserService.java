@@ -6,6 +6,7 @@ import com.mit.community.mapper.OldMedicalReadUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,6 +28,8 @@ public class OldMedicalReadUserService {
      * @date 19:42 2018/12/18
      */
     public void save(OldMedicalReadUser oldMedicalReadUser) {
+        oldMedicalReadUser.setGmtCreate(LocalDateTime.now());
+        oldMedicalReadUser.setGmtModified(LocalDateTime.now());
         oldMedicalReadUserMapper.insert(oldMedicalReadUser);
     }
 
@@ -66,8 +69,8 @@ public class OldMedicalReadUserService {
      * @author shuyy
      * @date 2019-01-02 16:10
      * @company mitesofor
-    */
-    public Integer countReadNum(Integer userId){
+     */
+    public Integer countReadNum(Integer userId) {
         EntityWrapper<OldMedicalReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return oldMedicalReadUserMapper.selectCount(wrapper);
