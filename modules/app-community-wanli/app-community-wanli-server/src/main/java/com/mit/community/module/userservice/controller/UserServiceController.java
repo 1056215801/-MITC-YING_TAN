@@ -593,8 +593,9 @@ public class UserServiceController {
                     lostFountReadUserService.save(lostFountReadUser1);
                     //添加足迹
                     userTrackService.addUserTrack(cellphone, "查询失物招领", "查询" + lostFount.getTitle() + "成功");
+                    return Result.success(lostFount);
                 }
-                return Result.success(lostFount);
+                return Result.error("失物招领不存在");
             }
             return Result.error("请登录");
         }
