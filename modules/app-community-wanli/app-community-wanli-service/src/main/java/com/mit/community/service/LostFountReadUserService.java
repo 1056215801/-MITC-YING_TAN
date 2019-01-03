@@ -29,12 +29,13 @@ public class LostFountReadUserService {
      */
     public void save(LostFountReadUser lostFountReadUser) {
         List<LostFountReadUser> item = this.getByUserIdByLostFountId(lostFountReadUser.getUserId(), lostFountReadUser.getLostFountId());
-        if(item == null){
+        if (item.isEmpty()) {
             lostFountReadUser.setGmtCreate(LocalDateTime.now());
             lostFountReadUser.setGmtModified(LocalDateTime.now());
             lostFountReadUserMapper.insert(lostFountReadUser);
         }
     }
+
     /**
      * 获取用户指定的已读记录
      * @param userId
@@ -44,13 +45,13 @@ public class LostFountReadUserService {
      * @author shuyy
      * @date 2018/12/29 10:33
      * @company mitesofor
-    */
-    public LostFountReadUser getByUserIdAndLostFountId(Integer userId, Integer lostFountId){
+     */
+    public LostFountReadUser getByUserIdAndLostFountId(Integer userId, Integer lostFountId) {
         EntityWrapper<LostFountReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("lost_fount_id", lostFountId);
         List<LostFountReadUser> lostFountReadUsers = lostFountReadUserMapper.selectList(wrapper);
-        if(lostFountReadUsers.isEmpty()){
+        if (lostFountReadUsers.isEmpty()) {
             return null;
         }
         return lostFountReadUsers.get(0);
@@ -91,8 +92,8 @@ public class LostFountReadUserService {
      * @author shuyy
      * @date 2019-01-02 15:49
      * @company mitesofor
-    */
-    public Integer countByUserId(Integer userId){
+     */
+    public Integer countByUserId(Integer userId) {
         EntityWrapper<LostFountReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return lostFountReadUserMapper.selectCount(wrapper);
