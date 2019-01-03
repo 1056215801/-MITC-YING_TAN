@@ -102,7 +102,7 @@ public class PromotionService {
             if (promotionContent != null) {
                 promotion.setContent(promotionContent.getContent());
             }
-            Integer integer = promotionReadUserService.countByUserIdAndPromotionId(promotion.getId());
+            Integer integer = promotionReadUserService.countByPromotionId(promotion.getId());
             promotion.setReadNum(integer);
         }
         return promotion;

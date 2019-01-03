@@ -154,7 +154,7 @@ public class ExpressContorller {
             User user1 = userService.getByCellphone(cellphone);
             if (user1 != null) {
                 ExpressInfo expressInfo = new ExpressInfo(user.getCommunityCode(), user1.getId(), expressAddressId, waybillNum, 2, Constants.NULL_LOCAL_DATE_TIME,
-                        StringUtils.EMPTY, StringUtils.EMPTY, user.getName());
+                        StringUtils.EMPTY, StringUtils.EMPTY, user.getName(), null);
                 expressInfoService.save(expressInfo);
                 return Result.success("快递信息添加成功");
             }

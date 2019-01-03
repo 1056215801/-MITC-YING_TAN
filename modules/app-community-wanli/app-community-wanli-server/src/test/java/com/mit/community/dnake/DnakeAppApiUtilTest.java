@@ -24,14 +24,14 @@ public class DnakeAppApiUtilTest {
      * @company mitesofor
      */
     // @Test
-     @Test
+    @Test
     public void register() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/register";
         Map<String, Object> map = new HashMap<>();
         map.put("loginName", "13064102937");
-         String s = UUIDUtils.generateShortUuid();
-         map.put("password", s);
+        String s = UUIDUtils.generateShortUuid();
+        map.put("password", s);
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);
@@ -73,12 +73,12 @@ public class DnakeAppApiUtilTest {
         System.out.println(invoke);
     }
 
-     @Test
+    @Test
     public void login() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/auth/base/login";
         Map<String, Object> map = new HashMap<>();
-        map.put("loginName", "13064102937");
+        map.put("loginName", "18779158391");
         map.put("password", "123456");
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         map.put("registrationId", dnakeAppUser.getRegistrationId());
@@ -97,6 +97,18 @@ public class DnakeAppApiUtilTest {
         map.put("appUserId", "156781");
         map.put("deviceGroupId", "735");
         map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        DnakeAppUser dnakeAppUser = new DnakeAppUser();
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        System.out.println(invoke);
+    }
+
+    @Test
+    public void httpOpenDoor(String cellphone, String communityCode, String deviceNum) {
+        String url = "/auth/api/device/unlock";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
+        map.put("appUserId", 156781);
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("deviceNum", "AB900DX87689ef7f9270");
         DnakeAppUser dnakeAppUser = new DnakeAppUser();
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         System.out.println(invoke);

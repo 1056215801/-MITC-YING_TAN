@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.mit.community.entity.ExpressAddress;
 import com.mit.community.entity.ExpressInfo;
 import com.mit.community.mapper.ExpressInfoMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,8 @@ public class ExpressInfoService {
     private ExpressInfoMapper expressInfoMapper;
     @Autowired
     private ExpressReadUserService expressReadUserService;
+    @Autowired
+    private ExpressAddressService expressAddressService;
 
     /**
      * 添加快递信息
@@ -131,6 +134,12 @@ public class ExpressInfoService {
         wrapper.eq("express_address_id", expressAddressId);
         wrapper.orderBy("gmt_create", false);
         List<ExpressInfo> expressInfos = expressInfoMapper.selectPage(page, wrapper);
+        expressInfos.forEach(item -> {
+            ExpressAddress expressAddress = expressAddressService.getById(item.getExpressAddressId());
+            if (expressAddress != null) {
+                item.setAddress(expressAddress.getAddress());
+            }
+        });
         page.setRecords(expressInfos);
         return page;
     }

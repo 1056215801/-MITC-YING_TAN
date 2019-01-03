@@ -40,7 +40,7 @@ public class PromotionReadUserService {
      * @author Mr.Deng
      * @date 16:05 2018/12/18
      */
-    public Integer countByUserIdAndPromotionId(Integer promotionId) {
+    public Integer countByPromotionId(Integer promotionId) {
         EntityWrapper<PromotionReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("promotion_id", promotionId);
         return promotionReadUserMapper.selectCount(wrapper);
@@ -67,9 +67,9 @@ public class PromotionReadUserService {
      * @author shuyy
      * @date 2019-01-02 16:02
      * @company mitesofor
-    */
-    public Integer countByUserId(Integer userId){
-        EntityWrapper<PromotionReadUser>  wrapper = new EntityWrapper<>();
+     */
+    public Integer countByUserId(Integer userId) {
+        EntityWrapper<PromotionReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return promotionReadUserMapper.selectCount(wrapper);
     }

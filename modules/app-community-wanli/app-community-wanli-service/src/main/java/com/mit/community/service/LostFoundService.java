@@ -84,14 +84,16 @@ public class LostFoundService {
      */
     public LostFound getLostFountInfo(Integer id) {
         LostFound lostFound = this.getById(id);
-        LostFountContent lostFountContent = lostFountContentService.listByLostFountId(id);
-        String content = StringUtils.EMPTY;
-        if (lostFountContent != null) {
-            content = lostFountContent.getContent();
+        if (lostFound != null) {
+            LostFountContent lostFountContent = lostFountContentService.listByLostFountId(id);
+            String content = StringUtils.EMPTY;
+            if (lostFountContent != null) {
+                content = lostFountContent.getContent();
+            }
+            lostFound.setContent(content);
+            Integer readNum = lostFountReadUserService.countByLostFountId(id);
+            lostFound.setReadNum(readNum);
         }
-        lostFound.setContent(content);
-        Integer readNum = lostFountReadUserService.countByLostFountId(id);
-        lostFound.setReadNum(readNum);
         return lostFound;
     }
 
@@ -143,24 +145,24 @@ public class LostFoundService {
 
     /**
      * 保存
-     * @param title 标题
-     * @param imgUrl 图片地址
-     * @param issuer 发布人
-     * @param issuerPhone 发布电话
-     * @param picAddress 捡到地址
-     * @param pickTime 发布时间
+     * @param title         标题
+     * @param imgUrl        图片地址
+     * @param issuer        发布人
+     * @param issuerPhone   发布电话
+     * @param picAddress    捡到地址
+     * @param pickTime      发布时间
      * @param communityCode 小区code
-     * @param content 内容
+     * @param content       内容
      * @return void
      * @throws
      * @author shuyy
      * @date 2018/12/27 10:06
      * @company mitesofor
-    */
+     */
     @Transactional(rollbackFor = Exception.class)
     public void save(String title, String imgUrl, String issuer, String issuerPhone,
                      String picAddress, String receiverAddress, LocalDateTime pickTime, String communityCode, String content
-                     ){
+    ) {
         LostFound lostFound = new LostFound(title,
                 imgUrl, issuer, issuerPhone, picAddress,
                 pickTime, StringUtils.EMPTY, StringUtils.EMPTY,
@@ -175,66 +177,66 @@ public class LostFoundService {
 
     /**
      * 更新
-     * @param title 标题
-     * @param imgUrl 图片地址
-     * @param issuer 发布人
-     * @param issuerPhone 发布电话
-     * @param picAddress 捡到地址
-     * @param pickTime 捡到时间
-     * @param receiver 领取人
-     * @param receivePhone 领取电话
+     * @param title           标题
+     * @param imgUrl          图片地址
+     * @param issuer          发布人
+     * @param issuerPhone     发布电话
+     * @param picAddress      捡到地址
+     * @param pickTime        捡到时间
+     * @param receiver        领取人
+     * @param receivePhone    领取电话
      * @param receiverAddress 领取地址
-     * @param receiverTime 领取时间
-     * @param receiverStatus 领取状态
-     * @param content 内容
+     * @param receiverTime    领取时间
+     * @param receiverStatus  领取状态
+     * @param content         内容
      * @author shuyy
      * @date 2018/12/27 10:06
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
     public void update(Integer id, String title, String imgUrl, String issuer, String issuerPhone,
-                     String picAddress, LocalDateTime pickTime, String receiver, String receivePhone,
-                       String receiverAddress, LocalDateTime receiverTime, Boolean receiverStatus,  String content
-    ){
+                       String picAddress, LocalDateTime pickTime, String receiver, String receivePhone,
+                       String receiverAddress, LocalDateTime receiverTime, Boolean receiverStatus, String content
+    ) {
 
         LostFound lostFound = new LostFound();
         lostFound.setId(id);
-        if(StringUtils.isNotBlank(title)){
+        if (StringUtils.isNotBlank(title)) {
             lostFound.setTitle(title);
         }
-        if(StringUtils.isNotBlank(imgUrl)){
+        if (StringUtils.isNotBlank(imgUrl)) {
             lostFound.setImgUrl(imgUrl);
         }
-        if(StringUtils.isNotBlank(issuer)){
+        if (StringUtils.isNotBlank(issuer)) {
             lostFound.setIssuer(issuer);
         }
-        if(StringUtils.isNotBlank(issuerPhone)){
+        if (StringUtils.isNotBlank(issuerPhone)) {
             lostFound.setIssuerPhone(issuerPhone);
         }
-        if(StringUtils.isNotBlank(picAddress)){
+        if (StringUtils.isNotBlank(picAddress)) {
             lostFound.setPickAddress(picAddress);
         }
-        if(pickTime != null){
+        if (pickTime != null) {
             lostFound.setPickTime(pickTime);
         }
-        if(StringUtils.isNotBlank(receiver)){
+        if (StringUtils.isNotBlank(receiver)) {
             lostFound.setReceiver(receiver);
         }
-        if(StringUtils.isNotBlank(receivePhone)){
+        if (StringUtils.isNotBlank(receivePhone)) {
             lostFound.setReceivePhone(receivePhone);
         }
-        if(StringUtils.isNotBlank(receiverAddress)){
+        if (StringUtils.isNotBlank(receiverAddress)) {
             lostFound.setReceiverAddress(receiverAddress);
         }
-        if(null != receiverTime){
+        if (null != receiverTime) {
             lostFound.setReceiverTime(receiverTime);
         }
-        if(receiverStatus != null){
+        if (receiverStatus != null) {
             lostFound.setReadStatus(receiverStatus);
         }
         lostFound.setGmtModified(LocalDateTime.now());
         lostFoundMapper.updateById(lostFound);
-        if(StringUtils.isNotBlank(content)){
+        if (StringUtils.isNotBlank(content)) {
             LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
             lostFountContentService.updateByLostFoudId(lostFountContent);
         }
@@ -246,67 +248,67 @@ public class LostFoundService {
      * @author shuyy
      * @date 2018/12/27 11:04
      * @company mitesofor
-    */
-    public void remove(Integer id){
+     */
+    public void remove(Integer id) {
         lostFoundMapper.deleteById(id);
         lostFountContentService.removeByLostFoudId(id);
     }
 
     /**
      * 分页查询
-     * @param communityCode 小区code
-     * @param title 标题
-     * @param issuer 发布人
-     * @param issuerPhone 发布电话
-     * @param receiver 领取人
-     * @param receivePhone 领取人电话
+     * @param communityCode     小区code
+     * @param title             标题
+     * @param issuer            发布人
+     * @param issuerPhone       发布电话
+     * @param receiver          领取人
+     * @param receivePhone      领取人电话
      * @param receiverTimeStart 领取开始时间
-     * @param receiverTimeEnd 领取结束时间
-     * @param receiverStatus 领取状态
-     * @param pageNum 当前页
-     * @param pageSize 分页大小
+     * @param receiverTimeEnd   领取结束时间
+     * @param receiverStatus    领取状态
+     * @param pageNum           当前页
+     * @param pageSize          分页大小
      * @return com.baomidou.mybatisplus.plugins.Page<com.mit.community.entity.LostFound>
      * @author shuyy
      * @date 2018/12/27 11:16
      * @company mitesofor
-    */
+     */
     public Page<LostFound> listPage(String communityCode, String title, String issuer, String issuerPhone, LocalDateTime pickTimeStart,
                                     LocalDateTime pickTimeEnd, String receiver, String receivePhone,
-                                    LocalDateTime receiverTimeStart,LocalDateTime receiverTimeEnd,
-                                    Integer receiverStatus, Integer pageNum, Integer pageSize){
+                                    LocalDateTime receiverTimeStart, LocalDateTime receiverTimeEnd,
+                                    Integer receiverStatus, Integer pageNum, Integer pageSize) {
         Page<LostFound> page = new Page<>(pageNum, pageSize);
         EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
-        if(StringUtils.isNotBlank(title)){
+        if (StringUtils.isNotBlank(title)) {
             wrapper.like("title", title, SqlLike.RIGHT);
         }
-        if(StringUtils.isNotBlank(issuer)){
+        if (StringUtils.isNotBlank(issuer)) {
             wrapper.like("issuer", issuer, SqlLike.RIGHT);
         }
-        if(StringUtils.isNotBlank(issuerPhone)){
+        if (StringUtils.isNotBlank(issuerPhone)) {
             wrapper.like("issuer_phone", issuerPhone, SqlLike.RIGHT);
         }
-        if(pickTimeStart != null){
+        if (pickTimeStart != null) {
             wrapper.ge("pick_time", pickTimeStart);
         }
-        if(pickTimeEnd != null){
+        if (pickTimeEnd != null) {
             wrapper.le("pick_time", pickTimeEnd);
         }
-        if(StringUtils.isNotBlank(receiver)){
+        if (StringUtils.isNotBlank(receiver)) {
             wrapper.like("receiver", receiver, SqlLike.RIGHT);
         }
-        if(StringUtils.isNotBlank(receivePhone)){
+        if (StringUtils.isNotBlank(receivePhone)) {
             wrapper.like("receive_phone", receivePhone, SqlLike.RIGHT);
         }
-        if(receiverTimeStart != null){
+        if (receiverTimeStart != null) {
             wrapper.ge("receiver_time", receiverTimeStart);
         }
-        if(receiverTimeEnd != null){
+        if (receiverTimeEnd != null) {
             wrapper.le("receiver_time", receiverTimeEnd);
         }
-        if(receiverStatus != null){
+        if (receiverStatus != null) {
             wrapper.eq("receiver_status", receiverStatus);
         }
-        if(StringUtils.isNotBlank(communityCode)){
+        if (StringUtils.isNotBlank(communityCode)) {
             wrapper.eq("community_code", communityCode);
         }
         wrapper.orderBy("pick_time", false);
@@ -315,6 +317,7 @@ public class LostFoundService {
         return page;
 
     }
+
     /**
      * 统计未读
      * @param communityCode 小区code
@@ -322,8 +325,8 @@ public class LostFoundService {
      * @author shuyy
      * @date 2019-01-02 15:45
      * @company mitesofor
-    */
-    public Integer countNotRead(String communityCode, Integer userId){
+     */
+    public Integer countNotRead(String communityCode, Integer userId) {
         EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
 

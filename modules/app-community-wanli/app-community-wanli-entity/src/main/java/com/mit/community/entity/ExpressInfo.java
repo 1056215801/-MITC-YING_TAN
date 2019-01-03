@@ -64,4 +64,9 @@ public class ExpressInfo extends BaseEntity {
      */
     @TableField("create_user_name")
     private String createUserName;
+    /**
+     * 领取地址
+     */
+    @TableField(exist = false)
+    private String address;
 }
