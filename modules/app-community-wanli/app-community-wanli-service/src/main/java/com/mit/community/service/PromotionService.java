@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * 促销业务处理表
- *
  * @author Mr.Deng
  * @date 2018/12/18 15:56
  * <p>Copyright: Copyright (c) 2018</p>
@@ -33,7 +32,6 @@ public class PromotionService {
 
     /**
      * 查询所有的促销活动 ，通过小区code
-     *
      * @param communityCode 小区code
      * @return
      * @author Mr.Deng
@@ -48,46 +46,17 @@ public class PromotionService {
 
     /**
      * 查询所有的促销活动 ，通过小区code
-     *
      * @param communityCode 小区code
      * @return
      * @author Mr.Deng
      * @date 16:21 2018/12/18
      */
-    public Page<Promotion> listPage(String communityCode, Integer pageNum, Integer pageSize) {
+    public Page<Promotion> listPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
         EntityWrapper<Promotion> wrapper = new EntityWrapper<>();
         wrapper.orderBy("gmt_create", false);
         wrapper.eq("community_code", communityCode);
         Page<Promotion> page = new Page<>(pageNum, pageSize);
         List<Promotion> promotions = promotionMapper.selectPage(page, wrapper);
-        page.setRecords(promotions);
-        return page;
-    }
-
-    /**
-     * 查询促销信息，通过id
-     *
-     * @param promotionId 促销id
-     * @return 促销信息
-     * @author Mr.Deng
-     * @date 17:29 2018/12/18
-     */
-    public Promotion getByPromotionId(Integer promotionId) {
-        return promotionMapper.selectById(promotionId);
-    }
-
-    /**
-     * 查询所有的促销信息
-     *
-     * @param userId        用户id
-     * @param communityCode 小区code
-     * @return 促销信息
-     * @author Mr.Deng
-     * @date 17:25 2018/12/18
-     */
-    public Page<Promotion> listPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
-        Page<Promotion> page = this.listPage(communityCode, pageNum, pageSize);
-        List<Promotion> promotions = page.getRecords();
         if (!promotions.isEmpty()) {
             for (Promotion promotion : promotions) {
                 //查询状态
@@ -102,12 +71,23 @@ public class PromotionService {
                 }
             }
         }
+        page.setRecords(promotions);
         return page;
     }
 
     /**
+     * 查询促销信息，通过id
+     * @param promotionId 促销id
+     * @return 促销信息
+     * @author Mr.Deng
+     * @date 17:29 2018/12/18
+     */
+    public Promotion getByPromotionId(Integer promotionId) {
+        return promotionMapper.selectById(promotionId);
+    }
+
+    /**
      * 查询促销信息详情信息，通过促销id
-     *
      * @param promotionId 促销id
      * @return 促销信息
      * @author Mr.Deng
@@ -130,7 +110,6 @@ public class PromotionService {
 
     /**
      * 判断当前活动
-     *
      * @param startTime 活动开始时间
      * @param endTime   活动结束时间
      * @return 活动状态
@@ -150,7 +129,6 @@ public class PromotionService {
 
     /**
      * 保存
-     *
      * @param promotionType    促销累并
      * @param title            标题
      * @param imgUrl           图片url
@@ -188,7 +166,6 @@ public class PromotionService {
 
     /**
      * 更新
-     *
      * @param id
      * @param promotionType    促销累并
      * @param title            标题
@@ -227,7 +204,6 @@ public class PromotionService {
 
     /**
      * 删除
-     *
      * @param id
      * @return void
      * @throws
@@ -243,31 +219,30 @@ public class PromotionService {
 
     /**
      * 分页查询
-     * @param communityCode 小区code
-     * @param promotionType 促销类型
-     * @param title 标题
-     * @param issuer 发布人
-     * @param issuerPhone 发布手机号
+     * @param communityCode  小区code
+     * @param promotionType  促销类型
+     * @param title          标题
+     * @param issuer         发布人
+     * @param issuerPhone    发布手机号
      * @param issueTimeStart 发布开始时间
-     * @param issueTimeEnd 发布结束时间
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @param pageNum 当前页
-     * @param pageSize 分页大小
+     * @param issueTimeEnd   发布结束时间
+     * @param startTime      开始时间
+     * @param endTime        结束时间
+     * @param pageNum        当前页
+     * @param pageSize       分页大小
      * @return com.baomidou.mybatisplus.plugins.Page<com.mit.community.entity.Promotion>
      * @throws
      * @author shuyy
      * @date 2018/12/27 14:47
      * @company mitesofor
-    */
+     */
     @Transactional(rollbackFor = Exception.class)
     public Page<Promotion> listPage(String communityCode, String promotionType, String title, String issuer, String issuerPhone,
                                     LocalDateTime issueTimeStart, LocalDateTime issueTimeEnd,
                                     LocalDateTime startTime, LocalDateTime endTime, Integer pageNum, Integer pageSize) {
-
         Page<Promotion> page = new Page<>(pageNum, pageSize);
         EntityWrapper<Promotion> wrapper = new EntityWrapper<>();
-        if(StringUtils.isNotBlank(communityCode)){
+        if (StringUtils.isNotBlank(communityCode)) {
             wrapper.eq("community_code", communityCode);
         }
         if (StringUtils.isNotBlank(promotionType)) {

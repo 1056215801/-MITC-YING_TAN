@@ -47,4 +47,9 @@ public class ExpressAddress extends BaseEntity {
      */
     @TableField(exist = false)
     private Integer expressNum;
+    /**
+     * 总数量
+     */
+    @TableField(exist = false)
+    private Integer total;
 }

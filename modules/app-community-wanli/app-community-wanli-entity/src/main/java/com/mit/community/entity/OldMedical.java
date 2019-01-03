@@ -66,7 +66,7 @@ public class OldMedical extends BaseEntity {
     @TableField(exist = false)
     private String oldMedicalStatus;
     /**
-     * 活动状态
+     * 已读状态
      */
     @TableField(exist = false)
     private Boolean readStatus;
