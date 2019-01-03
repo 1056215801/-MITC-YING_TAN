@@ -5,7 +5,9 @@ import com.mit.community.entity.OldMedicalContent;
 import com.mit.community.mapper.OldMedicalContentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -35,5 +37,45 @@ public class OldMedicalContentService {
             return null;
         }
         return oldMedicalContents.get(0);
+    }
+
+    /**
+     * 添加老人体检详情
+     * @param oldMedicalContent 老人体检详情
+     * @author Mr.Deng
+     * @date 17:01 2019/1/2
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void save(OldMedicalContent oldMedicalContent) {
+        oldMedicalContent.setGmtCreate(LocalDateTime.now());
+        oldMedicalContent.setGmtModified(LocalDateTime.now());
+        oldMedicalContentMapper.insert(oldMedicalContent);
+    }
+
+    /**
+     * 更新老人体检详情
+     * @param oldMedicalContent 老人体检详情
+     * @author Mr.Deng
+     * @date 17:20 2019/1/2
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateByOldMedicalId(OldMedicalContent oldMedicalContent) {
+        oldMedicalContent.setGmtModified(LocalDateTime.now());
+        EntityWrapper<OldMedicalContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("old_medical_id", oldMedicalContent.getOldMedicalId());
+        oldMedicalContentMapper.update(oldMedicalContent, wrapper);
+    }
+
+    /**
+     * 删除老人详情信息，通过老人体检id
+     * @param oldMedicalId 老人体检id
+     * @author Mr.Deng
+     * @date 17:33 2019/1/2
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void remove(Integer oldMedicalId) {
+        EntityWrapper<OldMedicalContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("old_medical_id", oldMedicalId);
+        oldMedicalContentMapper.delete(wrapper);
     }
 }

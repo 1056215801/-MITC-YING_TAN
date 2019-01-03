@@ -74,7 +74,8 @@ public class UserServiceController {
                                  PromotionReadUserService promotionReadUserService,
                                  OldMedicalReadUserService oldMedicalReadUserService, OldMedicalService oldMedicalService,
                                  SysMessagesService sysMessagesService, SelectionActivitiesService selectionActivitiesService,
-                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService, SysMessageReadService sysMessageReadService, HouseHoldService houseHoldService) {
+                                 AccessControlService accessControlService, DnakeAppApiService dnakeAppApiService,
+                                 SysMessageReadService sysMessageReadService, HouseHoldService houseHoldService) {
         this.reportThingsRepairService = reportThingsRepairService;
         this.communityServiceInfoService = communityServiceInfoService;
         this.businessHandlingService = businessHandlingService;
@@ -338,7 +339,7 @@ public class UserServiceController {
         String communityCode = household.getCommunityCode();
         if (creatorUserId != null && status != null && StringUtils.isNotBlank(cellphone)) {
             Page<BusinessHandling> listBusinessHandling = businessHandlingService
-                    .pageByStatus(creatorUserId, status,communityCode, pageNum, pageSize);
+                    .pageByStatus(creatorUserId, status, communityCode, pageNum, pageSize);
             String st = (status == 0) ? "未完成" : "已完成";
             userTrackService.addUserTrack(cellphone, "查询业务办理数据", "查询办理状态" + st + "业务数据成功");
             return Result.success(listBusinessHandling);
@@ -506,7 +507,7 @@ public class UserServiceController {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                Page<ExpressAddress> page = expressAddressService.listExpressAddressPage(user.getId(), communityCode, pageNum, pageSize);
+                Page<ExpressAddress> page = expressAddressService.listByCommunityCodePage(user.getId(), communityCode, pageNum, pageSize);
                 userTrackService.addUserTrack(cellphone, "查看我的快递", "未领取快递信息查看成功");
                 return Result.success(page);
             }
@@ -527,10 +528,10 @@ public class UserServiceController {
     @ApiOperation(value = "查询快递详情信息", notes = "输出参数：userId 用户id，expressAddressId 快递地址id；waybillNum 订单编号" +
             "receiveStatus 领取状态1、已领取2、未领取；receiveTime 领取时间；receiver 领取人；receiverPhone 领取人手机号；" +
             "createUserName 创建人")
-    public Result listExpressInfo(String cellphone, Integer expressAddressId) {
+    public Result listExpressInfo(String cellphone, Integer expressAddressId, Integer pageNum, Integer pageSize) {
         if (StringUtils.isNotBlank(cellphone) && expressAddressId != null) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
-            List<ExpressInfo> expressInfos = expressInfoService.listExpressInfo(user.getId(), expressAddressId);
+            Page<ExpressInfo> page = expressInfoService.listExpressInfoPage(user.getId(), expressAddressId, pageNum, pageSize);
             ExpressReadUser expressReadUser1 = expressReadUserService.ByUserIdAndExpressAddressId(user.getId(), expressAddressId);
             if (expressReadUser1 == null) {
                 //添加已读
@@ -539,7 +540,7 @@ public class UserServiceController {
             }
             //记录足迹
             userTrackService.addUserTrack(cellphone, "查看快递详情", "查看快递详情成功");
-            return Result.success(expressInfos);
+            return Result.success(page);
         }
         return Result.success("参数不能为空");
     }

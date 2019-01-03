@@ -100,6 +100,21 @@ public class ExpressInfoService {
     }
 
     /**
+     * 查询快递总个数，通过用户id和快递位置信息
+     * @param userId           用户id
+     * @param expressAddressId 垮堤位置信息
+     * @return 快递个数
+     * @author Mr.Deng
+     * @date 17:08 2018/12/14
+     */
+    public Integer countExpressNum(Integer userId, Integer expressAddressId) {
+        EntityWrapper<ExpressInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        wrapper.eq("express_address_id", expressAddressId);
+        return expressInfoMapper.selectCount(wrapper);
+    }
+
+    /**
      * 查询快递详细信息
      * @param userId           用户id
      * @param expressAddressId 快递地址信息
@@ -107,12 +122,15 @@ public class ExpressInfoService {
      * @author Mr.Deng
      * @date 17:58 2018/12/17
      */
-    public List<ExpressInfo> listExpressInfo(Integer userId, Integer expressAddressId) {
+    public Page<ExpressInfo> listExpressInfoPage(Integer userId, Integer expressAddressId, Integer pageNum, Integer pageSize) {
         EntityWrapper<ExpressInfo> wrapper = new EntityWrapper<>();
+        Page<ExpressInfo> page = new Page<>(pageNum, pageSize);
         wrapper.eq("user_id", userId);
         wrapper.eq("express_address_id", expressAddressId);
         wrapper.orderBy("gmt_create", false);
-        return expressInfoMapper.selectList(wrapper);
+        List<ExpressInfo> expressInfos = expressInfoMapper.selectPage(page, wrapper);
+        page.setRecords(expressInfos);
+        return page;
     }
 
     /**

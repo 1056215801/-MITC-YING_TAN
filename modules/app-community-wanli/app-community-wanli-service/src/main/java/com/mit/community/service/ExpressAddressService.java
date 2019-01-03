@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ExpressAddressService
@@ -101,50 +100,26 @@ public class ExpressAddressService {
      * @author Mr.Deng
      * @date 17:02 2018/12/14
      */
-    public List<Map<String, Object>> listByCommunityCode(String communityCode) {
-        EntityWrapper<ExpressAddress> wrapper = new EntityWrapper<>();
-        wrapper.eq("community_code", communityCode);
-        return expressAddressMapper.selectMaps(wrapper);
-    }
-    /**
-     * 查询快递位置信息，通过小区code
-     * @param communityCode 小区code
-     * @return 快递位置信息
-     * @author Mr.Deng
-     * @date 17:02 2018/12/14
-     */
-    public Page<ExpressAddress> listByCommunityCodePage(String communityCode, Integer pageNum, Integer pageSize) {
+    public Page<ExpressAddress> listByCommunityCodePage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
         EntityWrapper<ExpressAddress> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         Page<ExpressAddress> page = new Page<>(pageNum, pageSize);
         List<ExpressAddress> expressAddresses = expressAddressMapper.selectPage(page, wrapper);
-        page.setRecords(expressAddresses);
-        return page;
-    }
-
-    /**
-     * 查询快递位置信息，通过用户id和小区code
-     * @param userId        用户id
-     * @param communityCode 小区code
-     * @return 快递位置信息
-     * @author Mr.Deng
-     * @date 17:15 2018/12/14
-     */
-    public Page<ExpressAddress> listExpressAddressPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
-        Page<ExpressAddress> page = this.listByCommunityCodePage(communityCode, pageNum, pageSize);
-        List<ExpressAddress> expressAddresses = page.getRecords();
         if (!expressAddresses.isEmpty()) {
             for (ExpressAddress expressAddress : expressAddresses) {
                 Integer integer = expressInfoService.countNotExpressNum(userId, expressAddress.getId());
+                Integer total = expressInfoService.countExpressNum(userId, expressAddress.getId());
                 ExpressReadUser expressReadUser = expressReadUserService.ByUserIdAndExpressAddressId(userId, expressAddress.getId());
                 if (expressReadUser == null) {
                     expressAddress.setReadStatus(false);
-                }else {
+                } else {
                     expressAddress.setReadStatus(true);
                 }
                 expressAddress.setExpressNum(integer);
+                expressAddress.setTotal(total);
             }
         }
+        page.setRecords(expressAddresses);
         return page;
     }
 
@@ -176,7 +151,8 @@ public class ExpressAddressService {
             wrapper.eq("create_user_name", createUserName);
         }
         List<ExpressAddress> expressAddresses = expressAddressMapper.selectPage(page, wrapper);
-        return page.setRecords(expressAddresses);
+        page.setRecords(expressAddresses);
+        return page;
     }
 
 }
