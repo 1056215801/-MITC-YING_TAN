@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/19
  * @company mitesofor
  */
-//@Component
+@Component
 public class HouseholdSchedule {
 
     private final HouseHoldService houseHoldService;
@@ -71,70 +71,76 @@ public class HouseholdSchedule {
     @Transactional(rollbackFor = Exception.class)
 //    @Scheduled(cron = "0 */10 * * * ?")
     @CacheClear(pre = "household")
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void removeAndiImport() {
-        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
-        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
+        try {
+            List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+            communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
 //        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("南昌市");
 
-        //
-        List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
-        if(houseHolds.isEmpty()){
-            return;
-        }
-        updateAuthAndHouseholdRoom(houseHolds);
-        List<HouseHold> list = houseHoldService.list();
-        // 对比出三种类型的数据
-        Map<Integer, HouseHold> map = Maps.newHashMapWithExpectedSize(list.size());
-        list.forEach(l -> map.put(l.getHouseholdId(), l));
-        List<HouseHold> updateHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
-        List<HouseHold> addHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
-        List<HouseHold> removeHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
-        for (HouseHold h : houseHolds) {
-            HouseHold houseHold = map.get(h.getHouseholdId());
-            if (houseHold == null) {
-                addHousehold.add(h);
-            } else {
-                boolean update = houseHoldService.isUpdate(h, houseHold);
-                if (update) {
-                    h.setId(houseHold.getId());
-                    h.setGmtModified(LocalDateTime.now());
-                    updateHousehold.add(h);
-                }
-                map.remove(h.getHouseholdId());
+            //
+            List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
+            if (houseHolds.isEmpty()) {
+                return;
             }
-        }
-        map.forEach((key, value) -> removeHousehold.add(value));
-        // 删除
-        if(!removeHousehold.isEmpty()){
-            List<Integer> deleteId = removeHousehold.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
-            houseHoldService.removeByhouseholdIdList(deleteId);
-        }
-        // 更新
-        if(!updateHousehold.isEmpty()){
-            houseHoldService.updateBatchById(updateHousehold, 1);
-            updateHousehold.forEach(houseHold -> {
-                String mobile = houseHold.getMobile();
-                userService.updateCellphoneByHouseholdId(mobile, houseHold.getHouseholdId());
-            });
-        }
-        if(!addHousehold.isEmpty()){
-            // 增加
-            houseHoldService.insertBatch(addHousehold);
+
+            updateAuthAndHouseholdRoom(houseHolds);
+            List<HouseHold> list = houseHoldService.list();
+            // 对比出三种类型的数据
+            Map<Integer, HouseHold> map = Maps.newHashMapWithExpectedSize(list.size());
+            list.forEach(l -> map.put(l.getHouseholdId(), l));
+            List<HouseHold> updateHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
+            List<HouseHold> addHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
+            List<HouseHold> removeHousehold = Lists.newArrayListWithCapacity(houseHolds.size());
+            for (HouseHold h : houseHolds) {
+                HouseHold houseHold = map.get(h.getHouseholdId());
+                if (houseHold == null) {
+                    addHousehold.add(h);
+                } else {
+                    boolean update = houseHoldService.isUpdate(h, houseHold);
+                    if (update) {
+                        h.setId(houseHold.getId());
+                        h.setGmtModified(LocalDateTime.now());
+                        updateHousehold.add(h);
+                    }
+                    map.remove(h.getHouseholdId());
+                }
+            }
+            map.forEach((key, value) -> removeHousehold.add(value));
+            // 删除
+            if (!removeHousehold.isEmpty()) {
+                List<Integer> deleteId = removeHousehold.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
+                houseHoldService.removeByhouseholdIdList(deleteId);
+            }
+            // 更新
+            if (!updateHousehold.isEmpty()) {
+                houseHoldService.updateBatchById(updateHousehold, 1);
+                updateHousehold.forEach(houseHold -> {
+                    String mobile = houseHold.getMobile();
+                    userService.updateCellphoneByHouseholdId(mobile, houseHold.getHouseholdId());
+                });
+            }
+            if (!addHousehold.isEmpty()) {
+                // 增加
+                houseHoldService.insertBatch(addHousehold);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     /**
      * 更新授权设备和关联房屋
+     *
      * @param houseHolds
      * @return void
      * @throws
      * @author shuyy
      * @date 2018/12/12 10:45
      * @company mitesofor
-    */
+     */
     @CacheClear(pre = "householdRoom")
-    private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds){
+    private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds) {
         authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
         householdRoomService.remove();
@@ -158,17 +164,14 @@ public class HouseholdSchedule {
                 }
                 map.forEach((key, value) -> removeAppGroup.add(value));
                 // 删除
-                if(!removeAppGroup.isEmpty()){
+                if (!removeAppGroup.isEmpty()) {
                     List<Integer> deleteId = removeAppGroup.parallelStream().map(AuthorizeAppHouseholdDeviceGroup::getId).collect(Collectors.toList());
                     authorizeAppHouseholdDeviceGroupService.deleteBatchIds(deleteId);
                 }
-                if(!addAppGroup.isEmpty()){
+                if (!addAppGroup.isEmpty()) {
                     // 增加
                     authorizeAppHouseholdDeviceGroupService.insertBatch(addAppGroup);
                 }
-
-
-
 
 
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
@@ -184,6 +187,7 @@ public class HouseholdSchedule {
                 }
             });
         }
+        System.out.println("in");
     }
 
     /***

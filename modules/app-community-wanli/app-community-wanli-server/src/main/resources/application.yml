@@ -183,7 +183,7 @@ redis:
   password:
   timeout: 2000
   # 服务或应用名
-  sysName: app-community-wanli
+  sysName: community
   enable: true
   database: 0
 

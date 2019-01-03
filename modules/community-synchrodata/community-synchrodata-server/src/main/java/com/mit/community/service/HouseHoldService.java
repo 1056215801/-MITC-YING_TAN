@@ -222,6 +222,9 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                 authorizeAppHouseholdDeviceGroups.add(authorizeAppHouseholdDeviceGroup);
             }
             houseHold.setAuthorizeAppHouseholdDeviceGroups(authorizeAppHouseholdDeviceGroups);
+        }else{
+            ArrayList<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups = Lists.newArrayListWithCapacity(0);
+            houseHold.setAuthorizeAppHouseholdDeviceGroups(authorizeAppHouseholdDeviceGroups);
         }
     }
 
@@ -243,6 +246,9 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                 authorizeHouseholdDevice.setGmtModified(LocalDateTime.now());
                 authorizeHouseholdDeviceGroups.add(authorizeHouseholdDevice);
             }
+            houseHold.setAuthorizeHouseholdDeviceGroups(authorizeHouseholdDeviceGroups);
+        }else{
+            ArrayList<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = Lists.newArrayListWithCapacity(0);
             houseHold.setAuthorizeHouseholdDeviceGroups(authorizeHouseholdDeviceGroups);
         }
     }

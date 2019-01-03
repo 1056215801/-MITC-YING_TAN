@@ -177,7 +177,7 @@ redis:
   password:
   timeout: 2000
   # 服务或应用名
-  sysName: community-synchrodata
+  sysName: community
   enable: true
   database: 0
 
