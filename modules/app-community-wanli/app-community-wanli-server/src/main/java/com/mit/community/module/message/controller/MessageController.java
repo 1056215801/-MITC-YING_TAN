@@ -71,6 +71,13 @@ public class MessageController {
         Integer notReadOld = oldMedicalService.countNotRead(communityCode, user.getId());
         Integer notMessageRead = visitorMessageService.countNotRead(cellphone);
         Map<String, Integer> map = Maps.newHashMapWithExpectedSize(7);
+        notReadNotice = notReadNotice  < 0 ? 0 : notReadNotice;
+        notSysMessage = notSysMessage  < 0 ? 0 : notSysMessage;
+        notReadExpress = notReadExpress  < 0 ? 0 : notReadExpress;
+        notReadLostFound = notReadLostFound  < 0 ? 0 : notReadLostFound;
+        notReadPromotion = notReadPromotion  < 0 ? 0 : notReadPromotion;
+        notReadOld = notReadOld  < 0 ? 0 : notReadOld;
+        notMessageRead = notMessageRead  < 0 ? 0 : notMessageRead;
         map.put("notice", notReadNotice);
         map.put("sysMessage", notSysMessage);
         map.put("express", notReadExpress);

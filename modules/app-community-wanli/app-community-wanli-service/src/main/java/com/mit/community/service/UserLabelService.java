@@ -2,6 +2,8 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.google.common.collect.Maps;
+import com.mit.community.entity.Label;
 import com.mit.community.entity.UserLabel;
 import com.mit.community.mapper.UserLabelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 用户标签
@@ -22,6 +26,8 @@ public class UserLabelService extends ServiceImpl<UserLabelMapper, UserLabel> {
     private final UserLabelMapper userLabelMapper;
 
     private final DictionaryService dictionaryService;
+    @Autowired
+    private LabelService labelService;
 
     @Autowired
     public UserLabelService(UserLabelMapper userLabelMapper, DictionaryService dictionaryService) {
@@ -68,7 +74,17 @@ public class UserLabelService extends ServiceImpl<UserLabelMapper, UserLabel> {
     public List<UserLabel> listByUserId(Integer userId){
         EntityWrapper<UserLabel> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
-        return userLabelMapper.selectList(wrapper);
+        List<UserLabel> userLabelList = userLabelMapper.selectList(wrapper);
+        List<Integer> list = userLabelList.parallelStream().map(UserLabel::getLabelId).collect(Collectors.toList());
+        List<Label> labels = labelService.listByIdList(list);
+        Map<Integer, Label> map = Maps.newHashMapWithExpectedSize(labels.size());
+        labels.forEach(item -> map.put(item.getId(), item));
+        userLabelList.forEach(item -> {
+            Integer labelId = item.getLabelId();
+            Label label = map.get(labelId);
+            item.setLableName(label.getName());
+        });
+        return userLabelList;
     }
 
 
