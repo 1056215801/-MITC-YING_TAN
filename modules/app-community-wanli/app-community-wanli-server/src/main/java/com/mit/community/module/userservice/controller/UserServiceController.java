@@ -234,7 +234,7 @@ public class UserServiceController {
     @GetMapping("/listCommunityServiceInfoByCommunityCode")
     @ApiOperation(value = "查询社区门诊信息，通过小区code", notes = "输入参数：cellphone 手机号；（坐标为当前用户定位坐标）" +
             "longitude 经度;latitude 纬度；type 社区服务类型.关联字典code community_service_type 社区服务类型" +
-            " \n返回参数：name 名称；address 地址；cellphone 电话号码；distance 距离；longitude 经度;latitude 纬度" +
+            " <br/>返回参数：name 名称；address 地址；cellphone 电话号码；distance 距离；longitude 经度;latitude 纬度" +
             "image 图片地址；creatorUserId 创建用户id ")
     public Result listCommunityServiceInfoByCommunityCode(String cellphone, Double longitude, Double latitude, String type) {
         if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(cellphone) && longitude != null && latitude != null) {
@@ -767,8 +767,8 @@ public class UserServiceController {
                 Page<SysMessages> page = sysMessagesService.listByUserIdPage(user.getId(), pageNum, pageSize);
                 List<SysMessages> sysMessages = page.getRecords();
                 if (!sysMessages.isEmpty()) {
-                    List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
                     // 记录系统消息已读
+                    List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
                     List<SysMessageRead> sysMessageReads = sysMessageReadService.listByUserId(user.getId());
                     if (!sysMessageReads.isEmpty()) {
                         List<Integer> collect = sysMessageReads.stream().map(SysMessageRead::getSysMessageId).collect(Collectors.toList());
