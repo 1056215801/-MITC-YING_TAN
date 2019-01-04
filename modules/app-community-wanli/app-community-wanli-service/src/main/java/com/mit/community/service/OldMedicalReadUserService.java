@@ -41,24 +41,15 @@ public class OldMedicalReadUserService {
      * @author Mr.Deng
      * @date 19:50 2018/12/18
      */
-    public List<OldMedicalReadUser> getByUserIdOldMedicalId(Integer userId, Integer oldMedicalId) {
+    public OldMedicalReadUser getByUserIdOldMedicalId(Integer userId, Integer oldMedicalId) {
         EntityWrapper<OldMedicalReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("old_medical_id", oldMedicalId);
-        return oldMedicalReadUserMapper.selectList(wrapper);
-    }
-
-    /**
-     * 老人体检浏览量
-     * @param oldMedicalId 老人体检id
-     * @return 浏览量
-     * @author Mr.Deng
-     * @date 19:50 2018/12/18
-     */
-    public Integer countByUserIdOldMedicalId(Integer oldMedicalId) {
-        EntityWrapper<OldMedicalReadUser> wrapper = new EntityWrapper<>();
-        wrapper.eq("old_medical_id", oldMedicalId);
-        return oldMedicalReadUserMapper.selectCount(wrapper);
+        List<OldMedicalReadUser> oldMedicalReadUsers = oldMedicalReadUserMapper.selectList(wrapper);
+        if (oldMedicalReadUsers.isEmpty()) {
+            return null;
+        }
+        return oldMedicalReadUsers.get(0);
     }
 
     /**

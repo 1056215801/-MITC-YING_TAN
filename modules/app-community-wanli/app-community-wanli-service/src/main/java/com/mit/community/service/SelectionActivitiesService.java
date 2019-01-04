@@ -88,13 +88,12 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
      * @date 14:34 2018/12/22
      */
     public Integer updateReadNum(SelectionActivities selectionActivities) {
-        selectionActivities.getId();
+        Integer id = selectionActivities.getId();
         Integer readNum = selectionActivities.getReadNum();
         selectionActivities.setReadNum(readNum + 1);
         EntityWrapper<SelectionActivities> wrapper = new EntityWrapper<>();
-        wrapper.eq("read_num", readNum).eq("id", selectionActivities.getId());
-        Integer update = selectionActivitiesMapper.update(selectionActivities, wrapper);
-        return update;
+        wrapper.eq("read_num", readNum).eq("id", id);
+        return selectionActivitiesMapper.update(selectionActivities, wrapper);
     }
 
     /**

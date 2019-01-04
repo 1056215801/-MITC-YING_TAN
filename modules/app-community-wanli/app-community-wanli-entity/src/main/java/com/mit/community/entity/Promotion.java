@@ -77,16 +77,25 @@ public class Promotion extends BaseEntity {
      */
     @TableField("community_code")
     private String communityCode;
-
-    @TableField(exist = false, value = "促销状态")
+    /**
+     * 浏览量
+     */
+    @TableField("read_num")
+    private Integer readNum;
+    /**
+     * 促销状态
+     */
+    @TableField(exist = false)
     private String promotionStatus;
-
-    @TableField(exist = false, value = "已读状态")
+    /**
+     * 已读状态
+     */
+    @TableField(exist = false)
     private Boolean readStatus;
-
-    @TableField(exist = false, value = "详情")
+    /**
+     * 详情
+     */
+    @TableField(exist = false)
     private String content;
 
-    @TableField(exist = false, value = "浏览量")
-    private Integer readNum;
 }

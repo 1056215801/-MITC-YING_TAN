@@ -62,11 +62,15 @@ public class LostFountReadUserService {
      * @author Mr.Deng
      * @date 9:51 2018/12/18
      */
-    public List<LostFountReadUser> getByUserIdByLostFountId(Integer userId, Integer lostFountId) {
+    public LostFountReadUser getByUserIdByLostFountId(Integer userId, Integer lostFountId) {
         EntityWrapper<LostFountReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("lost_fount_id", lostFountId);
-        return lostFountReadUserMapper.selectList(wrapper);
+        List<LostFountReadUser> lostFountReadUsers = lostFountReadUserMapper.selectList(wrapper);
+        if (lostFountReadUsers.isEmpty()) {
+            return null;
+        }
+        return lostFountReadUsers.get(0);
     }
 
     /**

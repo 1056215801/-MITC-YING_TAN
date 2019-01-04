@@ -52,7 +52,7 @@ public class LostFoundService {
      * @author Mr.Deng
      * @date 9:19 2018/12/18
      */
-    public Page<LostFound> listPage(String communityCode, Integer pageNum, Integer pageSize) {
+    public Page<LostFound> listPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
         EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("id,title,img_url as imgUrl,receiver_address as receiverAddress,receiver_status as receiverStatus");
         wrapper.orderBy("gmt_create", false);
@@ -60,6 +60,17 @@ public class LostFoundService {
         wrapper.eq("receiver_status", 1);
         Page<LostFound> page = new Page<>(pageNum, pageSize);
         List<LostFound> lostFounds = lostFoundMapper.selectPage(page, wrapper);
+        if (!lostFounds.isEmpty()) {
+            for (LostFound lostFound : lostFounds) {
+                LostFountReadUser lostFountReadUsers = lostFountReadUserService.
+                        getByUserIdByLostFountId(userId, lostFound.getId());
+                if (lostFountReadUsers == null) {
+                    lostFound.setReadStatus(false);
+                } else {
+                    lostFound.setReadStatus(true);
+                }
+            }
+        }
         page.setRecords(lostFounds);
         return page;
     }
@@ -91,56 +102,8 @@ public class LostFoundService {
                 content = lostFountContent.getContent();
             }
             lostFound.setContent(content);
-            Integer readNum = lostFountReadUserService.countByLostFountId(id);
-            lostFound.setReadNum(readNum);
         }
         return lostFound;
-    }
-
-    /**
-     * 查询所有的失物招领信息
-     * @param userId 用户id
-     * @return 失物招领信息
-     * @author Mr.Deng
-     * @date 10:02 2018/12/18
-     */
-    public List<LostFound> listAll(Integer userId, String communityCode) {
-        List<LostFound> list = this.list(communityCode);
-        if (!list.isEmpty()) {
-            for (LostFound lostFound : list) {
-                List<LostFountReadUser> lostFountReadUsers = lostFountReadUserService.getByUserIdByLostFountId(userId, lostFound.getId());
-                if (lostFountReadUsers.isEmpty()) {
-                    lostFound.setReadStatus(false);
-                } else {
-                    lostFound.setReadStatus(true);
-                }
-            }
-        }
-        return list;
-    }
-
-    /**
-     * 查询所有的失物招领信息
-     * @param userId 用户id
-     * @return 失物招领信息
-     * @author Mr.Deng
-     * @date 10:02 2018/12/18
-     */
-    public Page<LostFound> listPage(Integer userId, String communityCode, Integer pageNum, Integer pageSize) {
-        Page<LostFound> lostFoundPage = this.listPage(communityCode, pageNum, pageSize);
-        List<LostFound> list = lostFoundPage.getRecords();
-        if (!list.isEmpty()) {
-            for (LostFound lostFound : list) {
-                List<LostFountReadUser> lostFountReadUsers = lostFountReadUserService.
-                        getByUserIdByLostFountId(userId, lostFound.getId());
-                if (lostFountReadUsers.isEmpty()) {
-                    lostFound.setReadStatus(false);
-                } else {
-                    lostFound.setReadStatus(true);
-                }
-            }
-        }
-        return lostFoundPage;
     }
 
     /**
@@ -153,8 +116,6 @@ public class LostFoundService {
      * @param pickTime      发布时间
      * @param communityCode 小区code
      * @param content       内容
-     * @return void
-     * @throws
      * @author shuyy
      * @date 2018/12/27 10:06
      * @company mitesofor
@@ -167,7 +128,7 @@ public class LostFoundService {
                 imgUrl, issuer, issuerPhone, picAddress,
                 pickTime, StringUtils.EMPTY, StringUtils.EMPTY,
                 receiverAddress, Constants.NULL_LOCAL_DATE_TIME,
-                1, communityCode, null, null, null);
+                1, communityCode, 0, null, null);
         lostFound.setGmtCreate(LocalDateTime.now());
         lostFound.setGmtModified(LocalDateTime.now());
         lostFoundMapper.insert(lostFound);
@@ -333,6 +294,41 @@ public class LostFoundService {
         Integer num = lostFoundMapper.selectCount(wrapper);
         Integer readNum = lostFountReadUserService.countByUserId(userId);
         return num - readNum;
+    }
+
+    /**
+     * 记录浏览量
+     * @param lostFound 失物招领
+     * @return 更新条数
+     * @author Mr.Deng
+     * @date 9:23 2019/1/4
+     */
+    public Integer updateReadNum(LostFound lostFound) {
+        EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
+        Integer id = lostFound.getId();
+        Integer readNum = lostFound.getReadNum();
+        lostFound.setReadNum(readNum + 1);
+        wrapper.eq("read_num", readNum).eq("id", id);
+        return lostFoundMapper.update(lostFound, wrapper);
+    }
+
+    /**
+     * 增加浏览量
+     * @param lostFound 失物招领
+     * @author Mr.Deng
+     * @date 9:26 2019/1/4
+     */
+    public void addLostFoundReadNum(LostFound lostFound) {
+        Integer num = this.updateReadNum(lostFound);
+        if (num == 0) {
+            lostFound = this.getById(lostFound.getId());
+            if (lostFound == null) {
+                return;
+            } else {
+                this.updateReadNum(lostFound);
+            }
+        }
+        return;
     }
 
 }
