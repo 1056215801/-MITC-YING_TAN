@@ -162,5 +162,20 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
         return this.selectBatchIds(labelIdList);
     }
 
+    /**
+     * 查询label，通过labelid列表
+     * @param labelIds
+     * @return java.util.List<com.mit.community.entity.Label>
+     * @throws
+     * @author shuyy
+     * @date 2019-01-04 10:00
+     * @company mitesofor
+    */
+    public List<Label> listByIdList(List<Integer> labelIds){
+        EntityWrapper<Label> wrapper = new EntityWrapper<>();
+        wrapper.in("id", labelIds);
+        return labelMapper.selectList(wrapper);
+    }
+
 
 }

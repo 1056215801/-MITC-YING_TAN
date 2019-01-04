@@ -112,7 +112,11 @@ public class HouseHoldService {
     public HouseHold getByHouseholdId(Integer householdId) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);
-        return houseHoldMapper.selectList(wrapper).get(0);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if(houseHolds.isEmpty()){
+            return null;
+        }
+        return houseHolds.get(0);
     }
 
     /**
