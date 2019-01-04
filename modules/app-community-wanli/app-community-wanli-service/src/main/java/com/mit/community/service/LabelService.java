@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import com.mit.community.entity.Label;
 import com.mit.community.entity.UserLabel;
 import com.mit.community.mapper.LabelMapper;
@@ -40,7 +41,7 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
      * @company mitesofor
      */
     public Label save(String name, Short type, Integer userId) {
-        Label label = new Label(name, type, userId);
+        Label label = new Label(name, type, userId, null);
         label.setGmtCreate(LocalDateTime.now());
         label.setGmtModified(LocalDateTime.now());
         labelMapper.insert(label);
@@ -49,16 +50,16 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
 
     /**
      * 查询自定义标签列表，通过标签名列表和用户id
-     * @param nameList 标签名列表
+     * @param idList 标签名列表
      * @param userId 用户id
      * @return com.mit.community.entity.Label
      * @author shuyy
      * @date 2018/12/19 19:12
      * @company mitesofor
     */
-    public List<Label> listByNameListAndUserId(List<String> nameList, Integer userId) {
+    public List<Label> listByNameListAndUserId(List<String> idList, Integer userId) {
         EntityWrapper<Label> wrapper = new EntityWrapper<>();
-        wrapper.in("name", nameList).eq("user_id", userId);
+        wrapper.in("id", idList).eq("user_id", userId);
         return labelMapper.selectList(wrapper);
     }
 
@@ -154,7 +155,12 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
     */
     public List<Label> listAssociationLabelByUserId(Integer userId){
         List<UserLabel> userLabelList = userLabelService.listByUserId(userId);
+        if(userLabelList.isEmpty()){
+            return Lists.newArrayListWithCapacity(0);
+        }
         List<Integer> labelIdList = userLabelList.parallelStream().map(UserLabel::getLabelId).collect(Collectors.toList());
         return this.selectBatchIds(labelIdList);
     }
+
+
 }

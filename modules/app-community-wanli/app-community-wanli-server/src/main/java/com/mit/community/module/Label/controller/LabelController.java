@@ -1,6 +1,7 @@
 package com.mit.community.module.Label.controller;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mit.community.constants.Constants;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.Label;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 标签
@@ -40,33 +43,34 @@ public class LabelController {
 
     /**
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/12/19 18:47
      * @company mitesofor
-    */
+     */
     @GetMapping("/listLabelSystem")
-    @ApiOperation(value = "查询系统预设标签")
-    public Result listLabelSystem() {
-        List<Label> labels = labelService.listByType(Constants.LABEL_TYPE_SYSTEM);
-        return Result.success(labels);
+    @ApiOperation(value = "查询标签", notes = "note 1、系统标签。2、自定义标签")
+    public Result listLabelSystem(String cellphone, short type) {
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        List<Label> labels = labelService.listAssociationLabelByUserId(user.getId());
+        Map<Short, List<Label>> typeMap = labels.parallelStream().collect(Collectors.groupingBy(Label::getType));
+        List<Label> selectedSystemLabel = typeMap.get(type);
+        Map<Integer, Label> map = Maps.newHashMap();
+        if (selectedSystemLabel != null) {
+            for (Label label : selectedSystemLabel) {
+                map.put(label.getId(), label);
+            }
+        }
+        List<Label> dataLabels = labelService.listByType(type);
+        dataLabels.forEach(item -> {
+            if (null == map.get(item.getId())) {
+                item.setSelected(false);
+            } else {
+                item.setSelected(true);
+            }
+        });
+        return Result.success(dataLabels);
     }
 
-    /**
-     *
-     * @param cellphone 手机号
-     * @return com.mit.community.util.Result
-     * @author shuyy
-     * @date 2018/12/19 18:52
-     * @company mitesofor
-    */
-    @GetMapping("/listLabelByUserId")
-    @ApiOperation(value = "查询用户自定义标签",  notes = "传参：cellphone 手机号")
-    public Result listLabelByUserId(String cellphone) {
-        User user = (User) redisService.get(RedisConstant.USER + cellphone);
-        List<Label> labels = labelService.listByUserId(user.getId());
-        return Result.success(labels);
-    }
 
     /**
      * @param cellphone 手机号
@@ -75,7 +79,7 @@ public class LabelController {
      * @author shuyy
      * @date 2018/12/19 19:00
      * @company mitesofor
-    */
+     */
     @PostMapping("/saveLabelCustomer")
     @ApiOperation(value = "增加用户自定义标签", notes = "传参：labelName 标签名")
     public Result saveLabelCustomer(String cellphone, String labelName) {
@@ -91,7 +95,7 @@ public class LabelController {
      * @author shuyy
      * @date 2018/12/19 19:05
      * @company mitesofor
-    */
+     */
     @DeleteMapping("/removeLabelCustomer")
     @ApiOperation(value = "删除用户自定义标签", notes = "传参：labelName 标签名")
     public Result removeLabelCustomer(String cellphone, String labelName) {
@@ -101,27 +105,27 @@ public class LabelController {
     }
 
     /**
-     * @param cellphone 手机号
+     * @param cellphone             手机号
      * @param customerlabelNameList 自定义标签名列表
-     * @param systemLabelIdList 系统标签id列表
+     * @param systemLabelIdList     系统标签id列表
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 19:20
      * @company mitesofor
-    */
+     */
     @PostMapping("/associationLabelCustomer")
     @ApiOperation(value = "关联用户自定义标签", notes = "数据库有这个自定义标签才能关联，所以关联用户自定一标签前，每添加一个自定义标签，" +
             "都需要调用saveLabelCustomer接口添加自定标签。而且，调用本接口流程是，先删除之前的标签，再插入新标签。<br/>" +
             "传参：customerlabelNameList 自定义标签名列表， systemLabelIdList 系统标签id列表")
-    public Result associationLabel(String cellphone, @RequestParam("customerlabelNameList") List<String> customerlabelNameList,
-                                           @RequestParam("SystemLabelIdList") List<Integer> systemLabelIdList) {
+    public Result associationLabel(String cellphone, @RequestParam("customerlabelIdList") List<String> customerlabelIdList,
+                                   @RequestParam("SystemLabelIdList") List<Integer> systemLabelIdList) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         // 先删除，再关联
         userLabelService.removeByUserId(user.getId());
-        List<Label> labels = labelService.listByNameListAndUserId(customerlabelNameList, user.getId());
-        List<UserLabel> userLabelList = Lists.newArrayListWithCapacity(customerlabelNameList.size() + systemLabelIdList.size());
+        List<Label> labels = labelService.listByNameListAndUserId(customerlabelIdList, user.getId());
+        List<UserLabel> userLabelList = Lists.newArrayListWithCapacity(customerlabelIdList.size() + systemLabelIdList.size());
         labels.forEach(label -> {
-            UserLabel userLabel = new UserLabel(label.getId(), user.getId(),label.getType(), null);
+            UserLabel userLabel = new UserLabel(label.getId(), user.getId(), label.getType(), null);
             userLabel.setGmtModified(LocalDateTime.now());
             userLabel.setGmtCreate(LocalDateTime.now());
             userLabelList.add(userLabel);
@@ -134,25 +138,6 @@ public class LabelController {
         });
         userLabelService.insertBatch(userLabelList);
         return Result.success("关联成功");
-    }
-
-
-
-
-    /**
-     *
-     * @param cellphone 手机号
-     * @return com.mit.community.util.Result
-     * @author shuyy
-     * @date 2018/12/19 19:47
-     * @company mitesofor
-    */
-    @GetMapping("/listAssociationLabel")
-    @ApiOperation(value = "查询用户关联标签", notes = "返回参数：label的属性type：1、系统标签。2、用户自定义标签")
-    public Result listAssociationLabel(String cellphone) {
-        User user = (User) redisService.get(RedisConstant.USER + cellphone);
-        List<Label> labels = labelService.listAssociationLabelByUserId(user.getId());
-        return Result.success(labels);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.mit.community.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,4 +30,7 @@ public class Label extends BaseEntity {
      * 用户id
      */
     private Integer user_id;
+    /***/
+    @TableField(exist = false)
+    private Boolean selected;
 }
