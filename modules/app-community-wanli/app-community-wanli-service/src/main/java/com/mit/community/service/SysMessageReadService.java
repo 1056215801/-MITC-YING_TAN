@@ -15,7 +15,6 @@ import java.util.Map;
 
 /**
  * 系统消息已读
- *
  * @author shuyy
  * @date 2018/12/29
  * @company mitesofor
@@ -33,8 +32,8 @@ public class SysMessageReadService extends ServiceImpl<SysMessageReadMapper, Sys
      * @author shuyy
      * @date 2018/12/29 10:12
      * @company mitesofor
-    */
-    public List<SysMessageRead> listByUserId(Integer userId){
+     */
+    public List<SysMessageRead> listByUserId(Integer userId) {
         EntityWrapper<SysMessageRead> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return sysMessageReadMapper.selectList(wrapper);
@@ -49,23 +48,21 @@ public class SysMessageReadService extends ServiceImpl<SysMessageReadMapper, Sys
      * @author shuyy
      * @date 2018/12/29 9:54
      * @company mitesofor
-    */
-    public void saveNotRead(Integer userId, List<Integer> sysMessageIdList){
+     */
+    public void saveNotRead(Integer userId, List<Integer> sysMessageIdList) {
         List<SysMessageRead> sysMessageReads = this.listByUserId(userId);
         Map<Integer, SysMessageRead> map = Maps.newHashMapWithExpectedSize(sysMessageReads.size());
-        sysMessageReads.forEach(item -> {
-            map.put(item.getSysMessageId(), item);
-        });
+        sysMessageReads.forEach(item -> map.put(item.getSysMessageId(), item));
         List<SysMessageRead> sysMessageReadAdd = Lists.newArrayListWithCapacity(sysMessageIdList.size());
         sysMessageIdList.forEach(item -> {
-            if(!map.containsKey(item)){
+            if (!map.containsKey(item)) {
                 SysMessageRead sysMessageRead = new SysMessageRead(userId, item);
                 sysMessageRead.setGmtCreate(LocalDateTime.now());
                 sysMessageRead.setGmtModified(LocalDateTime.now());
                 sysMessageReadAdd.add(sysMessageRead);
             }
         });
-        if(!sysMessageReadAdd.isEmpty()){
+        if (!sysMessageReadAdd.isEmpty()) {
             this.insertBatch(sysMessageReadAdd);
         }
     }
@@ -77,8 +74,8 @@ public class SysMessageReadService extends ServiceImpl<SysMessageReadMapper, Sys
      * @author shuyy
      * @date 2018/12/29 10:08
      * @company mitesofor
-    */
-    public Integer countNum(Integer userId){
+     */
+    public Integer countNum(Integer userId) {
         EntityWrapper<SysMessageRead> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         return sysMessageReadMapper.selectCount(wrapper);

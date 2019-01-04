@@ -766,9 +766,19 @@ public class UserServiceController {
             if (user != null) {
                 Page<SysMessages> page = sysMessagesService.listByUserIdPage(user.getId(), pageNum, pageSize);
                 List<SysMessages> sysMessages = page.getRecords();
-                // 记录系统消息已读
-                List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
-                sysMessageReadService.saveNotRead(user.getId(), list);
+                if (!sysMessages.isEmpty()) {
+                    List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
+                    // 记录系统消息已读
+                    List<SysMessageRead> sysMessageReads = sysMessageReadService.listByUserId(user.getId());
+                    if (!sysMessageReads.isEmpty()) {
+                        List<Integer> collect = sysMessageReads.stream().map(SysMessageRead::getSysMessageId).collect(Collectors.toList());
+                        list.addAll(collect);
+                        List<Integer> collect1 = list.stream().distinct().collect(Collectors.toList());
+                        if (!collect1.isEmpty()) {
+                            sysMessageReadService.saveNotRead(user.getId(), collect1);
+                        }
+                    }
+                }
                 return Result.success(page);
             }
             return Result.error("请登录");

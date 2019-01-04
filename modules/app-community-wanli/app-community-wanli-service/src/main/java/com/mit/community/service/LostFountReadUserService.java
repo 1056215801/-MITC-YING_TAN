@@ -74,19 +74,6 @@ public class LostFountReadUserService {
     }
 
     /**
-     * 查询浏览量，通过失物招领id
-     * @param lostFountId 失物招领id
-     * @return 浏览数
-     * @author Mr.Deng
-     * @date 9:53 2018/12/18
-     */
-    public Integer countByLostFountId(Integer lostFountId) {
-        EntityWrapper<LostFountReadUser> wrapper = new EntityWrapper<>();
-        wrapper.eq("lost_fount_id", lostFountId);
-        return lostFountReadUserMapper.selectCount(wrapper);
-    }
-
-    /**
      * 统计已读条数
      * @param userId 用户id
      * @return java.lang.Integer
