@@ -34,19 +34,6 @@ public class PromotionReadUserService {
     }
 
     /**
-     * 查询某个促销活动的浏览量
-     * @param promotionId 促销id
-     * @return 浏览量
-     * @author Mr.Deng
-     * @date 16:05 2018/12/18
-     */
-    public Integer countByPromotionId(Integer promotionId) {
-        EntityWrapper<PromotionReadUser> wrapper = new EntityWrapper<>();
-        wrapper.eq("promotion_id", promotionId);
-        return promotionReadUserMapper.selectCount(wrapper);
-    }
-
-    /**
      * 查询促销活动已读信息，通过用户id和促销id
      * @param userId      用户id
      * @param promotionId 促销id
@@ -54,14 +41,19 @@ public class PromotionReadUserService {
      * @author Mr.Deng
      * @date 16:06 2018/12/18
      */
-    public List<PromotionReadUser> getByUserIdAndPromotionId(Integer userId, Integer promotionId) {
+    public PromotionReadUser getByUserIdAndPromotionId(Integer userId, Integer promotionId) {
         EntityWrapper<PromotionReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("promotion_id", promotionId);
-        return promotionReadUserMapper.selectList(wrapper);
+        List<PromotionReadUser> promotionReadUsers = promotionReadUserMapper.selectList(wrapper);
+        if (promotionReadUsers.isEmpty()) {
+            return null;
+        }
+        return promotionReadUsers.get(0);
     }
 
     /**
+     * 统计已读数
      * @param userId userId
      * @return java.lang.Integer
      * @author shuyy

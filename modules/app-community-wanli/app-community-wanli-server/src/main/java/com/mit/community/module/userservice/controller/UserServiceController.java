@@ -234,7 +234,7 @@ public class UserServiceController {
     @GetMapping("/listCommunityServiceInfoByCommunityCode")
     @ApiOperation(value = "查询社区门诊信息，通过小区code", notes = "输入参数：cellphone 手机号；（坐标为当前用户定位坐标）" +
             "longitude 经度;latitude 纬度；type 社区服务类型.关联字典code community_service_type 社区服务类型" +
-            " \n返回参数：name 名称；address 地址；cellphone 电话号码；distance 距离；longitude 经度;latitude 纬度" +
+            " <br/>返回参数：name 名称；address 地址；cellphone 电话号码；distance 距离；longitude 经度;latitude 纬度" +
             "image 图片地址；creatorUserId 创建用户id ")
     public Result listCommunityServiceInfoByCommunityCode(String cellphone, Double longitude, Double latitude, String type) {
         if (StringUtils.isNotBlank(type) && StringUtils.isNotBlank(cellphone) && longitude != null && latitude != null) {
@@ -562,8 +562,7 @@ public class UserServiceController {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                Page<LostFound> page = lostFoundService.listPage(user.getId(),
-                        communityCode, pageNum, pageSize);
+                Page<LostFound> page = lostFoundService.listPage(user.getId(), communityCode, pageNum, pageSize);
                 return Result.success(page);
             }
             return Result.error("请登录");
@@ -588,9 +587,14 @@ public class UserServiceController {
             if (user != null) {
                 LostFound lostFount = lostFoundService.getLostFountInfo(lostFountId);
                 if (lostFount != null) {
-                    //标记已读
-                    LostFountReadUser lostFountReadUser1 = new LostFountReadUser(user.getId(), lostFountId);
-                    lostFountReadUserService.save(lostFountReadUser1);
+                    //增加浏览量
+                    lostFoundService.addLostFoundReadNum(lostFount);
+                    LostFountReadUser lostFountId1 = lostFountReadUserService.getByUserIdByLostFountId(user.getId(), lostFountId);
+                    if (lostFountId1 == null) {
+                        //标记已读
+                        LostFountReadUser lostFountReadUser1 = new LostFountReadUser(user.getId(), lostFountId);
+                        lostFountReadUserService.save(lostFountReadUser1);
+                    }
                     //添加足迹
                     userTrackService.addUserTrack(cellphone, "查询失物招领", "查询" + lostFount.getTitle() + "成功");
                     return Result.success(lostFount);
@@ -646,9 +650,14 @@ public class UserServiceController {
             if (user != null) {
                 Promotion promotion = promotionService.getPromotionInfo(promotionId);
                 if (promotion != null) {
-                    //添加已读
-                    PromotionReadUser promotionReadUser = new PromotionReadUser(user.getId(), promotionId);
-                    promotionReadUserService.save(promotionReadUser);
+                    //增加浏览量
+                    promotionService.addPromotionReadNum(promotion);
+                    PromotionReadUser promotionReadUser1 = promotionReadUserService.getByUserIdAndPromotionId(user.getId(), promotionId);
+                    if (promotionReadUser1 == null) {
+                        //添加已读
+                        PromotionReadUser promotionReadUser = new PromotionReadUser(user.getId(), promotionId);
+                        promotionReadUserService.save(promotionReadUser);
+                    }
                     //添加足迹
                     userTrackService.addUserTrack(cellphone, "查询促销信息", "促销信息" + promotion.getTitle() + "查询成功");
                     return Result.success(promotion);
@@ -702,9 +711,14 @@ public class UserServiceController {
             if (user != null) {
                 OldMedical oldMedical = oldMedicalService.getByOldMedicalId(oldMedicalId);
                 if (oldMedical != null) {
-                    //添加已读
-                    OldMedicalReadUser oldMedicalReadUser = new OldMedicalReadUser(user.getId(), oldMedicalId);
-                    oldMedicalReadUserService.save(oldMedicalReadUser);
+                    //添加浏览量
+                    oldMedicalService.addOldMedicalReadNum(oldMedical);
+                    OldMedicalReadUser oldMedicalRead = oldMedicalReadUserService.getByUserIdOldMedicalId(user.getId(), oldMedicalId);
+                    if (oldMedicalRead == null) {
+                        //添加已读
+                        OldMedicalReadUser oldMedicalReadUser = new OldMedicalReadUser(user.getId(), oldMedicalId);
+                        oldMedicalReadUserService.save(oldMedicalReadUser);
+                    }
                     //记录足迹
                     userTrackService.addUserTrack(cellphone, "查看老人体检", "查询老人体检-" + oldMedical.getTitle() + "成功");
                     return Result.success(oldMedical);
@@ -752,9 +766,19 @@ public class UserServiceController {
             if (user != null) {
                 Page<SysMessages> page = sysMessagesService.listByUserIdPage(user.getId(), pageNum, pageSize);
                 List<SysMessages> sysMessages = page.getRecords();
-                // 记录系统消息已读
-                List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
-                sysMessageReadService.saveNotRead(user.getId(), list);
+                if (!sysMessages.isEmpty()) {
+                    // 记录系统消息已读
+                    List<Integer> list = sysMessages.parallelStream().map(SysMessages::getId).collect(Collectors.toList());
+                    List<SysMessageRead> sysMessageReads = sysMessageReadService.listByUserId(user.getId());
+                    if (!sysMessageReads.isEmpty()) {
+                        List<Integer> collect = sysMessageReads.stream().map(SysMessageRead::getSysMessageId).collect(Collectors.toList());
+                        list.addAll(collect);
+                        List<Integer> collect1 = list.stream().distinct().collect(Collectors.toList());
+                        if (!collect1.isEmpty()) {
+                            sysMessageReadService.saveNotRead(user.getId(), collect1);
+                        }
+                    }
+                }
                 return Result.success(page);
             }
             return Result.error("请登录");
@@ -815,8 +839,9 @@ public class UserServiceController {
         if (selectionActivities != null) {
             //记录浏览量
             selectionActivitiesService.AddSelectionActivitiesReadNum(selectionActivities);
+            return Result.success(selectionActivities);
         }
-        return Result.success(selectionActivities);
+        return Result.error("活动不存在");
     }
 
     /**

@@ -63,8 +63,8 @@ public class PromotionService {
                 String promotionStatus = getPromotionStatus(promotion.getStartTime(), promotion.getEndTime());
                 promotion.setPromotionStatus(promotionStatus);
                 //查询已读
-                List<PromotionReadUser> promotionReadUsers = promotionReadUserService.getByUserIdAndPromotionId(userId, promotion.getId());
-                if (promotionReadUsers.isEmpty()) {
+                PromotionReadUser promotionReadUsers = promotionReadUserService.getByUserIdAndPromotionId(userId, promotion.getId());
+                if (promotionReadUsers == null) {
                     promotion.setReadStatus(false);
                 } else {
                     promotion.setReadStatus(true);
@@ -102,8 +102,6 @@ public class PromotionService {
             if (promotionContent != null) {
                 promotion.setContent(promotionContent.getContent());
             }
-            Integer integer = promotionReadUserService.countByPromotionId(promotion.getId());
-            promotion.setReadNum(integer);
         }
         return promotion;
     }
@@ -155,8 +153,8 @@ public class PromotionService {
                 title, imgUrl, issuer, issuerPhone,
                 promotionAddress, issueTime,
                 discount, activityContent,
-                startTime, endTime, communityCode, null,
-                null, null, 0);
+                startTime, endTime, communityCode, 0, null,
+                null, null);
         promotion.setGmtCreate(LocalDateTime.now());
         promotion.setGmtModified(LocalDateTime.now());
         promotionMapper.insert(promotion);
@@ -192,7 +190,7 @@ public class PromotionService {
                 promotionAddress, issueTime,
                 discount, activityContent,
                 startTime, endTime, null, null,
-                null, null, 0);
+                null, null, null);
         promotion.setId(id);
         promotion.setGmtModified(LocalDateTime.now());
         promotionMapper.updateById(promotion);
@@ -276,20 +274,54 @@ public class PromotionService {
 
     /**
      * 统计未读数
-     * @param communityCode
-     * @param userId
+     * @param communityCode 小区code
+     * @param userId        用户id
      * @return java.lang.Integer
-     * @throws
      * @author shuyy
      * @date 2019-01-02 16:04
      * @company mitesofor
-    */
-    public Integer countNotReadNum(String communityCode, Integer userId){
+     */
+    public Integer countNotReadNum(String communityCode, Integer userId) {
         EntityWrapper<Promotion> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         Integer num = promotionMapper.selectCount(wrapper);
         Integer notNum = promotionReadUserService.countByUserId(userId);
         return num - notNum;
+    }
+
+    /**
+     * 记录浏览量
+     * @param promotion 促销活动
+     * @return 修改成功条数
+     * @author Mr.Deng
+     * @date 9:01 2019/1/4
+     */
+    public Integer updateReadNum(Promotion promotion) {
+        Integer id = promotion.getId();
+        Integer readNum = promotion.getReadNum();
+        promotion.setReadNum(readNum + 1);
+        EntityWrapper<Promotion> wrapper = new EntityWrapper<>();
+        wrapper.eq("read_num", readNum).eq("id", id);
+        return promotionMapper.update(promotion, wrapper);
+    }
+
+    /**
+     * 增加浏览量
+     * @param promotion 促销活动
+     * @author Mr.Deng
+     * @date 9:06 2019/1/4
+     */
+    public void addPromotionReadNum(Promotion promotion) {
+        Integer num = this.updateReadNum(promotion);
+        if (num == 0) {
+            promotion = this.getByPromotionId(promotion.getId());
+            if (promotion == null) {
+                return;
+            } else {
+                this.updateReadNum(promotion);
+            }
+        }
+        return;
     }
 
 }

@@ -49,7 +49,7 @@ public class OldMedicalService {
     public void save(String communityCode, String title, String issuer, String contacts, String phone, String address,
                      LocalDateTime startTime, LocalDateTime endTime, String content) {
         OldMedical oldMedical = new OldMedical(communityCode, title, issuer, LocalDateTime.now(), contacts, phone,
-                address, startTime, endTime, null, null, null, null);
+                address, startTime, endTime, 0, null, null, null);
         oldMedical.setGmtCreate(LocalDateTime.now());
         oldMedical.setGmtModified(LocalDateTime.now());
         oldMedicalMapper.insert(oldMedical);
@@ -196,8 +196,8 @@ public class OldMedicalService {
             for (OldMedical oldMedical : oldMedicals) {
                 String status = getStatus(oldMedical.getStartTime(), oldMedical.getEndTime());
                 oldMedical.setOldMedicalStatus(status);
-                List<OldMedicalReadUser> oldMedicalReadUsers = oldMedicalReadUserService.getByUserIdOldMedicalId(userId, oldMedical.getId());
-                if (oldMedicalReadUsers.isEmpty()) {
+                OldMedicalReadUser oldMedicalReadUsers = oldMedicalReadUserService.getByUserIdOldMedicalId(userId, oldMedical.getId());
+                if (oldMedicalReadUsers == null) {
                     oldMedical.setReadStatus(false);
                 } else {
                     oldMedical.setReadStatus(true);
@@ -229,8 +229,6 @@ public class OldMedicalService {
     public OldMedical getByOldMedicalId(Integer oldMedicalId) {
         OldMedical oldMedical = this.getById(oldMedicalId);
         if (oldMedical != null) {
-            Integer readNum = oldMedicalReadUserService.countByUserIdOldMedicalId(oldMedicalId);
-            oldMedical.setReadNum(readNum);
             String status = getStatus(oldMedical.getStartTime(), oldMedical.getEndTime());
             oldMedical.setOldMedicalStatus(status);
             OldMedicalContent oldMedicalContent = oldMedicalContentService.getByOldMedicalId(oldMedicalId);
@@ -276,6 +274,41 @@ public class OldMedicalService {
         Integer notRead = oldMedicalReadUserService.countReadNum(userId);
         return num - notRead;
 
+    }
+
+    /**
+     * 记录浏览量
+     * @param oldMedical 老人体检
+     * @return 更新成功数
+     * @author Mr.Deng
+     * @date 9:51 2019/1/4
+     */
+    public Integer updateReadNum(OldMedical oldMedical) {
+        EntityWrapper<OldMedical> wrapper = new EntityWrapper<>();
+        Integer id = oldMedical.getId();
+        Integer readNum = oldMedical.getReadNum();
+        oldMedical.setReadNum(readNum + 1);
+        wrapper.eq("read_num", readNum).eq("id", id);
+        return oldMedicalMapper.update(oldMedical, wrapper);
+    }
+
+    /**
+     * 增加浏览量信息
+     * @param oldMedical 老人体检
+     * @author Mr.Deng
+     * @date 9:54 2019/1/4
+     */
+    public void addOldMedicalReadNum(OldMedical oldMedical) {
+        Integer num = this.updateReadNum(oldMedical);
+        if (num == 0) {
+            oldMedical = this.getById(oldMedical.getId());
+            if (oldMedical == null) {
+                return;
+            } else {
+                this.updateReadNum(oldMedical);
+            }
+        }
+        return;
     }
 
 }

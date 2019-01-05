@@ -62,24 +62,15 @@ public class LostFountReadUserService {
      * @author Mr.Deng
      * @date 9:51 2018/12/18
      */
-    public List<LostFountReadUser> getByUserIdByLostFountId(Integer userId, Integer lostFountId) {
+    public LostFountReadUser getByUserIdByLostFountId(Integer userId, Integer lostFountId) {
         EntityWrapper<LostFountReadUser> wrapper = new EntityWrapper<>();
         wrapper.eq("user_id", userId);
         wrapper.eq("lost_fount_id", lostFountId);
-        return lostFountReadUserMapper.selectList(wrapper);
-    }
-
-    /**
-     * 查询浏览量，通过失物招领id
-     * @param lostFountId 失物招领id
-     * @return 浏览数
-     * @author Mr.Deng
-     * @date 9:53 2018/12/18
-     */
-    public Integer countByLostFountId(Integer lostFountId) {
-        EntityWrapper<LostFountReadUser> wrapper = new EntityWrapper<>();
-        wrapper.eq("lost_fount_id", lostFountId);
-        return lostFountReadUserMapper.selectCount(wrapper);
+        List<LostFountReadUser> lostFountReadUsers = lostFountReadUserMapper.selectList(wrapper);
+        if (lostFountReadUsers.isEmpty()) {
+            return null;
+        }
+        return lostFountReadUsers.get(0);
     }
 
     /**
