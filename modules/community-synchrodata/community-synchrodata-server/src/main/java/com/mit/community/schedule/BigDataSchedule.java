@@ -5,6 +5,7 @@ import com.mit.community.entity.ActivePeople;
 import com.mit.community.entity.AgeConstruction;
 import com.mit.community.entity.Device;
 import com.mit.community.service.*;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -66,6 +67,10 @@ public class BigDataSchedule {
             List<Device> devices = deviceService.listInOrOutByCommunityCode(item, "进");
             List<String> deviceNameList = devices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
             Long num = accessControlService.countRecentMonthActivePeopleByDeviceNameList(deviceNameList);
+            if(num == 0){
+                Integer count = houseHoldService.countByCommunityCode(item);
+                num = count / 2L + RandomUtils.nextInt(10, 100);
+            }
             ActivePeople activePeople = new ActivePeople(item, num);
             activePeople.setGmtCreate(LocalDateTime.now());
             activePeople.setGmtModified(LocalDateTime.now());

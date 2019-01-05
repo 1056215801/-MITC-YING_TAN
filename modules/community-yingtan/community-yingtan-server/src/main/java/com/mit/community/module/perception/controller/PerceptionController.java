@@ -253,6 +253,10 @@ public class PerceptionController {
             totalEarlySize = warningService.countByCommunityCodeList(list);
             map.put("totalEarlyWarning", 50);
         }
+        remainNum = remainNum < 0 ? 0 : remainNum;
+        houseHoldSize = houseHoldSize < 0 ? 0 : houseHoldSize;
+        accessControlSize = accessControlSize < 0 ? 0 : accessControlSize;
+        totalEarlySize = totalEarlySize < 0 ? 0 : totalEarlySize;
         map.put("totalResident", remainNum);
         // 人口
         map.put("totalPopulation", houseHoldSize);

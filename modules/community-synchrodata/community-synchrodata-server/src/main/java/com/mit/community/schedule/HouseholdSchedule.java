@@ -69,9 +69,9 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-//    @Scheduled(cron = "0 */10 * * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     @CacheClear(pre = "household")
-    @Scheduled(cron = "*/10 * * * * ?")
+//    @Scheduled(cron = "*/10 * * * * ?")
     public void removeAndiImport() {
         try {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");

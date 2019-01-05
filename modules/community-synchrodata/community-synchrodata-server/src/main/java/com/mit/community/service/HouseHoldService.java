@@ -95,6 +95,19 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         return houseHoldMapper.selectList(wrapper);
     }
 
+    /**
+     * 统计小区人数
+     * @return java.lang.Integer
+     * @author shuyy
+     * @date 2019-01-05 10:00
+     * @company mitesofor
+    */
+    public Integer countByCommunityCode(String communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        return houseHoldMapper.selectCount(wrapper);
+    }
+
     /***
      * 统计年龄结构，通过小区code列表
      *
