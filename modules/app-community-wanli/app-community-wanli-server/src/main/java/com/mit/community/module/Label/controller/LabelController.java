@@ -60,7 +60,7 @@ public class LabelController {
                 map.put(label.getId(), label);
             }
         }
-        List<Label> dataLabels = labelService.listByType(type);
+        List<Label> dataLabels = labelService.listByType(type, user.getId());
         dataLabels.forEach(item -> {
             if (null == map.get(item.getId())) {
                 item.setSelected(false);
@@ -84,8 +84,13 @@ public class LabelController {
     @ApiOperation(value = "增加用户自定义标签", notes = "传参：labelName 标签名")
     public Result saveLabelCustomer(String cellphone, String labelName) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
-        Label label = labelService.save(labelName, Constants.LABEL_TYPE_CUSTOMER, user.getId());
-        return Result.success(label, "保存成功");
+        List<Label> labels = labelService.listByUserIdAndName(labelName, user.getId());
+        if(labels.isEmpty()){
+            Label label = labelService.save(labelName, Constants.LABEL_TYPE_CUSTOMER, user.getId());
+            return Result.success(label, "保存成功");
+        }else{
+            return Result.error("标签已经存在");
+        }
     }
 
     /**
@@ -106,12 +111,11 @@ public class LabelController {
 
     /**
      * @param cellphone             手机号
-     * @param customerlabelNameList 自定义标签名列表
      * @param systemLabelIdList     系统标签id列表
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 19:20
-     * @company mitesofor
+     * @company mitesoforxd
      */
     @PostMapping("/associationLabelCustomer")
     @ApiOperation(value = "关联用户自定义标签", notes = "数据库有这个自定义标签才能关联，所以关联用户自定一标签前，每添加一个自定义标签，" +
