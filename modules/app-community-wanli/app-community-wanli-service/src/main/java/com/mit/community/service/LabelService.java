@@ -75,7 +75,7 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
      * @date 2018/12/19 19:12
      * @company mitesofor
     */
-    public List<Label> listByNameListAndUserId(List<String> idList, Integer userId) {
+    public List<Label> listByNameListAndUserId(List<Integer> idList, Integer userId) {
         EntityWrapper<Label> wrapper = new EntityWrapper<>();
         wrapper.in("id", idList).eq("user_id", userId);
         return labelMapper.selectList(wrapper);

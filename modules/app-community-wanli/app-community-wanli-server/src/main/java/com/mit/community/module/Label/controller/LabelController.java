@@ -1,5 +1,6 @@
 package com.mit.community.module.Label.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.Constants;
@@ -14,6 +15,7 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,34 +87,33 @@ public class LabelController {
     public Result saveLabelCustomer(String cellphone, String labelName) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         List<Label> labels = labelService.listByUserIdAndName(labelName, user.getId());
-        if(labels.isEmpty()){
+        if (labels.isEmpty()) {
             Label label = labelService.save(labelName, Constants.LABEL_TYPE_CUSTOMER, user.getId());
             return Result.success(label, "保存成功");
-        }else{
+        } else {
             return Result.error("标签已经存在");
         }
     }
 
     /**
      * @param cellphone 手机号
-     * @param labelId 标签名
+     * @param labelId   标签名
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 19:05
      * @company mitesofor
      */
-    @DeleteMapping("/removeLabelCustomer")
+    @PostMapping("/removeLabelCustomer")
     @ApiOperation(value = "删除用户自定义标签", notes = "传参：labelName 标签名")
     public Result removeLabelCustomer(String cellphone, Integer labelId) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         labelService.removeByLabelIdAndUserId(labelId, user.getId());
-        
+
         return Result.success("删除成功");
     }
 
     /**
-     * @param cellphone             手机号
-     * @param systemLabelIdList     系统标签id列表
+     * @param cellphone         手机号
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 19:20
@@ -122,20 +123,32 @@ public class LabelController {
     @ApiOperation(value = "关联用户自定义标签", notes = "数据库有这个自定义标签才能关联，所以关联用户自定一标签前，每添加一个自定义标签，" +
             "都需要调用saveLabelCustomer接口添加自定标签。而且，调用本接口流程是，先删除之前的标签，再插入新标签。<br/>" +
             "传参：customerlabelNameList 自定义标签名列表， systemLabelIdList 系统标签id列表")
-    public Result associationLabel(String cellphone, @RequestParam("customerlabelIdList") List<String> customerlabelIdList,
-                                   @RequestParam("systemLabelIdList") List<Integer> systemLabelIdList) {
+    public Result associationLabel(String cellphone, String customerlabelId,
+                                   String systemLabel) {
+        List<Integer> customerlabelIdList = null;
+        if (StringUtils.isBlank(customerlabelId)) {
+            customerlabelIdList = Lists.newArrayListWithCapacity(0);
+        } else {
+            customerlabelIdList = JSON.parseArray(customerlabelId, Integer.class);
+        }
+        List<Integer> systemLabelList = null;
+        if (StringUtils.isBlank("systemLabel")) {
+            systemLabelList = Lists.newArrayListWithCapacity(0);
+        } else {
+            systemLabelList = JSON.parseArray(systemLabel, Integer.class);
+        }
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         // 先删除，再关联
         userLabelService.removeByUserId(user.getId());
         List<Label> labels = labelService.listByNameListAndUserId(customerlabelIdList, user.getId());
-        List<UserLabel> userLabelList = Lists.newArrayListWithCapacity(customerlabelIdList.size() + systemLabelIdList.size());
+        List<UserLabel> userLabelList = Lists.newArrayListWithCapacity(customerlabelIdList.size() + systemLabelList.size());
         labels.forEach(label -> {
             UserLabel userLabel = new UserLabel(label.getId(), user.getId(), label.getType(), null);
             userLabel.setGmtModified(LocalDateTime.now());
             userLabel.setGmtCreate(LocalDateTime.now());
             userLabelList.add(userLabel);
         });
-        systemLabelIdList.forEach(labelId -> {
+        systemLabelList.forEach(labelId -> {
             UserLabel userLabel = new UserLabel(labelId, user.getId(), Constants.LABEL_TYPE_SYSTEM, null);
             userLabel.setGmtModified(LocalDateTime.now());
             userLabel.setGmtCreate(LocalDateTime.now());
