@@ -48,6 +48,22 @@ public class UserLabelService extends ServiceImpl<UserLabelMapper, UserLabel> {
         userLabelMapper.delete(wrapper);
     }
 
+    /**
+     * 删除，通过labelId，和UserId
+     * @param userId
+     * @param labelId
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2019-01-11 14:43
+     * @company mitesofor
+    */
+    public void removeByUserIdAndLabelId(Integer userId, Integer labelId){
+        EntityWrapper<UserLabel> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        wrapper.eq("label_id", labelId);
+        userLabelMapper.delete(wrapper);
+    }
 
 
 

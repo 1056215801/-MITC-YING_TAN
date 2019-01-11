@@ -95,7 +95,7 @@ public class LabelController {
 
     /**
      * @param cellphone 手机号
-     * @param labelName 标签名
+     * @param labelId 标签名
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 19:05
@@ -103,9 +103,9 @@ public class LabelController {
      */
     @DeleteMapping("/removeLabelCustomer")
     @ApiOperation(value = "删除用户自定义标签", notes = "传参：labelName 标签名")
-    public Result removeLabelCustomer(String cellphone, String labelName) {
+    public Result removeLabelCustomer(String cellphone, Integer labelId) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
-        labelService.removeByNameAndUserId(user.getId(), labelName);
+        labelService.removeByLabelIdAndUserId(labelId, user.getId());
         return Result.success("删除成功");
     }
 

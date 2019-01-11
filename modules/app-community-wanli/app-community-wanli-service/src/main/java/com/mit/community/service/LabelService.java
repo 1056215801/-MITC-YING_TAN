@@ -97,15 +97,16 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
      * 删除，通过用户id和标签名
      *
      * @param userId 用户id
-     * @param name   标签名
+     * @param userId   标签id
      * @author shuyy
      * @date 2018/12/19 19:04
      * @company mitesofor
      */
-    public void removeByNameAndUserId(Integer userId, String name) {
+    public void removeByLabelIdAndUserId(Integer labelId, Integer userId) {
         EntityWrapper<Label> wrapper = new EntityWrapper<>();
-        wrapper.eq("user_id", userId).eq("name", name);
+        wrapper.eq("id", labelId);
         labelMapper.delete(wrapper);
+        userLabelService.removeByUserIdAndLabelId(userId, labelId);
     }
 
     /**
