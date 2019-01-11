@@ -106,6 +106,7 @@ public class LabelController {
     public Result removeLabelCustomer(String cellphone, Integer labelId) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         labelService.removeByLabelIdAndUserId(labelId, user.getId());
+        
         return Result.success("删除成功");
     }
 
