@@ -43,7 +43,7 @@ public class LabelController {
     @Autowired
     private UserLabelService userLabelService;
 
-    /**
+  /**
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 18:47
@@ -71,6 +71,20 @@ public class LabelController {
             }
         });
         return Result.success(dataLabels);
+    }
+
+    /**
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/19 18:47
+     * @company mitesofor
+     */
+    @GetMapping("/listChooseLabel")
+    @ApiOperation(value = "查询选中标签", notes = "cellphone 手机号")
+    public Result listChooseLabel(String cellphone) {
+        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        List<Label> labels = labelService.listAssociationLabelByUserId(user.getId());
+        return Result.success(labels);
     }
 
 
