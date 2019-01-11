@@ -122,7 +122,7 @@ public class LabelController {
             "都需要调用saveLabelCustomer接口添加自定标签。而且，调用本接口流程是，先删除之前的标签，再插入新标签。<br/>" +
             "传参：customerlabelNameList 自定义标签名列表， systemLabelIdList 系统标签id列表")
     public Result associationLabel(String cellphone, @RequestParam("customerlabelIdList") List<String> customerlabelIdList,
-                                   @RequestParam("SystemLabelIdList") List<Integer> systemLabelIdList) {
+                                   @RequestParam("systemLabelIdList") List<Integer> systemLabelIdList) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         // 先删除，再关联
         userLabelService.removeByUserId(user.getId());
