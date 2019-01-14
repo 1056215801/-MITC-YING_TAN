@@ -1,5 +1,7 @@
 package com.mit.community.module.pass.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
@@ -40,7 +42,6 @@ import java.util.Objects;
 @Api(tags = "住户-通行模块接口")
 public class PassThroughController {
 
-    private final RegionService regionService;
     private final NoticeService noticeService;
     private final ApplyKeyService applyKeyService;
     private final VisitorService visitorService;
@@ -54,7 +55,6 @@ public class PassThroughController {
     private final DeviceGroupService deviceGroupService;
     private final RedisService redisService;
     private final ClusterCommunityService clusterCommunityService;
-    private final WeatherService weatherService;
     private final DeviceService deviceService;
     private final UserTrackService userTrackService;
     private final DictionaryService dictionaryService;
@@ -63,17 +63,16 @@ public class PassThroughController {
     private final VisitorReadService visitorReadService;
 
     @Autowired
-    public PassThroughController(RegionService regionService, NoticeService noticeService, ApplyKeyService applyKeyService,
+    public PassThroughController(NoticeService noticeService, ApplyKeyService applyKeyService,
                                  VisitorService visitorService,
                                  DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                                  ZoneService zoneService, UnitService unitService, RoomService roomService,
                                  BuildingService buildingService, AccessControlService accessControlService,
-                                 DeviceGroupService deviceGroupService, WeatherService weatherService,
+                                 DeviceGroupService deviceGroupService,
                                  RedisService redisService, ClusterCommunityService clusterCommunityService,
                                  DeviceService deviceService, UserTrackService userTrackService,
                                  DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService,
                                  SysMessagesService sysMessagesService, VisitorReadService visitorReadService) {
-        this.regionService = regionService;
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
         this.visitorService = visitorService;
@@ -85,7 +84,6 @@ public class PassThroughController {
         this.buildingService = buildingService;
         this.accessControlService = accessControlService;
         this.deviceGroupService = deviceGroupService;
-        this.weatherService = weatherService;
         this.redisService = redisService;
         this.clusterCommunityService = clusterCommunityService;
         this.deviceService = deviceService;
@@ -104,16 +102,29 @@ public class PassThroughController {
      * @date 15:17 2018/11/29
      */
     @GetMapping("/getWeather")
-    @ApiOperation(value = "天气", notes = "输入参数：cityName 城市名")
+    @ApiOperation(value = "天气", notes = "输入参数：cityName 城市名<br/>" +
+            "输出参数：hum 相对湿度，vis 能见度，默认单位：公里,pres 大气压强，pcpn 降雨量，fl 体感温度，默认单位：摄氏度，" +
+            "wind_sc 风力，wind_dir 风向，wind_spd 风速 公里/小时，cloud 云量，wind_deg 风向360角度，tmp 温度，默认单位：摄氏度，" +
+            "cond_txt 实况天气状况描述，cond_code 实况天气状况代码")
     public Result getWeather(String mac, String cellphone, String cityName) {
         if (StringUtils.isNotBlank(cityName)) {
-            Region region = regionService.getByCityCode(cityName);
-            if (region != null) {
-                String eng = region.getEnglishName();
-                Weather weather = weatherService.ByCityeEnglish(eng);
-                return Result.success(weather);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("https://free-api.heweather.net/s6/weather/now?")
+                    .append("location=")
+                    .append(cityName)
+                    .append("&key=HE1901141248371261");
+            String url = stringBuilder.toString();
+            String s = HttpUtil.sendGet(url);
+            JSONObject json = JSON.parseObject(s);
+            JSONArray heWeather6 = json.getJSONArray("HeWeather6");
+            JSONObject jsonObject = heWeather6.getJSONObject(0);
+            String status = jsonObject.getString("status");
+            if ("ok".equals(status)) {
+                JSONObject now = jsonObject.getJSONObject("now");
+                weatherInfo weatherInfo = JSON.toJavaObject(now, weatherInfo.class);
+                return Result.success(weatherInfo);
             }
-            return Result.error("输入城市code有误");
+            return Result.error(status);
         }
         return Result.error("参数不能为空");
     }
