@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
+import com.mit.community.constants.Constants;
 import com.mit.community.entity.Label;
 import com.mit.community.entity.UserLabel;
 import com.mit.community.mapper.LabelMapper;
@@ -49,6 +50,23 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
     }
 
     /**
+     * 查询标签，通过用户id和标签名
+     * @param name
+     * @param userId
+     * @return java.util.List<com.mit.community.entity.Label>
+     * @throws
+     * @author shuyy
+     * @date 2019-01-11 12:00
+     * @company mitesofor
+    */
+    public List<Label> listByUserIdAndName(String name, Integer userId){
+        EntityWrapper<Label> wrapper = new EntityWrapper<>();
+        wrapper.eq("user_id", userId);
+        wrapper.eq("name", name);
+        return labelMapper.selectList(wrapper);
+    }
+
+    /**
      * 查询自定义标签列表，通过标签名列表和用户id
      * @param idList 标签名列表
      * @param userId 用户id
@@ -57,7 +75,7 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
      * @date 2018/12/19 19:12
      * @company mitesofor
     */
-    public List<Label> listByNameListAndUserId(List<String> idList, Integer userId) {
+    public List<Label> listByNameListAndUserId(List<Integer> idList, Integer userId) {
         EntityWrapper<Label> wrapper = new EntityWrapper<>();
         wrapper.in("id", idList).eq("user_id", userId);
         return labelMapper.selectList(wrapper);
@@ -79,15 +97,16 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
      * 删除，通过用户id和标签名
      *
      * @param userId 用户id
-     * @param name   标签名
+     * @param userId   标签id
      * @author shuyy
      * @date 2018/12/19 19:04
      * @company mitesofor
      */
-    public void removeByNameAndUserId(Integer userId, String name) {
+    public void removeByLabelIdAndUserId(Integer labelId, Integer userId) {
         EntityWrapper<Label> wrapper = new EntityWrapper<>();
-        wrapper.eq("user_id", userId).eq("name", name);
+        wrapper.eq("id", labelId);
         labelMapper.delete(wrapper);
+        userLabelService.removeByUserIdAndLabelId(userId, labelId);
     }
 
     /**
@@ -99,9 +118,12 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
      * @date 2018/12/19 18:40
      * @company mitesofor
      */
-    public List<Label> listByType(Short type) {
+    public List<Label> listByType(Short type, Integer userId) {
         EntityWrapper<Label> wrapper = new EntityWrapper<>();
         wrapper.eq("type", type);
+        if(type == Constants.LABEL_TYPE_CUSTOMER){
+            wrapper.eq("user_id", userId);
+        }
         return labelMapper.selectList(wrapper);
     }
 

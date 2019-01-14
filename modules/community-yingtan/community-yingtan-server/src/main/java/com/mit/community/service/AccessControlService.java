@@ -202,6 +202,9 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @date 2018/11/22 14:04
      */
     private Integer countUntilTwoNumByDeviceNameList(List<String> deviceNameList) {
+        if(deviceNameList.isEmpty()){
+            return 0;
+        }
         EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
         wrapper.in("device_name", deviceNameList);
         LocalDateTime now = LocalDateTime.now();
