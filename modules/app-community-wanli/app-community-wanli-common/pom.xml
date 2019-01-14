@@ -34,5 +34,11 @@
             <version>1.25</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>7.2.0</version>
+        </dependency>
+
     </dependencies>
 </project>

@@ -5,10 +5,10 @@ import com.mit.common.util.DateUtils;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
 import com.mit.community.util.SmsCommunityAppUtil;
 import com.mit.community.util.ThreadPoolUtil;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -380,7 +379,7 @@ public class LoginController {
     @ApiOperation(value = "修改用户信息", notes = "输入信息：cellphone 手机号；nickname 昵称；gender 性别1、男。0、女；" +
             "birthday 生日 yyyy-MM-dd；bloodType 血型；profession 职业；signature 我的签名；constellation 星座")
     @PatchMapping("/updateUserInfo")
-    public Result updateUserInfo(String nickname, Short gender, String cellphone, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate birthday, String bloodType,
+    public Result updateUserInfo(String nickname, Short gender, String cellphone, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthday, String bloodType,
                                  String profession, String signature, String constellation) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         if (user != null) {
@@ -416,7 +415,7 @@ public class LoginController {
         if (StringUtils.isNotBlank(cellphone) && image != null) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                String imageUrl = UploadUtil.upload(image);
                 user.setIcon_url(imageUrl);
                 userService.update(user);
                 //记录足迹

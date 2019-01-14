@@ -7,10 +7,10 @@ import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
 import com.mit.community.util.ThreadPoolUtil;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +25,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 住户-通行模块
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:27
  * <p>Copyright: Copyright (c) 2018</p>
@@ -98,6 +98,7 @@ public class PassThroughController {
 
     /**
      * 查询当地当前天气信息，通过城市英文名
+     *
      * @param cityName 城市code
      * @return result
      * @author Mr.Deng
@@ -120,6 +121,7 @@ public class PassThroughController {
 
     /**
      * 查询当天通行限号
+     *
      * @return result
      * @author Mr.Deng
      * @date 10:34 2018/12/10
@@ -175,6 +177,7 @@ public class PassThroughController {
 
     /**
      * 查询周末和节假日期，通过时间戳
+     *
      * @param localDate 时间yyyy-MM-dd
      * @return 工作日对应结果为 0, 休息日对应结果为 1, 节假日对应的结果为 2
      * @author Mr.Deng
@@ -195,6 +198,7 @@ public class PassThroughController {
 
     /**
      * 发布通知通告信息
+     *
      * @param cellphone 手机号
      * @param title     标题
      * @param code      类型(查询字典notice_type)
@@ -228,6 +232,7 @@ public class PassThroughController {
 
     /**
      * 查询所有的通知信息
+     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -253,6 +258,7 @@ public class PassThroughController {
 
     /**
      * 查询通知详情，通过手机号和通告id
+     *
      * @param cellphone 手机号
      * @param noticeId  通告id
      * @return result
@@ -277,6 +283,7 @@ public class PassThroughController {
 
     /**
      * 通知通告未读数
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @return result
@@ -296,6 +303,7 @@ public class PassThroughController {
 
     /**
      * 查询通知信息浏览量
+     *
      * @param cellphone 手机号
      * @param noticeId  通知id
      * @return result
@@ -314,6 +322,7 @@ public class PassThroughController {
 
     /**
      * 申请钥匙
+     *
      * @param cellphone        手机号
      * @param communityCode    小区code
      * @param communityName    小区名称
@@ -350,7 +359,7 @@ public class PassThroughController {
             List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
             if (images != null) {
                 for (MultipartFile image : images) {
-                    String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                    String imageUrl = UploadUtil.upload(image);
                     imageUrls.add(imageUrl);
                 }
             }
@@ -369,6 +378,7 @@ public class PassThroughController {
 
     /**
      * 查询申请钥匙信息，通过钥匙申请状态
+     *
      * @param cellphone 手机号
      * @param status    钥匙申请状态
      * @return result
@@ -408,6 +418,7 @@ public class PassThroughController {
 
     /**
      * http开门
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @param cellphone     电话号码
@@ -433,6 +444,7 @@ public class PassThroughController {
 
     /**
      * 获取我的钥匙
+     *
      * @param cellphone     电话号码
      * @param communityCode 小区code
      * @return result
@@ -472,6 +484,7 @@ public class PassThroughController {
 
     /**
      * 查询小区设备组信息,通过小区code
+     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -489,6 +502,7 @@ public class PassThroughController {
 
     /**
      * 申请访客邀请码
+     *
      * @param dateTag       日期标志：今天:0；明天：1;
      * @param times         开锁次数：无限次：0；一次：1；
      * @param deviceGroupId 设备分组id，默认只传公共权限组
@@ -515,6 +529,7 @@ public class PassThroughController {
 
     /**
      * 查询邀请码记录
+     *
      * @param cellphone 手机号
      * @param pageNum   页码，从1开始
      * @param pageSize  页大小最大100
@@ -540,6 +555,7 @@ public class PassThroughController {
 
     /**
      * 图片上传
+     *
      * @param image 文件
      * @return result
      * @author Mr.Deng
@@ -551,10 +567,11 @@ public class PassThroughController {
         if (image != null) {
             String result = StringUtils.EMPTY;
             try {
-                FastDFSClient instance = FastDFSClient.getInstance();
+                result = UploadUtil.upload(image);
+                /*FastDFSClient instance = FastDFSClient.getInstance();
                 if (instance != null) {
                     result = instance.uploadFile(image);
-                }
+                }*/
             } catch (Exception e) {
                 e.printStackTrace();
                 return Result.error("上传失败");
@@ -567,6 +584,7 @@ public class PassThroughController {
 
     /**
      * 查询所有访客信息
+     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -587,6 +605,7 @@ public class PassThroughController {
 
     /**
      * 查询访客详情
+     *
      * @param cellphone 手机号
      * @param id        访客id
      * @return result
@@ -616,6 +635,7 @@ public class PassThroughController {
 
     /**
      * 设置呼叫转移号码
+     *
      * @param cellphone 手机号
      * @param sipMobile 转移号码
      * @return result
@@ -637,6 +657,7 @@ public class PassThroughController {
 
     /**
      * 查询住户信息，通过用户id
+     *
      * @param userId 用户id
      * @return result
      * @author Mr.Deng
@@ -664,6 +685,7 @@ public class PassThroughController {
 
     /**
      * 查询省份
+     *
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/11 14:12
@@ -678,6 +700,7 @@ public class PassThroughController {
 
     /**
      * 查询城市，通过省份
+     *
      * @param province 省份
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -693,6 +716,7 @@ public class PassThroughController {
 
     /**
      * 查询分区信息，通过小区code
+     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -719,6 +743,7 @@ public class PassThroughController {
 
     /**
      * 查询楼栋信息，通过分区id
+     *
      * @param zoneId 分区id
      * @return 楼栋信息
      * @author Mr.Deng
@@ -736,6 +761,7 @@ public class PassThroughController {
 
     /**
      * 查询单元信息，通过楼栋id
+     *
      * @param buildingId 楼栋id
      * @return result
      * @author Mr.Deng
@@ -753,6 +779,7 @@ public class PassThroughController {
 
     /**
      * 查询房间信息，通过单元id
+     *
      * @param unitId 单元id
      * @return result
      * @author Mr.Deng
@@ -770,6 +797,7 @@ public class PassThroughController {
 
     /**
      * 查询门禁记录，通过手机号
+     *
      * @param cellphone     手机号码
      * @param communityCode 小区code
      * @param type          类型；M：单元机；W：门口机；
@@ -792,6 +820,7 @@ public class PassThroughController {
 
     /**
      * 访客高级邀请，
+     *
      * @param cellphone     手机号
      * @param times         时间段（时间格式（yyyy-MM-dd HH:mm:ss）：{"startTime,endTime","startTime,endTime"}）
      * @param deviceGroupId 设备组id
@@ -818,6 +847,7 @@ public class PassThroughController {
 
     /**
      * 免打扰
+     *
      * @param cellphone 手机号
      * @param status    免打扰开关：1关；0开
      * @return result

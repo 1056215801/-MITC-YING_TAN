@@ -7,8 +7,8 @@ import com.mit.community.entity.SysUser;
 import com.mit.community.service.LostFoundService;
 import com.mit.community.service.RedisService;
 import com.mit.community.util.CookieUtils;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +62,7 @@ public class LostFoudController {
                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTime, String content) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        String imgUrl = FastDFSClient.getInstance().uploadFile(img);
+        String imgUrl = UploadUtil.upload(img);
         lostFoundService.save(title, imgUrl, issuer, issuerPhone, picAddress,
                 receiverAddress, pickTime, user.getCommunityCode(), content);
         return Result.success("发布成功");
@@ -96,7 +96,7 @@ public class LostFoudController {
                          String receiverAddress, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTime, Boolean receiverStatus, String content) throws Exception {
         String imgUrl = null;
         if (img != null) {
-            imgUrl = FastDFSClient.getInstance().uploadFile(img);
+            imgUrl = UploadUtil.upload(img);
         }
         lostFoundService.update(id, title, imgUrl, issuer, issuerPhone, picAddress,
                 pickTime, receiver, receivePhone, receiverAddress, receiverTime, receiverStatus, content);

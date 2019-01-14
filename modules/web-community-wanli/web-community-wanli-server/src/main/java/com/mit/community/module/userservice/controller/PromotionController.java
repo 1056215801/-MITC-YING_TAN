@@ -7,8 +7,8 @@ import com.mit.community.entity.SysUser;
 import com.mit.community.service.PromotionService;
 import com.mit.community.service.RedisService;
 import com.mit.community.util.CookieUtils;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +57,7 @@ public class PromotionController {
                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime, String content) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        String imgUrl = FastDFSClient.getInstance().uploadFile(img);
+        String imgUrl = UploadUtil.upload(img);
         promotionService.save(promotionType, title, imgUrl, issuer, issuerPhone, promotionAddress, issueTime, discount,
                 activityContent, startTime, endTime, user.getCommunityCode(), content);
         return Result.success("发布成功");
@@ -82,7 +82,7 @@ public class PromotionController {
                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime, String content) throws Exception {
         String imgUrl = null;
         if(img != null){
-            imgUrl = FastDFSClient.getInstance().uploadFile(img);
+            imgUrl = UploadUtil.upload(img);
         }
         promotionService.update(id, promotionType, title, imgUrl, issuer,
                 issuerPhone, promotionAddress,
