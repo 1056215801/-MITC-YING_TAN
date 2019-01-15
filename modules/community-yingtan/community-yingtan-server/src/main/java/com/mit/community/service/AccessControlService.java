@@ -15,6 +15,7 @@ import com.mit.common.util.DateUtils;
 import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.ActivePeople;
 import com.mit.community.entity.Device;
+import com.mit.community.entity.HouseHold;
 import com.mit.community.module.pass.mapper.AccessControlMapper;
 import com.mit.community.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -376,8 +376,10 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
             if (deviceName.equals(accessControl.get("deviceName"))) {
                 LocalDateTime accessTime = DateUtils.parseStringToDateTime(accessControl.get("accessTime").toString(),
                         null);
-                long second = accessTime.until(LocalDateTime.now(), ChronoUnit.SECONDS);
                 AccessControl o = accessControl.toJavaObject(AccessControl.class);
+                String householdMobile = o.getHouseholdMobile();
+                HouseHold household = houseHoldService.getByHouseholdByCellphoneAndCommunityCode(householdMobile, communityCode);
+                o.setIdentityType(household.getIdentityType());
                 String accessImgUrl = o.getAccessImgUrl();
                 // 判定这个图片是否已经存到服务器。重试10次
                 for (int i = 0; i < 10; i++) {

@@ -155,7 +155,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
         wrapper.eq("device_name", deviceName);
         List<Device> devices = deviceMapper.selectList(wrapper);
         if(devices.isEmpty()){
-            return devices.get(0);
+            return null;
         }
         return devices.get(0);
     }

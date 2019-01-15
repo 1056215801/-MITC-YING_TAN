@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  * 门禁记录
+ *
  * @author Mr.Deng
  * @date 2018/11/15 11:32
  * <p>Copyright: Copyright (c) 2018</p>
@@ -113,5 +114,14 @@ public class AccessControl extends BaseEntity {
      */
     @TableField("room_num")
     private String roomNum;
-
+    /**
+     * 注册人脸图
+     */
+    @TableField(exist = false)
+    private String faceRegisterUrl;
+    /**
+     * 身份类型
+     */
+    @TableField(exist = false)
+    private Short identityType;
 }

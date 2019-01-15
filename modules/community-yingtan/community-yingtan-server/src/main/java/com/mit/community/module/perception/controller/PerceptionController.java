@@ -396,9 +396,12 @@ public class PerceptionController {
      * @company mitesofor
     */
     @GetMapping("/getCurrentAccess")
-    @ApiOperation(value = "获取当前门禁")
+    @ApiOperation(value = "获取当前门禁", notes = "identityType:1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、6、上访人员、99、其他")
     public Result getCurrentAccess(String deviceName) {
         Device device = deviceService.getByDevice(deviceName);
+        if(device == null){
+            return Result.error("错误");
+        }
         AccessControl accessControl = accessControlService.getCurrentAccess(deviceName, device.getCommunityCode());
         Map<String, Object> map = Maps.newHashMap();
         map.put("device", device);
