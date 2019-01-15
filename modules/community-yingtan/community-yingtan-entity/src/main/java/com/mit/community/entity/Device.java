@@ -1,13 +1,8 @@
 package com.mit.community.entity;
 
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * 设备表
@@ -19,7 +14,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("device")
-public class Device extends BaseEntity{
+public class Device extends BaseEntity {
     /**
      * 小区Code
      */
@@ -80,5 +75,9 @@ public class Device extends BaseEntity{
      */
     @TableField("device_id")
     private String deviceId;
+    /**
+     * 坐标
+     */
+    private String coordinate;
 
 }

@@ -358,10 +358,10 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      * @author shuyy
      * @date 2018/11/13 16:50
      */
-    public AccessControl getCurrentAccess(String deviceName) {
+    public AccessControl getCurrentAccess(String deviceName, String communityCode) {
         String result = StringUtils.EMPTY;
         try {
-            result = this.listAccessControl(deviceName, 20);
+            result = this.listAccessControl(deviceName, communityCode, 20);
         } catch (Exception e) {
             // 报错了就取我们数据库的最新的一条记录
             List<AccessControl> list = this.listAccessControl(null, 1, deviceName);
@@ -397,14 +397,14 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return new AccessControl();
     }
 
-    private String listAccessControl(String deviceName, Integer pageSize) {
+    private String listAccessControl(String deviceName, String communityCode, Integer pageSize) {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/device/getAccessControlList";
         HashMap<String, Object> map = Maps.newLinkedHashMapWithExpectedSize(4);
         map.put("deviceName", deviceName);
         map.put("pageSize", pageSize);
         map.put("pageNum", "1");
-        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        map.put("communityCode", communityCode);
         String invoke = DnakeWebApiUtil.invoke(url, map);
         System.out.println(invoke);
         return invoke;

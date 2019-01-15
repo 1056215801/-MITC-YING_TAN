@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.ClusterCommunity;
+import com.mit.community.entity.Device;
 import com.mit.community.entity.RoomTypeConstruction;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpUtil;
@@ -46,12 +47,13 @@ public class PerceptionController {
     private final RoomTypeConstructionService roomTypeConstructionService;
     private final WarningService warningService;
     private final HouseholdRoomService householdRoomService;
+    private final DeviceService deviceService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
                                 HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
                                 VisitorService visitorService, AccessControlService accessControlService,
-                                RoomTypeConstructionService roomTypeConstructionService, WarningService warningService, HouseholdRoomService householdRoomService) {
+                                RoomTypeConstructionService roomTypeConstructionService, WarningService warningService, HouseholdRoomService householdRoomService, DeviceService deviceService) {
         this.buildingService = buildingService;
         this.roomService = roomService;
         this.houseHoldService = houseHoldService;
@@ -61,6 +63,7 @@ public class PerceptionController {
         this.roomTypeConstructionService = roomTypeConstructionService;
         this.warningService = warningService;
         this.householdRoomService = householdRoomService;
+        this.deviceService = deviceService;
     }
 
     /**
@@ -395,8 +398,12 @@ public class PerceptionController {
     @GetMapping("/getCurrentAccess")
     @ApiOperation(value = "获取当前门禁")
     public Result getCurrentAccess(String deviceName) {
-        AccessControl accessControl = accessControlService.getCurrentAccess(deviceName);
-        return Result.success(accessControl);
+        Device device = deviceService.getByDevice(deviceName);
+        AccessControl accessControl = accessControlService.getCurrentAccess(deviceName, device.getCommunityCode());
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("device", device);
+        map.put("access", accessControl);
+        return Result.success(map);
     }
 
 
