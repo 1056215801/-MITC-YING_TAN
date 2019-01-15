@@ -1,5 +1,12 @@
 package com.mit.community.util;
 
+import com.dnake.util.MySecureProtocolSocketFactory;
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -64,6 +71,38 @@ public class HttpUtil {
         }
         return result;
     }
+
+
+    /**
+     * 发送get请求,并返回JSON数据 Https
+     *
+     * @param url 路径
+     * @return JSON数据
+     */
+    public static Integer getStatus(String url) {
+        ProtocolSocketFactory fcty = new MySecureProtocolSocketFactory();
+        Protocol.registerProtocol("https", new Protocol("https", fcty, 443));
+        HttpClient httpClient = new HttpClient();
+        httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(30000);
+        httpClient.getHttpConnectionManager().getParams().setSoTimeout(30000);
+        String charSetName = "utf-8";
+        // 创建一个方法实例.
+        GetMethod getMethod = new GetMethod(url);
+        getMethod.addRequestHeader( "Connection", "close");
+        // 提供定制的重试处理程序是必要的
+        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
+        Integer status = 500;
+        try {
+            // 执行getMethod.
+            status = httpClient.executeMethod(getMethod);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            getMethod.releaseConnection();
+        }
+        return status;
+    }
+
 
     /**
      * 发送HttpPost请求，参数为map

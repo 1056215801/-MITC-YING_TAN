@@ -8,12 +8,15 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.dnake.common.DnakeWebApiUtil;
+import com.dnake.constant.DnakeConstants;
 import com.dnake.constant.DnakeWebConstants;
 import com.google.common.collect.Maps;
+import com.mit.common.util.DateUtils;
 import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.ActivePeople;
 import com.mit.community.entity.Device;
 import com.mit.community.module.pass.mapper.AccessControlMapper;
+import com.mit.community.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -345,5 +349,79 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         Map<String, Object> map = accessControlMapper.selectMaps(wrapper).get(0);
 
         return Integer.parseInt(map.get("i").toString());
+    }
+
+    /***
+     * 获取当前访问记录
+     * @param deviceName 设备名
+     * @return java.util.Map
+     * @author shuyy
+     * @date 2018/11/13 16:50
+     */
+    public AccessControl getCurrentAccess(String deviceName) {
+        String result = StringUtils.EMPTY;
+        try {
+            result = this.listAccessControl(deviceName, 20);
+        } catch (Exception e) {
+            // 报错了就取我们数据库的最新的一条记录
+            List<AccessControl> list = this.listAccessControl(null, 1, deviceName);
+            if (!list.isEmpty()) {
+                return list.get(0);
+            }
+        }
+        JSONObject jsonResult = JSON.parseObject(result);
+        JSONArray accessControlList = (JSONArray) jsonResult.get("accessControlList");
+        for (Object item : accessControlList) {
+            JSONObject accessControl = (JSONObject) item;
+            if (deviceName.equals(accessControl.get("deviceName"))) {
+                LocalDateTime accessTime = DateUtils.parseStringToDateTime(accessControl.get("accessTime").toString(),
+                        null);
+                long second = accessTime.until(LocalDateTime.now(), ChronoUnit.SECONDS);
+                AccessControl o = accessControl.toJavaObject(AccessControl.class);
+                String accessImgUrl = o.getAccessImgUrl();
+                // 判定这个图片是否已经存到服务器。重试10次
+                for (int i = 0; i < 10; i++) {
+                    int status = HttpUtil.getStatus(accessImgUrl);
+                    if (status == 200) {
+                        break;
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return o;
+            }
+        }
+        return new AccessControl();
+    }
+
+    private String listAccessControl(String deviceName, Integer pageSize) {
+        DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
+        String url = "/v1/device/getAccessControlList";
+        HashMap<String, Object> map = Maps.newLinkedHashMapWithExpectedSize(4);
+        map.put("deviceName", deviceName);
+        map.put("pageSize", pageSize);
+        map.put("pageNum", "1");
+        map.put("communityCode", "ab497a8a46194311ad724e6bf79b56de");
+        String invoke = DnakeWebApiUtil.invoke(url, map);
+        System.out.println(invoke);
+        return invoke;
+    }
+
+    public List<AccessControl> listAccessControl(String communityCode, Integer pageSize, String deviceNUm) {
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotBlank(deviceNUm)) {
+            wrapper.eq("device_num", deviceNUm);
+        }
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        wrapper.orderBy("access_time", false);
+        Page<AccessControl> page = new Page<>();
+        page.setCurrent(1);
+        page.setSize(pageSize);
+        return accessControlMapper.selectPage(page, wrapper);
     }
 }

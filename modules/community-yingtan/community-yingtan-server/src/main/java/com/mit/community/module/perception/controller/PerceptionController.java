@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.ClusterCommunity;
 import com.mit.community.entity.RoomTypeConstruction;
 import com.mit.community.service.*;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * 智慧社区感知平台控制类
+ *
  * @author Mr.Deng
  * @date 2018/11/16 9:02
  * <p>Copyright: Copyright (c) 2018</p>
@@ -63,6 +65,7 @@ public class PerceptionController {
 
     /**
      * 查询当前地区天气
+     *
      * @param local 地区名拼音
      * @return Result
      * @author Mr.Deng
@@ -87,6 +90,7 @@ public class PerceptionController {
 
     /**
      * 查询所有小区code，通过城市名
+     *
      * @param cityName 城市名
      * @return result
      * @author Mr.Deng
@@ -106,6 +110,7 @@ public class PerceptionController {
 
     /**
      * 小区综合统计数据
+     *
      * @return result
      * @author Mr.Deng
      * @date 9:10 2018/11/16
@@ -182,6 +187,7 @@ public class PerceptionController {
 
     /**
      * 查询男女比例
+     *
      * @return result
      * @author Mr.Deng
      * @date 16:18 2018/11/19
@@ -201,6 +207,7 @@ public class PerceptionController {
 
     /**
      * 人口数据感知
+     *
      * @return result
      * @author Mr.Deng
      * @date 17:36 2018/11/19
@@ -224,6 +231,7 @@ public class PerceptionController {
 
     /**
      * 人口总数、驻留总数、总通行次数、预警总数
+     *
      * @return result
      * @author Mr.Deng
      * @date 17:47 2018/11/19
@@ -268,6 +276,7 @@ public class PerceptionController {
 
     /**
      * 房屋数据感知
+     *
      * @return result
      * @author Mr.Deng
      * @date 17:22 2018/11/19
@@ -334,6 +343,7 @@ public class PerceptionController {
 
     /**
      * 人员通行感知
+     *
      * @return result
      * @author Mr.Deng
      * @date 9:00 2018/11/20
@@ -364,6 +374,7 @@ public class PerceptionController {
 
     /**
      * 查询小区code，通过城市名
+     *
      * @param cityName 城市名
      * @return 小区code列表
      * @author Mr.Deng
@@ -373,5 +384,20 @@ public class PerceptionController {
         List<ClusterCommunity> clusterCommunities = clusterCommunityService.listByCityName(cityName);
         return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
     }
+
+    /**
+     * @param deviceName 设备name
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2019-01-15 10:55
+     * @company mitesofor
+    */
+    @GetMapping("/getCurrentAccess")
+    @ApiOperation(value = "获取当前门禁")
+    public Result getCurrentAccess(String deviceName) {
+        AccessControl accessControl = accessControlService.getCurrentAccess(deviceName);
+        return Result.success(accessControl);
+    }
+
 
 }
