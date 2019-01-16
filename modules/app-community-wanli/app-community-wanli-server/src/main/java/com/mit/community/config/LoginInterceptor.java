@@ -36,7 +36,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 servletPath.contains(".gif") || servletPath.contains("/error") ||
                 servletPath.contains("/login/getMobileVerificationCode") ||
                 servletPath.contains("/login/login") || servletPath.contains("/login/cellphoneVerification")
-                || servletPath.contains("/login/register") || servletPath.contains("/login/haveLogin")) {
+                || servletPath.contains("/login/register") || servletPath.contains("/login/haveLogin")
+                || servletPath.contains("/login/updateGender") || servletPath.contains("/login/updateRegion")
+                || servletPath.contains("/login/updateBirthdayAndNick") || servletPath.contains("/label/listLabelSystem")
+                || servletPath.contains("/label/associationLabelCustomer")) {
             return true;
         }
         String mac = request.getParameter("mac");
