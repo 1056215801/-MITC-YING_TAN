@@ -777,6 +777,8 @@ public class UserServiceController {
                         if (!collect1.isEmpty()) {
                             sysMessageReadService.saveNotRead(user.getId(), collect1);
                         }
+                    } else {
+                        sysMessageReadService.saveNotRead(user.getId(), list);
                     }
                 }
                 return Result.success(page);
