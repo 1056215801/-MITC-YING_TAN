@@ -168,7 +168,9 @@ public class LabelController {
             userLabel.setGmtCreate(LocalDateTime.now());
             userLabelList.add(userLabel);
         });
-        userLabelService.insertBatch(userLabelList);
+        if(!userLabelList.isEmpty()){
+            userLabelService.insertBatch(userLabelList);
+        }
         return Result.success("关联成功");
     }
 

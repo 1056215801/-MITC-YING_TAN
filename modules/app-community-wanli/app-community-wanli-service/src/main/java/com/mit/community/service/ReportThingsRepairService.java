@@ -153,6 +153,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
         }
         wrapper.in("status", s);
         wrapper.eq("household_id", householdId);
+        wrapper.orderBy("gmt_create", false);
         List<ReportThingsRepair> reportThingsRepairList = reportThingsRepairMapper.selectPage(page, wrapper);
         if (!reportThingsRepairList.isEmpty()) {
             page.setRecords(reportThingsRepairList);

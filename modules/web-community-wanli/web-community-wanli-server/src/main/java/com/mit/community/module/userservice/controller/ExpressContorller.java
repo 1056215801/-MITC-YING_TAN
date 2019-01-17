@@ -12,8 +12,8 @@ import com.mit.community.service.ExpressInfoService;
 import com.mit.community.service.RedisService;
 import com.mit.community.service.UserService;
 import com.mit.community.util.CookieUtils;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public class ExpressContorller {
     @ApiOperation(value = "添加快递领取地址信息", notes = "输入参数：name 快递名称；address 领取地址；image 图片")
     public Result saveExpressAddress(HttpServletRequest request, String name, String address, MultipartFile image) throws Exception {
         if (StringUtils.isNotBlank(name) && StringUtils.isNotBlank(address) && image != null) {
-            String imageUrl = FastDFSClient.getInstance().uploadFile(image);
+            String imageUrl = UploadUtil.upload(image);
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             expressAddressService.save(user.getCommunityCode(), name, address, imageUrl, user.getName());
@@ -87,7 +87,7 @@ public class ExpressContorller {
         if (id != null) {
             String imageUrl = null;
             if (image != null) {
-                imageUrl = FastDFSClient.getInstance().uploadFile(image);
+                imageUrl = UploadUtil.upload(image);
             }
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);

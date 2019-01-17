@@ -5,8 +5,8 @@ import com.mit.community.entity.YellowPages;
 import com.mit.community.entity.YellowPagesType;
 import com.mit.community.service.YellowPagesService;
 import com.mit.community.service.YellowPagesTypeService;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +49,7 @@ public class YellowPageController {
         if (StringUtils.isBlank(parentName) || image == null || StringUtils.isBlank(submenuName)) {
             return Result.error("参数错误");
         }
-        String imageUrl = FastDFSClient.getInstance().uploadFile(image);
+        String imageUrl = UploadUtil.upload(image);
         yellowPagesTypeService.save(parentName,
                 imageUrl, submenuName, order);
         return Result.success("保存成功");
@@ -74,7 +74,7 @@ public class YellowPageController {
         }
         String imageUrl = null;
         if (image != null) {
-            imageUrl = FastDFSClient.getInstance().uploadFile(image);
+            imageUrl = UploadUtil.upload(image);
         }
         yellowPagesTypeService.update(id,
                 parentName, imageUrl, submenuName);

@@ -1,3 +1,4 @@
+/*
 package com.mit.community.util;
 
 import com.mit.community.config.FastDFSConf;
@@ -6,21 +7,25 @@ import org.csource.fastdfs.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+*/
 /**
  * 文件上传工具类
  *
  * @author shuyy
  * @date 2018年8月18日
- */
+ *//*
+
 public class FastDFSClient {
 
     private TrackerClient trackerClient = null;
     private TrackerServer trackerServer = null;
     private StorageServer storageServer = null;
     private StorageClient1 storageClient = null;
-    /**
+    */
+/**
      * client.conf的地址
-     */
+     *//*
+
 //    private static final String CLIENT_URL = "classpath:config/FastDFS/client.conf";
     private static final String CLIENT_URL = "/config/FastDFS/client.conf";
 
@@ -45,7 +50,8 @@ public class FastDFSClient {
         storageClient = new StorageClient1(trackerServer, storageServer);
     }
 
-    /**
+    */
+/**
      * 上传文件方法
      * <p>Title: uploadFile</p>
      * <p>Description: </p>
@@ -55,7 +61,8 @@ public class FastDFSClient {
      * @param metas    文件扩展信息
      * @return
      * @throws Exception
-     */
+     *//*
+
     public String uploadFile(String fileName, String extName, NameValuePair[] metas) throws Exception {
         String result = storageClient.upload_file1(fileName, extName, metas);
         return result;
@@ -69,7 +76,8 @@ public class FastDFSClient {
         return uploadFile(fileName, extName, null);
     }
 
-    /**
+    */
+/**
      * 上传文件方法
      * <p>Title: uploadFile</p>
      * <p>Description: </p>
@@ -79,7 +87,8 @@ public class FastDFSClient {
      * @param metas       文件扩展信息
      * @return
      * @throws Exception
-     */
+     *//*
+
     public String uploadFile(byte[] fileContent, String extName, NameValuePair[] metas) throws Exception {
 
         String result = storageClient.upload_file1(fileContent, extName, metas);
@@ -94,7 +103,8 @@ public class FastDFSClient {
         return uploadFile(fileContent, extName, null);
     }
 
-    /**
+    */
+/**
      * 上传文件方法。
      * 上传文件的时候记得保存好文件名称
      *
@@ -103,7 +113,8 @@ public class FastDFSClient {
      * @param @throws Exception
      * @return String 返回完整的带有nginx地址的url地址。
      * @throws
-     */
+     *//*
+
     public String uploadFile(MultipartFile file) throws Exception {
         String filename = file.getOriginalFilename();
         // 取扩展名
@@ -112,3 +123,4 @@ public class FastDFSClient {
         return FastDFSConf.nginxUrl + "/" + url;
     }
 }
+*/

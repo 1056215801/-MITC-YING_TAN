@@ -220,6 +220,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>7.2.0</version>
+        </dependency>
+
+        <!--百度文字识别接口-->
+        <dependency>
+            <groupId>com.baidu.aip</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>4.3.2</version>
+        </dependency>
 
     </dependencies>
     <build>

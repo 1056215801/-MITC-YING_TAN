@@ -8,8 +8,8 @@ import com.mit.community.feigin.SelectionActivitiesFeigin;
 import com.mit.community.service.RedisService;
 import com.mit.community.service.SelectionActivitiesService;
 import com.mit.community.util.CookieUtils;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public class SelectionActivesController {
     public Result save(HttpServletRequest request, String title, String introduce,
                        String externalUrl, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime validTime,
                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issueTime, MultipartFile image, String notes, String content) throws Exception {
-        String s = FastDFSClient.getInstance().uploadFile(image);
+        String s = UploadUtil.upload(image);
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         selectionActivitiesService.save(user.getCommunityCode(), title, introduce, externalUrl, validTime, issueTime,
@@ -93,7 +93,7 @@ public class SelectionActivesController {
         if (id != null) {
             String s = null;
             if (image != null) {
-                s = FastDFSClient.getInstance().uploadFile(image);
+                s = UploadUtil.upload(image);
             }
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);

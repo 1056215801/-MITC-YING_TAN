@@ -7,8 +7,8 @@ import com.mit.community.entity.SysUser;
 import com.mit.community.service.CommunityServiceInfoService;
 import com.mit.community.service.RedisService;
 import com.mit.community.util.CookieUtils;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +62,7 @@ public class CommunityServiceInfoController {
                        Double longitude, Double latitude, MultipartFile image, String type, String detail) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        String imageUrl = FastDFSClient.getInstance().uploadFile(image);
+        String imageUrl = UploadUtil.upload(image);
         communityServiceInfoService.save(user.getCommunityCode(), name, intro, businessHours, address, cellphone, longitude, latitude, imageUrl, type, user.getId(), detail);
         return Result.success("保存成功");
     }
@@ -78,7 +78,6 @@ public class CommunityServiceInfoController {
      * @param longitude     经度
      * @param latitude      维度
      * @param image         图片
-     * @param type          类型
      * @param detail        详情
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -94,7 +93,7 @@ public class CommunityServiceInfoController {
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String imageUrl = null;
         if (image != null) {
-            imageUrl = FastDFSClient.getInstance().uploadFile(image);
+            imageUrl = UploadUtil.upload(image);
         }
         communityServiceInfoService.update(id,
                 name, intro, businessHours, address, cellphone, longitude, latitude, imageUrl,

@@ -792,7 +792,27 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("household_id", householdIdList);
         houseHoldMapper.delete(wrapper);
+    }
 
+    /**
+     * 获取住户，通过cellphone和communityCode
+     * @param cellphone
+     * @param communityCode
+     * @return com.mit.community.entity.HouseHold
+     * @throws
+     * @author shuyy
+     * @date 2019-01-15 14:56
+     * @company mitesofor
+    */
+    public HouseHold getByHouseholdByCellphoneAndCommunityCode(String cellphone, String communityCode){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("mobile", cellphone);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if(houseHolds.isEmpty()){
+            return null;
+        }
+        return houseHolds.get(0);
     }
 
 

@@ -158,6 +158,7 @@ public class BusinessHandlingService {
         wrapper.in("status", s);
         wrapper.eq("creator_user_id", creatorUserId);
         wrapper.eq("community_code", communityCode);
+        wrapper.orderBy("gmt_create", false);
         List<BusinessHandling> businessHandlings = businessHandlingMapper.selectPage(page, wrapper);
         if (!businessHandlings.isEmpty()) {
             page.setRecords(businessHandlings);

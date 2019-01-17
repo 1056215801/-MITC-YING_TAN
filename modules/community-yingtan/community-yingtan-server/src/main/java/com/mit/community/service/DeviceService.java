@@ -141,4 +141,22 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
     public void remove() {
         deviceMapper.delete(null);
     }
+
+    /**
+     * @param deviceName
+     * @return java.util.List<com.mit.community.entity.Device>
+     * @throws
+     * @author shuyy
+     * @date 2019-01-15 11:18
+     * @company mitesofor
+    */
+    public Device getByDevice(String deviceName){
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_name", deviceName);
+        List<Device> devices = deviceMapper.selectList(wrapper);
+        if(devices.isEmpty()){
+            return null;
+        }
+        return devices.get(0);
+    }
 }

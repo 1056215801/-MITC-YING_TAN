@@ -6,8 +6,8 @@ import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.service.*;
-import com.mit.community.util.FastDFSClient;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -135,7 +134,7 @@ public class UserServiceController {
                 List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
                 if (images != null) {
                     for (MultipartFile image : images) {
-                        String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                        String imageUrl = UploadUtil.upload(image);
                         imageUrls.add(imageUrl);
                     }
                 }
@@ -304,7 +303,7 @@ public class UserServiceController {
             List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
             if (images != null) {
                 for (MultipartFile image : images) {
-                    String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                    String imageUrl = UploadUtil.upload(image);
                     imageUrls.add(imageUrl);
                 }
             }
@@ -477,7 +476,7 @@ public class UserServiceController {
             List<String> imageUrls = Lists.newArrayListWithCapacity(5);
             if (null != images) {
                 for (MultipartFile image : images) {
-                    String imageUrl = Objects.requireNonNull(FastDFSClient.getInstance()).uploadFile(image);
+                    String imageUrl = UploadUtil.upload(image);
                     imageUrls.add(imageUrl);
                 }
             }

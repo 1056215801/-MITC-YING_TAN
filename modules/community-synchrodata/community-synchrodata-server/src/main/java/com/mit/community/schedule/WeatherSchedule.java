@@ -9,7 +9,6 @@ import com.mit.community.service.RegionService;
 import com.mit.community.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
  * <p>Copyright: Copyright (c) 2018</p>
  * <p>Company: mitesofor </p>
  */
-@Component
+//@Component
 public class WeatherSchedule {
 
     private final WeatherService weatherService;
