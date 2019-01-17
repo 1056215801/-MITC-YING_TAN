@@ -1,5 +1,6 @@
 package com.mit.community.module.pass.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.mit.community.conmon.BaiduOcr;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * 百度
@@ -30,7 +32,8 @@ public class BaiduOcrController {
     public Result analyze(MultipartFile file) throws IOException {
         byte[] bytes = file.getBytes();
         String invoke = BaiduOcr.invoke(bytes);
-        return Result.success(invoke);
+        Map map = JSON.parseObject(invoke, Map.class);
+        return Result.success(map);
     }
 
 }
