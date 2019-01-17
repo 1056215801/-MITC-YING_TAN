@@ -226,6 +226,13 @@
             <version>7.2.0</version>
         </dependency>
 
+        <!--百度文字识别接口-->
+        <dependency>
+            <groupId>com.baidu.aip</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>4.3.2</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>app-community-wanli-server</finalName>
