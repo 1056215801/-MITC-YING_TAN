@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class weatherInfo {
+public class WeatherInfo {
     /**
      * 相对湿度
      */

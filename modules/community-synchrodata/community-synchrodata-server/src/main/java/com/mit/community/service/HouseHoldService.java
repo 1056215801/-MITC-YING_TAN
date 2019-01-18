@@ -355,7 +355,9 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
                 String constellation = ConstellationUtil.calc(birthday);
                 item.setConstellation(constellation);
             } else {
-                item.setConstellation(StringUtils.EMPTY);
+                if(item.getConstellation() == null){
+                    item.setConstellation(StringUtils.EMPTY);
+                }
             }
             String city = idCardInfo.getCity();
             if (city != null) {
