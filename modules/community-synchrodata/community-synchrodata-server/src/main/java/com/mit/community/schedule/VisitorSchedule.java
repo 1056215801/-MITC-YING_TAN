@@ -38,8 +38,8 @@ public class VisitorSchedule {
         this.visitorMessageService = visitorMessageService;
     }
 
-    @Scheduled(cron = "0 */30 * * * ?")
-//    @Scheduled(cron = "*/5 * * * * ?")
+//    @Scheduled(cron = "0 */30 * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {
         List<Visitor> dataList = visitorService.list();
@@ -61,6 +61,7 @@ public class VisitorSchedule {
                 if (dnakeVisitor.getVisitorStatus().equals(dataVisitor.getVisitorStatus())) {
                     map.remove(visitorId);
                 } else {
+                    dnakeVisitor.setId(dataVisitor.getId());
                     updateList.add(dnakeVisitor);
                     map.remove(visitorId);
                 }
