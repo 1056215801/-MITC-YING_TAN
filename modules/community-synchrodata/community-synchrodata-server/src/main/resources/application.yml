@@ -111,7 +111,7 @@ eureka:
     serviceUrl:
       #            defaultZone: http://localhost:8761/eureka/
       # docker 部署开启
-      defaultZone: http://${EUREKA_HOST:192.168.1.222}:${EUREKA_PORT:8761}/eureka/
+      defaultZone: http://${EUREKA_HOST:127.0.0.1}:${EUREKA_PORT:8761}/eureka/
 # 必须配置
 feign:
   httpclient:
@@ -193,8 +193,8 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
-#      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+#      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
 #      username: root
@@ -204,7 +204,7 @@ db:
       maxActive: 100
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
       initialSize: 20

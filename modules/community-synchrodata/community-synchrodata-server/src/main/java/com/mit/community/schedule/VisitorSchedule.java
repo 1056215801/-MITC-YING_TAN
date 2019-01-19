@@ -38,8 +38,8 @@ public class VisitorSchedule {
         this.visitorMessageService = visitorMessageService;
     }
 
-//    @Scheduled(cron = "0 */30 * * * ?")
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {
         List<Visitor> dataList = visitorService.list();
