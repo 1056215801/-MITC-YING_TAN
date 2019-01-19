@@ -1,11 +1,11 @@
 logging:
   level:
     #        tk.mybatis: DEBUG
-    com.mit: DEBUG
+    com.mit: INFO
 spring:
   redis:
     database: 2
-    host: ${REDIS_HOST:192.168.1.222}
+    host: ${REDIS_HOST:127.0.0.1}
     port: ${REDIS_PORT:6379}
     pool:
     max-active: 20
@@ -50,7 +50,7 @@ spring:
         reset-enable: true
         login-username: admin
         login-password: admin
-        allow: 192.168.1.222
+        allow: 127.0.0.1
       filter:
         stat:
           db-type: mysql
@@ -110,14 +110,14 @@ eureka:
     healthCheckUrlPath: /actuator/health
     # docker 部署开启
     prefer-ip-address: true
-    ip-address: 192.168.1.222
+    ip-address: 127.0.0.1
     instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
     hostname: ${spring.cloud.client.hostname}
   client:
     serviceUrl:
       #            defaultZone: http://localhost:8761/eureka/
       # docker 部署开启
-      defaultZone: http://${EUREKA_HOST:192.168.1.222}:${EUREKA_PORT:8761}/eureka/
+      defaultZone: http://${EUREKA_HOST:127.0.0.1}:${EUREKA_PORT:8761}/eureka/
 # 必须配置
 feign:
   httpclient:
@@ -178,7 +178,7 @@ redis:
     maxActive: 300
     maxIdle: 100
     maxWait: 1000
-  host: ${REDIS_HOST:192.168.1.222}
+  host: ${REDIS_HOST:127.0.0.1}
   port:  ${REDIS_PORT:6379}
   password:
   timeout: 2000
@@ -199,12 +199,12 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
 

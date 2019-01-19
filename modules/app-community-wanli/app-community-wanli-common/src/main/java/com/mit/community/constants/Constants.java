@@ -1,5 +1,7 @@
 package com.mit.community.constants;
 
+import com.mit.community.util.UploadUtil;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -31,7 +33,8 @@ public class Constants {
     /**
      * 用户默认头像地址
      */
-    public static final String USER_ICO_DEFULT = "192.168.1.222:8088/group1/M00/00/03/wKgB3lwR-ViAakJKAAAOWH6Ql6c941.png";
+    public static final String USER_ICO_DEFULT = UploadUtil.URL + "1ec47936-e19a-43d2-86c1-481ddfe07a8c.png";
+
     /**标签类型-系统*/
     public static final Short LABEL_TYPE_SYSTEM = 1;
     /**标签类型-自定义*/
