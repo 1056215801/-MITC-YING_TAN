@@ -71,9 +71,7 @@ public class VisitorMessageService extends ServiceImpl<VisitorMessageMapper, Vis
      * @company mitesofor
     */
     public void updateStatus(List<VisitorMessage> visitorMessages){
-        visitorMessages.forEach(item -> {
-            item.setStatus((short) 2);
-        });
+        visitorMessages.forEach(item -> item.setStatus((short) 2));
         this.updateBatchById(visitorMessages);
     }
 }

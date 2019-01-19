@@ -30,24 +30,26 @@ import java.util.Map;
 @Slf4j
 @Api(tags = "消息服务")
 public class MessageController {
+    private final NoticeService noticeService;
+    private final RedisService redisService;
+    private final ExpressInfoService expressInfoService;
+    private final SysMessagesService sysMessagesService;
+    private final LostFoundService lostFoundService;
+    private final PromotionService promotionService;
+    private final OldMedicalService oldMedicalService;
+    private final VisitorMessageService visitorMessageService;
+
     @Autowired
-    private NoticeReadUserService noticeReadUserService;
-    @Autowired
-    private NoticeService noticeService;
-    @Autowired
-    private RedisService redisService;
-    @Autowired
-    private ExpressInfoService expressInfoService;
-    @Autowired
-    private SysMessagesService sysMessagesService;
-    @Autowired
-    private LostFoundService lostFoundService;
-    @Autowired
-    private PromotionService promotionService;
-    @Autowired
-    private OldMedicalService oldMedicalService;
-    @Autowired
-    private VisitorMessageService visitorMessageService;
+    public MessageController(NoticeService noticeService, RedisService redisService, ExpressInfoService expressInfoService, SysMessagesService sysMessagesService, LostFoundService lostFoundService, PromotionService promotionService, OldMedicalService oldMedicalService, VisitorMessageService visitorMessageService) {
+        this.noticeService = noticeService;
+        this.redisService = redisService;
+        this.expressInfoService = expressInfoService;
+        this.sysMessagesService = sysMessagesService;
+        this.lostFoundService = lostFoundService;
+        this.promotionService = promotionService;
+        this.oldMedicalService = oldMedicalService;
+        this.visitorMessageService = visitorMessageService;
+    }
 
     /**
      * @param cellphone
