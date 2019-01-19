@@ -303,7 +303,7 @@ public class LoginController {
      */
     @PostMapping("/register")
     @ApiOperation(value = "注册", notes = "传参;cellphone 手机号;password 密码")
-    public Result register(String cellphone, String password) {
+    public Result register(String mac, String cellphone, String password) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(password)) {
             Object o = redisService.get(RedisConstant.VERIFICATION_SUCCESS + cellphone);
             if (o == null) {
@@ -313,7 +313,7 @@ public class LoginController {
             if (status == 0) {
                 return Result.success("用户已经存在");
             } else {
-                Result login = this.login(null, cellphone, null, password);
+                Result login = this.login(mac, cellphone, null, password);
                 //添加系统消息
                 sysMessagesService.addSysMessages(cellphone, "注册", "成功注册赣鄱乐生活账号！");
                 return login;
