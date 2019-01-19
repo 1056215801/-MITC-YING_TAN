@@ -39,6 +39,7 @@ public class HttpUtil {
     public static String sendGet(String url) {
 
         HttpGet httpget = new HttpGet(url);
+        httpget.addHeader("Connection", "close");
         CloseableHttpResponse response = null;
         try {
             response = HTTP_CLIENT.execute(httpget);
@@ -58,6 +59,7 @@ public class HttpUtil {
                 if (response != null) {
                     response.close();
                 }
+                httpget.releaseConnection();
             } catch (IOException e) {
                 e.printStackTrace();
             }

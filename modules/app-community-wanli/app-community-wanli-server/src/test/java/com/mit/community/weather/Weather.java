@@ -3,7 +3,7 @@ package com.mit.community.weather;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mit.community.entity.weatherInfo;
+import com.mit.community.entity.WeatherInfo;
 import com.mit.community.util.HttpUtil;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class Weather {
         String status = jsonObject.getString("status");
         if ("ok".equals(status)) {
             JSONObject now = jsonObject.getJSONObject("now");
-            weatherInfo weatherInfo = JSON.toJavaObject(now, weatherInfo.class);
+            WeatherInfo weatherInfo = JSON.toJavaObject(now, WeatherInfo.class);
             System.out.println(weatherInfo);
         }
     }

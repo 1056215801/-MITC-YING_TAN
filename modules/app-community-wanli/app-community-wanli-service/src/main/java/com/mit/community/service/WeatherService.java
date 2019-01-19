@@ -1,8 +1,15 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Weather;
+import com.mit.community.entity.WeatherInfo;
 import com.mit.community.mapper.WeatherMapper;
+import com.mit.community.util.HttpUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +26,31 @@ import java.util.List;
 public class WeatherService {
     @Autowired
     private WeatherMapper weatherMapper;
+
+
+    @Cache(key = "weather{1}", expire = 60)
+    public WeatherInfo getWeather(String cityName){
+        if (StringUtils.isNotBlank(cityName)) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("https://free-api.heweather.net/s6/weather/now?")
+                    .append("location=")
+                    .append(cityName)
+                    .append("&key=HE1901141248371261");
+            String url = stringBuilder.toString();
+            String s = HttpUtil.sendGet(url);
+            JSONObject json = JSON.parseObject(s);
+            JSONArray heWeather6 = json.getJSONArray("HeWeather6");
+            JSONObject jsonObject = heWeather6.getJSONObject(0);
+            String status = jsonObject.getString("status");
+            if ("ok".equals(status)) {
+                JSONObject now = jsonObject.getJSONObject("now");
+                WeatherInfo weatherInfo = JSON.toJavaObject(now, WeatherInfo.class);
+                return weatherInfo;
+            }
+            return null;
+        }
+        return null;
+    }
 
     /**
      * 查询天气信息，通过城市英文

@@ -55,6 +55,7 @@ public class VisitorMessageService extends ServiceImpl<VisitorMessageMapper, Vis
     public Page<VisitorMessage> listPage(String cellphone, Integer pageNum, Integer pageSize){
         EntityWrapper<VisitorMessage> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
+        wrapper.orderBy("gmt_create", false);
         Page<VisitorMessage> page = new Page(pageNum, pageSize);
         List<VisitorMessage> visitorMessages = visitorMessageMapper.selectPage(page, wrapper);
         page.setRecords(visitorMessages);

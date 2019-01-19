@@ -1,7 +1,5 @@
 package com.mit.community.module.pass.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
@@ -61,6 +59,7 @@ public class PassThroughController {
     private final NoticeReadUserService noticeReadUserService;
     private final SysMessagesService sysMessagesService;
     private final VisitorReadService visitorReadService;
+    private final WeatherService weatherService;
 
     @Autowired
     public PassThroughController(NoticeService noticeService, ApplyKeyService applyKeyService,
@@ -72,7 +71,7 @@ public class PassThroughController {
                                  RedisService redisService, ClusterCommunityService clusterCommunityService,
                                  DeviceService deviceService, UserTrackService userTrackService,
                                  DictionaryService dictionaryService, NoticeReadUserService noticeReadUserService,
-                                 SysMessagesService sysMessagesService, VisitorReadService visitorReadService) {
+                                 SysMessagesService sysMessagesService, VisitorReadService visitorReadService, WeatherService weatherService) {
         this.noticeService = noticeService;
         this.applyKeyService = applyKeyService;
         this.visitorService = visitorService;
@@ -92,6 +91,7 @@ public class PassThroughController {
         this.noticeReadUserService = noticeReadUserService;
         this.sysMessagesService = sysMessagesService;
         this.visitorReadService = visitorReadService;
+        this.weatherService = weatherService;
     }
 
     /**
@@ -109,23 +109,8 @@ public class PassThroughController {
             "cond_txt 实况天气状况描述，cond_code 实况天气状况代码")
     public Result getWeather(String mac, String cellphone, String cityName) {
         if (StringUtils.isNotBlank(cityName)) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("https://free-api.heweather.net/s6/weather/now?")
-                    .append("location=")
-                    .append(cityName)
-                    .append("&key=HE1901141248371261");
-            String url = stringBuilder.toString();
-            String s = HttpUtil.sendGet(url);
-            JSONObject json = JSON.parseObject(s);
-            JSONArray heWeather6 = json.getJSONArray("HeWeather6");
-            JSONObject jsonObject = heWeather6.getJSONObject(0);
-            String status = jsonObject.getString("status");
-            if ("ok".equals(status)) {
-                JSONObject now = jsonObject.getJSONObject("now");
-                weatherInfo weatherInfo = JSON.toJavaObject(now, weatherInfo.class);
-                return Result.success(weatherInfo);
-            }
-            return Result.error(status);
+            WeatherInfo weather = weatherService.getWeather(cityName);
+            return Result.success(weather);
         }
         return Result.error("参数不能为空");
     }

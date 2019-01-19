@@ -50,7 +50,7 @@ spring:
         reset-enable: true
         login-username: admin
         login-password: admin
-        allow: 127.0.0.1
+        allow: 192.168.1.222
       filter:
         stat:
           db-type: mysql

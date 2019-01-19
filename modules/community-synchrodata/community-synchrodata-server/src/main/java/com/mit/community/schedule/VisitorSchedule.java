@@ -61,6 +61,7 @@ public class VisitorSchedule {
                 if (dnakeVisitor.getVisitorStatus().equals(dataVisitor.getVisitorStatus())) {
                     map.remove(visitorId);
                 } else {
+                    dnakeVisitor.setId(dataVisitor.getId());
                     updateList.add(dnakeVisitor);
                     map.remove(visitorId);
                 }
