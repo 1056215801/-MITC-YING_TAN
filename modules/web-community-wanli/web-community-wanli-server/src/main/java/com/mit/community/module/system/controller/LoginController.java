@@ -138,10 +138,15 @@ public class LoginController {
 
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         String sessionId = CookieUtils.getSessionId(request);
+        /*
         String code = (String) redisService.get(RedisConstant.KAPTCHA + sessionId);
         if (StringUtils.isBlank(kaptcha) || !kaptcha.equalsIgnoreCase(code)) {
             return Result.error("验证码错误");
-        } else {
+        }*/
+        if(false){
+
+        }
+        else {
             HttpLogin httpLogin = new HttpLogin(username, password);
             //判断是否是集群管理账户访问不同的登录接口
             //是集群账户

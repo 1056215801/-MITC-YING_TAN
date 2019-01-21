@@ -12,6 +12,7 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,9 +99,14 @@ public class PassThroughController {
     @ApiOperation(value = "分页查询申请钥匙数据", notes = "输入参数：为空则不作为过滤条件。<br/>" +
             "zoneId 分区id，buildingId 楼栋id, unitId 单元id, roomId 房间id, contactPerson 联系人," +
             " contactCellphone 联系人手机号；status 1、申请中，2、审批通过； pageNum 当前页； pageSize 分页大小")
-    public Result listApplyKeyPage(Integer zoneId, Integer buildingId, Integer unitId,
+    public Result listApplyKeyPage(HttpServletRequest request, Integer zoneId,
+                                   String communityCode, Integer buildingId, Integer unitId,
                                    Integer roomId, String contactPerson, String contactCellphone, Integer status, Integer pageNum, Integer pageSize) {
-        String communityCode = "";
+        if(StringUtils.isBlank(communityCode)){
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
         List<ApplyKey> list = applyKeyService.listByPage(null, communityCode, zoneId, buildingId, unitId, roomId, contactPerson, contactCellphone, status, pageNum, pageSize);
         return Result.success(list);
     }
