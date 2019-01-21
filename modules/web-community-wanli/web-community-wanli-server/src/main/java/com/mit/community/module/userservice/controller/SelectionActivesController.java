@@ -65,7 +65,7 @@ public class SelectionActivesController {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         selectionActivitiesService.save(user.getCommunityCode(), title, introduce, externalUrl, validTime, issueTime,
-                user.getName(), s, notes, content);
+                user.getAdminName(), s, notes, content);
         return Result.success("保存成功");
     }
 
@@ -98,7 +98,7 @@ public class SelectionActivesController {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             selectionActivitiesService.update(id, title, introduce, externalUrl, validTime, issueTime,
-                    user.getName(), s, notes, content);
+                    user.getAdminName(), s, notes, content);
             return Result.success("修改成功");
         }
         return Result.error("id 不能为空");

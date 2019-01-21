@@ -68,7 +68,7 @@ public class PassThroughController {
         // 更新申请钥匙记录
         String sessionId = CookieUtils.getSessionId(request);
         SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        String checkPerson = sysUser.getName();
+        String checkPerson = sysUser.getAdminName();
         String status = applyKeyService.approval(applyKeyId, checkPerson, residenceTime,
                 deviceGroupIdList);
         if (!"success".equals(status)) {

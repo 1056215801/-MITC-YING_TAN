@@ -61,7 +61,7 @@ public class OldMedicalController {
                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        oldMedicalService.save(user.getCommunityCode(), title, user.getName(), contacts, phone, address, startTime, endTime, content);
+        oldMedicalService.save(user.getCommunityCode(), title, user.getAdminName(), contacts, phone, address, startTime, endTime, content);
         return Result.success("发布成功");
     }
 

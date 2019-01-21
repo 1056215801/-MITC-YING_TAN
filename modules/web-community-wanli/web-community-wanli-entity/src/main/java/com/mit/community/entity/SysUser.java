@@ -1,66 +1,91 @@
 package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import lombok.AllArgsConstructor;
+import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
 /**
- * 用户信息.
- *
- * @author Angel(QQ : 412887952)
- * @version v.0.1
+ * 用户
+ * @author shuyy
+ * @date 2018/11/14
+ * @company mitesofor
  */
-@NoArgsConstructor
-@AllArgsConstructor
+@TableName("sys_user")
 @Data
-@TableName("web_sys_user")
-public class SysUser extends BaseEntity {
+public class SysUser implements Serializable {
 
+    @TableId(type = IdType.AUTO)
+    private Integer id;
     /**
-     * 姓名
-     */
-    private String name;
-    /**
-     * 账号
+     * 用户名
      */
     private String username;
     /**
-     * 密码;
+     * 密码
      */
     private String password;
     /**
-     * 加密密码的盐
+     * 小区code
      */
-    private String salt;
-    /**
-     * 用户状态,0:创建未认证（比如没有激活，没有输入验证码等等）--等待验证的用户 , 1:正常状态,2：用户被锁定.
-     */
-    private byte state;
-
-    /**小区code*/
     @TableField("community_code")
     private String communityCode;
     /**
-     * 电子邮件
+     * 省份名称
      */
-    private String email;
-
+    @TableField("province_name")
+    private String provinceName;
     /**
-     * 最后一次登录时间
+     * 城市名称
      */
-    private LocalDateTime lastLogin;
+    @TableField("city_name")
+    private String cityName;
     /**
-     * 手机号
+     * 区/县名称
+     */
+    @TableField("area_name")
+    private String areaName;
+    /**
+     * 镇/街道
+     */
+    @TableField("street_name")
+    private String streetName;
+    /**
+     * 地址
+     */
+    private String address;
+    /**
+     * 管理员名称
+     */
+    @TableField("admin_name")
+    private String adminName;
+    /**
+     * 账号角色
+     */
+    private String role;
+    /**
+     * logo
+     */
+    private String logo;
+    /**
+     * 电话号码
      */
     private String phone;
     /**
-     * 备注
+     * 备注信息
      */
     private String remark;
-
-
+    /**
+     * 所管理小区
+     */
+    @TableField("management_community")
+    private String managementCommunity;
+    /**
+     * 管理单位
+     */
+    @TableField("management_unit")
+    private String managementUnit;
 }

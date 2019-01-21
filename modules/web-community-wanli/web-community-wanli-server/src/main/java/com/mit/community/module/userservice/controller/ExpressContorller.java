@@ -64,7 +64,7 @@ public class ExpressContorller {
             String imageUrl = UploadUtil.upload(image);
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-            expressAddressService.save(user.getCommunityCode(), name, address, imageUrl, user.getName());
+            expressAddressService.save(user.getCommunityCode(), name, address, imageUrl, user.getAdminName());
             return Result.success("添加成功");
         }
         return Result.error("参数不能为空");
@@ -91,7 +91,7 @@ public class ExpressContorller {
             }
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-            expressAddressService.update(id, name, address, imageUrl, user.getName());
+            expressAddressService.update(id, name, address, imageUrl, user.getAdminName());
             return Result.success("更新成功");
         }
         return Result.error("id不能为空");
@@ -154,7 +154,7 @@ public class ExpressContorller {
             User user1 = userService.getByCellphone(cellphone);
             if (user1 != null) {
                 ExpressInfo expressInfo = new ExpressInfo(user.getCommunityCode(), user1.getId(), expressAddressId, waybillNum, 2, Constants.NULL_LOCAL_DATE_TIME,
-                        StringUtils.EMPTY, StringUtils.EMPTY, user.getName(), null);
+                        StringUtils.EMPTY, StringUtils.EMPTY, user.getAdminName(), null);
                 expressInfoService.save(expressInfo);
                 return Result.success("快递信息添加成功");
             }
@@ -188,7 +188,7 @@ public class ExpressContorller {
         if (id != null) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-            expressInfoService.update(id, userId, waybillNum, expressAddressId, user.getName(), receiver, receiverPhone);
+            expressInfoService.update(id, userId, waybillNum, expressAddressId, user.getAdminName(), receiver, receiverPhone);
             return Result.success("修改成功");
         }
         return Result.error("id不能为空");

@@ -97,7 +97,7 @@ public class SysUserController {
         return Result.success("用户名不存在");
     }
 
-    @PostMapping("/saveUser")
+    /*@PostMapping("/saveUser")
     @ApiOperation(value = "保存用户", notes = "传参：username 用户名 required、" +
             "password:密码 required、communityCode 小区code required、" +
             "email 电子邮件、" +
@@ -112,7 +112,7 @@ public class SysUserController {
                 username, password,
                 communityCode, email, phone, remark);
         return Result.success("保存成功");
-    }
+    }*/
 
     /**
      *

@@ -50,7 +50,7 @@ public class ReportThingRepairController {
     public Result receiveReportThingsRepairId(HttpServletRequest request, Integer reportThingsRepairId) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        reportThingsRepairService.receive(reportThingsRepairId, user.getName());
+        reportThingsRepairService.receive(reportThingsRepairId, user.getAdminName());
         return Result.success("受理成功");
     }
 

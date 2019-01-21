@@ -51,7 +51,7 @@ public class BussinessHandleController {
     public Result receive(HttpServletRequest request, Integer id) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        businessHandlingService.receive(id, user.getName());
+        businessHandlingService.receive(id, user.getAdminName());
         return Result.success("受理成功");
     }
 

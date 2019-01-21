@@ -46,6 +46,8 @@ public class RedisConstant {
 
     /**session id*/
     public final static String SESSION_ID = "SESSION_ID:";
+    /**验证码*/
+    public final static String KAPTCHA = "kaptcha:";
 
     /**
      * mac地址

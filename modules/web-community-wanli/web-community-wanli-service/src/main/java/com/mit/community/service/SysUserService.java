@@ -3,17 +3,13 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
-import com.mit.community.constants.Constants;
 import com.mit.community.entity.SysRole;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.SysUserRole;
 import com.mit.community.mapper.SysUserMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -115,7 +111,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
      * @date 2018/12/17 19:56
      * @company mitesofor
      */
-    @Transactional(rollbackFor = Exception.class)
+ /*   @Transactional(rollbackFor = Exception.class)
     public void save(String name, String username, String password, String communityCode, String email,
                      String phone, String remark) {
         if (StringUtils.isBlank(email)) {
@@ -132,7 +128,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         sysUser.setGmtModified(LocalDateTime.now());
         sysUserMapper.insert(sysUser);
     }
-
+*/
     /**
      * 获取用户， 根据用户名
      * @param username 用户名
