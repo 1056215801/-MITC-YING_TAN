@@ -33,7 +33,6 @@ public class BusinessHandlingService {
     @Autowired
     private HouseholdRoomService householdRoomService;
 
-
     /**
      * 添加业务办理数据
      * @param businessHandling 业务办理数据
@@ -261,7 +260,7 @@ public class BusinessHandlingService {
      * @date 2018/12/20 11:20
      * @company mitesofor
      */
-    public List<BusinessHandling> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
+    public Page<BusinessHandling> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
                                            Integer roomId, String cellphone, String status,
                                            String appointmentTimeStart, String appointmentTimeEnd, String type,
                                            Integer pageNum, Integer pageSize) {
@@ -296,7 +295,9 @@ public class BusinessHandlingService {
         }
         wrapper.orderBy("gmt_create", false);
         Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
-        return businessHandlingMapper.selectPage(page, wrapper);
+        List<BusinessHandling> businessHandlings = businessHandlingMapper.selectPage(page, wrapper);
+        page.setRecords(businessHandlings);
+        return page;
     }
 
     /**
@@ -316,7 +317,7 @@ public class BusinessHandlingService {
 
     /**
      * 查询业务办理总数，通过手机号和小区code
-     * @param userId     用户id
+     * @param userId        用户id
      * @param communityCode 小区code
      * @return 统计总数
      * @author Mr.Deng
