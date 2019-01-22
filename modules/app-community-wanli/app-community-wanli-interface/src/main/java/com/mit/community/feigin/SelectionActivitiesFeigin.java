@@ -17,5 +17,4 @@ public interface SelectionActivitiesFeigin {
 
     @GetMapping("/api/app/communitywanli/userService/getBySelectionActivitiesId")
     Result getBySelectionActivitiesId(@RequestParam("selectionActivitiesId") Integer selectionActivitiesId);
-
 }

@@ -3,6 +3,7 @@ package com.mit.community.module.pass.controller;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ApplyKey;
 import com.mit.community.entity.SysUser;
+import com.mit.community.feigin.PassThroughFeign;
 import com.mit.community.service.ApplyKeyService;
 import com.mit.community.service.DnakeAppApiService;
 import com.mit.community.service.RedisService;
@@ -41,12 +42,15 @@ public class PassThroughController {
 
     private final DnakeAppApiService dnakeAppApiService;
 
+    private final PassThroughFeign passThroughFeign;
+
     @Autowired
-    public PassThroughController(ApplyKeyService applyKeyService, RedisService redisService, AppUserService userService, DnakeAppApiService dnakeAppApiService) {
+    public PassThroughController(ApplyKeyService applyKeyService, RedisService redisService, AppUserService userService, DnakeAppApiService dnakeAppApiService, PassThroughFeign passThroughFeign) {
         this.applyKeyService = applyKeyService;
         this.redisService = redisService;
         this.userService = userService;
         this.dnakeAppApiService = dnakeAppApiService;
+        this.passThroughFeign = passThroughFeign;
     }
 
     /**
@@ -102,7 +106,7 @@ public class PassThroughController {
     public Result listApplyKeyPage(HttpServletRequest request, Integer zoneId,
                                    String communityCode, Integer buildingId, Integer unitId,
                                    Integer roomId, String contactPerson, String contactCellphone, Integer status, Integer pageNum, Integer pageSize) {
-        if(StringUtils.isBlank(communityCode)){
+        if (StringUtils.isBlank(communityCode)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = sysUser.getCommunityCode();
@@ -110,4 +114,59 @@ public class PassThroughController {
         List<ApplyKey> list = applyKeyService.listByPage(null, communityCode, zoneId, buildingId, unitId, roomId, contactPerson, contactCellphone, status, pageNum, pageSize);
         return Result.success(list);
     }
+
+    /**
+     * @param communityCode 小区code
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2019-01-22 9:31
+     * @company mitesofor
+     */
+    @ApiOperation(value = "查询分区信息，通过小区code")
+    @GetMapping("/listZoneByCommunityCode")
+    public Result listZoneByCommunityCode(String communityCode) {
+        return passThroughFeign.listZoneByCommunityCode(communityCode);
+    }
+
+    /**
+     * @param zoneId 分区id
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2019-01-22 9:31
+     * @company mitesofor
+     */
+    @ApiOperation(value = "查询楼栋，通过分区id")
+    @GetMapping("/listBuildingByZoneId")
+    public Result listBuildingByZoneId(Integer zoneId) {
+        return passThroughFeign.listBuildingByZoneId(zoneId);
+    }
+
+
+    /**
+     * @param buildingId 楼栋id
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2019-01-22 9:35
+     * @company mitesofor
+     */
+    @ApiOperation(value = "查询单元信息，通过楼栋id")
+    @GetMapping("/listUnitByBuildingId")
+    public Result listUnitByBuildingId(Integer buildingId) {
+        return passThroughFeign.listUnitByBuildingId(buildingId);
+    }
+
+    /**
+     * @param unitId 单元id
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2019-01-22 9:36
+     * @company mitesofor
+     */
+    @ApiOperation(value = "查询房间信息，通过单元id")
+    @GetMapping("/listRoomByUnitId")
+    public Result listRoomByUnitId(Integer unitId) {
+        return passThroughFeign.listRoomByUnitId(unitId);
+    }
+
+
 }
