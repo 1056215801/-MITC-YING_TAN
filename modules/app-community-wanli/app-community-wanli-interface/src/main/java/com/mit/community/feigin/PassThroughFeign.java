@@ -35,7 +35,7 @@ public interface PassThroughFeign {
      * @company mitesofor
     */
     @GetMapping("/api/app/communitywanli/passThrough/listBuildingByZoneId")
-    Result listBuildingByZoneId(Integer zoneId);
+    Result listBuildingByZoneId(@RequestParam("zoneId")Integer zoneId);
 
     /**
      *
@@ -46,7 +46,7 @@ public interface PassThroughFeign {
      * @company mitesofor
     */
     @GetMapping("/api/app/communitywanli/passThrough/listUnitByBuildingId")
-    Result listUnitByBuildingId(Integer buildingId);
+    Result listUnitByBuildingId(@RequestParam("buildingId")Integer buildingId);
 
     /**
      *
@@ -56,7 +56,7 @@ public interface PassThroughFeign {
      * @date 2019-01-22 9:34
      * @company mitesofor
     */
-    @GetMapping("/listRoomByUnitId")
-    Result listRoomByUnitId(Integer unitId);
+    @GetMapping("/api/app/communitywanli/passThrough/listRoomByUnitId")
+    Result listRoomByUnitId(@RequestParam("unitId")Integer unitId);
 
 }

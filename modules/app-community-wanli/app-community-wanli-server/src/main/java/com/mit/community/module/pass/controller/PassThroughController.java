@@ -387,10 +387,11 @@ public class PassThroughController {
         if (StringUtils.isNotBlank(cellphone)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             if (user != null) {
-                List<ApplyKey> applyKeys = applyKeyService.listByPage(user.getId(), null,
+                Page<ApplyKey> page = applyKeyService.listByPage(user.getId(), null,
                         null, null, null, null, null,
                         null, status, pageNum, pageSize);
-                //记录足迹
+                List<ApplyKey> applyKeys = page.getRecords();
+                        //记录足迹
                 String message = "全部";
                 if (status != null) {
                     switch (status) {

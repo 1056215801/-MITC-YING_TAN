@@ -98,7 +98,7 @@ public class ApplyKeyService {
      * @date 2018/12/14 16:03
      * @company mitesofor
      */
-    public List<ApplyKey> listByPage(Integer createUserId, String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
+    public Page<ApplyKey> listByPage(Integer createUserId, String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
                                      Integer roomId, String contactPerson, String contactCellphone, Integer status, Integer pageNum, Integer pageSize) {
         EntityWrapper<ApplyKey> wrapper = new EntityWrapper<>();
         if (createUserId != null) {
@@ -114,7 +114,7 @@ public class ApplyKeyService {
             wrapper.eq("unit_id", unitId);
         }
         if (roomId != null) {
-            wrapper.eq("roomId", roomId);
+            wrapper.eq("room_id", roomId);
         }
         if (StringUtils.isNotBlank(communityCode)) {
             wrapper.eq("community_code", communityCode);
@@ -131,10 +131,14 @@ public class ApplyKeyService {
         wrapper.orderBy("gmt_create", false);
         if (pageNum != null && pageSize != null) {
             Page<ApplyKey> page = new Page<>(pageNum, pageSize);
-            return applyKeyMapper.selectPage(page, wrapper);
+            List<ApplyKey> applyKeys = applyKeyMapper.selectPage(page, wrapper);
+            page.setRecords(applyKeys);
+            return page;
         }
-        return applyKeyMapper.selectList(wrapper);
+        return null;
     }
+
+
 
     /*
     public List<ApplyKey> listByCellphone(String contactPerson) {

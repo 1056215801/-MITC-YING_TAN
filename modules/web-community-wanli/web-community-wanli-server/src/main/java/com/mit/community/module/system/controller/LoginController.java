@@ -63,6 +63,8 @@ public class LoginController {
     @ApiOperation(value = "生成验证码")
     @GetMapping("code")
     public void code(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+        HttpSession session1 = request.getSession();
+        Object hello = session.getAttribute("hello");
         response.setDateHeader("Expires", 0);
         // Set standard HTTP/1.1 no-cache headers.
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
@@ -104,21 +106,6 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * 初始化cookie
-     *
-     * @param session session
-     * @return com.mit.community.util.Result
-     * @author shuyy
-     * @date 2018/12/19 10:55
-     * @company mitesofor
-     */
-    @GetMapping("/initCookie")
-    @ApiOperation(value = "初始化cookie")
-    public Result initCookie(HttpSession session) {
-        return Result.success("初始化cookie成功");
     }
 
     /**
