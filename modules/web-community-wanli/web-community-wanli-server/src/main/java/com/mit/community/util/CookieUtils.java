@@ -25,7 +25,7 @@ public class CookieUtils {
     public static String getSessionId(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("JSESSIONID")) {
+            if (cookie.getName().equals("SESSION")) {
                 return cookie.getValue();
             }
         }

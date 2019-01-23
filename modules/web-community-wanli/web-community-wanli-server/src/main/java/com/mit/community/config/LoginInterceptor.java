@@ -33,7 +33,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         if (servletPath.contains("swagger") || servletPath.contains(".html") ||
                 servletPath.contains(".js") || servletPath.contains(".css")
                 || servletPath.contains(".jpg") || servletPath.contains(".png") ||
-                servletPath.contains(".gif") || servletPath.contains("/error") || servletPath.contains("/login/")) {
+                servletPath.contains(".gif") || servletPath.contains("/error")
+                || servletPath.contains("/login/")
+                || servletPath.contains("/initCookie")) {
             return true;
         }
         Cookie[] cookies = request.getCookies();
@@ -43,7 +45,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         }
         for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
-            if (cookie.getName().equals("JSESSIONID")) {
+            if (cookie.getName().equals("SESSION")) {
                 Object o = redisService.get(RedisConstant.SESSION_ID + cookie.getValue());
                 if (o == null) {
                     writeMessage(response, "请登录");

@@ -1,5 +1,6 @@
 package com.mit.community.module.pass.controller;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ApplyKey;
 import com.mit.community.entity.SysUser;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -111,8 +113,8 @@ public class PassThroughController {
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = sysUser.getCommunityCode();
         }
-        List<ApplyKey> list = applyKeyService.listByPage(null, communityCode, zoneId, buildingId, unitId, roomId, contactPerson, contactCellphone, status, pageNum, pageSize);
-        return Result.success(list);
+        Page<ApplyKey> page = applyKeyService.listByPage(null, communityCode, zoneId, buildingId, unitId, roomId, contactPerson, contactCellphone, status, pageNum, pageSize);
+        return Result.success(page);
     }
 
     /**
@@ -124,7 +126,14 @@ public class PassThroughController {
      */
     @ApiOperation(value = "查询分区信息，通过小区code")
     @GetMapping("/listZoneByCommunityCode")
-    public Result listZoneByCommunityCode(String communityCode) {
+    public Result listZoneByCommunityCode(String communityCode, HttpServletRequest request, HttpSession session) {
+        Object hello = session.getAttribute("hello");
+        System.out.println(hello);
+        if(StringUtils.isBlank(communityCode)){
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
         return passThroughFeign.listZoneByCommunityCode(communityCode);
     }
 
