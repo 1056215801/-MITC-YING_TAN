@@ -5,10 +5,7 @@ import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ApplyKey;
 import com.mit.community.entity.SysUser;
 import com.mit.community.feigin.PassThroughFeign;
-import com.mit.community.service.ApplyKeyService;
-import com.mit.community.service.DnakeAppApiService;
-import com.mit.community.service.RedisService;
-import com.mit.community.service.AppUserService;
+import com.mit.community.service.*;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -16,10 +13,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -46,6 +45,7 @@ public class PassThroughController {
 
     private final PassThroughFeign passThroughFeign;
 
+
     @Autowired
     public PassThroughController(ApplyKeyService applyKeyService, RedisService redisService, AppUserService userService, DnakeAppApiService dnakeAppApiService, PassThroughFeign passThroughFeign) {
         this.applyKeyService = applyKeyService;
@@ -56,22 +56,37 @@ public class PassThroughController {
     }
 
     /**
-     * 审批钥匙
-     *
-     * @param request           request
-     * @param applyKeyId        申请钥匙记录id
-     * @param residenceTime     过期时间
-     * @param deviceGroupIdList 设备组id列表
+     * 查询设备列表
      * @return com.mit.community.util.Result
      * @author shuyy
-     * @date 2018/12/19 10:02
+     * @date 2019-01-23 13:57
      * @company mitesofor
-     */
-    @PatchMapping("/approveKey")
+    */
+    @GetMapping("/listDeviceGroup")
+    @ApiOperation(value = "设备组列表")
+    public Result listDeviceGroup(HttpServletRequest request) {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        return passThroughFeign.getDeviceGroup(sysUser.getCommunityCode());
+    }
+
+        /**
+         * 审批钥匙
+         *
+         * @param request           request
+         * @param applyKeyId        申请钥匙记录id
+         * @param residenceTime     过期时间
+         * @param deviceGroupIdList 设备组id列表
+         * @return com.mit.community.util.Result
+         * @author shuyy
+         * @date 2018/12/19 10:02
+         * @company mitesofor
+         */
+    @PostMapping("/approveKey")
     @ApiOperation(value = "审批钥匙", notes = "传参：applyKeyId 申请钥匙id，residenceTime 申请钥匙记录id," +
             " deviceGroupIdList 设备组id列表")
     public Result approveKey(HttpServletRequest request, Integer applyKeyId,
-                             String residenceTime, @RequestParam("deviceGroupIdList") List<String> deviceGroupIdList) {
+                             String residenceTime, @RequestParam("deviceGroupIdList[]") List<String> deviceGroupIdList) {
         // 更新申请钥匙记录
         String sessionId = CookieUtils.getSessionId(request);
         SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
@@ -82,6 +97,27 @@ public class PassThroughController {
             return Result.error(status);
         }
         return Result.success("审批成功");
+    }
+
+    /**
+     * 审批钥匙
+     *
+     * @param request           request
+     * @param applyKeyId        申请钥匙记录id
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/19 10:02
+     * @company mitesofor
+     */
+    @PostMapping("/refuseKey")
+    @ApiOperation(value = "拒绝审批钥匙", notes = "传参：applyKeyId 申请钥匙id")
+    public Result refuseKey(Integer applyKeyId) {
+        // 更新申请钥匙记录
+        ApplyKey applyKey = new ApplyKey();
+        applyKey.setId(applyKeyId);
+        applyKey.setStatus(3);
+        applyKeyService.update(applyKey);
+        return Result.success("拒绝审批成功");
     }
 
     /**
@@ -107,13 +143,15 @@ public class PassThroughController {
             " contactCellphone 联系人手机号；status 1、申请中，2、审批通过； pageNum 当前页； pageSize 分页大小")
     public Result listApplyKeyPage(HttpServletRequest request, Integer zoneId,
                                    String communityCode, Integer buildingId, Integer unitId,
-                                   Integer roomId, String contactPerson, String contactCellphone, Integer status, Integer pageNum, Integer pageSize) {
+                                   Integer roomId, String contactPerson, String contactCellphone, Integer status,
+                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateStart,
+                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateEnd, Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(communityCode)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = sysUser.getCommunityCode();
         }
-        Page<ApplyKey> page = applyKeyService.listByPage(null, communityCode, zoneId, buildingId, unitId, roomId, contactPerson, contactCellphone, status, pageNum, pageSize);
+        Page<ApplyKey> page = applyKeyService.listByPage(null, communityCode, zoneId, buildingId, unitId, roomId, contactPerson, contactCellphone, status,gmtCreateStart, gmtCreateEnd, pageNum, pageSize);
         return Result.success(page);
     }
 

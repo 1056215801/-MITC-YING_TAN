@@ -81,7 +81,7 @@ public class ApplyKey extends BaseEntity {
     @TableField("contact_cellphone")
     private String contactCellphone;
     /**
-     * 申请钥匙状态：1、申请中；2、审批通过
+     * 申请钥匙状态：1、申请中；2、审批通过;3、拒绝申请
      */
     private Integer status;
     /**
