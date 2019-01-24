@@ -4,7 +4,6 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.mit.auth.client.interceptor.ServiceAuthRestInterceptor;
 import com.mit.auth.client.interceptor.UserAuthRestInterceptor;
-import com.mit.common.handler.GlobalExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +28,8 @@ public class WebConfiguration implements WebMvcConfigurer {
     private LoginInterceptor loginInterceptor;
 
     @Bean
-    GlobalExceptionHandler getGlobalExceptionHandler() {
-        return new GlobalExceptionHandler();
+    CustomerExceptionHandler getGlobalExceptionHandler() {
+        return new CustomerExceptionHandler();
     }
 
     @Override

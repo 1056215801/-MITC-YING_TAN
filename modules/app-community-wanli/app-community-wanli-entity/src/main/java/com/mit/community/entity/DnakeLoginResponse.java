@@ -26,4 +26,6 @@ public class DnakeLoginResponse implements Serializable {
      * uuid
      */
     private String uuid;
+    /**状态。1、成功。2、密码错误。3、不存在用户*/
+    private Integer status;
 }

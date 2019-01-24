@@ -5,17 +5,17 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
-import com.mit.community.entity.ApplyKey;
-import com.mit.community.entity.ApplyKeyImg;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.User;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.ApplyKeyMapper;
+import com.mit.community.util.ConstellationUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,12 @@ public class ApplyKeyService {
     private UserService userService;
     @Autowired
     private HouseHoldService houseHoldService;
+    @Autowired
+    private IdCardInfoExtractorUtil idCardInfoExtractorUtil;
+    @Autowired
+    private AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceGroupService;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
 
     /**
      * 添加申请钥匙数据
@@ -129,10 +135,10 @@ public class ApplyKeyService {
         if (status != null) {
             wrapper.eq("status", status);
         }
-        if(gmtCreateStart != null){
+        if (gmtCreateStart != null) {
             wrapper.ge("gmt_create", gmtCreateStart);
         }
-        if(gmtCreateEnd != null){
+        if (gmtCreateEnd != null) {
             wrapper.le("gmt_create", gmtCreateEnd);
         }
         wrapper.orderBy("gmt_create", false);
@@ -193,9 +199,9 @@ public class ApplyKeyService {
     /**
      * 审批申请钥匙
      *
-     * @param applyKeyId 申请记录id
-     * @param checkPerson 审批人
-     * @param residenceTime 过期时间
+     * @param applyKeyId        申请记录id
+     * @param checkPerson       审批人
+     * @param residenceTime     过期时间
      * @param deviceGroupIdList 设备组id列表
      * @author shuyy
      * @date 2018/12/19 9:53
@@ -203,22 +209,25 @@ public class ApplyKeyService {
      */
     @Transactional(rollbackFor = Exception.class)
     public String approval(Integer applyKeyId, String checkPerson,
-                                      String residenceTime, List<String> deviceGroupIdList) {
+                           LocalDate residenceTime, List<String> deviceGroupIdList) {
         // 判断用户表里有没有数据，有则说明数据还没同步，提示已有钥匙，5分钟后重新登录，直接返回
         ApplyKey applyKey = this.selectById(applyKeyId);
         Integer creatorUserId = applyKey.getCreatorUserId();
         User user = userService.getById(creatorUserId);
         String cellphone = user.getCellphone();
         List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
-        if (houseHoldList.isEmpty()) {
-            return "数据还没同步，已有钥匙,5分钟后重新查看";
+        if(!houseHoldList.isEmpty()){
+            return "已经有住户信息";
         }
+//        if (houseHoldList.isEmpty()) {
+//            return "数据还没同步，已有钥匙,5分钟后重新查看";
+//        }
         // 更新申请钥匙记录
         applyKey.setCheckTime(LocalDateTime.now());
         applyKey.setStatus(2);
         applyKey.setCheckPerson(checkPerson);
         this.update(applyKey);
-        // 增加住户，
+        // dnake平台增加住户，
         String communityCode = applyKey.getCommunityCode();
         Integer zoneId = applyKey.getZoneId();
         Integer buildingId = applyKey.getBuildingId();
@@ -232,13 +241,46 @@ public class ApplyKeyService {
         h.put("unitId", unitId);
         h.put("roomId", roomId);
         houseList.add(h);
-        JSONObject jsonObject = dnakeAppApiService.saveHousehold(communityCode, cellphone, contactPerson, residenceTime, houseList);
-        if(jsonObject.get("errorCode") != null && !jsonObject.get("errorCode").equals(0)){
+        // 解析身份证信息
+        String idCard = applyKey.getIdCard();
+        String residenceTimeStr = DateUtils.format(residenceTime, null);
+        IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
+        JSONObject jsonObject = dnakeAppApiService.saveHousehold(communityCode, cellphone, idCardInfo.getGender(),
+                contactPerson, residenceTimeStr, houseList);
+        if (jsonObject.get("errorCode") != null && !jsonObject.get("errorCode").equals(0)) {
             throw new RuntimeException(jsonObject.get("msg").toString());
         }
         // 添加授权设备组
         Integer householdId = (Integer) jsonObject.get("householdId");
-        dnakeAppApiService.authorizeHousehold(communityCode, householdId, residenceTime, deviceGroupIdList);
+        dnakeAppApiService.authorizeHousehold(communityCode, householdId, residenceTimeStr, deviceGroupIdList);
+        // 本地数据库保存住户
+        String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
+        HouseHold houseHold = new HouseHold(applyKey.getCommunityCode(), constellation, householdId, contactPerson,
+                1, 2,
+                idCardInfo.getGender(), residenceTime,
+                user.getCellphone(), StringUtils.EMPTY,
+                StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
+                idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
+                (short) 99, null, null, null);
+        houseHoldService.save(houseHold);
+        // 本地数据库保存关联设备组
+        List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
+        deviceGroupIdList.forEach(item -> {
+            AuthorizeAppHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeAppHouseholdDeviceGroup(householdId, Integer.parseInt(item));
+            authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
+            authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
+            authorizeAppHouseholdDeviceGroups.add(authorizeAppHouseholdDeviceGroup);
+        });
+        authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDeviceGroups);
+        // 关联房屋
+        HouseholdRoom householdRoom = new HouseholdRoom(applyKey.getCommunityCode(),
+                applyKey.getCommunityName(),
+                applyKey.getZoneId(), applyKey.getZoneName(),
+                applyKey.getBuildingId(), applyKey.getBuildingName(),
+                applyKey.getUnitId(), applyKey.getUnitName(),
+                applyKey.getRoomId(), applyKey.getRoomNum(),
+                (short) 1, householdId, null);
+        householdRoomService.save(householdRoom);
         return "success";
     }
 

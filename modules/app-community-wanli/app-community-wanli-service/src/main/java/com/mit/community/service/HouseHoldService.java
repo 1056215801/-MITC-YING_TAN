@@ -10,6 +10,7 @@ import com.mit.community.mapper.UserHouseholdMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,5 +129,19 @@ public class HouseHoldService {
     @CacheClear(key = "household:cellphone:{1.mobile}")
     public void update(HouseHold houseHold) {
         houseHoldMapper.updateById(houseHold);
+    }
+
+    /**
+     * 保存住户
+     * @param houseHold 住户对象
+     * @author shuyy
+     * @date 2019-01-24 10:51
+     * @company mitesofor
+    */
+    @CacheClear(key = "household:cellphone:{1.mobile}")
+    public void save(HouseHold houseHold){
+        houseHold.setGmtModified(LocalDateTime.now());
+        houseHold.setGmtCreate(LocalDateTime.now());
+        houseHoldMapper.insert(houseHold);
     }
 }

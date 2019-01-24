@@ -125,6 +125,25 @@ public class DateUtils {
     }
 
     /**
+     * 将datetime转成string
+     * @param dateTime
+     * @param format
+     * @return java.lang.String
+     * @throws
+     * @author shuyy
+     * @date 2019-01-24 11:32
+     * @company mitesofor
+    */
+    public static String format(LocalDate dateTime, String format) {
+        if (format == null) {
+            format = "yyyy-MM-dd";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        String strDate = dateTime.format(formatter);
+        return strDate;
+    }
+
+    /**
      * 将字符串转换成unix时间戳
      * @param time 时间字符串
      * @return java.lang.Long 时间戳

@@ -9,10 +9,12 @@ import com.mit.community.mapper.HouseholdRoomMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * 住户房屋关联
+ *
  * @author shuyy
  * @date 2018/12/11
  * @company mitesofor
@@ -29,6 +31,7 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
 
     /**
      * 查询房屋，通过住户id
+     *
      * @param householdId 住户id
      * @return java.util.List<com.mit.community.entity.HouseholdRoom>
      * @author shuyy
@@ -44,6 +47,7 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
 
     /**
      * 查询房屋列表，通过住户id列表
+     *
      * @param householdIdList 住户id列表
      * @return java.util.List<com.mit.community.entity.HouseholdRoom>
      * @author shuyy
@@ -57,9 +61,9 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
     }
 
 
-
     /**
      * 查询房间信息，通过住户id和房号
+     *
      * @param householdId 住户id
      * @param roomNum     房号
      * @return 房间信息
@@ -87,5 +91,23 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
     @CacheClear(pre = "householdRoom")
     public void remove() {
         householdRoomMapper.delete(null);
+    }
+
+    /**
+     * 保存
+     *
+     * @param householdRoom
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2019-01-24 15:49
+     * @company mitesofor
+     */
+//    @Cache(key = "householdRoom:householdId:{1}")
+    @CacheClear(key = "householdRoom:householdId:{1.householdId}")
+    public void save(HouseholdRoom householdRoom) {
+        householdRoom.setGmtCreate(LocalDateTime.now());
+        householdRoom.setGmtModified(LocalDateTime.now());
+        householdRoomMapper.insert(householdRoom);
     }
 }
