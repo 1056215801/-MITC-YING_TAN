@@ -163,7 +163,7 @@ public class LoginController {
         String s = Integer.toBinaryString(authorizeStatus);
         StringBuilder stringBuilder = new StringBuilder(s);
         s = stringBuilder.reverse().toString();
-        if (s.charAt(1) != '1') {
+        if (s.equals('0') || s.charAt(1) != '1') {
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
@@ -174,6 +174,12 @@ public class LoginController {
             }));
             return Result.success(user, "已授权app");
         }
+    }
+
+    public static void main(String[] args) {
+        Integer i = 0;
+        String s = Integer.toBinaryString(0);
+        System.out.println(s);
     }
 
     /**
