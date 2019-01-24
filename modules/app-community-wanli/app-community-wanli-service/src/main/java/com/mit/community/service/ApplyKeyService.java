@@ -185,10 +185,10 @@ public class ApplyKeyService {
     public void insertApplyKey(String communityCode, String communityName, Integer zoneId, String zoneName,
                                Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                                String roomNum, String contactPerson, String contactCellphone, String content,
-                               Integer creatorUserId, String idCard, List<String> images) {
+                               Integer creatorUserId, String idCard, Short householdType, List<String> images) {
         ApplyKey applyKey = new ApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName,
                 unitId, unitName, roomId, roomNum, contactPerson, contactCellphone, 1, content, creatorUserId,
-                StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, idCard);
+                StringUtils.EMPTY, Constants.NULL_LOCAL_DATE_TIME, idCard, householdType);
         this.save(applyKey);
         for (String image : images) {
             ApplyKeyImg applyKeyImg = new ApplyKeyImg(applyKey.getId(), image);
@@ -240,6 +240,7 @@ public class ApplyKeyService {
         h.put("buildingId", buildingId);
         h.put("unitId", unitId);
         h.put("roomId", roomId);
+        h.put("householdType", applyKey.getHouseholdType());
         houseList.add(h);
         // 解析身份证信息
         String idCard = applyKey.getIdCard();
@@ -279,7 +280,7 @@ public class ApplyKeyService {
                 applyKey.getBuildingId(), applyKey.getBuildingName(),
                 applyKey.getUnitId(), applyKey.getUnitName(),
                 applyKey.getRoomId(), applyKey.getRoomNum(),
-                (short) 1, householdId, null);
+                applyKey.getHouseholdType(), householdId, null);
         householdRoomService.save(householdRoom);
         return "success";
     }
