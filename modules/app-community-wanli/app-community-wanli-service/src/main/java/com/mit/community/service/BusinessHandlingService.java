@@ -243,18 +243,18 @@ public class BusinessHandlingService {
 
     /**
      * 查询业务办理列表
-     * @param communityCode        小区code
-     * @param zoneId               分区id
-     * @param buildingId           楼栋id
-     * @param unitId               单元id
-     * @param roomId               房间id
-     * @param cellphone            电话号码
-     * @param status               状态
-     * @param appointmentTimeStart 预约开始时间
-     * @param appointmentTimeEnd   预约结束时间
-     * @param type                 业务类型
-     * @param pageNum              当前页
-     * @param pageSize             分页大小
+     * @param communityCode  小区code
+     * @param zoneId         分区id
+     * @param buildingId     楼栋id
+     * @param unitId         单元id
+     * @param roomId         房间id
+     * @param cellphone      电话号码
+     * @param status         状态
+     * @param gmtCreateStart 订单创建开始时间
+     * @param gmtCreateEnd   订单创建结束时间
+     * @param type           业务类型
+     * @param pageNum        当前页
+     * @param pageSize       分页大小
      * @return java.util.List<com.mit.community.entity.BusinessHandling>
      * @author shuyy
      * @date 2018/12/20 11:20
@@ -262,7 +262,7 @@ public class BusinessHandlingService {
      */
     public Page<BusinessHandling> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
                                            Integer roomId, String cellphone, String status,
-                                           String appointmentTimeStart, String appointmentTimeEnd, String type,
+                                           String gmtCreateStart, String gmtCreateEnd, String type,
                                            Integer pageNum, Integer pageSize) {
         EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
@@ -279,16 +279,16 @@ public class BusinessHandlingService {
             wrapper.eq("room_id", roomId);
         }
         if (StringUtils.isNotBlank(cellphone)) {
-            wrapper.eq("cellphone", cellphone);
+            wrapper.eq("contact_cellphone", cellphone);
         }
         if (StringUtils.isNotBlank(status)) {
             wrapper.eq("status", status);
         }
-        if (StringUtils.isNotBlank(appointmentTimeStart)) {
-            wrapper.ge("appointment_time", appointmentTimeStart);
+        if (StringUtils.isNotBlank(gmtCreateStart)) {
+            wrapper.ge("gmt_create", gmtCreateStart);
         }
-        if (StringUtils.isNotBlank(appointmentTimeEnd)) {
-            wrapper.le("appointment_time", appointmentTimeEnd);
+        if (StringUtils.isNotBlank(gmtCreateEnd)) {
+            wrapper.le("gmt_create", gmtCreateEnd);
         }
         if (StringUtils.isNotBlank(type)) {
             wrapper.eq("type", type);
