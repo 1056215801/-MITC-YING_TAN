@@ -99,7 +99,8 @@ public class ApplyKeyService {
      * @company mitesofor
      */
     public Page<ApplyKey> listByPage(Integer createUserId, String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
-                                     Integer roomId, String contactPerson, String contactCellphone, Integer status, Integer pageNum, Integer pageSize) {
+                                     Integer roomId, String contactPerson, String contactCellphone, Integer status,
+                                     LocalDateTime gmtCreateStart, LocalDateTime gmtCreateEnd, Integer pageNum, Integer pageSize) {
         EntityWrapper<ApplyKey> wrapper = new EntityWrapper<>();
         if (createUserId != null) {
             wrapper.eq("creator_user_id", createUserId);
@@ -127,6 +128,12 @@ public class ApplyKeyService {
         }
         if (status != null) {
             wrapper.eq("status", status);
+        }
+        if(gmtCreateStart != null){
+            wrapper.ge("gmt_create", gmtCreateStart);
+        }
+        if(gmtCreateEnd != null){
+            wrapper.le("gmt_create", gmtCreateEnd);
         }
         wrapper.orderBy("gmt_create", false);
         if (pageNum != null && pageSize != null) {
@@ -226,6 +233,9 @@ public class ApplyKeyService {
         h.put("roomId", roomId);
         houseList.add(h);
         JSONObject jsonObject = dnakeAppApiService.saveHousehold(communityCode, cellphone, contactPerson, residenceTime, houseList);
+        if(jsonObject.get("errorCode") != null && !jsonObject.get("errorCode").equals(0)){
+            throw new RuntimeException(jsonObject.get("msg").toString());
+        }
         // 添加授权设备组
         Integer householdId = (Integer) jsonObject.get("householdId");
         dnakeAppApiService.authorizeHousehold(communityCode, householdId, residenceTime, deviceGroupIdList);

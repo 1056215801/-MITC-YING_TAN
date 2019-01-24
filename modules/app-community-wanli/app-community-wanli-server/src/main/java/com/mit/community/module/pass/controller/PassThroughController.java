@@ -389,7 +389,7 @@ public class PassThroughController {
             if (user != null) {
                 Page<ApplyKey> page = applyKeyService.listByPage(user.getId(), null,
                         null, null, null, null, null,
-                        null, status, pageNum, pageSize);
+                        null, status, null, null, pageNum, pageSize);
                 List<ApplyKey> applyKeys = page.getRecords();
                         //记录足迹
                 String message = "全部";

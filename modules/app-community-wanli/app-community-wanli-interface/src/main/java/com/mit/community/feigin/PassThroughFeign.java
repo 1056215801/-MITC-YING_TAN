@@ -59,4 +59,15 @@ public interface PassThroughFeign {
     @GetMapping("/api/app/communitywanli/passThrough/listRoomByUnitId")
     Result listRoomByUnitId(@RequestParam("unitId")Integer unitId);
 
+    /**
+     * 查询设备组，通过小区code
+     * @param communityCode
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2019-01-23 13:55
+     * @company mitesofor
+    */
+    @GetMapping("/api/app/communitywanli/passThrough/getDeviceGroup")
+    Result getDeviceGroup(@RequestParam("communityCode") String communityCode);
+
 }
