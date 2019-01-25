@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
 import com.mit.community.mapper.BusinessHandlingMapper;
@@ -296,6 +297,19 @@ public class BusinessHandlingService {
         wrapper.orderBy("gmt_create", false);
         Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
         List<BusinessHandling> businessHandlings = businessHandlingMapper.selectPage(page, wrapper);
+        if (!businessHandlings.isEmpty()) {
+            List<Integer> businessHandlingIds = businessHandlings.stream().map(BusinessHandling::getId).collect(Collectors.toList());
+            List<BusinessHandlingImg> businessHandlingImgs = businessHandlingImgService.getByBusinessHandlingIds(businessHandlingIds);
+            businessHandlings.forEach(item -> {
+                List<String> imgs = Lists.newArrayListWithExpectedSize(5);
+                businessHandlingImgs.forEach(it -> {
+                    if (it.getBusinessHandlingId().equals(item.getId())) {
+                        imgs.add(it.getImgUrl());
+                    }
+                });
+                item.setImages(imgs);
+            });
+        }
         page.setRecords(businessHandlings);
         return page;
     }
