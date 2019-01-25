@@ -70,6 +70,9 @@ public class LoginController {
     @GetMapping("/getMobileVerificationCode")
     @ApiOperation(value = "获取手机验证码", notes = "传参：cellphone 手机号、type 类型：1 注册, 2 登陆")
     public Result getMobileVerificationCode(String mac, String cellphone, Integer type) {
+        if(!cellphone.isEmpty()){
+            throw new RuntimeException("错误");
+        }
         String code = SmsCommunityAppUtil.generatorCode();
         if (SmsCommunityAppUtil.TYPE_REGISTER.equals(type)) {
             // 注册
@@ -163,17 +166,33 @@ public class LoginController {
         String s = Integer.toBinaryString(authorizeStatus);
         StringBuilder stringBuilder = new StringBuilder(s);
         s = stringBuilder.reverse().toString();
-        if (s.charAt(1) != '1') {
+        if (s.equals('0') || s.charAt(1) != '1') {
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
             ThreadPoolUtil.execute(new Thread(() -> {
+
                 DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                if(dnakeLoginResponse.getStatus().equals(2)){
+                    // 密码错误
+                    dnakeAppApiService.resetPwd(cellphone, psd);
+                    dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                }else if(dnakeLoginResponse.getStatus().equals(3)){
+                    // 用户不存在
+                    dnakeAppApiService.register(cellphone, psd);
+                    dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                }
                 redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
                         dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
             }));
             return Result.success(user, "已授权app");
         }
+    }
+
+    public static void main(String[] args) {
+        Integer i = 0;
+        String s = Integer.toBinaryString(0);
+        System.out.println(s);
     }
 
     /**

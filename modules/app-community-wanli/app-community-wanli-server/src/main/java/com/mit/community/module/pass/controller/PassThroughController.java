@@ -341,12 +341,12 @@ public class PassThroughController {
     @PostMapping(value = "/applyKey", produces = {"application/json"})
     @ApiOperation(value = "申请钥匙", notes = "输入参数：cellphone 手机号，communityCode 小区code;communityName 小区名；zoneId 分区id;" +
             "zoneName 分区名；buildingId 楼栋id ;buildingName 楼栋名；unitId 单元id；unitName 单元名；roomId 房间id;" +
-            "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；idCard 身份证号；" +
+            "roomNum 房间编号；contactPerson 申请人；contactCellphone 申请人电话；content 描述；idCard 身份证号；householdType 与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)" +
             "images 图片列表（可不传）")
     public Result applyKey(String cellphone, String communityCode, String communityName, Integer zoneId, String zoneName,
                            Integer buildingId, String buildingName, Integer unitId, String unitName, Integer roomId,
                            String roomNum, String contactPerson, String contactCellphone, String content,
-                           String idCard, MultipartFile[] images) throws Exception {
+                           String idCard, Short householdType, MultipartFile[] images) throws Exception {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(communityName)
                 && zoneId != null && StringUtils.isNotBlank(zoneName) && buildingId != null && StringUtils.isNotBlank(buildingName)
                 && unitId != null && StringUtils.isNotBlank(unitName) && roomId != null && StringUtils.isNotBlank(roomNum)
@@ -361,7 +361,7 @@ public class PassThroughController {
             }
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             applyKeyService.insertApplyKey(communityCode, communityName, zoneId, zoneName, buildingId, buildingName, unitId,
-                    unitName, roomId, roomNum, contactPerson, contactCellphone, content, user.getId(), idCard, imageUrls);
+                    unitName, roomId, roomNum, contactPerson, contactCellphone, content, user.getId(), idCard, householdType, imageUrls);
             //记录足迹
             userTrackService.addUserTrack(cellphone, "申请钥匙", "开门钥匙申请成功");
             //添加系统消息

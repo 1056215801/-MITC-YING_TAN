@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -115,7 +114,7 @@ public class HouseHold extends BaseEntity {
      * 居住期限
      */
     @TableField("residence_time")
-    private LocalDateTime residenceTime;
+    private LocalDate residenceTime;
     /**
      * 业主手机号
      */

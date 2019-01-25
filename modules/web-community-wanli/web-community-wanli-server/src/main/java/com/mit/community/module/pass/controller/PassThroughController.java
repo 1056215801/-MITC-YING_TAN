@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -86,7 +87,8 @@ public class PassThroughController {
     @ApiOperation(value = "审批钥匙", notes = "传参：applyKeyId 申请钥匙id，residenceTime 申请钥匙记录id," +
             " deviceGroupIdList 设备组id列表")
     public Result approveKey(HttpServletRequest request, Integer applyKeyId,
-                             String residenceTime, @RequestParam("deviceGroupIdList[]") List<String> deviceGroupIdList) {
+                             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate residenceTime,
+                             @RequestParam("deviceGroupIdList[]") List<String> deviceGroupIdList) {
         // 更新申请钥匙记录
         String sessionId = CookieUtils.getSessionId(request);
         SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);

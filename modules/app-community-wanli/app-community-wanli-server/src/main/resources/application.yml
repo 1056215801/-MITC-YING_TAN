@@ -5,7 +5,7 @@ logging:
 spring:
   redis:
     database: 2
-    host: ${REDIS_HOST:127.0.0.1}
+    host: ${REDIS_HOST:192.168.1.222}
     port: ${REDIS_PORT:6379}
     pool:
     max-active: 20
@@ -50,7 +50,7 @@ spring:
         reset-enable: true
         login-username: admin
         login-password: admin
-        allow: 127.0.0.1
+        allow: 192.168.1.222
       filter:
         stat:
           db-type: mysql
@@ -178,7 +178,7 @@ redis:
     maxActive: 300
     maxIdle: 100
     maxWait: 1000
-  host: ${REDIS_HOST:127.0.0.1}
+  host: ${REDIS_HOST:192.168.1.222}
   port:  ${REDIS_PORT:6379}
   password:
   timeout: 2000

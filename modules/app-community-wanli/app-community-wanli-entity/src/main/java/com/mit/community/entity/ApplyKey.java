@@ -107,4 +107,8 @@ public class ApplyKey extends BaseEntity {
      * 身份证号
      */
     private String IdCard;
+
+    /**身份类别*/
+    @TableField("household_type")
+    private Short householdType;
 }
