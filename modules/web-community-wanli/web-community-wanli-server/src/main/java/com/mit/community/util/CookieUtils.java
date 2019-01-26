@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * cookie帮助类
- *
  * @author shuyy
  * @date 2018/12/18
  * @company mitesofor
@@ -14,7 +13,6 @@ public class CookieUtils {
 
     /**
      * 获取sessionId
-     *
      * @param request
      * @return java.lang.String
      * @throws

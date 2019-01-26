@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.BusinessHandlingImg;
 import com.mit.community.mapper.BusinessHandlingImgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.List;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class BusinessHandlingImgService {
+public class BusinessHandlingImgService extends ServiceImpl<BusinessHandlingImgMapper, BusinessHandlingImg> {
     @Autowired
     private BusinessHandlingImgMapper bussinessHandingImgMapper;
 
@@ -44,6 +45,19 @@ public class BusinessHandlingImgService {
     public List<BusinessHandlingImg> getByBusinessHandlingId(Integer businessHandlingId) {
         EntityWrapper<BusinessHandlingImg> wrapper = new EntityWrapper<>();
         wrapper.eq("business_handling_id", businessHandlingId);
+        return bussinessHandingImgMapper.selectList(wrapper);
+    }
+
+    /**
+     * 查询业务办理图片信息，组
+     * @param businessHandlingIds 一组业务办理id
+     * @return 业务办理图片
+     * @author Mr.Deng
+     * @date 11:56 2019/1/24
+     */
+    public List<BusinessHandlingImg> getByBusinessHandlingIds(List<Integer> businessHandlingIds) {
+        EntityWrapper<BusinessHandlingImg> wrapper = new EntityWrapper<>();
+        wrapper.in("business_handling_id", businessHandlingIds);
         return bussinessHandingImgMapper.selectList(wrapper);
     }
 

@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
 import com.mit.community.mapper.BusinessHandlingMapper;
@@ -32,7 +33,6 @@ public class BusinessHandlingService {
     private HouseHoldService houseHoldService;
     @Autowired
     private HouseholdRoomService householdRoomService;
-
 
     /**
      * 添加业务办理数据
@@ -244,26 +244,26 @@ public class BusinessHandlingService {
 
     /**
      * 查询业务办理列表
-     * @param communityCode        小区code
-     * @param zoneId               分区id
-     * @param buildingId           楼栋id
-     * @param unitId               单元id
-     * @param roomId               房间id
-     * @param cellphone            电话号码
-     * @param status               状态
-     * @param appointmentTimeStart 预约开始时间
-     * @param appointmentTimeEnd   预约结束时间
-     * @param type                 业务类型
-     * @param pageNum              当前页
-     * @param pageSize             分页大小
+     * @param communityCode  小区code
+     * @param zoneId         分区id
+     * @param buildingId     楼栋id
+     * @param unitId         单元id
+     * @param roomId         房间id
+     * @param cellphone      电话号码
+     * @param status         状态
+     * @param gmtCreateStart 订单创建开始时间
+     * @param gmtCreateEnd   订单创建结束时间
+     * @param type           业务类型
+     * @param pageNum        当前页
+     * @param pageSize       分页大小
      * @return java.util.List<com.mit.community.entity.BusinessHandling>
      * @author shuyy
      * @date 2018/12/20 11:20
      * @company mitesofor
      */
-    public List<BusinessHandling> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
+    public Page<BusinessHandling> listPage(String communityCode, Integer zoneId, Integer buildingId, Integer unitId,
                                            Integer roomId, String cellphone, String status,
-                                           String appointmentTimeStart, String appointmentTimeEnd, String type,
+                                           String gmtCreateStart, String gmtCreateEnd, String type,
                                            Integer pageNum, Integer pageSize) {
         EntityWrapper<BusinessHandling> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
@@ -280,23 +280,38 @@ public class BusinessHandlingService {
             wrapper.eq("room_id", roomId);
         }
         if (StringUtils.isNotBlank(cellphone)) {
-            wrapper.eq("cellphone", cellphone);
+            wrapper.eq("contact_cellphone", cellphone);
         }
         if (StringUtils.isNotBlank(status)) {
             wrapper.eq("status", status);
         }
-        if (StringUtils.isNotBlank(appointmentTimeStart)) {
-            wrapper.ge("appointment_time", appointmentTimeStart);
+        if (StringUtils.isNotBlank(gmtCreateStart)) {
+            wrapper.ge("gmt_create", gmtCreateStart);
         }
-        if (StringUtils.isNotBlank(appointmentTimeEnd)) {
-            wrapper.le("appointment_time", appointmentTimeEnd);
+        if (StringUtils.isNotBlank(gmtCreateEnd)) {
+            wrapper.le("gmt_create", gmtCreateEnd);
         }
         if (StringUtils.isNotBlank(type)) {
             wrapper.eq("type", type);
         }
         wrapper.orderBy("gmt_create", false);
         Page<BusinessHandling> page = new Page<>(pageNum, pageSize);
-        return businessHandlingMapper.selectPage(page, wrapper);
+        List<BusinessHandling> businessHandlings = businessHandlingMapper.selectPage(page, wrapper);
+        if (!businessHandlings.isEmpty()) {
+            List<Integer> businessHandlingIds = businessHandlings.stream().map(BusinessHandling::getId).collect(Collectors.toList());
+            List<BusinessHandlingImg> businessHandlingImgs = businessHandlingImgService.getByBusinessHandlingIds(businessHandlingIds);
+            businessHandlings.forEach(item -> {
+                List<String> imgs = Lists.newArrayListWithExpectedSize(5);
+                businessHandlingImgs.forEach(it -> {
+                    if (it.getBusinessHandlingId().equals(item.getId())) {
+                        imgs.add(it.getImgUrl());
+                    }
+                });
+                item.setImages(imgs);
+            });
+        }
+        page.setRecords(businessHandlings);
+        return page;
     }
 
     /**
@@ -316,7 +331,7 @@ public class BusinessHandlingService {
 
     /**
      * 查询业务办理总数，通过手机号和小区code
-     * @param userId     用户id
+     * @param userId        用户id
      * @param communityCode 小区code
      * @return 统计总数
      * @author Mr.Deng

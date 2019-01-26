@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.ReportThingRepairImg;
 import com.mit.community.mapper.ReportThingRepairImgMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.List;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class ReportThingRepairImgService {
+public class ReportThingRepairImgService extends ServiceImpl<ReportThingRepairImgMapper, ReportThingRepairImg> {
     @Autowired
     private ReportThingRepairImgMapper reportThingRepairImgMapper;
 
@@ -36,14 +37,27 @@ public class ReportThingRepairImgService {
 
     /**
      * 查找报事报修图片，通告报事报修id
-     * @param ReportThingsRepairId 报事报修id
+     * @param reportThingsRepairId 报事报修id
      * @return 报事报修图片信息
      * @author Mr.Deng
      * @date 18:49 2018/12/19
      */
-    public List<ReportThingRepairImg> getByReportThingsRepairId(Integer ReportThingsRepairId) {
+    public List<ReportThingRepairImg> getByReportThingsRepairId(Integer reportThingsRepairId) {
         EntityWrapper<ReportThingRepairImg> wrapper = new EntityWrapper<>();
-        wrapper.eq("report_thing_repair_id", ReportThingsRepairId);
+        wrapper.eq("report_thing_repair_id", reportThingsRepairId);
+        return reportThingRepairImgMapper.selectList(wrapper);
+    }
+
+    /**
+     * 查询报事报修图片，通过报事报修id列表
+     * @param reportThingsRepairIds 报事报修ids
+     * @return 报事报修图片
+     * @author Mr.Deng
+     * @date 14:15 2019/1/25
+     */
+    public List<ReportThingRepairImg> getByReportThingsRepairIds(List<Integer> reportThingsRepairIds) {
+        EntityWrapper<ReportThingRepairImg> wrapper = new EntityWrapper<>();
+        wrapper.in("report_thing_repair_id", reportThingsRepairIds);
         return reportThingRepairImgMapper.selectList(wrapper);
     }
 
