@@ -71,7 +71,7 @@ public class YellowPagesTypeService {
         EntityWrapper<YellowPagesType> wrapper = new EntityWrapper<>();
         wrapper.setSqlSelect("id,submenu_name,image");
         wrapper.eq("parent_name", parentName);
-        wrapper.orderBy("LENGTH(submenu_name)");
+        wrapper.orderBy("gmt_create");
         return yellowPagesTypeMapper.selectMaps(wrapper);
     }
 
