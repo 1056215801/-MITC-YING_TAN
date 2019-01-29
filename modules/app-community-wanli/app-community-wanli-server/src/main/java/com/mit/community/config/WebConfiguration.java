@@ -26,6 +26,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private LoginInterceptor loginInterceptor;
+    @Autowired
+    private Ipterceptor ipterceptor;
 
     @Bean
     CustomerExceptionHandler getGlobalExceptionHandler() {
@@ -37,6 +39,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 //    	//是否有访问这个服务的权限
         registry.addInterceptor(getServiceAuthRestInterceptor()).
                 addPathPatterns(getIncludePathPatterns());
+        registry.addInterceptor(ipterceptor).
+                addPathPatterns("/**");
         // 拦截只有一台设备可以登录
         registry.addInterceptor(loginInterceptor).addPathPatterns("/**");
         //这里的拦截，只是拦截是否有登录过，request头部有没有token,并且把token中分析的信息放入threadLocal

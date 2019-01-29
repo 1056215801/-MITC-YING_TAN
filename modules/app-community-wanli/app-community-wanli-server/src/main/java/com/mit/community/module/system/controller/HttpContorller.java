@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * @author shuyy
@@ -28,26 +28,27 @@ import java.util.concurrent.SynchronousQueue;
 @Api(tags = {"http轮询请求"})
 public class HttpContorller {
 
-    public static final Map<String, SynchronousQueue<Boolean>> householdQueueMap
-            = new ConcurrentHashMap<>();
-    public static final Map<String, HttpServletResponse> responseMap = new ConcurrentHashMap<>();
+    public static final Map<String, Thread> threadMap = new ConcurrentHashMap<>();
 
+    public static final Map<String, Boolean> haveUpdateMap = new ConcurrentHashMap<>();
 
     @GetMapping("/haveUpdateHousehold")
     @ApiOperation(value = "住户信息是否更新", notes = "堵塞方法， 有则返回，没有则堵塞")
-    public void haveUpdateHousehold(HttpServletRequest request, HttpServletResponse response, String cellphone, String mac){
-        String remoteHost = request.getRemoteHost();
-        System.out.println(remoteHost);
-        responseMap.put(cellphone, response);
-        try {
-            SynchronousQueue<Boolean> quene = householdQueueMap.get(cellphone);
-            if(quene == null){
-                quene = new SynchronousQueue<>();
-                householdQueueMap.put(cellphone, quene);
-            }
-            quene.take();
-            System.out.println("take message:" + cellphone);
-            response = responseMap.get(cellphone);
+    public void haveUpdateHousehold(HttpServletRequest request, HttpServletResponse response, String cellphone, String mac) {
+        if(threadMap.get(cellphone) == null){
+            // 第一次调用
+            threadMap.put(cellphone, Thread.currentThread());
+            LockSupport.park();
+        }else{
+            Thread thread = threadMap.get(cellphone);
+            LockSupport.unpark(thread);
+            threadMap.put(cellphone, Thread.currentThread());
+            LockSupport.park();
+        }
+        Boolean haveUpdate = haveUpdateMap.get(cellphone);
+        if(haveUpdate != null){
+            // 已更新
+            haveUpdateMap.remove(cellphone);
             PrintWriter writer = null;
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=utf-8");
@@ -62,8 +63,9 @@ public class HttpContorller {
                 if (writer != null)
                     writer.close();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        }else{
+            System.out.println("=========offer=================");
+            return;
         }
     }
 

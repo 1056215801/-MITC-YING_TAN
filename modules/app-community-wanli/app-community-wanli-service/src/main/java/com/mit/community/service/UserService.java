@@ -62,6 +62,7 @@ public class UserService {
      * @date 10:56 2018/12/7
      */
     @CacheClear(key = "user:cellphone{1.cellphone}")
+    @Transactional(rollbackFor = Exception.class)
     public void update(User user) {
         user.setGmtModified(LocalDateTime.now());
         userMapper.updateById(user);
@@ -118,6 +119,7 @@ public class UserService {
      * @company mitesofor
      */
     @Cache(key = "user:cellphone{1}")
+    @Transactional
     public User getByCellphone(String cellphone) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);

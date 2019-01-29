@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * 住户-通行模块
@@ -880,12 +880,9 @@ public class PassThroughController {
     @PostMapping("/hoseholdUpdate")
     @ApiOperation(value = "住户信息已经更新", notes = "输入参数：status 免打扰开关：1关；0开")
     public Result hoseholdUpdate(String cellphone) throws InterruptedException {
-        SynchronousQueue<Boolean> queue = HttpContorller.householdQueueMap.get(cellphone);
-        if(queue == null){
-            queue = new SynchronousQueue<>();
-            HttpContorller.householdQueueMap.put(cellphone, queue);
-        }
-        queue.put(true);
+        HttpContorller.haveUpdateMap.put(cellphone, true);
+        Thread thread = HttpContorller.threadMap.get(cellphone);
+        LockSupport.unpark(thread);
         return Result.success(true);
     }
 }
