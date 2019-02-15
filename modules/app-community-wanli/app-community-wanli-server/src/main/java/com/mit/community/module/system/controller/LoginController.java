@@ -70,9 +70,6 @@ public class LoginController {
     @GetMapping("/getMobileVerificationCode")
     @ApiOperation(value = "获取手机验证码", notes = "传参：cellphone 手机号、type 类型：1 注册, 2 登陆")
     public Result getMobileVerificationCode(String mac, String cellphone, Integer type) {
-        if(!cellphone.isEmpty()){
-            throw new RuntimeException("错误");
-        }
         String code = SmsCommunityAppUtil.generatorCode();
         if (SmsCommunityAppUtil.TYPE_REGISTER.equals(type)) {
             // 注册
@@ -341,6 +338,7 @@ public class LoginController {
         return Result.error("参数不能为空");
     }
 
+
     /**
      * 查询用户授权的所有小区
      *
@@ -561,5 +559,13 @@ public class LoginController {
         }
         return Result.error("失败");
     }
+
+    @PostMapping("/getHousehold")
+    @ApiOperation(value = "获取住户信息", notes = "传参;cellphone")
+    public Result getHousehold(String mac, String cellphone) {
+        User user = userService.getByCellphone(cellphone);
+        return this.login(mac, cellphone, null, user.getPassword());
+    }
+
 
 }

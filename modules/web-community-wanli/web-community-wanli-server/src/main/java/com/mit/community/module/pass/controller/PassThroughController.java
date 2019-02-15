@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ApplyKey;
 import com.mit.community.entity.SysUser;
+import com.mit.community.entity.User;
 import com.mit.community.feigin.PassThroughFeign;
 import com.mit.community.service.*;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
+import com.mit.community.util.ThreadPoolUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +42,9 @@ public class PassThroughController {
 
     private final RedisService redisService;
 
-    private final AppUserService userService;
+    private final AppUserService appUserService;
+
+    private final UserService userService;
 
     private final DnakeAppApiService dnakeAppApiService;
 
@@ -48,9 +52,10 @@ public class PassThroughController {
 
 
     @Autowired
-    public PassThroughController(ApplyKeyService applyKeyService, RedisService redisService, AppUserService userService, DnakeAppApiService dnakeAppApiService, PassThroughFeign passThroughFeign) {
+    public PassThroughController(ApplyKeyService applyKeyService, RedisService redisService, UserService userService, AppUserService appUserService, DnakeAppApiService dnakeAppApiService, PassThroughFeign passThroughFeign) {
         this.applyKeyService = applyKeyService;
         this.redisService = redisService;
+        this.appUserService = appUserService;
         this.userService = userService;
         this.dnakeAppApiService = dnakeAppApiService;
         this.passThroughFeign = passThroughFeign;
@@ -98,13 +103,21 @@ public class PassThroughController {
         if (!"success".equals(status)) {
             return Result.error(status);
         }
+        ThreadPoolUtil.execute(new Thread(){
+            @Override
+            public void run() {
+                ApplyKey applyKey = applyKeyService.selectById(applyKeyId);
+                Integer creatorUserId = applyKey.getCreatorUserId();
+                User user = userService.getById(creatorUserId);
+                passThroughFeign.hoseholdUpdate(user.getCellphone());
+            }
+        });
         return Result.success("审批成功");
     }
 
     /**
      * 审批钥匙
      *
-     * @param request           request
      * @param applyKeyId        申请钥匙记录id
      * @return com.mit.community.util.Result
      * @author shuyy

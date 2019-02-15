@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
+import com.mit.community.module.system.controller.HttpContorller;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * 住户-通行模块
@@ -865,5 +867,22 @@ public class PassThroughController {
             return Result.error("status免打扰开关：1关；0开");
         }
         return Result.error("参数不能为空/有问题");
+    }
+
+    /**
+     * 住户信息已经更新
+     * @param cellphone 用户号码
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2019-01-25 11:51
+     * @company mitesofor
+    */
+    @PostMapping("/hoseholdUpdate")
+    @ApiOperation(value = "住户信息已经更新", notes = "输入参数：status 免打扰开关：1关；0开")
+    public Result hoseholdUpdate(String cellphone) throws InterruptedException {
+        HttpContorller.haveUpdateMap.put(cellphone, true);
+        Thread thread = HttpContorller.threadMap.get(cellphone);
+        LockSupport.unpark(thread);
+        return Result.success(true);
     }
 }

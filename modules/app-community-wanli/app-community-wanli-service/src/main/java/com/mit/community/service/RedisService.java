@@ -143,6 +143,7 @@ public class RedisService {
     public void hmSet(String key, Object hashKey, Object value) {
         HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
         hash.put(key, hashKey, value);
+
     }
 
     /**
@@ -220,4 +221,20 @@ public class RedisService {
         ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
         return zset.rangeByScore(key, scoure, scoure1);
     }
+
+    /**
+     * 自增
+     * @param key
+     * @param delta
+     * @return void
+     * @throws
+     * @author shuyy
+     * @date 2019-01-29 10:03
+     * @company mitesofor
+    */
+    public void increment(String key, Integer delta){
+        ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+        operations.increment(key, delta);
+    }
+
 }
