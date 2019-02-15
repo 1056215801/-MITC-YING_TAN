@@ -31,10 +31,14 @@ import javax.servlet.http.HttpServletRequest;
 @Api(tags = "报事报修")
 public class ReportThingRepairController {
 
+    private final ReportThingsRepairService reportThingsRepairService;
+    private final RedisService redisService;
+
     @Autowired
-    private ReportThingsRepairService reportThingsRepairService;
-    @Autowired
-    private RedisService redisService;
+    public ReportThingRepairController(ReportThingsRepairService reportThingsRepairService, RedisService redisService) {
+        this.reportThingsRepairService = reportThingsRepairService;
+        this.redisService = redisService;
+    }
 
     /**
      * @param request              rquest
