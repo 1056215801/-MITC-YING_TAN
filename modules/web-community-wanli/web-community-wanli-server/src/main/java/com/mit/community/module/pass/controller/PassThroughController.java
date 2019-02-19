@@ -103,15 +103,12 @@ public class PassThroughController {
         if (!"success".equals(status)) {
             return Result.error(status);
         }
-        ThreadPoolUtil.execute(new Thread(){
-            @Override
-            public void run() {
-                ApplyKey applyKey = applyKeyService.selectById(applyKeyId);
-                Integer creatorUserId = applyKey.getCreatorUserId();
-                User user = userService.getById(creatorUserId);
-                passThroughFeign.hoseholdUpdate(user.getCellphone());
-            }
-        });
+        ThreadPoolUtil.execute(new Thread(() -> {
+            ApplyKey applyKey = applyKeyService.selectById(applyKeyId);
+            Integer creatorUserId = applyKey.getCreatorUserId();
+            User user = userService.getById(creatorUserId);
+            passThroughFeign.hoseholdUpdate(user.getCellphone());
+        }));
         return Result.success("审批成功");
     }
 
