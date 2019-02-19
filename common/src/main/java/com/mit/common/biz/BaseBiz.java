@@ -43,7 +43,7 @@ public abstract class BaseBiz<M extends Mapper<T>, T> {
         return mapper.select(entity);
     }
 
-    @TargetDataSource(DataSourceKey.DATA_SOURCE_2)
+//    @TargetDataSource(DataSourceKey.DATA_SOURCE_2)
     public List<T> selectListAll() {
         return mapper.selectAll();
     }
