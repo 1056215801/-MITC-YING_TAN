@@ -545,7 +545,8 @@ public class LoginController {
     @PatchMapping("/chooseCommunity")
     @ApiOperation(value = "选择小区", notes = "输入参数：cellPhone 电话号码；communityCode 小区code")
     public Result chooseCommunity(String mac, String cellphone, String communityCode) {
-        User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        Object o = redisService.get(RedisConstant.USER + cellphone);
+        User user = (User) o;
         List<HouseHold> houseHolds = houseHoldService.getByCellphone(cellphone);
         for (HouseHold item : houseHolds) {
             String c = item.getCommunityCode();

@@ -45,6 +45,9 @@ server:
   port: 8762
 
 eureka:
+  server:
+    # 测试时关闭自我保护机制，保证不可用服务及时踢出
+    enable-self-preservation: false
   client:
     #false:不作为一个客户端注册到注册中心
     #registerWithEureka: false
