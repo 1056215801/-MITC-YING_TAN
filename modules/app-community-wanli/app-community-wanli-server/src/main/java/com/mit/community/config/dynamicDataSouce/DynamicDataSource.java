@@ -1,5 +1,6 @@
 package com.mit.community.config.dynamicDataSouce;
 
+import com.mit.common.config.DataSourceKey;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,11 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
         * 设置当前的数据源，在路由类中使用getDataSource进行获取，
         *  交给AbstractRoutingDataSource进行注入使用。
         */
-    	log.info("数据源为："+ DynamicDataSourceHolder.getDataSource());
+        String dataSource = DynamicDataSourceHolder.getDataSource();
+        if (dataSource == null){
+            DynamicDataSourceHolder.setDataSource(DataSourceKey.DATA_SOURCE_1);
+        }
+//        log.info("数据源为："+ DynamicDataSourceHolder.getDataSource());
        return DynamicDataSourceHolder.getDataSource();
 
     }

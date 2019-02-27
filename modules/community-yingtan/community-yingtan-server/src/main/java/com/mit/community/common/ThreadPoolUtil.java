@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 @Component
 public class ThreadPoolUtil implements CommandLineRunner {
 
-    private static ExecutorService threadPoolExecutor;
+        private static ExecutorService threadPoolExecutor;
 
     private static void init(){
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()

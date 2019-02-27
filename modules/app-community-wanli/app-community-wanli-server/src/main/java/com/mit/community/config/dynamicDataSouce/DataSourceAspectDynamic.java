@@ -8,6 +8,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.mit.common.config.TargetDataSource;
+import sun.rmi.runtime.Log;
 
 /***
  * 动态切换数据源aop
@@ -25,6 +26,7 @@ public class DataSourceAspectDynamic {
     public void changeDataSource(JoinPoint point, TargetDataSource targetDataSource) throws Throwable {
         // 获取当前的指定的数据源;
         String dsId = targetDataSource.value();
+        System.out.println("--------------------" + dsId);
         // 如果不在我们注入的所有的数据源范围之内，那么输出警告信息，系统自动使用默认的数据源。
 //		if (!DynamicDataSourceHolder.containsDataSource(dsId)) {
 //			System.err.println("数据源[{}]不存在，使用默认数据源 > {}" + targetDataSource.value() + point.getSignature());
