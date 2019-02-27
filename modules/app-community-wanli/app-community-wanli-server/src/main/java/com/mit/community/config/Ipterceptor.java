@@ -45,7 +45,7 @@ public class Ipterceptor extends HandlerInterceptorAdapter {
         }
         Object o = redisService.get(key);
         if(o == null){
-            redisService.set(key, 1, 2000L);
+            redisService.set(key, 1, 2L);
         } else if(o.equals(50)){
             // 2秒超过50个请求就屏蔽掉,放入黑名单,1小时候之后不能访问
             redisService.set(BLACK_PREFIX + ip, 1, 3600L);
