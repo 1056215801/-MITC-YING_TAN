@@ -68,12 +68,12 @@ spring:
           statement-close-after-log-enabled: false
           result-set-open-after-log-enabled: false
           result-set-close-after-log-enabled: false
-  #    rabbitmq:
-  #        host: ${RABBIT_MQ_HOST:localhost}
-  #        host: localhost
-  #        port:  5672
-  #        username: guest
-  #        password: guest
+      rabbitmq:
+          host: ${RABBIT_MQ_HOST:192.168.1.222}
+#          host: localhost
+          port:  5672
+          username: guest
+          password: guest
   sleuth:
     enabled: true
     http:
@@ -124,15 +124,15 @@ feign:
     enabled: false
   okhttp:
     enabled: true
-
-ribbon:
-  eureka:
-    enabled: true
-  ReadTimeout: 100000
-  ConnectTimeout: 100000
-  MaxAutoRetries: 0
-  MaxAutoRetriesNextServer: 1
-  OkToRetryOnAllOperations: false
+#
+#ribbon:
+#  eureka:
+#    enabled: true
+#  ReadTimeout: 100000
+#  ConnectTimeout: 100000
+#  MaxAutoRetries: 0
+#  MaxAutoRetriesNextServer: 1
+#  OkToRetryOnAllOperations: false
 
 hystrix:
   threadpool:

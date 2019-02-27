@@ -1,6 +1,6 @@
 logging:
   level:
-    #        tk.mybatis: DEBUG
+    # tk.mybatis: DEBUG
     com.mit: DEBUG
 spring:
   redis:
@@ -50,7 +50,7 @@ spring:
         reset-enable: true
         login-username: admin
         login-password: admin
-        allow: 127.0.0.1
+        allow: 192.168.1.222
       filter:
         stat:
           db-type: mysql
@@ -154,7 +154,7 @@ swagger:
   base-package: com.mit.community
   title: com.mit.community
   version: 1.0.0.SNAPSHOT
-  description: app-community-wanli
+  description: web-community-wanli
   contact:
     name: community
 #服务调用的配置。
@@ -200,7 +200,6 @@ db:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
-#      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
     datasouce2:

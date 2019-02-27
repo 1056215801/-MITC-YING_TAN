@@ -126,9 +126,7 @@ public class OldMedicalService {
                                      LocalDateTime endTime, LocalDateTime endTimeLast, Integer pageNum, Integer pageSize) {
         EntityWrapper<OldMedical> wrapper = new EntityWrapper<>();
         Page<OldMedical> page = new Page<>(pageNum, pageSize);
-        if (StringUtils.isNotBlank(communityCode)) {
-            wrapper.eq("community_code", communityCode);
-        }
+        wrapper.eq("community_code", communityCode);
         if (StringUtils.isNotBlank(title)) {
             wrapper.like("title", title);
         }
