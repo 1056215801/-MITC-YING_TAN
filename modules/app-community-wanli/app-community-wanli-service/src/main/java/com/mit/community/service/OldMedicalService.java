@@ -105,6 +105,7 @@ public class OldMedicalService {
      * @param communityCode   小区code
      * @param title           标题
      * @param issuer          发布人
+     * @param status          活动状态：1、未开始 2、进行中 3、已结束
      * @param issuerTimeStart 发布时间开始
      * @param issuerTimeEnd   发布时间结束
      * @param contacts        联系人
@@ -121,13 +122,24 @@ public class OldMedicalService {
      * @date 9:06 2019/1/3
      */
     public Page<OldMedical> listPage(String communityCode, String title, String issuer, LocalDateTime issuerTimeStart,
-                                     LocalDateTime issuerTimeEnd,
+                                     LocalDateTime issuerTimeEnd, Integer status,
                                      String contacts, String phone, String address, LocalDateTime startTime, LocalDateTime startTimeLast,
                                      LocalDateTime endTime, LocalDateTime endTimeLast, Integer pageNum, Integer pageSize) {
         EntityWrapper<OldMedical> wrapper = new EntityWrapper<>();
         Page<OldMedical> page = new Page<>(pageNum, pageSize);
-        if (StringUtils.isNotBlank(communityCode)) {
-            wrapper.eq("community_code", communityCode);
+        LocalDateTime nowTime = LocalDateTime.now();
+        wrapper.eq("community_code", communityCode);
+        if (status != null && status > 0) {
+            if (status == 1) {
+                wrapper.ge("start_time", nowTime);
+            }
+            if (status == 2) {
+                wrapper.le("start_time", nowTime);
+                wrapper.ge("end_time", nowTime);
+            }
+            if (status == 3) {
+                wrapper.le("end_time", nowTime);
+            }
         }
         if (StringUtils.isNotBlank(title)) {
             wrapper.like("title", title);
@@ -163,6 +175,12 @@ public class OldMedicalService {
             wrapper.le("end_time", endTimeLast);
         }
         List<OldMedical> oldMedicals = oldMedicalMapper.selectPage(page, wrapper);
+        if (!oldMedicals.isEmpty()) {
+            for (OldMedical oldMedical : oldMedicals) {
+                String statusStr = getStatus(oldMedical.getStartTime(), oldMedical.getEndTime());
+                oldMedical.setOldMedicalStatus(statusStr);
+            }
+        }
         page.setRecords(oldMedicals);
         return page;
     }

@@ -68,12 +68,12 @@ spring:
           statement-close-after-log-enabled: false
           result-set-open-after-log-enabled: false
           result-set-close-after-log-enabled: false
-  #    rabbitmq:
-  #        host: ${RABBIT_MQ_HOST:localhost}
-  #        host: localhost
-  #        port:  5672
-  #        username: guest
-  #        password: guest
+      rabbitmq:
+        host: ${RABBIT_MQ_HOST:192.168.1.222}
+        #          host: localhost
+        port:  5672
+        username: guest
+        password: guest
   sleuth:
     enabled: true
     http:
@@ -111,7 +111,6 @@ eureka:
     # docker 部署开启
     prefer-ip-address: true
     ip-address: 192.168.1.222
-#    ip-address: 127.0.0.1
     instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
     hostname: ${spring.cloud.client.hostname}
   client:
@@ -119,22 +118,21 @@ eureka:
       #            defaultZone: http://localhost:8761/eureka/
       # docker 部署开启
       defaultZone: http://${EUREKA_HOST:192.168.1.222}:${EUREKA_PORT:8761}/eureka/
-#      defaultZone: http://${EUREKA_HOST:127.0.0.1}:${EUREKA_PORT:8761}/eureka/
 # 必须配置
 feign:
   httpclient:
     enabled: false
   okhttp:
     enabled: true
-
-ribbon:
-  eureka:
-    enabled: true
-  ReadTimeout: 100000
-  ConnectTimeout: 100000
-  MaxAutoRetries: 0
-  MaxAutoRetriesNextServer: 1
-  OkToRetryOnAllOperations: false
+#
+#ribbon:
+#  eureka:
+#    enabled: true
+#  ReadTimeout: 100000
+#  ConnectTimeout: 100000
+#  MaxAutoRetries: 0
+#  MaxAutoRetriesNextServer: 1
+#  OkToRetryOnAllOperations: false
 
 hystrix:
   threadpool:

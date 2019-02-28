@@ -110,6 +110,7 @@ public class OldMedicalController {
      * @param issuer          发布人
      * @param issuerTimeStart 发布时间开始
      * @param issuerTimeEnd   发布时间结束
+     * @param status          活动状态：1、未开始 2、进行中 3、已结束
      * @param contacts        联系人
      * @param phone           联系人手机号
      * @param address         登记地址
@@ -125,7 +126,7 @@ public class OldMedicalController {
      */
     @GetMapping("/listPage")
     @ApiOperation(value = "分页查询老人体检", notes = "输入参数：title 标题，issuer 发布人，contacts 联系人，phone 联系人手机号，" +
-            "address 活动地址" +
+            "address 活动地址,status 活动状态：1、未开始 2、进行中 3、已结束" +
             "<br/>issuerTimeStart 发布开始时间（yyyy-MM-dd HH:mm:ss）" +
             "<br/>issuerTimeEnd 发布结束时间（yyyy-MM-dd HH:mm:ss）" +
             "<br/>startTime  活动开始时间开始（yyyy-MM-dd HH:mm:ss）" +
@@ -134,7 +135,7 @@ public class OldMedicalController {
             "<br/>endTimeLast 活动结束时间结束（yyyy-MM-dd HH:mm:ss）")
     public Result listPage(HttpServletRequest request, String title, String issuer,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issuerTimeStart,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issuerTimeEnd,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issuerTimeEnd, Integer status,
                            String contacts, String phone, String address, Integer pageNum, Integer pageSize,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTimeLast,
@@ -143,7 +144,7 @@ public class OldMedicalController {
         if (pageSize != null && pageNum != null) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-            Page<OldMedical> page = oldMedicalService.listPage(user.getCommunityCode(), title, issuer, issuerTimeStart, issuerTimeEnd, contacts,
+            Page<OldMedical> page = oldMedicalService.listPage(user.getCommunityCode(), title, issuer, issuerTimeStart, issuerTimeEnd, status, contacts,
                     phone, address, startTime, startTimeLast, endTime, endTimeLast, pageNum, pageSize);
             return Result.success(page);
         }

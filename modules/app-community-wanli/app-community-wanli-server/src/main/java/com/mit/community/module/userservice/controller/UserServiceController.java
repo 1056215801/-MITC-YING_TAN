@@ -110,7 +110,7 @@ public class UserServiceController {
      * @param content         报事内容
      * @param reportUser      报事人
      * @param reportCellphone 联系人
-     * @param maintainType    维修类型.关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他
+     * @param maintainType    维修类型.关联字典code maintain_type
      * @param creatorUserId   创建用户id
      * @return result
      * @author Mr.Deng
@@ -119,7 +119,7 @@ public class UserServiceController {
     @PostMapping(value = "/applyReportThingsRepair", produces = {"application/json"})
     @ApiOperation(value = "申请报事报修", notes = "输入参数：输入参数：communityCode 小区code;cellphone 登录用户手机号；roomId 房间id;" +
             "roomNum 房间编号；content 报事内容；reportUser 报事人；reportCellphone 报事人手机号；" +
-            "maintainType 维修类型.关联字典code maintain_type 维修类型：1、水，2、电，3、可燃气，4、锁，5、其他；" +
+            "maintainType 维修类型.关联字典code maintain_type" +
             "creatorUserId 创建用户id；images 图片（可不传），appointmentTime 预约时间（yyyy-MM-dd HH:mm:ss）")
     public Result applyReportThingsRepair(String communityCode, String cellphone, Integer roomId, String roomNum, String content,
                                           String reportUser, String reportCellphone, String maintainType,
