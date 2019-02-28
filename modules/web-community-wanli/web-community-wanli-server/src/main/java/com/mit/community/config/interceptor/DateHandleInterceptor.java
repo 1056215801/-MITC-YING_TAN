@@ -1,4 +1,4 @@
-package com.mit.community.config;
+package com.mit.community.config.interceptor;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
