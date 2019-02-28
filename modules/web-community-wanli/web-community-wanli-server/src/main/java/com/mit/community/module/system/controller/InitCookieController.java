@@ -1,5 +1,6 @@
 package com.mit.community.module.system.controller;
 
+import com.mit.community.common.constant.LoginConstant;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,12 +38,11 @@ public class InitCookieController {
     @ApiOperation(value = "初始化cookie")
     public Result initCookie(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         String id = session.getId();
-        Cookie cookie = new Cookie("SESSION", id);
+        Cookie cookie = new Cookie(LoginConstant.LOGIN_SESSION, id);
         cookie.setPath("/");
         cookie.setHttpOnly(false);
         cookie.setMaxAge(1800);
         response.addCookie(cookie);
-        session.setAttribute("hello", "world");
         return Result.success("初始化cookie成功");
     }
 }

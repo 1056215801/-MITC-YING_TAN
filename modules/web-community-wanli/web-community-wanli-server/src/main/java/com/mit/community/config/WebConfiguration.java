@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author ace
  * @date 2017/9/8
  */
-@Configuration("admimWebConfig")
+@Configuration("adminWebConfig")
 @Primary
 public class WebConfiguration implements WebMvcConfigurer {
 

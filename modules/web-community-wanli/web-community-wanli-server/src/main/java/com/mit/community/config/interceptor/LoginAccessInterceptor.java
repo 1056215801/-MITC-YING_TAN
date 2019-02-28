@@ -1,5 +1,6 @@
 package com.mit.community.config.interceptor;
 
+import com.mit.community.common.constant.LoginConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -23,7 +24,7 @@ public class LoginAccessInterceptor extends HandlerInterceptorAdapter {
         }
         for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
-            if ("SESSION".equals(cookie.getName())) {
+            if (LoginConstant.LOGIN_SESSION.equals(cookie.getName())) {
                 cookie.setPath("/");
                 cookie.setHttpOnly(false);
                 cookie.setMaxAge(1800);
