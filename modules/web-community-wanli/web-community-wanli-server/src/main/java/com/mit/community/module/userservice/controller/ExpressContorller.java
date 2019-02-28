@@ -81,7 +81,7 @@ public class ExpressContorller {
      * @author Mr.Deng
      * @date 17:15 2018/12/26
      */
-    @PatchMapping("/'updateExpressAddress")
+    @PatchMapping("/updateExpressAddress")
     @ApiOperation(value = "修改快递位置信息", notes = "输入参数：id 快递位置id ；name 快递名；address 领取位置 ；image 图片")
     public Result updateExpressAddress(HttpServletRequest request, Integer id, String name, String address, MultipartFile image) throws Exception {
         if (id != null) {

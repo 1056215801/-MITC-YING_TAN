@@ -1,4 +1,4 @@
-package com.mit.community.config;
+package com.mit.community.config.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.mit.community.constants.RedisConstant;

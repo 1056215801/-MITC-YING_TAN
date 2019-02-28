@@ -37,11 +37,11 @@ public class InitCookieController {
     @ApiOperation(value = "初始化cookie")
     public Result initCookie(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         String id = session.getId();
-        Cookie cookie=new Cookie("SESSION", id);
+        Cookie cookie = new Cookie("SESSION", id);
         cookie.setPath("/");
         cookie.setHttpOnly(false);
+        cookie.setMaxAge(1800);
         response.addCookie(cookie);
-//        Cookie[] cookies = request.getCookies();
         session.setAttribute("hello", "world");
         return Result.success("初始化cookie成功");
     }
