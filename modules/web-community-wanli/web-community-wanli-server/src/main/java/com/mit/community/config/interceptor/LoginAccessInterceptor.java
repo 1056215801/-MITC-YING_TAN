@@ -1,6 +1,5 @@
 package com.mit.community.config.interceptor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -13,12 +12,10 @@ import javax.servlet.http.HttpServletResponse;
  * @creatTime 2019-02-28 09:52
  */
 @Configuration
-@Slf4j
 public class LoginAccessInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        log.info("cookie is inner interceptor 是好 --------------");
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return true;
@@ -26,7 +23,6 @@ public class LoginAccessInterceptor extends HandlerInterceptorAdapter {
         for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
             if ("SESSION".equals(cookie.getName())) {
-                log.info(cookie.toString());
                 cookie.setPath("/");
                 cookie.setHttpOnly(false);
                 cookie.setMaxAge(1800);
