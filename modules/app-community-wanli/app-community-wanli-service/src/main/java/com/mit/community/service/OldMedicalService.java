@@ -179,6 +179,12 @@ public class OldMedicalService {
             for (OldMedical oldMedical : oldMedicals) {
                 String statusStr = getStatus(oldMedical.getStartTime(), oldMedical.getEndTime());
                 oldMedical.setOldMedicalStatus(statusStr);
+                OldMedicalContent oldMedicalContent = oldMedicalContentService.getByOldMedicalId(oldMedical.getId());
+                if (oldMedicalContent != null) {
+                    oldMedical.setContent(oldMedicalContent.getContent());
+                } else {
+                    oldMedical.setContent(StringUtils.EMPTY);
+                }
             }
         }
         page.setRecords(oldMedicals);

@@ -96,7 +96,7 @@ public class OldMedicalController {
      * @author Mr.Deng
      * @date 17:37 2019/1/2
      */
-    @DeleteMapping("/remove")
+    @PatchMapping("/remove")
     @ApiOperation(value = "删除老人体检", notes = "输入参数：oldMedicalId 老人体检id")
     public Result remove(Integer oldMedicalId) {
         oldMedicalService.remove(oldMedicalId);

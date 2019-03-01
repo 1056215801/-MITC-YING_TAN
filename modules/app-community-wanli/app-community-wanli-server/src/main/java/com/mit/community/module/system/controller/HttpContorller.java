@@ -82,7 +82,7 @@ public class HttpContorller {
         }
     }
 
-    @Scheduled(cron = "0/30 * * ? * *")
+    @Scheduled(cron = "0 0/2 * ? * *")
     public void rmThreadMapToRedis() {
         System.out.println("start-----------------------------");
         Set<String> Keys = threadMap.keySet();
