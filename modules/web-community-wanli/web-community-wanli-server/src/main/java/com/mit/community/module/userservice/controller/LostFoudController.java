@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 
 /**
  * 失物招领
- *
  * @author shuyy
  * @date 2018/12/26
  * @company mitesofor
@@ -37,7 +36,6 @@ public class LostFoudController {
     private LostFoundService lostFoundService;
     @Autowired
     private RedisService redisService;
-
 
     /**
      * @param request     request
@@ -56,9 +54,7 @@ public class LostFoudController {
     @ApiOperation(value = "发布失物招领", notes = "输入参数：title 标题， img 图片， issuer 发布人， issuerPhone 发布电话，" +
             "picAddress 捡到地址， pickTime 捡到时间，content 内容 ")
     public Result save(HttpServletRequest request, String title, MultipartFile img, String issuer,
-                       String issuerPhone,
-                       String picAddress,
-                       String receiverAddress,
+                       String issuerPhone, String picAddress, String receiverAddress,
                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTime, String content) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
@@ -70,13 +66,12 @@ public class LostFoudController {
 
     /**
      * 更新
-     *
      * @param title           标题
      * @param img             图片
      * @param issuer          发布人
      * @param issuerPhone     发布电话
      * @param picAddress      捡到地址
-     * @param pickTime       捡到时间
+     * @param pickTime        捡到时间
      * @param receiver        领取人
      * @param receivePhone    领取电话
      * @param receiverAddress 领取地址
@@ -110,7 +105,7 @@ public class LostFoudController {
      * @author shuyy
      * @date 2018/12/27 11:51
      * @company mitesofor
-    */
+     */
     @DeleteMapping("/remove")
     @ApiOperation(value = "删除失物招领", notes = "输入参数：id id")
     public Result remove(Integer id) {
@@ -119,36 +114,35 @@ public class LostFoudController {
     }
 
     /**
-     *
      * @param request
-     * @param title 标题
-     * @param issuer 发布人
-     * @param issuerPhone 发布电话
-     * @param receiver 领取人
-     * @param receivePhone 领取电话
+     * @param title             标题
+     * @param issuer            发布人
+     * @param issuerPhone       发布电话
+     * @param receiver          领取人
+     * @param receivePhone      领取电话
      * @param receiverTimeStart 领取开始时间
-     * @param receiverTimeEnd 领取结束时间
-     * @param receiverStatus 领取状态
-     * @param pageNum 当前页
-     * @param pageSize 分页大小
+     * @param receiverTimeEnd   领取结束时间
+     * @param receiverStatus    领取状态
+     * @param pageNum           当前页
+     * @param pageSize          分页大小
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/27 11:56
      * @company mitesofor
-    */
+     */
     @GetMapping("/listPage")
     @ApiOperation(value = "分页查询失物招领", notes = "输入参数：title 标题，issuer 发布人， issuerPhone 发布电话，pickTimeStart 捡到开始时间，pickTimeEnd 捡到结束时间，" +
             "receiver 领取人，receivePhone 领取电话，receiverTimeStart 领取开始时间， receiverTimeEnd 领取结束时间  ")
-    public Result listPage(HttpServletRequest request,String title, String issuer, String issuerPhone,
+    public Result listPage(HttpServletRequest request, String title, String issuer, String issuerPhone,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTimeStart,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTimeEnd,
-                           String receiver, String receivePhone,
+                           String receiver, String receivePhone, String pickAddress,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTimeStart,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTimeEnd,
-                         Integer receiverStatus, Integer pageNum, Integer pageSize) {
+                           Integer receiverStatus, Integer pageNum, Integer pageSize) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        Page<LostFound> page = lostFoundService.listPage(user.getCommunityCode(), title, issuer, issuerPhone,
+        Page<LostFound> page = lostFoundService.listPage(user.getCommunityCode(), title, issuer, issuerPhone, pickAddress,
                 pickTimeStart, pickTimeEnd,
                 receiver, receivePhone, receiverTimeStart, receiverTimeEnd,
                 receiverStatus, pageNum, pageSize);
@@ -162,13 +156,12 @@ public class LostFoudController {
      * @author shuyy
      * @date 2018/12/27 13:50
      * @company mitesofor
-    */
+     */
     @GetMapping("/getById")
     @ApiOperation(value = "获取详情", notes = "输入参数：id id")
     public Result getById(Integer id) {
         LostFound lostFount = lostFoundService.getLostFountInfo(id);
         return Result.success(lostFount);
     }
-
 
 }

@@ -233,12 +233,15 @@ public class LostFoundService {
      * @date 2018/12/27 11:16
      * @company mitesofor
      */
-    public Page<LostFound> listPage(String communityCode, String title, String issuer, String issuerPhone, LocalDateTime pickTimeStart,
+    public Page<LostFound> listPage(String communityCode, String title, String issuer, String issuerPhone, String pickAddress, LocalDateTime pickTimeStart,
                                     LocalDateTime pickTimeEnd, String receiver, String receivePhone,
                                     LocalDateTime receiverTimeStart, LocalDateTime receiverTimeEnd,
                                     Integer receiverStatus, Integer pageNum, Integer pageSize) {
         Page<LostFound> page = new Page<>(pageNum, pageSize);
         EntityWrapper<LostFound> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotBlank(pickAddress)) {
+            wrapper.like("pick_address", pickAddress);
+        }
         if (StringUtils.isNotBlank(title)) {
             wrapper.like("title", title, SqlLike.RIGHT);
         }
@@ -274,9 +277,16 @@ public class LostFoundService {
         }
         wrapper.orderBy("pick_time", false);
         List<LostFound> lostFounds = lostFoundMapper.selectPage(page, wrapper);
+        if (!lostFounds.isEmpty()) {
+            lostFounds.stream().forEach(item -> {
+                LostFountContent lostFountContent = lostFountContentService.listByLostFountId(item.getId());
+                if (lostFountContent != null) {
+                    item.setContent(lostFountContent.getContent());
+                }
+            });
+        }
         page.setRecords(lostFounds);
         return page;
-
     }
 
     /**
