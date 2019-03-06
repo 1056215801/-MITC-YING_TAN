@@ -1,5 +1,9 @@
 package com.mit.community.config.dynamicDataSouce;
 
+/**
+ * 本地线程操作
+ * @author asus
+ */
 public class DynamicDataSourceHolder {
 	
 	/**

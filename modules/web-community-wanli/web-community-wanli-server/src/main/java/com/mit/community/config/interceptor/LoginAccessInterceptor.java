@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * 登录成功session延时拦截器
  * @author LW
  * @creatTime 2019-02-28 09:52
  */

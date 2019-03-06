@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 /**
+ * web上下文容器
  * @author ace
  * @date 2017/9/8
  */
@@ -51,7 +52,6 @@ public class WebConfiguration implements WebMvcConfigurer {
 //                "/**/swagger**/**", "\\.html", "*\\.js",
 //                "*\\.css", "*\\.jpg", "*\\.gif", "/**\\.png").addPathPatterns("/**");
 
-
     }
 
     @Bean
@@ -66,7 +66,6 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     /**
      * 需要用户和服务认证判断的路径
-     *
      * @return
      */
     private ArrayList<String> getIncludePathPatterns() {

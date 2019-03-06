@@ -12,25 +12,33 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 设置动态数据源
+ * @author asus
+ */
 @Configuration
 public class DataSourceConfig {
 
-    //数据源1
+    /**
+     * 数据源1
+     */
     @Bean
     @ConfigurationProperties(prefix = "db.datasource.datasouce1")
-    public DataSource datasouce1(){
+    public DataSource datasouce1() {
         return DruidDataSourceBuilder.create().build();
     }
 
-    //数据源2
+    /**
+     * 数据源2
+     */
     @Bean
     @ConfigurationProperties(prefix = "db.datasource.datasouce2")
-    public DataSource datasouce2(){
+    public DataSource datasouce2() {
         return DruidDataSourceBuilder.create().build();
     }
 
     @Bean
-    public DataSource dataSource(){
+    public DataSource dataSource() {
         //按照目标数据源名称和目标数据源对象的映射存放在Map中
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put(DataSourceKey.DATA_SOURCE_1, datasouce1());
@@ -45,7 +53,7 @@ public class DataSourceConfig {
     }
 
     @Bean
-    public PlatformTransactionManager txManager(){
+    public PlatformTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());
     }
 

@@ -40,7 +40,6 @@ public class WeatherSchedule {
      * @date 15:01 2018/12/11
      */
     @Scheduled(cron = "0 0 */6 * * ?")
-//    @Scheduled(cron = "*/5 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {
         List<Region> regionList = regionService.list();

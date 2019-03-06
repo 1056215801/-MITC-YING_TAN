@@ -58,8 +58,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    if (writer != null)
+                    if (writer != null) {
                         writer.close();
+                    }
                 }
                 return false;
             }

@@ -36,7 +36,6 @@ public class AccessControlSchedule {
      * @company mitesofor
     */
     @Scheduled(cron = "0 */8 * * * ?")
-//    @Scheduled(cron = "*/5 * * * * ?")
     public void importIncrement (){
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
@@ -50,8 +49,4 @@ public class AccessControlSchedule {
             accessControlService.insertBatch(allAccessControlsList);*/
         }
     }
-
-
-
-
 }

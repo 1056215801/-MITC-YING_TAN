@@ -9,7 +9,13 @@ import org.apache.ibatis.session.RowBounds;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.Map.Entry;
-
+/**
+ * 全局时间处理器
+ *
+ * @author shuyy
+ * @date 2018/11/8 8:40
+ * @company mitesofor
+ */
 @Intercepts({ @Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
 		RowBounds.class, ResultHandler.class }) })
 public class DateHandleInterceptor implements Interceptor {

@@ -48,6 +48,12 @@ public class WebConfiguration implements WebMvcConfigurer {
                 addPathPatterns(getIncludePathPatterns());
     }
 
+    /**
+     * auth鉴权过滤
+     * @return
+     * @author Mr.Deng
+     * @date 17:04 2019/3/5
+    */
     @Bean
     ServiceAuthRestInterceptor getServiceAuthRestInterceptor() {
         return new ServiceAuthRestInterceptor();

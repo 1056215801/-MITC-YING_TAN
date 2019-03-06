@@ -2,22 +2,22 @@ server:
   port: 8765
 
 eureka:
-    instance:
-        statusPageUrlPath: /actuator/info
-        healthCheckUrlPath: /actuator/health
-        home-page-url-path: /
-        prefer-ip-address: true
-        ip-address: 192.168.1.222
-        instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-        hostname: ${spring.cloud.client.hostname}
-        # docker 部署开启
-#        prefer-ip-address: true
-#        ip-address: localhost
-    client:
-        serviceUrl:
-#            defaultZone: http://localhost:8761/eureka/
-                    # docker 部署开启
-            defaultZone: http://${EUREKA_HOST:192.168.1.222}:${EUREKA_PORT:8761}/eureka/
+  instance:
+    statusPageUrlPath: /actuator/info
+    healthCheckUrlPath: /actuator/health
+    home-page-url-path: /
+    prefer-ip-address: true
+    ip-address: 192.168.1.222
+    instance-id:  ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+    hostname: ${spring.cloud.client.hostname}
+    # docker 部署开启
+  #        prefer-ip-address: true
+  #        ip-address: localhost
+  client:
+    serviceUrl:
+      #            defaultZone: http://localhost:8761/eureka/
+      # docker 部署开启
+      defaultZone: http://${EUREKA_HOST:192.168.1.222}:${EUREKA_PORT:8761}/eureka/
 
 #请求和响应GZIP压缩支持
 feign:
@@ -37,22 +37,22 @@ ribbon:
   ConnectTimeout: 60000
 spring:
   application:
-      name: gateway
+    name: gateway
   jackson:
-        date-format: yyyy-MM-dd HH:mm:ss
-        time-zone: GMT+8
-        default-property-inclusion: non_null
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
   redis:
-      database: 2
-      host: 192.168.1.222
-      jedis:
-        pool:
-            max-active: 20
-#  rabbitmq:
-#      host: ${RABBIT_MQ_HOST:localhost}
-#      port:  ${RABBIT_MQ_PORT:5672}
-#      username: guest
-#      password: guest
+    database: 2
+    host: 192.168.1.222
+    jedis:
+      pool:
+        max-active: 20
+  #  rabbitmq:
+  #      host: ${RABBIT_MQ_HOST:localhost}
+  #      port:  ${RABBIT_MQ_PORT:5672}
+  #      username: guest
+  #      password: guest
   sleuth:
     enabled: true
     http:
@@ -63,35 +63,35 @@ spring:
       locator:
         enabled: true
       routes:
-      # =====================================
-      - id: auth
-        uri: lb://auth
-        order: 8000
-        predicates:
-        - Path=/api/auth/**
-        filters:
-        - StripPrefix=2
-      - id: admin
-        uri: lb://admin
-        order: 8001
-        predicates:
-        - Path=/api/admin/**
-        filters:
-        - StripPrefix=2
-      - id: MIT-Cloud
-        uri: lb://MIT-Cloud
-        order: 8002
-        predicates:
-        - Path=/api/mitc/**
-        filters:
-        - StripPrefix=2
-      - id: community-yingtan
-        uri: lb://community-yingtan
-        order: 8003
-        predicates:
-        - Path=/api/communityyingtan/**
-        filters:
-        - StripPrefix=2
+        # =====================================
+        - id: auth
+          uri: lb://auth
+          order: 8000
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+        - id: admin
+          uri: lb://admin
+          order: 8001
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - StripPrefix=2
+        - id: MIT-Cloud
+          uri: lb://MIT-Cloud
+          order: 8002
+          predicates:
+            - Path=/api/mitc/**
+          filters:
+            - StripPrefix=2
+        - id: community-yingtan
+          uri: lb://community-yingtan
+          order: 8003
+          predicates:
+            - Path=/api/communityyingtan/**
+          filters:
+            - StripPrefix=2
 
 
 logging:

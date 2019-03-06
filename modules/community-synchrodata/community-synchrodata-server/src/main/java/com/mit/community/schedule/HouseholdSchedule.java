@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 /**
  * 住户
- *
  * @author shuyy
  * @date 2018/11/19
  * @company mitesofor
@@ -71,19 +70,14 @@ public class HouseholdSchedule {
     @Transactional(rollbackFor = Exception.class)
     @Scheduled(cron = "0 */10 * * * ?")
     @CacheClear(pre = "household")
-//    @Scheduled(cron = "*/10 * * * * ?")
     public void removeAndiImport() {
         try {
             List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
             communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
-//        List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("南昌市");
-
-            //
             List<HouseHold> houseHolds = houseHoldService.listFromDnakeByCommunityCodeList(communityCodeList, null);//
             if (houseHolds.isEmpty()) {
                 return;
             }
-
             updateAuthAndHouseholdRoom(houseHolds);
             List<HouseHold> list = houseHoldService.list();
             // 对比出三种类型的数据
@@ -131,7 +125,6 @@ public class HouseholdSchedule {
 
     /**
      * 更新授权设备和关联房屋
-     *
      * @param houseHolds
      * @return void
      * @throws
@@ -172,7 +165,6 @@ public class HouseholdSchedule {
                     // 增加
                     authorizeAppHouseholdDeviceGroupService.insertBatch(addAppGroup);
                 }
-
 
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
                     authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDevices);
@@ -216,7 +208,6 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Scheduled(cron = "0 0 1 * * ?")
-//    @Scheduled(cron = "*/5 * * * * ?")
     public void parseIdentityType() {
         List<Map<String, Object>> maps = householdRoomService.listActiveRoomId();
         maps.forEach(item -> {

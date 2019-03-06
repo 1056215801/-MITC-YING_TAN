@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 /**
- *
+ * web容器
  * @author ace
  * @date 2017/9/8
  */
@@ -55,7 +55,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private ArrayList<String> getIncludePathPatterns() {
         ArrayList<String> list = new ArrayList<>();
         String[] urls = {
-        		"/api/**"
+                "/api/**"
 //                "/element/**",
 //                "/gateLog/**",
 //                "/group/**",
