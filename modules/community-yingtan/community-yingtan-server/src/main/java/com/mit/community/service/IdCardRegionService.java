@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * 身份证地区业务层
- *
  * @author Mr.Deng
  * @date 2018/11/21 10:54
  * <p>Copyright: Copyright (c) 2018</p>
@@ -24,6 +23,12 @@ public class IdCardRegionService {
         this.idCardRegionMapper = idCardRegionMapper;
     }
 
+    /**
+     * 查询身份证，省、市、县
+     * @param idCardSum6 身份证前六位
+     * @author Mr.Deng
+     * @date 16:02 2019/3/7
+     */
     public IdCardRegion getByIdCardSum6(String idCardSum6) {
         EntityWrapper<IdCardRegion> wrapper = new EntityWrapper<>();
         int idCardLen = idCardSum6.length();

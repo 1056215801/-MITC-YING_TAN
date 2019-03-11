@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
-import com.mit.community.module.system.controller.HttpContorller;
+import com.mit.community.module.system.controller.HttpController;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
@@ -30,7 +30,6 @@ import java.util.concurrent.locks.LockSupport;
 
 /**
  * 住户-通行模块
- *
  * @author Mr.Deng
  * @date 2018/12/3 14:27
  * <p>Copyright: Copyright (c) 2018</p>
@@ -98,7 +97,6 @@ public class PassThroughController {
 
     /**
      * 查询当地当前天气信息，通过城市英文名
-     *
      * @param cityName 城市code
      * @return result
      * @author Mr.Deng
@@ -119,7 +117,6 @@ public class PassThroughController {
 
     /**
      * 查询当天通行限号
-     *
      * @return result
      * @author Mr.Deng
      * @date 10:34 2018/12/10
@@ -175,7 +172,6 @@ public class PassThroughController {
 
     /**
      * 查询周末和节假日期，通过时间戳
-     *
      * @param localDate 时间yyyy-MM-dd
      * @return 工作日对应结果为 0, 休息日对应结果为 1, 节假日对应的结果为 2
      * @author Mr.Deng
@@ -196,7 +192,6 @@ public class PassThroughController {
 
     /**
      * 发布通知通告信息
-     *
      * @param cellphone 手机号
      * @param title     标题
      * @param code      类型(查询字典notice_type)
@@ -213,8 +208,7 @@ public class PassThroughController {
     public Result insertByNotice(String cellphone, String communityCode, String title, String code, String synopsis,
                                  String publisher, String content, LocalDateTime releaseTime, LocalDateTime validateTime) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(title) && StringUtils.isNotBlank(code)
-                && StringUtils.isNotBlank(synopsis) && StringUtils.isNotBlank(publisher)
-                && StringUtils.isNotBlank(content)) {
+                && StringUtils.isNotBlank(synopsis) && StringUtils.isNotBlank(publisher) && StringUtils.isNotBlank(content)) {
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
             noticeService.releaseNotice(communityCode, title, code, synopsis, publisher, user.getId(), content, releaseTime, validateTime);
             //记录足迹
@@ -230,7 +224,6 @@ public class PassThroughController {
 
     /**
      * 查询所有的通知信息
-     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -256,7 +249,6 @@ public class PassThroughController {
 
     /**
      * 查询通知详情，通过手机号和通告id
-     *
      * @param cellphone 手机号
      * @param noticeId  通告id
      * @return result
@@ -281,7 +273,6 @@ public class PassThroughController {
 
     /**
      * 通知通告未读数
-     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @return result
@@ -301,7 +292,6 @@ public class PassThroughController {
 
     /**
      * 查询通知信息浏览量
-     *
      * @param cellphone 手机号
      * @param noticeId  通知id
      * @return result
@@ -320,7 +310,6 @@ public class PassThroughController {
 
     /**
      * 申请钥匙
-     *
      * @param cellphone        手机号
      * @param communityCode    小区code
      * @param communityName    小区名称
@@ -354,6 +343,7 @@ public class PassThroughController {
                 && unitId != null && StringUtils.isNotBlank(unitName) && roomId != null && StringUtils.isNotBlank(roomNum)
                 && StringUtils.isNotBlank(contactPerson) && StringUtils.isNotBlank(contactCellphone) && StringUtils.isNotBlank(content)
                 && StringUtils.isNotBlank(idCard)) {
+            //上传图片
             List<String> imageUrls = Lists.newArrayListWithExpectedSize(5);
             if (images != null) {
                 for (MultipartFile image : images) {
@@ -376,7 +366,6 @@ public class PassThroughController {
 
     /**
      * 查询申请钥匙信息，通过钥匙申请状态
-     *
      * @param cellphone 手机号
      * @param status    钥匙申请状态
      * @return result
@@ -393,7 +382,7 @@ public class PassThroughController {
                         null, null, null, null, null,
                         null, status, null, null, pageNum, pageSize);
                 List<ApplyKey> applyKeys = page.getRecords();
-                        //记录足迹
+                //记录足迹
                 String message = "全部";
                 if (status != null) {
                     switch (status) {
@@ -417,10 +406,8 @@ public class PassThroughController {
 
     /**
      * http开门
-     *
      * @param cellphone     手机号
      * @param communityCode 小区code
-     * @param cellphone     电话号码
      * @param deviceNum     设备编号
      * @return result
      * @author Mr.Deng
@@ -443,7 +430,6 @@ public class PassThroughController {
 
     /**
      * 获取我的钥匙
-     *
      * @param cellphone     电话号码
      * @param communityCode 小区code
      * @return result
@@ -483,7 +469,6 @@ public class PassThroughController {
 
     /**
      * 查询小区设备组信息,通过小区code
-     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -501,7 +486,6 @@ public class PassThroughController {
 
     /**
      * 申请访客邀请码
-     *
      * @param dateTag       日期标志：今天:0；明天：1;
      * @param times         开锁次数：无限次：0；一次：1；
      * @param deviceGroupId 设备分组id，默认只传公共权限组
@@ -528,7 +512,6 @@ public class PassThroughController {
 
     /**
      * 查询邀请码记录
-     *
      * @param cellphone 手机号
      * @param pageNum   页码，从1开始
      * @param pageSize  页大小最大100
@@ -554,7 +537,6 @@ public class PassThroughController {
 
     /**
      * 图片上传
-     *
      * @param image 文件
      * @return result
      * @author Mr.Deng
@@ -564,13 +546,9 @@ public class PassThroughController {
     @ApiOperation(value = "上传图片")
     public Result updateImage(MultipartFile image) {
         if (image != null) {
-            String result = StringUtils.EMPTY;
+            String result;
             try {
                 result = UploadUtil.upload(image);
-                /*FastDFSClient instance = FastDFSClient.getInstance();
-                if (instance != null) {
-                    result = instance.uploadFile(image);
-                }*/
             } catch (Exception e) {
                 e.printStackTrace();
                 return Result.error("上传失败");
@@ -583,7 +561,6 @@ public class PassThroughController {
 
     /**
      * 查询所有访客信息
-     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -604,7 +581,6 @@ public class PassThroughController {
 
     /**
      * 查询访客详情
-     *
      * @param cellphone 手机号
      * @param id        访客id
      * @return result
@@ -634,7 +610,6 @@ public class PassThroughController {
 
     /**
      * 设置呼叫转移号码
-     *
      * @param cellphone 手机号
      * @param sipMobile 转移号码
      * @return result
@@ -656,7 +631,6 @@ public class PassThroughController {
 
     /**
      * 查询住户信息，通过用户id
-     *
      * @param userId 用户id
      * @return result
      * @author Mr.Deng
@@ -684,7 +658,6 @@ public class PassThroughController {
 
     /**
      * 查询省份
-     *
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/11 14:12
@@ -699,7 +672,6 @@ public class PassThroughController {
 
     /**
      * 查询城市，通过省份
-     *
      * @param province 省份
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -715,7 +687,6 @@ public class PassThroughController {
 
     /**
      * 查询分区信息，通过小区code
-     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -730,6 +701,7 @@ public class PassThroughController {
             if (!zones.isEmpty()) {
                 for (Zone zone : zones) {
                     String zoneName = zone.getZoneName();
+                    //排除默认分区
                     if (!"默认分区".equals(zoneName)) {
                         zoneList.add(zone);
                     }
@@ -742,7 +714,6 @@ public class PassThroughController {
 
     /**
      * 查询楼栋信息，通过分区id
-     *
      * @param zoneId 分区id
      * @return 楼栋信息
      * @author Mr.Deng
@@ -760,7 +731,6 @@ public class PassThroughController {
 
     /**
      * 查询单元信息，通过楼栋id
-     *
      * @param buildingId 楼栋id
      * @return result
      * @author Mr.Deng
@@ -778,7 +748,6 @@ public class PassThroughController {
 
     /**
      * 查询房间信息，通过单元id
-     *
      * @param unitId 单元id
      * @return result
      * @author Mr.Deng
@@ -796,7 +765,6 @@ public class PassThroughController {
 
     /**
      * 查询门禁记录，通过手机号
-     *
      * @param cellphone     手机号码
      * @param communityCode 小区code
      * @param type          类型；M：单元机；W：门口机；
@@ -817,36 +785,35 @@ public class PassThroughController {
         return Result.error("参数不能为空");
     }
 
-    /**
-     * 访客高级邀请，
-     *
-     * @param cellphone     手机号
-     * @param times         时间段（时间格式（yyyy-MM-dd HH:mm:ss）：{"startTime,endTime","startTime,endTime"}）
-     * @param deviceGroupId 设备组id
-     * @param communityCode 小区code
-     * @param roomNum       房号
-     * @return String
-     * @author Mr.Deng
-     * @date 15:08 2018/12/17
-     */
-    @GetMapping("/highGrade")
-    @ApiOperation(value = "访客邀请（高级模式）", notes = "传参：cellphone  手机号；deviceGroupId 设备组id；communityCode 小区code" +
-            "times  时间段（时间格式（yyyy-MM-dd HH:mm:ss）：{\"startTime,endTime\",\"startTime,endTime\"}）")
-    public String highGrade(String cellphone, String[] times, String roomNum, String deviceGroupId, String
-            communityCode) {
-        Map<String, Object> timeMap = Maps.newHashMapWithExpectedSize(4);
-        timeMap.put("start_time", "1517212800");
-        timeMap.put("end_time", "1517220000");
-        timeMap.put("once", 0);
-        timeMap.put("room", roomNum);
-        List<Map<String, Object>> list = Lists.newArrayListWithExpectedSize(15);
-        list.add(timeMap);
-        return dnakeAppApiService.highGrade(cellphone, list, deviceGroupId, communityCode);
-    }
+    //存在问题，目前这个接口不能用
+//    /**
+//     * 访客高级邀请，
+//     * @param cellphone     手机号
+//     * @param times         时间段（时间格式（yyyy-MM-dd HH:mm:ss）：{"startTime,endTime","startTime,endTime"}）
+//     * @param deviceGroupId 设备组id
+//     * @param communityCode 小区code
+//     * @param roomNum       房号
+//     * @return String
+//     * @author Mr.Deng
+//     * @date 15:08 2018/12/17
+//     */
+//    @GetMapping("/highGrade")
+//    @ApiOperation(value = "访客邀请（高级模式）", notes = "传参：cellphone  手机号；deviceGroupId 设备组id；communityCode 小区code" +
+//            "times  时间段（时间格式（yyyy-MM-dd HH:mm:ss）：{\"startTime,endTime\",\"startTime,endTime\"}）")
+//    public String highGrade(String cellphone, String[] times, String roomNum, String deviceGroupId, String
+//            communityCode) {
+//        Map<String, Object> timeMap = Maps.newHashMapWithExpectedSize(4);
+//        timeMap.put("start_time", "1517212800");
+//        timeMap.put("end_time", "1517220000");
+//        timeMap.put("once", 0);
+//        timeMap.put("room", roomNum);
+//        List<Map<String, Object>> list = Lists.newArrayListWithExpectedSize(15);
+//        list.add(timeMap);
+//        return dnakeAppApiService.highGrade(cellphone, list, deviceGroupId, communityCode);
+//    }
 
     /**
      * 免打扰
-     *
      * @param cellphone 手机号
      * @param status    免打扰开关：1关；0开
      * @return result
@@ -876,12 +843,12 @@ public class PassThroughController {
      * @author shuyy
      * @date 2019-01-25 11:51
      * @company mitesofor
-    */
+     */
     @PostMapping("/hoseholdUpdate")
     @ApiOperation(value = "住户信息已经更新", notes = "输入参数：status 免打扰开关：1关；0开")
-    public Result hoseholdUpdate(String cellphone) throws InterruptedException {
-        HttpContorller.haveUpdateMap.put(cellphone, true);
-        Thread thread = HttpContorller.threadMap.get(cellphone);
+    public Result hoseholdUpdate(String cellphone) {
+        HttpController.HAVE_UPDATE_MAP.put(cellphone, true);
+        Thread thread = HttpController.THREAD_MAP.get(cellphone);
         LockSupport.unpark(thread);
         return Result.success(true);
     }

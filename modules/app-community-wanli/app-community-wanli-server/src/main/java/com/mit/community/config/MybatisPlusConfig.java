@@ -20,10 +20,13 @@ public class MybatisPlusConfig {
     public PaginationInterceptor paginationInterceptor() {
         return new PaginationInterceptor();
     }
-    
+
+    /**
+     * 全局时间处理
+     */
     @Bean
     public DateHandleInterceptor CustomInterceptor() {
-    	return new DateHandleInterceptor();
+        return new DateHandleInterceptor();
     }
 
     /**

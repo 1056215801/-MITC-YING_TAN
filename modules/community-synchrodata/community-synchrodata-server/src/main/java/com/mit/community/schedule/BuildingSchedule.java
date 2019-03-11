@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * 楼栋定时
- *
  * @author shuyy
  * @date 2018/11/20
  * @company mitesofor
@@ -35,10 +34,16 @@ public class BuildingSchedule {
         this.zoneService = zoneService;
     }
 
-    @CacheClear(pre="building")
+    /**
+     * 用先删除后添加的方式，更新数据
+     * @return
+     * @author Mr.Deng
+     * @date 10:44 2019/3/7
+     */
+    @CacheClear(pre = "building")
     @Scheduled(cron = "0 10 23 * * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void remoteAndImport(){
+    public void remoteAndImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         List<Building> buildingsList = Lists.newArrayListWithCapacity(100);
@@ -50,7 +55,7 @@ public class BuildingSchedule {
                 buildingsList.addAll(buildings);
             });
         });
-        if(!buildingsList.isEmpty()){
+        if (!buildingsList.isEmpty()) {
             // 先删除，在插入
             buildingService.remove();
             buildingService.insertBatch(buildingsList);

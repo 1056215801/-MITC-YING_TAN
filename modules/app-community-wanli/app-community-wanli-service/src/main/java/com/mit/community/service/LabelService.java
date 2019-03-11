@@ -121,7 +121,7 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
     public List<Label> listByType(Short type, Integer userId) {
         EntityWrapper<Label> wrapper = new EntityWrapper<>();
         wrapper.eq("type", type);
-        if(type == Constants.LABEL_TYPE_CUSTOMER){
+        if(type.equals(Constants.LABEL_TYPE_CUSTOMER)){
             wrapper.eq("user_id", userId);
         }
         return labelMapper.selectList(wrapper);

@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 /**
  * 标签
- *
  * @author shuyy
  * @date 2018/12/19
  * @company mitesofor
@@ -36,14 +35,19 @@ import java.util.stream.Collectors;
 @Slf4j
 @Api(tags = "标签")
 public class LabelController {
-    @Autowired
-    private LabelService labelService;
-    @Autowired
-    private RedisService redisService;
-    @Autowired
-    private UserLabelService userLabelService;
+    private final LabelService labelService;
+    private final RedisService redisService;
+    private final UserLabelService userLabelService;
 
-  /**
+    @Autowired
+    public LabelController(RedisService redisService, UserLabelService userLabelService, LabelService labelService) {
+        this.redisService = redisService;
+        this.userLabelService = userLabelService;
+        this.labelService = labelService;
+    }
+
+    /**
+     * 查询标签,通过手机号和标签类型
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 18:47
@@ -53,8 +57,11 @@ public class LabelController {
     @ApiOperation(value = "查询标签", notes = "note 1、系统标签。2、自定义标签")
     public Result listLabelSystem(String cellphone, short type) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        //通过用户id查询标签
         List<Label> labels = labelService.listAssociationLabelByUserId(user.getId());
+        //通过标签类型进行分组
         Map<Short, List<Label>> typeMap = labels.parallelStream().collect(Collectors.groupingBy(Label::getType));
+        //通过输入的类型去查找类型的标签
         List<Label> selectedSystemLabel = typeMap.get(type);
         Map<Integer, Label> map = Maps.newHashMap();
         if (selectedSystemLabel != null) {
@@ -74,6 +81,7 @@ public class LabelController {
     }
 
     /**
+     * 查询选中标签
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 18:47
@@ -87,8 +95,8 @@ public class LabelController {
         return Result.success(labels);
     }
 
-
     /**
+     * 增加用户自定义标签
      * @param cellphone 手机号
      * @param labelName 标签名
      * @return com.mit.community.util.Result
@@ -110,6 +118,7 @@ public class LabelController {
     }
 
     /**
+     * 删除用户自定义标签
      * @param cellphone 手机号
      * @param labelId   标签名
      * @return com.mit.community.util.Result
@@ -122,12 +131,12 @@ public class LabelController {
     public Result removeLabelCustomer(String cellphone, Integer labelId) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
         labelService.removeByLabelIdAndUserId(labelId, user.getId());
-
         return Result.success("删除成功");
     }
 
     /**
-     * @param cellphone         手机号
+     * 关联用户自定义标签
+     * @param cellphone 手机号
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/19 19:20
@@ -139,13 +148,13 @@ public class LabelController {
             "传参：customerlabelNameList 自定义标签名列表， systemLabelIdList 系统标签id列表")
     public Result associationLabel(String cellphone, String customerlabelId,
                                    String systemLabel) {
-        List<Integer> customerlabelIdList = null;
+        List<Integer> customerlabelIdList;
         if (StringUtils.isBlank(customerlabelId)) {
             customerlabelIdList = Lists.newArrayListWithCapacity(0);
         } else {
             customerlabelIdList = JSON.parseArray(customerlabelId, Integer.class);
         }
-        List<Integer> systemLabelList = null;
+        List<Integer> systemLabelList;
         if (StringUtils.isBlank("systemLabel")) {
             systemLabelList = Lists.newArrayListWithCapacity(0);
         } else {
@@ -168,7 +177,7 @@ public class LabelController {
             userLabel.setGmtCreate(LocalDateTime.now());
             userLabelList.add(userLabel);
         });
-        if(!userLabelList.isEmpty()){
+        if (!userLabelList.isEmpty()) {
             userLabelService.insertBatch(userLabelList);
         }
         return Result.success("关联成功");

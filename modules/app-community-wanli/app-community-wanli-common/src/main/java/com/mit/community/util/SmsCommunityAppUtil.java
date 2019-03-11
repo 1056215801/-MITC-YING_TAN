@@ -40,10 +40,10 @@ public class SmsCommunityAppUtil {
         Map<String, String> param = Maps.newHashMapWithExpectedSize(1);
         param.put("code", code);
         try {
-            if (type == TYPE_REGISTER) {
+            if (type.equals(TYPE_REGISTER)) {
                 SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_NORMAL_VERIFICATION,
                         param);
-            } else if (type == TYPE_LOGIN_CONFIRM) {
+            } else if (type.equals(TYPE_LOGIN_CONFIRM)) {
                 SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_NORMAL_VERIFICATION,
                         param);
             }

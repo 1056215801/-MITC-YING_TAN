@@ -31,9 +31,9 @@ public class BaiduOcr {
      * }
      */
     public static String getAuth() {
-// 官网获取的 API Key
+        // 官网获取的 API Key
         String clientId = "cgumzfCkMYhLDU6HUESS7cG9";
-// 官网获取的 Secret Key
+        // 官网获取的 Secret Key
         String clientSecret = "p5jdQfFjyaBie2EjzomMl9WCIdLarGw8";
         return getAuth(clientId, clientSecret);
     }
@@ -47,25 +47,25 @@ public class BaiduOcr {
      * "24.c9303e47f0729c40f2bc2be6f8f3d589.2592000.1530936208.282335-1234567"
      */
     public static String getAuth(String ak, String sk) {
-// 获取token地址
+        // 获取token地址
         String authHost = "https://aip.baidubce.com/oauth/2.0/token?";
         String getAccessTokenUrl = authHost
-// 1. grant_type为固定参数
+                // 1. grant_type为固定参数
                 + "grant_type=client_credentials"
-// 2. 官网获取的 API Key
+                // 2. 官网获取的 API Key
                 + "&client_id=" + ak
-// 3. 官网获取的 Secret Key
+                // 3. 官网获取的 Secret Key
                 + "&client_secret=" + sk;
         try {
             URL realUrl = new URL(getAccessTokenUrl);
-// 打开和URL之间的连接
+            // 打开和URL之间的连接
             HttpURLConnection connection = (HttpURLConnection) realUrl.openConnection();
             //百度推荐使用POST请求
             connection.setRequestMethod("POST");
             connection.connect();
-// 获取所有响应头字段
+            // 获取所有响应头字段
             Map<String, List<String>> map = connection.getHeaderFields();
-// 定义 BufferedReader输入流来读取URL的响应
+            // 定义 BufferedReader输入流来读取URL的响应
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String result = "";
             String line;
@@ -88,26 +88,25 @@ public class BaiduOcr {
         String result = null;
         StringBuffer sbf = new StringBuffer();
         try {
-//用java JDK自带的URL去请求
+            //用java JDK自带的URL去请求
             URL url = new URL(httpUrl);
             HttpURLConnection connection = (HttpURLConnection) url
                     .openConnection();
-//设置该请求的消息头
-//设置HTTP方法：POST
+            //设置该请求的消息头
+            //设置HTTP方法：POST
             connection.setRequestMethod("POST");
-//设置其Header的Content-Type参数为application/x-www-form-urlencoded
-            connection.setRequestProperty("Content-Type",
-                    "application/x-www-form-urlencoded");
-// 填入apikey到HTTP header
+            //设置其Header的Content-Type参数为application/x-www-form-urlencoded
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            // 填入apikey到HTTP header
             connection.setRequestProperty("apikey", "uml8HFzu2hFd8iEG2LkQGMxm");
-//将第二步获取到的token填入到HTTP header
+            //将第二步获取到的token填入到HTTP header
             connection.setRequestProperty("access_token", BaiduOcr.getAuth());
             connection.setDoOutput(true);
             connection.getOutputStream().write(httpArg.getBytes("UTF-8"));
             connection.connect();
             InputStream is = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            String strRead = null;
+            String strRead;
             while ((strRead = reader.readLine()) != null) {
                 sbf.append(strRead);
                 sbf.append("\r\n");
@@ -124,7 +123,7 @@ public class BaiduOcr {
         String imageBase = BASE64.encodeImgageToBase64(byteArray);
         imageBase = imageBase.replaceAll("\r\n", "");
         imageBase = imageBase.replaceAll("\\+", "%2B");
-//百度云的文字识别接口,后面参数为获取到的token
+        //百度云的文字识别接口,后面参数为获取到的token
         String httpUrl = "https://aip.baidubce.com/rest/2.0/ocr/v1/idcard?access_token=" + BaiduOcr.getAuth();
         String httpArg = "detect_direction=true&id_card_side=front&image=" + imageBase;
         String jsonResult = request(httpUrl, httpArg);

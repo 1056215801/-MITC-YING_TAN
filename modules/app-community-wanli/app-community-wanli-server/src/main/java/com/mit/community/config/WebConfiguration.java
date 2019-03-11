@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.Properties;
 
 /**
- *
  * @author ace
  * @date 2017/9/8
  */
@@ -36,9 +35,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//    	//是否有访问这个服务的权限
+        //是否有访问这个服务的权限
         registry.addInterceptor(getServiceAuthRestInterceptor()).
                 addPathPatterns(getIncludePathPatterns());
+        //ip拦截器
         registry.addInterceptor(ipterceptor).
                 addPathPatterns("/**");
         // 拦截只有一台设备可以登录
@@ -49,16 +49,16 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
     /**
-     * auth鉴权过滤
-     * @return
-     * @author Mr.Deng
-     * @date 17:04 2019/3/5
-    */
+     * auth服务端鉴权过滤
+     */
     @Bean
     ServiceAuthRestInterceptor getServiceAuthRestInterceptor() {
         return new ServiceAuthRestInterceptor();
     }
 
+    /**
+     * auth用户端鉴权过滤
+     */
     @Bean
     UserAuthRestInterceptor getUserAuthRestInterceptor() {
         return new UserAuthRestInterceptor();
@@ -71,15 +71,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private ArrayList<String> getIncludePathPatterns() {
         ArrayList<String> list = new ArrayList<>();
         String[] urls = {
-        		"/api/**"
-//                "/element/**",
-//                "/gateLog/**",
-//                "/group/**",
-//                "/groupType/**",
-//                "/menu/**",
-//                "/user/**",
-//                "/api/permissions",
-//                "/api/user/un/**"
+                "/api/**"
         };
         Collections.addAll(list, urls);
         return list;

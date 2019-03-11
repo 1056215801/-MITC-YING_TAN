@@ -28,7 +28,6 @@ import java.util.List;
 @Api(tags = "用户")
 public class UserController {
 
-    private final UserService userService;
     private final HouseHoldService houseHoldService;
     private final ClusterCommunityService clusterCommunityService;
     private final UserLabelService userLabelService;
@@ -36,9 +35,8 @@ public class UserController {
     private final RedisService redisService;
 
     @Autowired
-    public UserController(UserService userService, HouseHoldService houseHoldService,
+    public UserController(HouseHoldService houseHoldService,
                           ClusterCommunityService clusterCommunityService, UserLabelService userLabelService, HouseholdRoomService householdRoomService, RedisService redisService) {
-        this.userService = userService;
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.userLabelService = userLabelService;
@@ -47,6 +45,7 @@ public class UserController {
     }
 
     /**
+     * 查询用户详情
      * @param mac       mac
      * @param cellphone 手机号
      * @return com.mit.community.util.Result

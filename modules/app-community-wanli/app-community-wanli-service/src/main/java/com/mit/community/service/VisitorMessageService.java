@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * 访客消息service
- *
  * @author shuyy
  * @date 2019-01-02
  * @company mitesofor
@@ -23,13 +22,10 @@ public class VisitorMessageService extends ServiceImpl<VisitorMessageMapper, Vis
     @Autowired
     private VisitorMessageMapper visitorMessageMapper;
 
-
     /**
      * 查询未读
-     *
-     * @param mobile
+     * @param mobile 电话
      * @return java.lang.Integer
-     * @throws
      * @author shuyy
      * @date 2019-01-03 10:28
      * @company mitesofor
@@ -51,8 +47,8 @@ public class VisitorMessageService extends ServiceImpl<VisitorMessageMapper, Vis
      * @author shuyy
      * @date 2019-01-03 10:33
      * @company mitesofor
-    */
-    public Page<VisitorMessage> listPage(String cellphone, Integer pageNum, Integer pageSize){
+     */
+    public Page<VisitorMessage> listPage(String cellphone, Integer pageNum, Integer pageSize) {
         EntityWrapper<VisitorMessage> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
         wrapper.orderBy("gmt_create", false);
@@ -64,14 +60,12 @@ public class VisitorMessageService extends ServiceImpl<VisitorMessageMapper, Vis
 
     /**
      * 更新状态
-     * @param visitorMessages
-     * @return void
-     * @throws
+     * @param visitorMessages 访客消息
      * @author shuyy
      * @date 2019-01-03 10:41
      * @company mitesofor
-    */
-    public void updateStatus(List<VisitorMessage> visitorMessages){
+     */
+    public void updateStatus(List<VisitorMessage> visitorMessages) {
         visitorMessages.forEach(item -> item.setStatus((short) 2));
         this.updateBatchById(visitorMessages);
     }

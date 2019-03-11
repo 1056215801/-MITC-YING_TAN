@@ -143,7 +143,8 @@ public class BigDataController {
         return Result.success(maps);
     }
 
-    /***
+    /**
+     * 外来人口分布，按市统计
      * @param communityCode 小区code
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -181,7 +182,8 @@ public class BigDataController {
         return Result.success(maps);
     }
 
-    /***
+    /**
+     * 实时通行记录
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/11/23 14:49

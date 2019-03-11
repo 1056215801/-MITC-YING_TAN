@@ -26,7 +26,7 @@ public class ThreadPoolUtil implements CommandLineRunner {
                 new LinkedBlockingQueue<>(), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
 
-    /***
+    /**
      * 提交线程执行
      * @param thread 线程
      * @author shuyy

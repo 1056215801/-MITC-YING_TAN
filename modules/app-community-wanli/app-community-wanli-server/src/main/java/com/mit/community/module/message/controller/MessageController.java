@@ -51,10 +51,10 @@ public class MessageController {
     }
 
     /**
-     * @param cellphone
-     * @param communityCode
+     * 统计未读消息
+     * @param cellphone     手机号
+     * @param communityCode 小区code
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2019-01-02 16:16
      * @company mitesofor
@@ -63,13 +63,19 @@ public class MessageController {
     @ApiOperation(value = "统计未读消息", notes = "输入参数：cellphone 手机号；communityCode小区code")
     public Result getTotal(String cellphone, String communityCode) {
         User user = (User) redisService.get(RedisConstant.USER + cellphone);
+        //通知通告未读数
         Integer notReadNotice = noticeService.getNotReadNotice(communityCode, user.getId());
+        //系统消息未读数
         Integer notSysMessage = sysMessagesService.countNotReadNum(user.getId());
+        //快递未读数
         Integer notReadExpress = expressInfoService.countNotRead(user.getId());
-
+        //失物招领未读数
         Integer notReadLostFound = lostFoundService.countNotRead(communityCode, user.getId());
+        //促销活动未读数
         Integer notReadPromotion = promotionService.countNotReadNum(communityCode, user.getId());
+        //老人体检未读数
         Integer notReadOld = oldMedicalService.countNotRead(communityCode, user.getId());
+        //访客消息未读数
         Integer notMessageRead = visitorMessageService.countNotRead(cellphone);
         Map<String, Integer> map = Maps.newHashMapWithExpectedSize(7);
         notReadNotice = notReadNotice < 0 ? 0 : notReadNotice;
@@ -90,11 +96,10 @@ public class MessageController {
     }
 
     /**
-     * @param cellphone
-     * @param pageNum
-     * @param pageSize
+     * @param cellphone 手机号
+     * @param pageNum   页数
+     * @param pageSize  一页数量
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2019-01-03 10:38
      * @company mitesofor

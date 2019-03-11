@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * 帮助
- *
  * @author shuyy
  * @date 2019-01-03
  * @company mitesofor
@@ -25,22 +24,25 @@ import java.util.List;
 @Slf4j
 @Api(tags = {"帮助"})
 public class HelpController {
+    private final HelpService helpService;
+
     @Autowired
-    private HelpService helpService;
+    public HelpController(HelpService helpService) {
+        this.helpService = helpService;
+    }
 
     /**
-     *
+     * 查询帮助列表
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2019-01-03 11:46
      * @company mitesofor
-    */
+     */
     @GetMapping("/list")
     @ApiOperation(value = "帮助列表")
     public Result list() {
         List<Help> list = helpService.list();
         return Result.success(list);
     }
-
 
 }

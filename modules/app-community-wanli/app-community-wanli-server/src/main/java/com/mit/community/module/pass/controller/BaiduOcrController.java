@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * 百度
- *
+ * 百度身份证识别
  * @author shuyy
  * @date 2019-01-17
  * @company mitesofor

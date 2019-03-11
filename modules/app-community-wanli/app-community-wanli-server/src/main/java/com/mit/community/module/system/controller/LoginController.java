@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 /**
  * 注册登陆
- *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -83,7 +82,6 @@ public class LoginController {
 
     /**
      * 快捷登录或密码登录
-     *
      * @param cellphone        手机号
      * @param verificationCode 手机号验证码
      * @param password         密码
@@ -117,9 +115,9 @@ public class LoginController {
         } else {
             // 密码登陆
             user = userService.getByCellphone(cellphone);
-            if(user == null){
+            if (user == null) {
                 return Result.error("用户名不存在");
-            }else if (!password.equals(user.getPassword())) {
+            } else if (!password.equals(user.getPassword())) {
                 return Result.error("用户名或密码错误");
             }
         }
@@ -170,11 +168,11 @@ public class LoginController {
             ThreadPoolUtil.execute(new Thread(() -> {
 
                 DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
-                if(dnakeLoginResponse.getStatus().equals(2)){
+                if (dnakeLoginResponse.getStatus().equals(2)) {
                     // 密码错误
                     dnakeAppApiService.resetPwd(cellphone, psd);
                     dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
-                }else if(dnakeLoginResponse.getStatus().equals(3)){
+                } else if (dnakeLoginResponse.getStatus().equals(3)) {
                     // 用户不存在
                     dnakeAppApiService.register(cellphone, psd);
                     dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
@@ -186,15 +184,8 @@ public class LoginController {
         }
     }
 
-    public static void main(String[] args) {
-        Integer i = 0;
-        String s = Integer.toBinaryString(0);
-        System.out.println(s);
-    }
-
     /**
      * 登出
-     *
      * @param cellphone 用户登录手机号
      * @return result
      * @author Mr.Deng
@@ -214,7 +205,6 @@ public class LoginController {
 
     /**
      * 选择性别
-     *
      * @param cellphone 电话号码
      * @param gender    性别
      * @return com.mit.community.util.Result
@@ -237,7 +227,6 @@ public class LoginController {
 
     /**
      * 选择出生日期和昵称
-     *
      * @param cellphone 手机号
      * @param birthday  出生日期
      * @param nickName  昵称
@@ -263,7 +252,6 @@ public class LoginController {
 
     /**
      * 选择地区
-     *
      * @param cellphone 手机号
      * @param region    地区 （省+市）
      * @return result
@@ -285,7 +273,6 @@ public class LoginController {
 
     /**
      * 手机验证码验证
-     *
      * @param cellphone        手机号
      * @param verificationCode 手机号验证码
      * @return com.mit.community.util.Result
@@ -309,7 +296,6 @@ public class LoginController {
 
     /**
      * 注册
-     *
      * @param cellphone 手机号
      * @param password  密码
      * @return com.mit.community.util.Result
@@ -338,10 +324,8 @@ public class LoginController {
         return Result.error("参数不能为空");
     }
 
-
     /**
      * 查询用户授权的所有小区
-     *
      * @param cellphone 手机号
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -382,7 +366,6 @@ public class LoginController {
 
     /**
      * 修改用户信息
-     *
      * @param cellphone     手机号
      * @param nickname      昵称
      * @param gender        性别1、男。0、女。
@@ -410,18 +393,8 @@ public class LoginController {
         return Result.error("请登录");
     }
 
-    @PostMapping(value = "/updatetest", produces = {"application/json"})
-    @ApiOperation(value = "测试", notes = "传参：cellphone 手机号，image 头像图片")
-    public Result updatetest(String cellphone, MultipartFile image) throws Exception {
-        User user = new User();
-        user.setCellphone("13064102937");
-        userService.update(user);
-        return Result.success("");
-    }
-
     /**
      * 修改头像
-     *
      * @param cellphone 手机号
      * @param image     头像图片
      * @return result
@@ -448,7 +421,6 @@ public class LoginController {
 
     /**
      * 修改密码
-     *
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @param oldPassword 旧密码
@@ -474,7 +446,6 @@ public class LoginController {
 
     /**
      * 重置密码
-     *
      * @param cellphone   手机号
      * @param newPassword 新密码
      * @return com.mit.community.util.Result
@@ -498,6 +469,7 @@ public class LoginController {
     }
 
     /**
+     * 用户是否登录
      * @param cellphone 手机号
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -517,6 +489,15 @@ public class LoginController {
         return Result.error("参数不能为空");
     }
 
+    /**
+     * 修改手机号
+     * @param cellphone    手机号
+     * @param newCellphone 新手机号
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/18 10:34
+     * @company mitesofor
+     */
     @PatchMapping("/updateCellphone")
     @ApiOperation(value = "修改手机号", notes = "输入参数：cellPhone 电话号码；newPassword 新密码")
     public Result updateCellphone(String mac, String cellphone, String newCellphone) {
@@ -534,6 +515,7 @@ public class LoginController {
     }
 
     /**
+     * 选择小区
      * @param mac           mac
      * @param cellphone     电话号码
      * @param communityCode 小区code
@@ -561,12 +543,19 @@ public class LoginController {
         return Result.error("失败");
     }
 
+    /**
+     * 获取住户信息
+     * @param cellphone 电话号码
+     * @return com.mit.community.util.Result
+     * @author shuyy
+     * @date 2018/12/25 17:14
+     * @company mitesofor
+     */
     @PostMapping("/getHousehold")
     @ApiOperation(value = "获取住户信息", notes = "传参;cellphone")
     public Result getHousehold(String mac, String cellphone) {
         User user = userService.getByCellphone(cellphone);
         return this.login(mac, cellphone, null, user.getPassword());
     }
-
 
 }

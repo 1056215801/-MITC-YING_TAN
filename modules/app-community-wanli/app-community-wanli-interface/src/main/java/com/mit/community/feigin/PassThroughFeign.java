@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 通行
- *
  * @author shuyy
  * @date 2019-01-22
  * @company mitesofor
@@ -18,7 +17,6 @@ public interface PassThroughFeign {
 
     /**
      * 查询分区，通过小区code
-     *
      * @param communityCode 小区code
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -30,7 +28,6 @@ public interface PassThroughFeign {
 
     /**
      * 查询楼栋，通过分区id
-     *
      * @param zoneId 分区id
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -42,7 +39,6 @@ public interface PassThroughFeign {
 
     /**
      * 查询单元信息，通过楼栋id
-     *
      * @param buildingId 楼栋id
      * @author shuyy
      * @date 2019-01-22 9:35
@@ -53,7 +49,6 @@ public interface PassThroughFeign {
 
     /**
      * 查询房间信息，通过单元id
-     *
      * @param unitId 单元id
      * @author shuyy
      * @date 2019-01-22 9:34
@@ -64,8 +59,7 @@ public interface PassThroughFeign {
 
     /**
      * 查询设备组，通过小区code
-     *
-     * @param communityCode
+     * @param communityCode 小区code
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2019-01-23 13:55
@@ -83,6 +77,6 @@ public interface PassThroughFeign {
      * @company mitesofor
      */
     @PostMapping("/api/app/communitywanli/passThrough/hoseholdUpdate")
-    Result hoseholdUpdate(@RequestParam("cellphone")  String cellphone);
+    Result hoseholdUpdate(@RequestParam("cellphone") String cellphone);
 
 }

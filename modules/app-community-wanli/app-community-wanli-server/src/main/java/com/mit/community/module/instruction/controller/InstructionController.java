@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * 操作指南
- *
  * @author shuyy
  * @date 2018/12/20
  * @company mitesofor
@@ -26,10 +25,15 @@ import java.util.List;
 @Api(tags = "操作指南")
 public class InstructionController {
 
+    private final InstructionService instructionService;
+
     @Autowired
-    private InstructionService instructionService;
+    public InstructionController(InstructionService instructionService) {
+        this.instructionService = instructionService;
+    }
 
     /**
+     * 获取操作指南，通过id
      * @param id id
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -42,10 +46,10 @@ public class InstructionController {
         Instruction instruction = instructionService.getDetail(id);
         return Result.success(instruction);
     }
+
     /**
-     *
+     * 查询操作指南列表
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/12/20 10:05
      * @company mitesofor

@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.LockSupport;
 
 /**
+ * http轮询请求，用来刷新app首页
  * @author shuyy
  * @date 2019-01-25
  * @company mitesofor
@@ -34,32 +35,36 @@ import java.util.concurrent.locks.LockSupport;
 @RequestMapping(value = "/http")
 @Slf4j
 @Api(tags = {"http轮询请求"})
-public class HttpContorller {
+public class HttpController {
+    private final RedisService redisService;
+
+    public static final Map<String, Thread> THREAD_MAP = new ConcurrentHashMap<>();
+
+    public static final Map<String, Boolean> HAVE_UPDATE_MAP = new ConcurrentHashMap<>();
+
     @Autowired
-    private RedisService redisService;
-
-    public static final Map<String, Thread> threadMap = new ConcurrentHashMap<>();
-
-    public static final Map<String, Boolean> haveUpdateMap = new ConcurrentHashMap<>();
+    public HttpController(RedisService redisService) {
+        this.redisService = redisService;
+    }
 
     @GetMapping("/haveUpdateHousehold")
     @ApiOperation(value = "住户信息是否更新", notes = "堵塞方法， 有则返回，没有则堵塞")
     public void haveUpdateHousehold(HttpServletRequest request, HttpServletResponse response, String cellphone, String mac) {
-        System.out.println(threadMap.keySet() + "-----------------start");
-        if (threadMap.get(cellphone) == null) {
+        System.out.println(THREAD_MAP.keySet() + "-----------------start");
+        if (THREAD_MAP.get(cellphone) == null) {
             // 第一次调用
-            threadMap.put(cellphone, Thread.currentThread());
+            THREAD_MAP.put(cellphone, Thread.currentThread());
             LockSupport.park();
         } else {
-            Thread thread = threadMap.get(cellphone);
+            Thread thread = THREAD_MAP.get(cellphone);
             LockSupport.unpark(thread);
-            threadMap.put(cellphone, Thread.currentThread());
+            THREAD_MAP.put(cellphone, Thread.currentThread());
             LockSupport.park();
         }
-        Boolean haveUpdate = haveUpdateMap.get(cellphone);
+        Boolean haveUpdate = HAVE_UPDATE_MAP.get(cellphone);
         if (haveUpdate != null) {
             // 已更新
-            haveUpdateMap.remove(cellphone);
+            HAVE_UPDATE_MAP.remove(cellphone);
             PrintWriter writer = null;
             response.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=utf-8");
@@ -77,15 +82,20 @@ public class HttpContorller {
             }
         } else {
             System.out.println("=========offer=================");
-            System.out.println(threadMap.keySet() + "-----------------end");
+            System.out.println(THREAD_MAP.keySet() + "-----------------end");
             return;
         }
     }
 
+    /**
+     * 定时清理退出登录但未及时释放的线程
+     * @author Mr.Deng
+     * @date 10:22 2019/3/7
+     */
     @Scheduled(cron = "0 0/2 * ? * *")
     public void rmThreadMapToRedis() {
         System.out.println("start-----------------------------");
-        Set<String> Keys = threadMap.keySet();
+        Set<String> Keys = THREAD_MAP.keySet();
         System.out.println(Keys);
         if (!Keys.isEmpty()) {
             Iterator iter = Keys.iterator();
@@ -93,9 +103,9 @@ public class HttpContorller {
                 String key = (String) iter.next();
                 Object o = redisService.get(RedisConstant.USER + key);
                 if (o == null) {
-                    Thread thread = threadMap.get(key);
+                    Thread thread = THREAD_MAP.get(key);
                     LockSupport.unpark(thread);
-                    threadMap.remove(key);
+                    THREAD_MAP.remove(key);
                 }
             }
             System.out.println("end------------------------------");

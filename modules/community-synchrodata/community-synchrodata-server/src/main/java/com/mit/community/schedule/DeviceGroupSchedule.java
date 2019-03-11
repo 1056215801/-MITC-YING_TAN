@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * 设备组同步
- *
  * @author shuyy
  * @date 2018/12/10
  * @company mitesofor
@@ -36,24 +35,29 @@ public class DeviceGroupSchedule {
         this.deviceDeviceGroupService = deviceDeviceGroupService;
     }
 
+    /**
+     * 先删除后批量插入，实现数据同步
+     * @author Mr.Deng
+     * @date 10:47 2019/3/7
+     */
     @Transactional(rollbackFor = Exception.class)
     @Scheduled(cron = "0 */15 * * * ?")
-    public void removeAndImport(){
+    public void removeAndImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         List<DeviceGroup> deviceGroups = deviceGroupService.listFromDnakeByCommunityCodeList(communityCodeList);
-        if(!deviceGroups.isEmpty()){
+        if (!deviceGroups.isEmpty()) {
             deviceGroupService.remove();
             deviceGroupService.insertBatch(deviceGroups);
         }
         List<DeviceDeviceGroup> list = Lists.newArrayListWithCapacity(200);
         deviceGroups.forEach(deviceGroup -> {
             List<DeviceDeviceGroup> deviceDeviceGroups = deviceGroup.getDeviceDeviceGroups();
-            if(deviceDeviceGroups != null){
+            if (deviceDeviceGroups != null) {
                 list.addAll(deviceDeviceGroups);
             }
         });
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             deviceDeviceGroupService.remove();
             deviceDeviceGroupService.insertBatch(list);
         }

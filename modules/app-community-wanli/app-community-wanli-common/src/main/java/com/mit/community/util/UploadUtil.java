@@ -14,7 +14,6 @@ import java.util.UUID;
 
 /**
  * 七牛文件上传
- *
  * @author shuyy
  * @date 2019-01-14
  * @company mitesofor
@@ -24,7 +23,9 @@ public class UploadUtil {
     private static final String ACCESS_KEY = "dEylXBCK0aahaL9FBlgqt9fXHw6p_g4TWSvx32N4";
     private static final String SECRET_KEY = "fTXZ-GVqqQNDWnCi7Rv1LimWSY81nrX1w4LRO_KI";
     private static final String BUCKET = "app-community";
-    // url前缀
+    /**
+     * url前缀
+     */
     public static final String URL = "http://www.miesofor.tech/";
 
     public static String upload(MultipartFile file) throws IOException {

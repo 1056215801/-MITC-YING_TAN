@@ -533,6 +533,7 @@ public class UserServiceController {
             Page<ExpressInfo> page = expressInfoService.listExpressInfoPage(user.getId(), expressAddressId, pageNum, pageSize);
             List<ExpressInfo> expressInfos = page.getRecords();
             for (ExpressInfo expressInfo : expressInfos) {
+                //查询是否已读
                 ExpressReadUser expressReadUser1 = expressReadUserService.ByUserIdAndExpressInfoId(user.getId(), expressInfo.getId());
                 if (expressReadUser1 == null) {
                     //添加已读
@@ -789,9 +790,8 @@ public class UserServiceController {
 
     /**
      * 统计未读数量
-     * @param cellphone
+     * @param cellphone 手机号
      * @return com.mit.community.util.Result
-     * @throws
      * @author shuyy
      * @date 2018/12/29 10:17
      * @company mitesofor
@@ -858,10 +858,14 @@ public class UserServiceController {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
             int myKeyNum = 0;
+            //报事报修总数
             Integer reportThingsRepairNum = reportThingsRepairService.countReportThingsRepair(cellphone, communityCode);
             User user = (User) redisService.get(RedisConstant.USER + cellphone);
+            //业务办理总数
             Integer handlingNum = businessHandlingService.countByCellphoneAndCommunityCode(user.getId(), communityCode);
+            //门禁总数
             Integer accessControlNum = accessControlService.countByCellphoneAndCommunityCode(cellphone, communityCode);
+            //我的钥匙
             List<MyKey> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
             if (!myKey.isEmpty()) {
                 myKeyNum = myKey.size();
