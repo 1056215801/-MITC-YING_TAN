@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- *  设备定时同步
+ * 设备定时同步
+ *
  * @author shuyy
  * @date 2018/11/22
  * @company mitesofor
@@ -32,7 +33,7 @@ public class DeviceSchedule {
 
     @Scheduled(cron = "0 */10 * * * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void removeAndImport(){
+    public void removeAndImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         List<Device> deviceList = Lists.newArrayListWithCapacity(100);
@@ -40,7 +41,8 @@ public class DeviceSchedule {
             List<Device> devices = deviceService.listFromDnakeByCommunityCode(item);
             deviceList.addAll(devices);
         });
-        if(!deviceList.isEmpty()){
+        if (!deviceList.isEmpty()) {
+            //任务报错，coordinate坐标没有默认值
             deviceService.remove();
             deviceService.insertBatch(deviceList);
         }

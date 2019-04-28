@@ -38,6 +38,12 @@
     </modules>
     <packaging>pom</packaging>
     <dependencies>
+        <!--热部署依赖-->
+        <!--<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -151,6 +157,13 @@
             <!--</execution>-->
             <!--</executions>-->
             <!--</plugin>-->
+            <!--<plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>-->
         </plugins>
 
         <resources>

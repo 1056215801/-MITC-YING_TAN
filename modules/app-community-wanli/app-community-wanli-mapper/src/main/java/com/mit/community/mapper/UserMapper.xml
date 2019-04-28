@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.UserMapper">
+    <!--更新用户住户id-->
+    <update id="updateHouseholdIdByMobile" parameterType="com.mit.community.entity.User">
+        UPDATE USER SET household_id = #{householdId} WHERE cellphone = #{mobile}
+    </update>
+    <!--更新用户手机号码-->
+    <update id="updateMobileByHouseholdId" parameterType="com.mit.community.entity.User">
+        UPDATE USER SET cellphone = #{mobile} WHERE household_id = #{householdId}
+    </update>
+    <!--重置住户id-->
+    <update id="updateByHouseholdId" parameterType="com.mit.community.entity.User">
+        UPDATE USER SET household_id = 0 WHERE household_id = #{householdId}
+    </update>
+</mapper>

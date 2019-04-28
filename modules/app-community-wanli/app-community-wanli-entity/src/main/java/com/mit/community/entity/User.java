@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * 用户
+ *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -81,8 +82,16 @@ public class User extends BaseEntity {
     @TableField(exist = false)
     private List<HouseholdRoom> householdRoomList;
 
-    /**是否有密码*/
+    /**
+     * 是否有密码
+     */
     @TableField(exist = false)
     private Boolean havePassword;
+
+    /**
+     * 业主状态：0-注销；1-启用；2-停用；3-权限过期
+     */
+    @TableField(exist = false)
+    private Integer househouldStatus;
 
 }

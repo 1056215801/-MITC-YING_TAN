@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.HouseHoldMapper">
+
+    <!--更新居住期限时间-->
+    <update id="updateObjectById" parameterType="com.mit.community.entity.HouseHold">
+        UPDATE household SET residence_time = #{residenceTime} WHERE household_id = #{household_id}
+    </update>
+    <!--更新权限有效期时间-->
+    <update id="updateValidityTime" parameterType="com.mit.community.entity.HouseHold">
+        UPDATE household SET validity_time = #{validityTime},authorize_status = #{status} WHERE household_id = #{household_id}
+    </update>
+    <!--修改住户信息-->
+    <update id="updateHouseholdByHouseholdId" parameterType="com.mit.community.entity.HouseHold">
+        UPDATE household
+        <trim prefix="set" suffixOverrides=",">
+            <if test="communityCode!=null">community_code=#{communityCode},</if>
+            <if test="constellation!=null">constellation=#{constellation},</if>
+            <if test="householdName!=null">household_name=#{householdName},</if>
+            <if test="householdStatus!=null">household_status=#{householdStatus},</if>
+            <if test="authorizeStatus!=null">authorize_status=#{authorizeStatus},</if>
+            <if test="gender!=null">gender=#{gender},</if>
+            <if test="residenceTime!=null">residence_time=#{residenceTime},</if>
+            <if test="mobile!=null">mobile=#{mobile},</if>
+            <if test="sipPassword!=null">sip_account=#{sipPassword},</if>
+            <if test="sipPassword!=null">sip_password=#{sipPassword},</if>
+            <if test="credentialNum!=null">credential_num=#{credentialNum},</if>
+            <if test="identityType!=null">identity_type=#{identityType},</if>
+            <if test="validityTime!=null">validity_time=#{validityTime},</if>
+            <if test="gmtModified!=null">gmt_modified=#{gmtModified},</if>
+        </trim>
+        WHERE household_id = #{householdId}
+    </update>
+
+</mapper>
+
+

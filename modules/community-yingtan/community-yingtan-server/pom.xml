@@ -171,7 +171,7 @@
         </dependency>
         <dependency>
             <groupId>com.mit</groupId>
-            <artifactId>dnake</artifactId>
+            <artifactId>dnake-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -179,7 +179,14 @@
         <dependency>
             <groupId>fastdfs_client</groupId>
             <artifactId>fastdfs_client</artifactId>
-            <version>1.25</version>
+            <version>1.27</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.csource/fastdfs-client-java -->
+        <dependency>
+            <groupId>org.csource</groupId>
+            <artifactId>fastdfs-client-java</artifactId>
+            <version>1.27-RELEASE</version>
         </dependency>
 
         <!--spring-boot-devtools 热启动依赖包-->

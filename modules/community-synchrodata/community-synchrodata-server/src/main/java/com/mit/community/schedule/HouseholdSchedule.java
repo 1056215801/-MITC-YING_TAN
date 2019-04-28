@@ -7,6 +7,7 @@ import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
 import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
+import com.mit.community.mapper.AuthorizeHouseholdDeviceGroupMapper;
 import com.mit.community.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * 住户
+ *
  * @author shuyy
  * @date 2018/11/19
  * @company mitesofor
@@ -43,11 +45,14 @@ public class HouseholdSchedule {
 
     private final UserService userService;
 
+    private final AuthorizeHouseholdDeviceGroupMapper authorizeHouseholdDeviceGroupMapper;
+
     @Autowired
     public HouseholdSchedule(HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
                              AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceService,
                              AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceService,
-                             AccessControlService accessControlService, HouseholdRoomService householdRoomService, UserService userService) {
+                             AccessControlService accessControlService, HouseholdRoomService householdRoomService, UserService userService,
+                             AuthorizeHouseholdDeviceGroupMapper authorizeHouseholdDeviceGroupMapper) {
         this.houseHoldService = houseHoldService;
         this.clusterCommunityService = clusterCommunityService;
         this.authorizeAppHouseholdDeviceGroupService = authorizeAppHouseholdDeviceService;
@@ -55,6 +60,7 @@ public class HouseholdSchedule {
         this.accessControlService = accessControlService;
         this.householdRoomService = householdRoomService;
         this.userService = userService;
+        this.authorizeHouseholdDeviceGroupMapper = authorizeHouseholdDeviceGroupMapper;
     }
 
     /***
@@ -68,7 +74,8 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 */10 * * * ?")
+    //@Scheduled(cron = "0 */10 * * * ?")
+    //@Scheduled(cron = "0 */2 * * * ?")
     @CacheClear(pre = "household")
     public void removeAndiImport() {
         try {
@@ -125,6 +132,7 @@ public class HouseholdSchedule {
 
     /**
      * 更新授权设备和关联房屋
+     *
      * @param houseHolds
      * @return void
      * @throws
@@ -134,7 +142,7 @@ public class HouseholdSchedule {
      */
     @CacheClear(pre = "householdRoom")
     private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds) {
-        authorizeHouseholdDeviceGroupService.remove();
+        //authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
         householdRoomService.remove();
         if (!houseHolds.isEmpty()) {
@@ -168,6 +176,25 @@ public class HouseholdSchedule {
 
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
                     authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDevices);
+                    /**
+                     * 新增数据同步代码（胡山林）
+                     */
+//                    List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
+//                    for (AuthorizeAppHouseholdDeviceGroup authHouse : authorizeAppHouseholdDevices) {
+//                        List<AuthorizeHouseholdDeviceGroup> existList = authorizeHouseholdDeviceGroupMapper.getObjectByIds(item.getHouseholdId(), authHouse.getDeviceGroupId());
+//                        if (existList.size() == 0) {
+//                            AuthorizeHouseholdDeviceGroup authorizeHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup();
+//                            authorizeHouseholdDeviceGroup.setId(authHouse.getId());
+//                            authorizeHouseholdDeviceGroup.setHouseholdId(authHouse.getHouseholdId());
+//                            authorizeHouseholdDeviceGroup.setDeviceGroupId(authHouse.getDeviceGroupId());
+//                            authorizeHouseholdDeviceGroup.setGmtCreate(authHouse.getGmtCreate());
+//                            authHouse.setGmtModified(authHouse.getGmtModified());
+//                            authorizeHouseholdDeviceGroups.add(authorizeHouseholdDeviceGroup);
+//                        }
+//                    }
+//                    if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {
+//                        authorizeHouseholdDeviceGroupService.insertBatch(authorizeHouseholdDeviceGroups);
+//                    }
                 }
                 List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
                 if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {
@@ -188,7 +215,7 @@ public class HouseholdSchedule {
      * @date 2018/12/08 15:36
      * @company mitesofor
      */
-    @Scheduled(cron = "0 0 0 * * ?")
+    //@Scheduled(cron = "0 0 0 * * ?")
     public void updateIdCard() {
         long start = System.currentTimeMillis();
         List<HouseHold> list = houseHoldService.list();
@@ -207,7 +234,7 @@ public class HouseholdSchedule {
      * @date 2018/11/24 10:36
      * @company mitesofor
      */
-    @Scheduled(cron = "0 0 1 * * ?")
+    //@Scheduled(cron = "0 0 1 * * ?")
     public void parseIdentityType() {
         List<Map<String, Object>> maps = householdRoomService.listActiveRoomId();
         maps.forEach(item -> {

@@ -47,4 +47,26 @@ public class AuthorizeAppHouseholdDeviceGroupService extends ServiceImpl<Authori
         wrapper.in("household_id", householdIdList);
         return authorizeAppHouseholdDeviceMapper.selectList(wrapper);
     }
+
+    /**
+     * 查询住户关联设备组表，通告住户id列表
+     * @param householdIdList 住户id列表
+     * @return 住户关联设备组
+     * @author Mr.Deng
+     * @date 16:20 2018/12/13
+     */
+    public List<AuthorizeAppHouseholdDeviceGroup> listByHouseholdId(Integer householdIdList) {
+        EntityWrapper<AuthorizeAppHouseholdDeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdIdList);
+        return authorizeAppHouseholdDeviceMapper.selectList(wrapper);
+    }
+
+    /**
+     * 根据住户id删除授权设备组列表
+     */
+    public void deleteByHouseholdId(Integer householdId) {
+        EntityWrapper<AuthorizeAppHouseholdDeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        authorizeAppHouseholdDeviceMapper.delete(wrapper);
+    }
 }

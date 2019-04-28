@@ -1,27 +1,30 @@
 package com.mit.community.entity;
 
+import lombok.Data;
+
 /**
  * 接受前端房屋数组实体类映射
  */
+@Data
 public class HouseRoomsVo {
 
-    private Integer id;
+    private String id;
 
-    private Integer zoneId;
+    private String zoneId;
 
     private String zoneName;
 
-    private Integer buildingId;
+    private String buildingId;
 
     private String buildingName;
 
-    private Integer unitId;
+    private String unitId;
 
     private String unitName;
 
-    private Integer roomId;
+    private String roomId;
 
     private String roomNum;
 
-    private short householdType;
+    private String householdType;
 }

@@ -19,5 +19,6 @@
         <module>app-community-wanli</module>
 		<module>community-synchrodata</module>
 		<module>web-community-wanli</module>
+        <module>dnake-api</module>
     </modules>
 </project>

@@ -441,18 +441,22 @@ public class PassThroughController {
             "返回参数: unitKeys 单元钥匙、 CommunityKeys 小区钥匙")
     public Result getMyKey(String cellphone, String communityCode) {
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(communityCode)) {
-            List<MyKey> myKeys = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            //List<MyKey> myKeys = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            List<MyKey> myKeys = dnakeAppApiService.getMyKeyWithLocal(cellphone, communityCode);
             if (!myKeys.isEmpty()) {
                 for (MyKey myKey : myKeys) {
                     Device device = deviceService.getByDeviceNumAndCommunityCode(communityCode, myKey.getDeviceNum());
                     if (device != null) {
                         ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(device.getCommunityCode());
-                        Building building = buildingService.getBybuildingCode(communityCode, device.getBuildingCode());
+                        Building building = buildingService.getBybuildingCode(device.getBuildingCode(), communityCode);
                         Unit unit = unitService.getByUnitCode(communityCode, device.getUnitCode());
                         Zone zone = null;
                         if (building != null) {
                             zone = zoneService.getByZoneId(communityCode, building.getZoneId());
                         }
+                        myKey.setDeviceName(device.getDeviceName());
+                        myKey.setBuildingCode(device.getBuildingCode());
+                        myKey.setUnitCode(device.getUnitCode());
                         myKey.setCommunityName(clusterCommunity == null ? StringUtils.EMPTY : clusterCommunity.getCommunityName());
                         myKey.setBuildingName(building == null ? StringUtils.EMPTY : building.getBuildingName());
                         myKey.setUnitName(unit == null ? StringUtils.EMPTY : unit.getUnitName());

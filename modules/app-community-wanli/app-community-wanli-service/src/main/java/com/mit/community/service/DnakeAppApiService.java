@@ -10,18 +10,18 @@ import com.dnake.entity.DnakeAppUser;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.DnakeLoginResponse;
-import com.mit.community.entity.HouseholdRoom;
-import com.mit.community.entity.MyKey;
-import com.mit.community.entity.User;
+import com.mit.community.entity.*;
+import com.mit.community.mapper.AuthorizeAppHouseholdDeviceGroupMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 /**
  * dnake接口调用
@@ -38,6 +38,22 @@ public class DnakeAppApiService {
     private RedisService redisService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private HouseHoldService houseHoldService;
+    @Autowired
+    private AuthorizeAppHouseholdDeviceGroupMapper authorizeAppHouseholdDeviceGroupMapper;
+    @Autowired
+    private AuthorizeAppHouseholdDeviceGroupService authorizeAppHouseholdDeviceGroupService;
+    @Autowired
+    private DeviceGroupService deviceGroupService;
+    @Autowired
+    private DeviceDeviceGroupService deviceDeviceGroupService;
+    @Autowired
+    private DeviceService deviceService;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
+    @Autowired
+    private AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceGroupService;
 
     /**
      * 验证手机验证码
@@ -275,6 +291,7 @@ public class DnakeAppApiService {
 
     /**
      * 获取邀请码记录
+     *
      * @param cellphone 手机号
      * @param pageIndex 页码，从0开始
      * @param pageSize  页大小
@@ -343,6 +360,62 @@ public class DnakeAppApiService {
 //                }
                 list.add(myKey);
             }
+        }
+        return list;
+    }
+
+    /**
+     * 获取我的本地数据库钥匙信息
+     *
+     * @param communityCode 小区code
+     * @param cellphone     手机号
+     * @return 我的钥匙信息
+     * @author Mr.Deng
+     * @date 14:08 2018/12/4
+     */
+//    @Cache(key = "key:cellphone:communityCode:{1}:{2}", expire = 1440)
+    public List<MyKey> getMyKeyWithLocal(String cellphone, String communityCode) {
+        List<MyKey> list = Lists.newArrayListWithExpectedSize(20);
+        /**
+         * 查询本地住户信息
+         */
+        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
+        /**
+         * 查询本地设备授权信息
+         */
+        List<AuthorizeHouseholdDeviceGroup> groups = authorizeHouseholdDeviceGroupService.listByHouseholdId(houseHold.getHouseholdId());
+        List<Integer> groupList = new ArrayList<>();
+        if (groups.size() != 0) {
+            for (AuthorizeHouseholdDeviceGroup group : groups) {
+                if (!groupList.contains(group.getDeviceGroupId())) {
+                    groupList.add(group.getDeviceGroupId());
+                }
+            }
+            /**
+             *查询已经存在的房屋信息
+             */
+            //List<HouseholdRoom> rooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
+            //if(rooms.size() != 0){
+            //for(HouseholdRoom room : rooms){
+            List<DeviceDeviceGroup> deviceDeviceGroups = deviceDeviceGroupService.listByDeviceGroupIds(groupList);
+            for (DeviceDeviceGroup deviceDeviceGroup : deviceDeviceGroups) {
+                MyKey myKey = new MyKey();
+                myKey.setSipAccount(houseHold.getSipAccount());
+                //myKey.setRoomNum(room.getRoomNum());
+                myKey.setDeviceGps("0");
+                myKey.setDeviceNum(deviceDeviceGroup.getDeviceNum());
+                /**
+                 * 时间信息
+                 */
+                LocalDate residenceTime = houseHold.getResidenceTime();
+                ZoneId zone = ZoneId.systemDefault();
+                Instant instant = residenceTime.atStartOfDay().atZone(zone).toInstant();
+                LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
+                myKey.setDueDate(localDateTime);
+                list.add(myKey);
+            }
+            //}
+            //}
         }
         return list;
     }
@@ -514,6 +587,119 @@ public class DnakeAppApiService {
         map.put("communityCode", communityCode);
         String result = DnakeWebApiUtil.invoke(url, map);
         log.info(result);
+    }
+
+    /**
+     * 授权用户设备组
+     *
+     * @param communityCode   小区code
+     * @param householdId     用户id
+     * @param expiryDate      过期时间
+     * @param deviceGroupList 设备组id，逗号分隔
+     * @author hsl
+     * @date 2018/12/19 9:31
+     * @company mitesofor
+     */
+    public JSONObject authorizeHouse(String communityCode, Integer householdId, String expiryDate, String appOperateType, List<String> deviceGroupList) {
+        String join = String.join(",", deviceGroupList);
+        String url = "/v1/household/authorizeHousehold";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(5);
+        map.put("householdId", householdId);
+        map.put("communityCode", communityCode);
+        map.put("expiryDate", expiryDate);
+        map.put("deviceGroups", join);
+        map.put("appOperateType", appOperateType);
+        String invoke = DnakeWebApiUtil.invoke(url, map);
+        return JSON.parseObject(invoke);
+    }
+
+    /**
+     * 新增住户
+     *
+     * @param communityCode 小区code
+     * @param mobile        手机号
+     * @param householdName 住户名
+     * @param residenceTime 居住期限
+     * @param houseList     房产列表
+     * @author shuyy
+     * @date 2018/12/18 20:02
+     * @company mitesofor
+     */
+    public JSONObject addHousehold(Integer id, String communityCode, Integer zoneId, Integer buildingId, Integer unitId, Integer roomId,
+                                   Integer householdType, String householdName,
+                                   String mobile, String residenceTime, List<Map<String, Object>> houseList) {
+        String url = "/v1/household/saveOrUpdateHousehold";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(9);
+        map.put("id", id);
+        map.put("communityCode", communityCode);
+        map.put("zoneId", zoneId);
+        map.put("buildingId", buildingId);
+        map.put("unitId", unitId);
+        map.put("roomId", roomId);
+        map.put("householdType", householdType);
+        map.put("householdName", householdName);
+        map.put("mobile", mobile);
+        String result = DnakeWebApiUtil.invoke(url, map);
+        return JSON.parseObject(result);
+    }
+
+    /**
+     * 保存住户(返回参数)
+     *
+     * @param communityCode 小区code
+     * @param mobile        手机号
+     * @param householdName 住户名
+     * @param residenceTime 居住期限
+     * @param houseList     房产列表
+     * @author shuyy
+     * @date 2018/12/18 20:02
+     * @company mitesofor
+     */
+    public JSONObject editHouseholdRoom(Integer id, String communityCode, String mobile, Integer gender, String householdName,
+                                        String residenceTime, List<Map<String, Object>> houseList) {
+        String url = "/v1/household/saveOrUpdateHouseholdMore";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
+        map.put("id", id);
+        map.put("communityCode", communityCode);
+        String s = JSON.toJSONString(houseList);
+        map.put("houseList", s);
+        map.put("mobile", mobile);
+        map.put("residenceTime", residenceTime);
+        map.put("householdName", householdName);
+        map.put("gender", gender);
+        String result = DnakeWebApiUtil.invoke(url, map);
+        return JSON.parseObject(result);
+    }
+
+    /**
+     * 注销用户(返回参数)
+     *
+     * @author shuyy
+     * @date 2018/12/19 16:15
+     * @company mitesofor
+     */
+    public JSONObject logOut(Integer householdId, String communityCode) {
+        String url = "/v1/household/operateHousehold";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
+        map.put("id", householdId);
+        map.put("operateType", "0");
+        map.put("communityCode", communityCode);
+        String result = DnakeWebApiUtil.invoke(url, map);
+        return JSON.parseObject(result);
+    }
+
+    /**
+     * 根据设备编号查询设备组列表
+     *
+     * @param communityCode
+     * @return
+     */
+    public JSONObject getDeviceGroupList(String communityCode) {
+        String url = "/v1/deviceGroup/getDeviceGroupList";
+        HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(3);
+        map.put("communityCode", communityCode);
+        String result = DnakeWebApiUtil.invoke(url, map);
+        return JSON.parseObject(result);
     }
 
 }

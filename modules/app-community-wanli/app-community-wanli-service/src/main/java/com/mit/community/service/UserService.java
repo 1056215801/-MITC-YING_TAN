@@ -118,9 +118,31 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
-    @Cache(key = "user:cellphone{1}")
+    //@Cache(key = "user:cellphone{1}")
     @Transactional
     public User getByCellphone(String cellphone) {
+        EntityWrapper<User> wrapper = new EntityWrapper<>();
+        wrapper.eq("cellphone", cellphone);
+        List<User> users = userMapper.selectList(wrapper);
+        if (users.isEmpty()) {
+            return null;
+        } else {
+            return users.get(0);
+        }
+    }
+
+    /**
+     * 获取User，通过cellphone，无缓存
+     *
+     * @param cellphone 手机号
+     * @return com.mit.community.entity.User
+     * @author shuyy
+     * @date 2018/11/29 11:28
+     * @company mitesofor
+     */
+    //@Cache(key = "user:cellphone{1}")
+    @Transactional
+    public User getByCellphoneNoCache(String cellphone) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
         List<User> users = userMapper.selectList(wrapper);
@@ -151,7 +173,7 @@ public class UserService {
         }
         user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                "普通业主", StringUtils.EMPTY, null, null);
+                "普通业主", StringUtils.EMPTY, null, null, null);
         this.save(user);
         return status;
     }
@@ -177,11 +199,11 @@ public class UserService {
         User user = new User(cellphone, null, null,
                 nickname, gender, null, null,
                 birthday, bloodType, profession,
-                signature, null, null, null, null);
+                signature, null, null, null, null,null);
         user.setId(userId);
         userService.update(user);
 //        User user = this.getById(userId);
-        if(StringUtils.isNotBlank(constellation)){
+        if (StringUtils.isNotBlank(constellation)) {
             List<HouseHold> houseHoldList = houseHoldService.getByCellphone(cellphone);
             if (!houseHoldList.isEmpty()) {
                 houseHoldList.forEach(item -> {
@@ -304,5 +326,15 @@ public class UserService {
         if (!status) {
             throw new RuntimeException("更新失败");
         }
+    }
+
+    /**
+     * 更新用户的住户信息id
+     *
+     * @param cellphone
+     * @param householdId
+     */
+    public void updateCellphoneByHouseholdId(String cellphone, Integer householdId) {
+        userMapper.updateHouseholdIdByMobile(householdId, cellphone);
     }
 }

@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * 注册登陆
+ *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -82,6 +84,7 @@ public class LoginController {
 
     /**
      * 快捷登录或密码登录
+     *
      * @param cellphone        手机号
      * @param verificationCode 手机号验证码
      * @param password         密码
@@ -116,7 +119,8 @@ public class LoginController {
             // 密码登陆
             user = userService.getByCellphone(cellphone);
             if (user == null) {
-                return Result.error("用户名不存在");
+                //return Result.error("用户名不存在");
+                return Result.error("用户不存在");
             } else if (!password.equals(user.getPassword())) {
                 return Result.error("用户名或密码错误");
             }
@@ -131,8 +135,11 @@ public class LoginController {
         user.setPassword(null);
         List<HouseHold> houseHoldList = houseHoldService.getByCellphone(user.getCellphone());
         if (houseHoldList.isEmpty()) {
-            redisService.set(RedisConstant.USER + user.getCellphone(), user);
-            redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
+            if (mac != null) {
+                redisService.set(RedisConstant.USER + user.getCellphone(), user);
+                redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
+            }
+            user.setHousehouldStatus(1);
             return Result.success(user, "没有关联住户");
         } else {
             // 设置默认操作小区对应的用户
@@ -140,10 +147,33 @@ public class LoginController {
                 user.setHouseholdId(houseHoldList.get(0).getHouseholdId());
                 userService.update(user);
             }
+            /**
+             * 判断用户当前住户状态：0-注销；1-启用；2-停用；3-权限过期
+             */
+            Integer householdId = user.getHouseholdId();
+            HouseHold houseHold = houseHoldService.getByHouseholdId(householdId);
+            Integer householdStatus = houseHold.getHouseholdStatus();
+            if (householdStatus == 0) {
+                user.setHousehouldStatus(0);
+                return Result.success(user, "用户已被注销");
+            } else if (householdStatus == 2) {
+                user.setHousehouldStatus(2);
+                return Result.success(user, "用户已被停用");
+            } else {//判断业主权限是否过期
+                user.setHousehouldStatus(1);
+                Date validityTime = houseHold.getValidityTime();
+                Long dayInter = com.mit.community.util.DateUtils.getDateInter(new Date(), validityTime);
+                if (dayInter < 0) {//权限已过期
+                    user.setHousehouldStatus(3);
+                    return Result.success(user, "用户权限已过期");
+                }
+            }
         }
         // redis中保存用户
-        redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
-        redisService.set(RedisConstant.USER + user.getCellphone(), user);
+        if (mac != null) {
+            redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
+            redisService.set(RedisConstant.USER + user.getCellphone(), user);
+        }
         // 查询用户对应的住户和房屋
         List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
         List<HouseholdRoom> householdRooms = Lists.newArrayListWithCapacity(10);
@@ -161,12 +191,11 @@ public class LoginController {
         String s = Integer.toBinaryString(authorizeStatus);
         StringBuilder stringBuilder = new StringBuilder(s);
         s = stringBuilder.reverse().toString();
-        if (s.equals('0') || s.charAt(1) != '1') {
+        if (s.equals("0") || s.charAt(1) != '1') {
             return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
             ThreadPoolUtil.execute(new Thread(() -> {
-
                 DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
                 if (dnakeLoginResponse.getStatus().equals(2)) {
                     // 密码错误
@@ -186,6 +215,7 @@ public class LoginController {
 
     /**
      * 登出
+     *
      * @param cellphone 用户登录手机号
      * @return result
      * @author Mr.Deng
@@ -205,6 +235,7 @@ public class LoginController {
 
     /**
      * 选择性别
+     *
      * @param cellphone 电话号码
      * @param gender    性别
      * @return com.mit.community.util.Result
@@ -227,6 +258,7 @@ public class LoginController {
 
     /**
      * 选择出生日期和昵称
+     *
      * @param cellphone 手机号
      * @param birthday  出生日期
      * @param nickName  昵称
@@ -252,6 +284,7 @@ public class LoginController {
 
     /**
      * 选择地区
+     *
      * @param cellphone 手机号
      * @param region    地区 （省+市）
      * @return result
@@ -273,6 +306,7 @@ public class LoginController {
 
     /**
      * 手机验证码验证
+     *
      * @param cellphone        手机号
      * @param verificationCode 手机号验证码
      * @return com.mit.community.util.Result
@@ -296,6 +330,7 @@ public class LoginController {
 
     /**
      * 注册
+     *
      * @param cellphone 手机号
      * @param password  密码
      * @return com.mit.community.util.Result
@@ -326,6 +361,7 @@ public class LoginController {
 
     /**
      * 查询用户授权的所有小区
+     *
      * @param cellphone 手机号
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -366,6 +402,7 @@ public class LoginController {
 
     /**
      * 修改用户信息
+     *
      * @param cellphone     手机号
      * @param nickname      昵称
      * @param gender        性别1、男。0、女。
@@ -395,6 +432,7 @@ public class LoginController {
 
     /**
      * 修改头像
+     *
      * @param cellphone 手机号
      * @param image     头像图片
      * @return result
@@ -421,6 +459,7 @@ public class LoginController {
 
     /**
      * 修改密码
+     *
      * @param cellPhone   电话号码
      * @param newPassword 新密码
      * @param oldPassword 旧密码
@@ -446,6 +485,7 @@ public class LoginController {
 
     /**
      * 重置密码
+     *
      * @param cellphone   手机号
      * @param newPassword 新密码
      * @return com.mit.community.util.Result
@@ -470,6 +510,7 @@ public class LoginController {
 
     /**
      * 用户是否登录
+     *
      * @param cellphone 手机号
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -491,6 +532,7 @@ public class LoginController {
 
     /**
      * 修改手机号
+     *
      * @param cellphone    手机号
      * @param newCellphone 新手机号
      * @return com.mit.community.util.Result
@@ -516,6 +558,7 @@ public class LoginController {
 
     /**
      * 选择小区
+     *
      * @param mac           mac
      * @param cellphone     电话号码
      * @param communityCode 小区code
@@ -545,6 +588,7 @@ public class LoginController {
 
     /**
      * 获取住户信息
+     *
      * @param cellphone 电话号码
      * @return com.mit.community.util.Result
      * @author shuyy

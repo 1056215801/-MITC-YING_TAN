@@ -2,15 +2,18 @@ package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 /**
  * 住户表
+ *
  * @author Mr.Deng
  * @date 2018/11/14 19:00
  * <p>Copyright: Copyright (c) 2018</p>
@@ -68,13 +71,13 @@ public class HouseHold extends BaseEntity {
      *//*
     @TableField("unit_name")
     private String unitName;
-    
+
     *//**
      * 房间id
      *//*
     @TableField("room_id")
     private Integer roomId;
-    
+
     *//**
      * 房间号
      *//*
@@ -97,7 +100,7 @@ public class HouseHold extends BaseEntity {
     @TableField("household_type")
     private Integer householdType;*/
     /**
-     * 业主状态（0：注销；1：启用）
+     * 业主状态（0：注销；1：启用；2：停用）
      */
     @TableField("household_status")
     private Integer householdStatus;
@@ -219,5 +222,36 @@ public class HouseHold extends BaseEntity {
      */
     @TableField(exist = false)
     public static final Short OTHER = 7;
+
+    /**
+     * 有效期限
+     */
+    @TableField(exist = false)
+    private Long diffDay;
+
+    /**
+     * 与户主关系
+     */
+    @TableField(exist = false)
+    private String householdType;
+
+    /**
+     * 房屋信息
+     */
+    @TableField(exist = false)
+    private String housing;
+
+    /**
+     * 权限有效期
+     */
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @TableField("validity_time")
+    private Date validityTime;
+
+    /**
+     * 与户主关系
+     */
+    private Integer housetype;
+
 
 }

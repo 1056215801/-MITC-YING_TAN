@@ -2,6 +2,9 @@ package com.mit.community.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 住户设备授权
@@ -12,4 +15,6 @@ import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
  */
 public interface AuthorizeHouseholdDeviceGroupMapper extends BaseMapper<AuthorizeHouseholdDeviceGroup> {
 
+    //自定义接口
+    List<AuthorizeHouseholdDeviceGroup> getObjectByIds(@Param("household_id")Integer household_id, @Param("device_group_id") Integer device_group_id);
 }

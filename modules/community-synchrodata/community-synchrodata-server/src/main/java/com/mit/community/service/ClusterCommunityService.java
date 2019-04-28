@@ -40,14 +40,15 @@ public class ClusterCommunityService {
 
     /**
      * 删除所有
+     *
      * @return void
      * @throws
      * @author shuyy
      * @date 2018/11/30 14:34
      * @company mitesofor
-    */
-    @CacheClear(pre="community")
-    public void remove(){
+     */
+    @CacheClear(pre = "community")
+    public void remove() {
         clusterCommunityMapper.delete(null);
     }
 
@@ -106,28 +107,31 @@ public class ClusterCommunityService {
         wrapper.eq("city_name", cityName);
         return clusterCommunityMapper.selectList(wrapper);
     }
+
     /**
      * 查询社区code列表，通过城市名
+     *
      * @param cityName 城市名
      * @return java.util.List<java.lang.String>
      * @author shuyy
      * @date 2018/11/22 15:15
      * @company mitesofor
-    */
-    public List<String> listCommunityCodeListByCityName(String cityName){
+     */
+    public List<String> listCommunityCodeListByCityName(String cityName) {
         List<ClusterCommunity> clusterCommunities = this.listByCityName(cityName);
         return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
     }
 
     /**
      * 从dnake接口查询所有小区
+     *
      * @return java.util.List<com.mit.community.entity.ClusterCommunity>
      * @throws
      * @author shuyy
      * @date 2018/11/30 14:30
      * @company mitesofor
-    */
-    public List<ClusterCommunity> listFromDnake(){
+     */
+    public List<ClusterCommunity> listFromDnake() {
         DnakeConstants.choose(DnakeConstants.MODEL_PRODUCT);
         String url = "/v1/community/queryClusterCommunity";
         HashMap<String, Object> map = new HashMap<>();

@@ -42,6 +42,7 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
     public List<HouseholdRoom> listByHouseholdId(Integer householdId) {
         EntityWrapper<HouseholdRoom> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);
+        wrapper.orderBy("gmt_create", true);
         return householdRoomMapper.selectList(wrapper);
     }
 
@@ -81,6 +82,26 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
         return householdRooms.get(0);
     }
 
+    /**
+     * 查询房间信息，通过住户id和房间id
+     *
+     * @param householdId 住户id
+     * @param roomNum     房号
+     * @return 房间信息
+     * @author Mr.Deng
+     * @date 14:05 2018/12/12
+     */
+    public HouseholdRoom getByHouseholdIdAndRoomId(Integer householdId, Integer roomId) {
+        EntityWrapper<HouseholdRoom> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        wrapper.eq("room_id", roomId);
+        List<HouseholdRoom> householdRooms = householdRoomMapper.selectList(wrapper);
+        if (householdRooms.isEmpty()) {
+            return null;
+        }
+        return householdRooms.get(0);
+    }
+
 
     /***
      * 删除
@@ -91,6 +112,15 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
     @CacheClear(pre = "householdRoom")
     public void remove() {
         householdRoomMapper.delete(null);
+    }
+
+    /**
+     * 根据住户id删除房屋列表
+     */
+    public void deleteByHouseholdId(Integer householdId) {
+        EntityWrapper<HouseholdRoom> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        householdRoomMapper.delete(wrapper);
     }
 
     /**
