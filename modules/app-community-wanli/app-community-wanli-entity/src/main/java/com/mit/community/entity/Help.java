@@ -23,4 +23,6 @@ public class Help extends BaseEntity{
 
     private Short orders;
 
+    private Integer status;
+
 }

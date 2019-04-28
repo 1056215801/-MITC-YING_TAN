@@ -73,7 +73,13 @@ public class PassThroughController {
     public Result listDeviceGroup(HttpServletRequest request) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        return passThroughFeign.getDeviceGroup(sysUser.getCommunityCode());
+        Result result = null;
+        try {
+            result = passThroughFeign.getDeviceGroup(sysUser.getCommunityCode());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
         /**

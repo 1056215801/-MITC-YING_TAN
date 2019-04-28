@@ -1,5 +1,7 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.Instruction;
 import com.mit.community.entity.InstructionDetail;
 import com.mit.community.mapper.InstructionMapper;
@@ -37,8 +39,8 @@ public class InstructionService {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void save(String title, String intro, Integer userCreate, String detail) {
-        Instruction instruction = new Instruction(title, intro, userCreate, null);
+    public void save(String title, String intro, Integer userCreate, String detail, Integer status) {
+        Instruction instruction = new Instruction(title, intro, userCreate, null, status);
         instruction.setGmtCreate(LocalDateTime.now());
         instruction.setGmtModified(LocalDateTime.now());
         instructionMapper.insert(instruction);
@@ -48,7 +50,7 @@ public class InstructionService {
         instructionDetailService.save(instructionDetail);
     }
 
-    public void update(Integer id, String title, String intro, Integer userCreate, String detail) {
+    public void update(Integer id, String title, String intro, Integer userCreate, String detail, Integer status) {
         Instruction instruction = new Instruction();
         instruction.setId(id);
         if (StringUtils.isNotBlank(title)) {
@@ -59,6 +61,9 @@ public class InstructionService {
         }
         if (userCreate != null) {
             instruction.setUserCreate(userCreate);
+        }
+        if (status != null) {
+            instruction.setStatus(status);
         }
         instruction.setGmtModified(LocalDateTime.now());
         instructionMapper.updateById(instruction);
@@ -119,5 +124,25 @@ public class InstructionService {
     */
     public void removeById(Integer id){
         instructionMapper.deleteById(id);
+    }
+
+    public Page<Instruction> listPage(String title, Integer status, LocalDateTime gmtCreateTimeStart, LocalDateTime gmtCreateTimeEnd, Integer pageNum, Integer pageSize){
+        EntityWrapper<Instruction> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotBlank(title)) {
+            wrapper.eq("title", title);
+        }
+        if (status != null) {
+            wrapper.eq("status", status);
+        }
+        if (gmtCreateTimeStart != null) {
+            wrapper.ge("gmt_create", gmtCreateTimeStart);
+        }
+        if (gmtCreateTimeEnd != null) {
+            wrapper.le("gmt_create", gmtCreateTimeEnd);
+        }
+        Page<Instruction> page = new Page<>(pageNum, pageSize);
+        List<Instruction> instructions = instructionMapper.selectPage(page, wrapper);
+        page.setRecords(instructions);
+        return page;
     }
 }

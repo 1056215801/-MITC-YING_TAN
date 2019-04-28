@@ -68,7 +68,8 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 */10 * * * ?")
+    //@Scheduled(cron = "0 */10 * * * ?")
+    @Scheduled(cron = "0 */2 * * * ?")
     @CacheClear(pre = "household")
     public void removeAndiImport() {
         try {
@@ -134,7 +135,7 @@ public class HouseholdSchedule {
      */
     @CacheClear(pre = "householdRoom")
     private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds) {
-        authorizeHouseholdDeviceGroupService.remove();
+        //authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
         householdRoomService.remove();
         if (!houseHolds.isEmpty()) {
@@ -168,6 +169,22 @@ public class HouseholdSchedule {
 
                 if (authorizeAppHouseholdDevices != null && !authorizeAppHouseholdDevices.isEmpty()) {
                     authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDevices);
+                    /**
+                     * 新增数据同步代码
+                     */
+//                    List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
+//                    for(AuthorizeAppHouseholdDeviceGroup authHouse : authorizeAppHouseholdDevices){
+//                        AuthorizeHouseholdDeviceGroup authorizeHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup();
+//                        authorizeHouseholdDeviceGroup.setId(authHouse.getId());
+//                        authorizeHouseholdDeviceGroup.setHouseholdId(authHouse.getHouseholdId());
+//                        authorizeHouseholdDeviceGroup.setDeviceGroupId(authHouse.getDeviceGroupId());
+//                        authorizeHouseholdDeviceGroup.setGmtCreate(authHouse.getGmtCreate());
+//                        authHouse.setGmtModified(authHouse.getGmtModified());
+//                        authorizeHouseholdDeviceGroups.add(authorizeHouseholdDeviceGroup);
+//                    }
+//                    if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {
+//                        authorizeHouseholdDeviceGroupService.insertBatch(authorizeHouseholdDeviceGroups);
+//                    }
                 }
                 List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
                 if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {

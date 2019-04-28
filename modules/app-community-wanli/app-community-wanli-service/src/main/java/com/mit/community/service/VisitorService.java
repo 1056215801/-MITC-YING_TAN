@@ -7,9 +7,13 @@ import com.mit.community.entity.Visitor;
 import com.mit.community.entity.VisitorImg;
 import com.mit.community.entity.VisitorRead;
 import com.mit.community.mapper.VisitorMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,6 +64,34 @@ public class VisitorService {
         return page;
     }
 
+    public Page<Visitor> listWebPage( String communityCode, String inviteName, String inviteMobile, String codeType, String codeStatus,
+                                      LocalDateTime gmtCreateTimeStart, LocalDateTime gmtCreateTimeEnd,Integer pageNum, Integer pageSize){
+        EntityWrapper<Visitor> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        if (StringUtils.isNotBlank(inviteName)) {
+            wrapper.eq("invite_name", inviteName);
+        }
+        if (StringUtils.isNotBlank(inviteMobile)) {
+            wrapper.eq("invite_mobile", inviteMobile);
+        }
+        if (StringUtils.isNotBlank(codeType)) {
+            wrapper.eq("code_type", codeType);
+        }
+        if (StringUtils.isNotBlank(codeStatus)) {
+            wrapper.eq("code_status", codeStatus);
+        }
+        if (gmtCreateTimeStart != null) {
+            wrapper.ge("gmt_create", gmtCreateTimeStart);
+        }
+        if (gmtCreateTimeEnd != null) {
+            wrapper.le("gmt_create", gmtCreateTimeEnd);
+        }
+        wrapper.orderBy("gmt_create", false);
+        Page<Visitor> page = new Page<>(pageNum, pageSize);
+        List<Visitor> visitors = visitorMapper.selectPage(page, wrapper);
+        page.setRecords(visitors);
+        return page;
+    }
     /**
      * 获取访客详情
      * @param id id

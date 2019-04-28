@@ -30,7 +30,7 @@
 
         <dependency>
             <groupId>com.mit</groupId>
-            <artifactId>dnake</artifactId>
+            <artifactId>dnake-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

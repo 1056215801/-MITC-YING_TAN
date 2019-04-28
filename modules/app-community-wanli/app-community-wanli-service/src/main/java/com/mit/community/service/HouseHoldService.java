@@ -144,4 +144,19 @@ public class HouseHoldService {
         houseHold.setGmtCreate(LocalDateTime.now());
         houseHoldMapper.insert(houseHold);
     }
+
+    /**
+     * 根据手机号和社区code查询本地钥匙信息
+     * @return
+     */
+    public HouseHold getHouseholdByPhoneAndCode(String cellphone, String communityCode){
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("mobile",cellphone);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if(houseHolds.isEmpty()){
+            return null;
+        }
+        return houseHolds.get(0);
+    }
 }

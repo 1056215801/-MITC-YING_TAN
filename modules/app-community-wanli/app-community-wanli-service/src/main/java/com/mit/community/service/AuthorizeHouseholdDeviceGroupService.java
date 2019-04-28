@@ -1,10 +1,14 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mit.community.entity.AuthorizeAppHouseholdDeviceGroup;
 import com.mit.community.entity.AuthorizeHouseholdDeviceGroup;
 import com.mit.community.mapper.AuthorizeHouseholdDeviceGroupMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 住户设备授权
@@ -43,6 +47,12 @@ public class AuthorizeHouseholdDeviceGroupService extends ServiceImpl<AuthorizeH
     */
     public void remove(){
         authorizeHouseholdDeviceMapper.delete(null);
+    }
+
+    public List<AuthorizeHouseholdDeviceGroup> listByHouseholdId(Integer householdId) {
+        EntityWrapper<AuthorizeHouseholdDeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        return authorizeHouseholdDeviceMapper.selectList(wrapper);
     }
 
 }

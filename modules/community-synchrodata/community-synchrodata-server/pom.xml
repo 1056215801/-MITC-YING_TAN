@@ -134,6 +134,19 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.54</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -171,7 +184,7 @@
         </dependency>
         <dependency>
             <groupId>com.mit</groupId>
-            <artifactId>dnake</artifactId>
+            <artifactId>dnake-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
@@ -180,6 +193,13 @@
             <groupId>fastdfs_client</groupId>
             <artifactId>fastdfs_client</artifactId>
             <version>1.25</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.csource/fastdfs-client-java -->
+        <dependency>
+            <groupId>org.csource</groupId>
+            <artifactId>fastdfs-client-java</artifactId>
+            <version>1.27-RELEASE</version>
         </dependency>
 
         <!--spring-boot-devtools 热启动依赖包-->

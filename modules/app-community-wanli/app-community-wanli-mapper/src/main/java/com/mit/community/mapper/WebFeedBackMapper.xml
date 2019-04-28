@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.WebFeedBackMapper">
+
+    <select id="selectTestPage" resultType="com.mit.community.entity.Test">
+        select a.id,a.content,a.gmt_create,a.status,b.cellphone as feedBackMoblie,c.household_name as feedBackName,d.community_name as communityName,d.zone_name as zoneName,d.building_name as buildingName,d.unit_name as unitName,d.room_num as roomNum
+        FROM
+        FeedBack a left join User b on a.user_id=b.id left join HouseHold c on b.household_id=c.id left join HouseHold_Room d on c.id=d.household_id ${ew.sqlSegment}
+    </select>
+
+</mapper>

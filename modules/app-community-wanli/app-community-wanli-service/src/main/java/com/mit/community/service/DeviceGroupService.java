@@ -37,6 +37,23 @@ public class DeviceGroupService extends ServiceImpl<DeviceGroupMapper, DeviceGro
     }
 
     /**
+     * 查询所有的设备组信息，通过小区code
+     * @param communityCode 小区code
+     * @return 设备组列表
+     * @author Mr.Deng
+     * @date 19:34 2018/12/10
+     */
+    public DeviceGroup getById(Integer deviceGroupId) {
+        EntityWrapper<DeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_group_Id", deviceGroupId);
+        List<DeviceGroup> list = deviceGroupMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    /**
      * 删除
      * @author shuyy
      * @date 2018/12/10 11:21

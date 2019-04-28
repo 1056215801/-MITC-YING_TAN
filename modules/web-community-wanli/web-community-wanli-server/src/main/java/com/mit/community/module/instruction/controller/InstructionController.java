@@ -1,5 +1,6 @@
 package com.mit.community.module.instruction.controller;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.Instruction;
 import com.mit.community.entity.SysUser;
@@ -11,10 +12,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * 操作指南
@@ -48,12 +50,12 @@ public class InstructionController {
      * @company mitesofor
      */
     @PostMapping("/saveInstruction")
-    @ApiOperation(value = "保存操作指南", notes = "传参：title 操作指南标题， intro 简介， detail 详情")
-    public Result saveInstruction(HttpServletRequest request, String title, String intro, String detail) {
+    @ApiOperation(value = "保存操作指南", notes = "传参：title 操作指南标题， intro 简介， detail 详情，status 状态（1已启用，2已停用）")
+    public Result saveInstruction(HttpServletRequest request, String title, String intro, String detail, Integer status) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         Integer userId = user.getId();
-        instructionService.save(title, intro, userId, detail);
+        instructionService.save(title, intro, userId, detail, status);
         return Result.success("操作成功");
     }
 
@@ -71,13 +73,13 @@ public class InstructionController {
     */
     @PutMapping("/updateInstruction")
     @ApiOperation(value = "修改操作指南", notes = "传参：id 操作指南id， title 操作指南标题，" +
-            " intro 简介， detail 详情")
+            " intro 简介， detail 详情， status 状态（1已启用，2已停用）")
     public Result updateInstruction(HttpServletRequest request,
-                                    Integer id, String title, String intro, String detail) {
+                                    Integer id, String title, String intro, String detail, Integer status) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         Integer userId = user.getId();
-        instructionService.update(id, title, intro, userId, detail);
+        instructionService.update(id, title, intro, userId, detail, status);
         return Result.success("操作成功");
     }
 
@@ -104,10 +106,13 @@ public class InstructionController {
      * @company mitesofor
     */
     @GetMapping("/listInstruction")
-    @ApiOperation(value = "查询操作指南列表")
-    public Result listInstruction() {
-        List<Instruction> instructions = instructionService.list();
-        return Result.success(instructions);
+    @ApiOperation(value = "查询操作指南列表", notes = "输入参数：title 标题， status 状态（1已启用，2已停用）， gmtCreateTimeStart 开始时间， gmtCreateTimeEnd 结束时间")
+    public Result listInstruction(String title, Integer status,Integer pageNum, Integer pageSize,
+                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateTimeStart,
+                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateTimeEnd) {
+        //List<Instruction> instructions = instructionService.list();
+        Page<Instruction> page = instructionService.listPage(title, status, gmtCreateTimeStart, gmtCreateTimeEnd, pageNum, pageSize);
+        return Result.success(page);
     }
 
     /**

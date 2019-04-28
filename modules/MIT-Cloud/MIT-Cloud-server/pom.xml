@@ -177,6 +177,13 @@
             <version>1.25</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.csource/fastdfs-client-java -->
+        <dependency>
+            <groupId>org.csource</groupId>
+            <artifactId>fastdfs-client-java</artifactId>
+            <version>1.27-RELEASE</version>
+        </dependency>
+
         <dependency>
             <groupId>com.mit</groupId>
             <artifactId>MIT-Cloud-entity</artifactId>

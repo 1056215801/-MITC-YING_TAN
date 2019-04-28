@@ -866,7 +866,8 @@ public class UserServiceController {
             //门禁总数
             Integer accessControlNum = accessControlService.countByCellphoneAndCommunityCode(cellphone, communityCode);
             //我的钥匙
-            List<MyKey> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            //List<MyKey> myKey = dnakeAppApiService.getMyKey(cellphone, communityCode);
+            List<MyKey> myKey = dnakeAppApiService.getMyKeyWithLocal(cellphone, communityCode);
             if (!myKey.isEmpty()) {
                 myKeyNum = myKey.size();
             }
