@@ -83,4 +83,14 @@ public class CommunityServiceInfo extends BaseEntity {
     @TableField(exist = false)
     private String detail;
 
+    /**
+     * 状态（1、启用；2、停用）
+     */
+    private Integer status;
+
+    /**
+     * 评价星级（1-5星）
+     */
+    private Integer appraise;
+
 }

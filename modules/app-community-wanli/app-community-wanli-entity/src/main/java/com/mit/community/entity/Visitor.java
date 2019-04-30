@@ -113,5 +113,16 @@ public class Visitor extends BaseEntity {
      */
     @TableField(exist = false)
     private Boolean readStatus;
-
+    /**
+     * 访客验证码（暂无）
+     */
+    private String code;
+    /**
+     * 验证码类型，关联字典表code为visitor_code_type(暂无)
+     */
+    private String codeType;
+    /**
+     * 验证码使用状态（关联字典表，code为visitor_code_status）（暂无）
+     */
+    private String code_status;
 }

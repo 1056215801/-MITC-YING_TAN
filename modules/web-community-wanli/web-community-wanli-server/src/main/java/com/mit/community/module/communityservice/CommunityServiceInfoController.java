@@ -57,13 +57,13 @@ public class CommunityServiceInfoController {
      */
     @PostMapping("/save")
     @ApiOperation(value = "保存小区服务", notes = "传参：name 名， intro 简介， businessHours 营业时间，" +
-            "address 地址， cellphone 号码， longitude 经度，latitude 维度，  image 图片， type 社区服务类型.关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家， detail 详情")
+            "address 地址， cellphone 号码， longitude 经度，latitude 维度，  image 图片， type 社区服务类型.关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家， detail 详情,apprais 评价星级（1-5星）")
     public Result save(HttpServletRequest request, String name, String intro, String businessHours, String address, String cellphone,
-                       Double longitude, Double latitude, MultipartFile image, String type, String detail) throws Exception {
+                       Double longitude, Double latitude, MultipartFile image, String type, String detail, Integer appraise) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String imageUrl = UploadUtil.upload(image);
-        communityServiceInfoService.save(user.getCommunityCode(), name, intro, businessHours, address, cellphone, longitude, latitude, imageUrl, type, user.getId(), detail);
+        communityServiceInfoService.save(user.getCommunityCode(), name, intro, businessHours, address, cellphone, longitude, latitude, imageUrl, type, user.getId(), detail, appraise);
         return Result.success("保存成功");
     }
 
@@ -86,9 +86,9 @@ public class CommunityServiceInfoController {
      */
     @PostMapping("/update")
     @ApiOperation(value = "修改小区服务", notes = "传参：id 社区服务id， name 名， intro 简介， businessHours 营业时间，" +
-            "address 地址， cellphone 号码， longitude 经度，latitude 维度，  image 图片， detail 详情")
+            "address 地址， cellphone 号码， longitude 经度，latitude 维度，  image 图片， detail 详情,appraise 评价星期（1-5星），status 状态（1启用；2停用）")
     public Result update(HttpServletRequest request, Integer id, String name, String intro, String businessHours, String address, String cellphone,
-                         Double longitude, Double latitude, MultipartFile image, String detail) throws Exception {
+                         Double longitude, Double latitude, MultipartFile image, String detail, Integer appraise, Integer status) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String imageUrl = null;
@@ -97,7 +97,7 @@ public class CommunityServiceInfoController {
         }
         communityServiceInfoService.update(id,
                 name, intro, businessHours, address, cellphone, longitude, latitude, imageUrl,
-                user.getId(), detail);
+                user.getId(), detail, appraise, status);
         return Result.success("修改成功");
     }
 
@@ -114,14 +114,15 @@ public class CommunityServiceInfoController {
      * @company mitesofor
      */
     @GetMapping("/listPage")
-    @ApiOperation(value = "分页查询小区服务", notes = "传参：communityCode 小区code，不传则查当前小区， type 类型")
-    public Result listPage(HttpServletRequest request, String communityCode, String type, Integer pageNum, Integer pageSize) {
+    @ApiOperation(value = "分页查询小区服务", notes = "传参：communityCode 小区code，不传则查当前小区， type 类型(关联字典code)，name 名称，status 状态（1已启动；2已停用）"
+    + "appraise 评价星级(1-5星)")
+    public Result listPage(HttpServletRequest request, String communityCode, String type, String name, Integer status, Integer appraise, Integer pageNum, Integer pageSize) {
         if (communityCode == null) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = user.getCommunityCode();
         }
-        Page<CommunityServiceInfo> communityServiceInfoPage = communityServiceInfoService.listPage(communityCode, type, pageNum, pageSize);
+        Page<CommunityServiceInfo> communityServiceInfoPage = communityServiceInfoService.listPage(communityCode, type, name, status, appraise, pageNum, pageSize);
         return Result.success(communityServiceInfoPage);
     }
 

@@ -120,9 +120,9 @@ public class CommunityServiceInfoService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void save(String communityCode, String name, String intro, String businessHours, String address, String cellphone,
-                     Double longitude, Double latitude, String image, String type, Integer creatorUserId, String detail) {
+                     Double longitude, Double latitude, String image, String type, Integer creatorUserId, String detail, Integer appraise) {
         CommunityServiceInfo communityServiceInfo = new CommunityServiceInfo(communityCode, name, intro, businessHours, address,
-                cellphone, 0, 0, longitude, latitude, image, type, creatorUserId, null);
+                cellphone, 0, 0, longitude, latitude, image, type, creatorUserId, null, 1, appraise);
         communityServiceInfo.setGmtCreate(LocalDateTime.now());
         communityServiceInfo.setGmtModified(LocalDateTime.now());
         communityServiceInfoMapper.insert(communityServiceInfo);
@@ -152,7 +152,7 @@ public class CommunityServiceInfoService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void update(Integer id, String name, String intro, String businessHours, String address, String cellphone,
-                       Double longitude, Double latitude, String image, Integer creatorUserId, String detail) {
+                       Double longitude, Double latitude, String image, Integer creatorUserId, String detail, Integer appraise, Integer status) {
 
         CommunityServiceInfo communityServiceInfo = new CommunityServiceInfo();
         communityServiceInfo.setId(id);
@@ -183,6 +183,12 @@ public class CommunityServiceInfoService {
         if (creatorUserId != null) {
             communityServiceInfo.setCreatorUserId(creatorUserId);
         }
+        if (appraise != null) {
+            communityServiceInfo.setAppraise(appraise);
+        }
+        if (status != null) {
+            communityServiceInfo.setStatus(status);
+        }
         if (StringUtils.isNotBlank(detail)) {
             CommunityServiceInfoDetail communityServiceInfoDetail = communityServiceInfoDetailService.getByCommunityServiceInfoId(id);
             communityServiceInfoDetail.setDetail(detail);
@@ -203,7 +209,7 @@ public class CommunityServiceInfoService {
      * @date 2018/12/20 17:25
      * @company mitesofor
      */
-    public Page<CommunityServiceInfo> listPage(String communityCode, String type, Integer pageNum, Integer pageSize) {
+    public Page<CommunityServiceInfo> listPage(String communityCode, String type, String name, Integer status, Integer appraise, Integer pageNum, Integer pageSize) {
         EntityWrapper<CommunityServiceInfo> wrapper = new EntityWrapper<>();
 
         if (StringUtils.isNotBlank(communityCode)) {
@@ -211,7 +217,15 @@ public class CommunityServiceInfoService {
         }
         if (StringUtils.isNotBlank(type)) {
             wrapper.eq("type", type);
-
+        }
+        if (StringUtils.isNotBlank(name)) {
+            wrapper.eq("name", name);
+        }
+        if (status != null) {
+            wrapper.eq("status", status);
+        }
+        if (appraise != null) {
+            wrapper.eq("appraise", appraise);
         }
         Page<CommunityServiceInfo> page = new Page<>(pageNum, pageSize);
         List<CommunityServiceInfo> communityServiceInfos = communityServiceInfoMapper.selectPage(page, wrapper);

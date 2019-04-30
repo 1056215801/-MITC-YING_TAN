@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Maps;
 import com.mit.community.entity.Notice;
+import com.mit.community.entity.WebNotice;
 import com.mit.community.entity.NoticeContent;
 import com.mit.community.entity.NoticeReadUser;
 import com.mit.community.mapper.NoticeMapper;
@@ -147,13 +148,30 @@ public class NoticeService {
      * @date 10:31 2018/11/30
      */
     @Transactional(rollbackFor = Exception.class)
-    public void releaseNotice(String communityCode, String title, String code, String synopsis,
-                              String publisher, Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime) {
-        Notice notice = new Notice(communityCode, title, code, releaseTime, validateTime, synopsis, publisher, creator, 0, null, null, null);
+    public void releaseWebNotice(String communityCode, String title, String code, String publishWay, String synopsis, String publisher,
+                              Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime, String imageUrl) {
+        Notice notice = new Notice(communityCode, title, code, publishWay, releaseTime, validateTime,synopsis, publisher ,creator, 0, null, imageUrl, 1, 0,false);
         this.save(notice);
         NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
         noticeContentService.save(noticeContent);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void releaseNotice(String communityCode, String title, String code,String synopsis,
+                              String publisher, Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime) {
+        Notice notice = new Notice(communityCode, title, code, null, releaseTime, validateTime, synopsis, publisher, creator, 0, null, null, 0,0,false);
+        this.save(notice);
+        NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
+        noticeContentService.save(noticeContent);
+    }
+    /*@Transactional(rollbackFor = Exception.class)
+    public void releaseWebNotice(String communityCode, String title, String type,String publishWay, String synopsis,
+                              String publisher, Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime, LocalDateTime beginTime) {
+        WebNotice notice = new WebNotice(communityCode, title, type, publishWay, releaseTime, validateTime, beginTime, synopsis, publisher, creator, 0, null, null, null);
+        this.save(notice);
+        NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
+        noticeContentService.save(noticeContent);
+    }*/
 
     /**
      * @param id        id
@@ -169,7 +187,7 @@ public class NoticeService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateNotice(Integer id, String title, String code, String synopsis,
-                             String publisher, Integer modifier, String content, LocalDateTime releaseTime, LocalDateTime validateTime) {
+                             String publisher, Integer modifier, String content, String publishWay, LocalDateTime releaseTime, LocalDateTime validateTime, Integer status) {
         Notice notice = new Notice();
         notice.setId(id);
         if (StringUtils.isNotBlank(title)) {
@@ -183,6 +201,12 @@ public class NoticeService {
         }
         if (StringUtils.isNotBlank(publisher)) {
             notice.setPublisher(publisher);
+        }
+        if (StringUtils.isNotBlank(publishWay)) {
+            notice.setPublishWay(publishWay);
+        }
+        if (status != null) {
+            notice.setStatus(status);
         }
         notice.setModifier(modifier);
         noticeMapper.updateById(notice);
@@ -247,7 +271,33 @@ public class NoticeService {
      * @date 2018/12/26 11:17
      * @company mitesofor
      */
-    public Page<Notice> listPage(String communityCode, LocalDateTime releaseTimeStart,
+    public Page<Notice> listPage(String communityCode, LocalDateTime validateTimeStart, LocalDateTime validateTimeEnd,
+                                  String title, String code, Integer status, Integer pageNum, Integer pageSize) {
+        Page<Notice> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<Notice> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        if (validateTimeStart != null) {
+            wrapper.ge("validate_time", validateTimeStart);
+        }
+        if (validateTimeEnd != null) {
+            wrapper.le("validate_time", validateTimeEnd);
+        }
+        if (StringUtils.isNotBlank(code)) {
+            wrapper.eq("code", code);
+        }
+        if (status != null) {
+            wrapper.eq("status", status);
+        }
+        if (StringUtils.isNotBlank(title)) {
+            wrapper.like("title", title, SqlLike.RIGHT);
+        }
+        List<Notice> notices = noticeMapper.selectPage(page, wrapper);
+        page.setRecords(notices);
+        return page;
+    }
+    /*public Page<Notice> listPage(String communityCode, LocalDateTime releaseTimeStart,
                                  LocalDateTime releaseTimeEnd,
                                  LocalDateTime validateTimeStart,
                                  LocalDateTime validateTimeEnd, String publisher, Integer pageNum, Integer pageSize) {
@@ -274,7 +324,7 @@ public class NoticeService {
         List<Notice> notices = noticeMapper.selectPage(page, wrapper);
         page.setRecords(notices);
         return page;
-    }
+    }*/
 
     /**
      * 未读数

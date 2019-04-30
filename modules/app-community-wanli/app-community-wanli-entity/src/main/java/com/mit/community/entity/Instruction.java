@@ -36,4 +36,9 @@ public class Instruction extends BaseEntity {
     @TableField(exist = false)
     private String detail;
 
+    /**
+     * 状态（1已启用，2已停用）
+     */
+    private Integer status;
+
 }

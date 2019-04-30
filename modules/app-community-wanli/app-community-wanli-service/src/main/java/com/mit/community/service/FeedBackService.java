@@ -1,8 +1,14 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.FeedBack;
 import com.mit.community.entity.FeedBackImg;
+import com.mit.community.entity.Test;
+import com.mit.community.entity.WebFeedBack;
 import com.mit.community.mapper.FeedBackMapper;
+import com.mit.community.mapper.WebFeedBackMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +31,8 @@ public class FeedBackService {
     @Autowired
     private FeedBackImgService feedBackImgService;
 
+    @Autowired
+    private WebFeedBackMapper webFeedBackMapper;
     /**
      * 添加反馈信息
      * @param feedBack 反馈信息
@@ -59,5 +67,78 @@ public class FeedBackService {
             }
         }
     }
+
+    /**
+     * 查询所有意见反馈信息
+     * @param communityCode
+     * @param status
+     * @param gmtCreateTimeStart
+     * @param gmtCreateTimeEnd
+     * @param pageNum
+     * @param pageSize
+     * @return 反馈的信息、反馈人个人信息
+     */
+    public Page<WebFeedBack> listPage(String communityCode, String status, LocalDateTime gmtCreateTimeStart, LocalDateTime gmtCreateTimeEnd, Integer pageNum, Integer pageSize){
+        EntityWrapper<WebFeedBack> wrapper = new EntityWrapper<>();
+        //wrapper.setSqlSelect("a.id,a.content,a.gmt_create,a.status,b.cellphone as feedBackMoblie,c.household_name as feedBackName,d.community_name as communityName,d.zone_name as zoneName,d.building_name as buildingName,d.unit_name as unitName,d.room_num as roomNum");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("c.community_code", communityCode);
+        }
+        if (StringUtils.isNotBlank(status)) {
+            wrapper.eq("a.status", status);
+        }
+        if (gmtCreateTimeStart != null) {
+            wrapper.ge("a.gmt_create", gmtCreateTimeStart);
+        }
+        if (gmtCreateTimeEnd != null) {
+            wrapper.le("a.gmt_create", gmtCreateTimeEnd);
+        }
+        wrapper.orderBy("a.gmt_create", false);
+        Page<WebFeedBack> page = new Page<>(pageNum, pageSize);
+        List<WebFeedBack> webFeedBacks = webFeedBackMapper.selectTestPage(page, wrapper);
+        page.setRecords(webFeedBacks);
+        return page;
+    }
+
+    /*public void receive(Integer id, String receiverName) {
+        WebFeedBack webFeedBack = this.getById(id);
+        webFeedBack.setStatus("acceptance");
+        webFeedBack.setReceiverTime(LocalDateTime.now());
+        webFeedBack.setReceiver(receiverName);
+        this.update(webFeedBack);
+    }*/
+
+    /**
+     * 查询所有意见反馈信息
+     * @param communityCode
+     * @param status
+     * @param gmtCreateTimeStart
+     * @param gmtCreateTimeEnd
+     * @param pageNum
+     * @param pageSize
+     * @return 反馈的信息、反馈人个人信息
+     */
+    /*public Page<Test> listTestPage(String communityCode, String status, LocalDateTime gmtCreateTimeStart, LocalDateTime gmtCreateTimeEnd, Integer pageNum, Integer pageSize){
+        EntityWrapper<Test> wrapper = new EntityWrapper<>();
+        //wrapper.setSqlSelect("a.id,a.content,a.gmt_create,a.status,b.cellphone as feedBackMoblie,c.household_name as feedBackName,d.community_name as communityName,d.zone_name as zoneName,d.building_name as buildingName,d.unit_name as unitName,d.room_num as roomNum");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("c.community_code", communityCode);
+        }
+        if (StringUtils.isNotBlank(status)) {
+            wrapper.eq("a.status", status);
+        }
+        if (gmtCreateTimeStart != null) {
+            wrapper.ge("a.gmt_create", gmtCreateTimeStart);
+        }
+        if (gmtCreateTimeEnd != null) {
+            wrapper.le("a.gmt_create", gmtCreateTimeEnd);
+        }
+        wrapper.orderBy("a.gmt_create", false);
+        Page<Test> page = new Page<>(pageNum, pageSize);
+        List<Test> webFeedBacks = webFeedBackMapper.selectTestPage(page, wrapper);
+        page.setRecords(webFeedBacks);
+        return page;
+    }*/
+
 
 }
