@@ -8,10 +8,7 @@ import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
-import com.mit.community.mapper.ApplyKeyMapper;
-import com.mit.community.mapper.AuthorizeAppHouseholdDeviceGroupMapper;
-import com.mit.community.mapper.AuthorizeHouseholdDeviceGroupMapper;
-import com.mit.community.mapper.HouseHoldMapper;
+import com.mit.community.mapper.*;
 import com.mit.community.util.ConstellationUtil;
 import com.mit.community.util.AuthorizeStatusUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +59,8 @@ public class ApplyKeyService {
     private AuthorizeAppHouseholdDeviceGroupMapper authorizeAppHouseholdDeviceGroupMapper;
     @Autowired
     private AuthorizeHouseholdDeviceGroupMapper authorizeHouseholdDeviceGroupMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 添加申请钥匙数据
@@ -605,6 +604,10 @@ public class ApplyKeyService {
             //更新本地用户住户信息id
             if (user != null) {
                 userService.updateCellphoneByHouseholdId(cellphone, householdId);
+                user.setIdCardNumber(applyKey.getIdCard());
+                user.setName(applyKey.getContactPerson());
+                user.setGmtModified(LocalDateTime.now());
+                userMapper.updateById(user);
             }
             result = "success";
         }

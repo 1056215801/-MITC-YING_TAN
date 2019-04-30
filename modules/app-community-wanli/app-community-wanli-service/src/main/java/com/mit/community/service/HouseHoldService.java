@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.ace.cache.annotation.Cache;
 import com.ace.cache.annotation.CacheClear;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -117,6 +118,7 @@ public class HouseHoldService {
     public List<HouseHold> getByCellphone(String cellphone) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
+        wrapper.eq("household_status", 1);//只查询状态“正常”的数据
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
         return houseHolds;
     }
@@ -153,6 +155,7 @@ public class HouseHoldService {
     public HouseHold getByHouseholdId(Integer householdId) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);
+        wrapper.eq("household_status", 1);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
         if (houseHolds.isEmpty()) {
             return null;
@@ -302,6 +305,13 @@ public class HouseHoldService {
             Page<HouseHold> page = new Page<>(pageNum, pageSize);
             houseHolds = houseHoldMapper.selectPage(page, wrapper);
             for (HouseHold houseHold : houseHolds) {
+                //读取用户表的基本信息
+                User user = userService.getByCellphoneNoCache(houseHold.getMobile());
+                if (user != null) {
+                    houseHold.setGender(user.getGender().intValue());
+                    houseHold.setHouseholdName(user.getName() == null ? houseHold.getHouseholdName() : user.getName());
+                    houseHold.setCredentialNum(user.getIdCardNumber() == null ? houseHold.getCredentialNum() : user.getIdCardNumber());
+                }
                 //权限到期天数计算diffDay,前端需要用来做样式判断
                 if (houseHold.getValidityTime() != null) {
                     houseHold.setDiffDay(DateUtils.getDateInter(new Date(), houseHold.getValidityTime()));
@@ -599,19 +609,8 @@ public class HouseHoldService {
                     if (groupsList.size() != 0) {
                         authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
                     }
-                    //注册默认账号
-                    //第一步：判断是否注册
-                    HouseHold existHouseHold = this.getByHouseholdId(householdId);
-                    User user = userService.getByCellphoneNoCache(existHouseHold.getMobile());
-                    //第二步：没有进行默认注册
-                    if (user == null) {
-                        user = new User(existHouseHold.getMobile(), "123456", householdId, existHouseHold.getHouseholdName(), existHouseHold.getGender().shortValue(), StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
-                                Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                                "普通业主", StringUtils.EMPTY, null, null, null);
-                        userService.save(user);
-                    }
                 }
-                msg = "success";
+                //msg = "success";
             } else {//修改
                 authorizeAppHouseholdDeviceGroupService.deleteByHouseholdId(householdId);
                 authorizeHouseholdDeviceGroupService.deleteByHouseholdId(householdId);
@@ -647,6 +646,26 @@ public class HouseHoldService {
                         authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
                     }
                 }
+//                //注册默认账号
+//                //第一步：判断是否注册
+//                HouseHold existHouseHold = this.getByHouseholdId(householdId);
+//                User user = userService.getByCellphoneNoCache(existHouseHold.getMobile());
+//                //第二步：没有进行默认注册
+//                if (user == null) {
+//                    user = new User(existHouseHold.getMobile(), "123456", householdId, existHouseHold.getHouseholdName(), existHouseHold.getGender().shortValue(), StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
+//                            Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+//                            "普通业主", StringUtils.EMPTY, null, null, null);
+//                    userService.save(user);
+//                } else {
+//                    List<Integer> list = AuthorizeStatusUtil.Contrast(authStatus);
+//                    //修改之后不包含APP授权，重置用户的住户信息，用户依旧可以登录APP
+//                    if (!list.contains(10)) {
+//                        userMapper.updateHouseholdIdByMobile(0, existHouseHold.getMobile());
+//                    }
+//                }
+//                msg = "success";
+            }
+            if (appAuthFlag == 1) {
                 //注册默认账号
                 //第一步：判断是否注册
                 HouseHold existHouseHold = this.getByHouseholdId(householdId);
@@ -655,17 +674,25 @@ public class HouseHoldService {
                 if (user == null) {
                     user = new User(existHouseHold.getMobile(), "123456", householdId, existHouseHold.getHouseholdName(), existHouseHold.getGender().shortValue(), StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                             Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                            "普通业主", StringUtils.EMPTY, null, null, null);
+                            "普通业主", StringUtils.EMPTY, null, null, null
+                            , null, null, null, null, null, null, null, null, null,
+                            existHouseHold.getHouseholdName(), existHouseHold.getCredentialNum(), existHouseHold.getProvince(),
+                            existHouseHold.getCity(), existHouseHold.getRegion(), existHouseHold.getConstellation());
                     userService.save(user);
-                } else {
-                    List<Integer> list = AuthorizeStatusUtil.Contrast(authStatus);
-                    //修改之后不包含APP授权，重置用户的住户信息，用户依旧可以登录APP
-                    if (!list.contains(10)) {
-                        userMapper.updateHouseholdIdByMobile(0, existHouseHold.getMobile());
-                    }
+                } else {//非空修改
+                    user.setName(existHouseHold.getHouseholdName());
+                    user.setIdCardNumber(existHouseHold.getCredentialNum());
+                    user.setProvince(existHouseHold.getProvince());
+                    user.setCity(existHouseHold.getCity());
+                    user.setDistrict(existHouseHold.getRegion());
+                    user.setConstellation(existHouseHold.getConstellation());
+                    user.setGender(existHouseHold.getGender().shortValue());
+                    //更新时间
+                    user.setGmtModified(LocalDateTime.now());
+                    userMapper.updateById(user);
                 }
-                msg = "success";
             }
+            msg = "success";
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage().toString());
         }

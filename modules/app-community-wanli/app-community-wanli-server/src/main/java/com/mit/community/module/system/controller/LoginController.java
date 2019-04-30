@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -135,11 +136,11 @@ public class LoginController {
         user.setPassword(null);
         List<HouseHold> houseHoldList = houseHoldService.getByCellphone(user.getCellphone());
         if (houseHoldList.isEmpty()) {
+            user.setHousehouldStatus(1);
             if (mac != null) {
                 redisService.set(RedisConstant.USER + user.getCellphone(), user);
                 redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
             }
-            user.setHousehouldStatus(1);
             return Result.success(user, "没有关联住户");
         } else {
             // 设置默认操作小区对应的用户
@@ -599,6 +600,11 @@ public class LoginController {
     @ApiOperation(value = "获取住户信息", notes = "传参;cellphone")
     public Result getHousehold(String mac, String cellphone) {
         User user = userService.getByCellphone(cellphone);
+        try {
+            new Thread().sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return this.login(mac, cellphone, null, user.getPassword());
     }
 

@@ -30,6 +30,7 @@ import java.util.concurrent.locks.LockSupport;
 
 /**
  * 住户-通行模块
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:27
  * <p>Copyright: Copyright (c) 2018</p>
@@ -97,6 +98,7 @@ public class PassThroughController {
 
     /**
      * 查询当地当前天气信息，通过城市英文名
+     *
      * @param cityName 城市code
      * @return result
      * @author Mr.Deng
@@ -109,7 +111,8 @@ public class PassThroughController {
             "cond_txt 实况天气状况描述，cond_code 实况天气状况代码")
     public Result getWeather(String mac, String cellphone, String cityName) {
         if (StringUtils.isNotBlank(cityName)) {
-            WeatherInfo weather = weatherService.getWeather(cityName);
+            //WeatherInfo weather = weatherService.getWeatherInfo(cityName);
+            WeatherVo weather = weatherService.getWeatherInfo(cityName);
             return Result.success(weather);
         }
         return Result.error("参数不能为空");
@@ -117,6 +120,7 @@ public class PassThroughController {
 
     /**
      * 查询当天通行限号
+     *
      * @return result
      * @author Mr.Deng
      * @date 10:34 2018/12/10
@@ -172,6 +176,7 @@ public class PassThroughController {
 
     /**
      * 查询周末和节假日期，通过时间戳
+     *
      * @param localDate 时间yyyy-MM-dd
      * @return 工作日对应结果为 0, 休息日对应结果为 1, 节假日对应的结果为 2
      * @author Mr.Deng
@@ -192,6 +197,7 @@ public class PassThroughController {
 
     /**
      * 发布通知通告信息
+     *
      * @param cellphone 手机号
      * @param title     标题
      * @param code      类型(查询字典notice_type)
@@ -224,6 +230,7 @@ public class PassThroughController {
 
     /**
      * 查询所有的通知信息
+     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -249,6 +256,7 @@ public class PassThroughController {
 
     /**
      * 查询通知详情，通过手机号和通告id
+     *
      * @param cellphone 手机号
      * @param noticeId  通告id
      * @return result
@@ -273,6 +281,7 @@ public class PassThroughController {
 
     /**
      * 通知通告未读数
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @return result
@@ -292,6 +301,7 @@ public class PassThroughController {
 
     /**
      * 查询通知信息浏览量
+     *
      * @param cellphone 手机号
      * @param noticeId  通知id
      * @return result
@@ -310,6 +320,7 @@ public class PassThroughController {
 
     /**
      * 申请钥匙
+     *
      * @param cellphone        手机号
      * @param communityCode    小区code
      * @param communityName    小区名称
@@ -366,6 +377,7 @@ public class PassThroughController {
 
     /**
      * 查询申请钥匙信息，通过钥匙申请状态
+     *
      * @param cellphone 手机号
      * @param status    钥匙申请状态
      * @return result
@@ -406,6 +418,7 @@ public class PassThroughController {
 
     /**
      * http开门
+     *
      * @param cellphone     手机号
      * @param communityCode 小区code
      * @param deviceNum     设备编号
@@ -430,6 +443,7 @@ public class PassThroughController {
 
     /**
      * 获取我的钥匙
+     *
      * @param cellphone     电话号码
      * @param communityCode 小区code
      * @return result
@@ -454,6 +468,7 @@ public class PassThroughController {
                         if (building != null) {
                             zone = zoneService.getByZoneId(communityCode, building.getZoneId());
                         }
+                        myKey.setOnlineStatus(device.getDeviceStatus());
                         myKey.setDeviceName(device.getDeviceName());
                         myKey.setBuildingCode(device.getBuildingCode());
                         myKey.setUnitCode(device.getUnitCode());
@@ -473,6 +488,7 @@ public class PassThroughController {
 
     /**
      * 查询小区设备组信息,通过小区code
+     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -490,6 +506,7 @@ public class PassThroughController {
 
     /**
      * 申请访客邀请码
+     *
      * @param dateTag       日期标志：今天:0；明天：1;
      * @param times         开锁次数：无限次：0；一次：1；
      * @param deviceGroupId 设备分组id，默认只传公共权限组
@@ -516,6 +533,7 @@ public class PassThroughController {
 
     /**
      * 查询邀请码记录
+     *
      * @param cellphone 手机号
      * @param pageNum   页码，从1开始
      * @param pageSize  页大小最大100
@@ -541,6 +559,7 @@ public class PassThroughController {
 
     /**
      * 图片上传
+     *
      * @param image 文件
      * @return result
      * @author Mr.Deng
@@ -565,6 +584,7 @@ public class PassThroughController {
 
     /**
      * 查询所有访客信息
+     *
      * @param cellphone 手机号
      * @return result
      * @author Mr.Deng
@@ -585,6 +605,7 @@ public class PassThroughController {
 
     /**
      * 查询访客详情
+     *
      * @param cellphone 手机号
      * @param id        访客id
      * @return result
@@ -614,6 +635,7 @@ public class PassThroughController {
 
     /**
      * 设置呼叫转移号码
+     *
      * @param cellphone 手机号
      * @param sipMobile 转移号码
      * @return result
@@ -635,6 +657,7 @@ public class PassThroughController {
 
     /**
      * 查询住户信息，通过用户id
+     *
      * @param userId 用户id
      * @return result
      * @author Mr.Deng
@@ -662,6 +685,7 @@ public class PassThroughController {
 
     /**
      * 查询省份
+     *
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/11 14:12
@@ -676,6 +700,7 @@ public class PassThroughController {
 
     /**
      * 查询城市，通过省份
+     *
      * @param province 省份
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -691,6 +716,7 @@ public class PassThroughController {
 
     /**
      * 查询分区信息，通过小区code
+     *
      * @param communityCode 小区code
      * @return result
      * @author Mr.Deng
@@ -718,6 +744,7 @@ public class PassThroughController {
 
     /**
      * 查询楼栋信息，通过分区id
+     *
      * @param zoneId 分区id
      * @return 楼栋信息
      * @author Mr.Deng
@@ -735,6 +762,7 @@ public class PassThroughController {
 
     /**
      * 查询单元信息，通过楼栋id
+     *
      * @param buildingId 楼栋id
      * @return result
      * @author Mr.Deng
@@ -752,6 +780,7 @@ public class PassThroughController {
 
     /**
      * 查询房间信息，通过单元id
+     *
      * @param unitId 单元id
      * @return result
      * @author Mr.Deng
@@ -769,6 +798,7 @@ public class PassThroughController {
 
     /**
      * 查询门禁记录，通过手机号
+     *
      * @param cellphone     手机号码
      * @param communityCode 小区code
      * @param type          类型；M：单元机；W：门口机；
@@ -818,6 +848,7 @@ public class PassThroughController {
 
     /**
      * 免打扰
+     *
      * @param cellphone 手机号
      * @param status    免打扰开关：1关；0开
      * @return result
@@ -842,6 +873,7 @@ public class PassThroughController {
 
     /**
      * 住户信息已经更新
+     *
      * @param cellphone 用户号码
      * @return com.mit.community.util.Result
      * @author shuyy

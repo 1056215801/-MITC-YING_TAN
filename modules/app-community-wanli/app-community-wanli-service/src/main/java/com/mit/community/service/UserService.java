@@ -118,7 +118,7 @@ public class UserService {
      * @date 2018/11/29 11:28
      * @company mitesofor
      */
-    //@Cache(key = "user:cellphone{1}")
+    @CacheClear(key = "user:cellphone{1}")
     @Transactional
     public User getByCellphone(String cellphone) {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
@@ -173,7 +173,9 @@ public class UserService {
         }
         user = new User(cellphone, password, 0, cellphone, (short) 0, StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-                "普通业主", StringUtils.EMPTY, null, null, null);
+                "普通业主", StringUtils.EMPTY, null, null, null,
+                null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null);
         this.save(user);
         return status;
     }
@@ -196,10 +198,10 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void updateUserInfo(Integer userId, String nickname, Short gender, LocalDate birthday, String bloodType,
                                String profession, String signature, String constellation, String cellphone) {
-        User user = new User(cellphone, null, null,
-                nickname, gender, null, null,
-                birthday, bloodType, profession,
-                signature, null, null, null, null,null);
+        User user = new User(cellphone, null, null, nickname, gender, null, null,
+                birthday, bloodType, profession, signature, null, null, null, null,
+                null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null);
         user.setId(userId);
         userService.update(user);
 //        User user = this.getById(userId);

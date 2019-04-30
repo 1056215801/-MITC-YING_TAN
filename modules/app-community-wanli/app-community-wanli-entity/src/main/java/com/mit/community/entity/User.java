@@ -94,4 +94,85 @@ public class User extends BaseEntity {
     @TableField(exist = false)
     private Integer househouldStatus;
 
+    /**
+     * 个体编号
+     */
+    private String serialnumber;
+
+    /**
+     * 原始照片Base64
+     */
+    @TableField("photo_base64")
+    private String photoBase64;
+
+    /**
+     * 原始照片地址
+     */
+    @TableField("photo_url")
+    private String photourl;
+
+    /**
+     * 模拟门禁卡号
+     */
+    private String doornum;
+
+    /**
+     * 卡号
+     */
+    private String cardnum;
+
+    /**
+     * 百度人脸库id
+     */
+    @TableField("face_token")
+    private String faceToken;
+
+    /**
+     * 是否将数据同步
+     */
+    @TableField("is_synchro")
+    private Integer isSync;
+
+    /**
+     * 身份类型
+     */
+    @TableField("identity_type")
+    private Integer identity;
+
+    /**
+     * 指纹信息
+     */
+    private String fingerprint;
+
+    /**
+     * 姓名
+     */
+    private String name;
+
+    /**
+     * 身份证号码
+     */
+    @TableField("id_card_num")
+    private String idCardNumber;
+
+    /**
+     * 省份
+     */
+    private String province;
+
+    /**
+     * 城市
+     */
+    private String city;
+
+    /**
+     * 区县
+     */
+    private String district;
+
+    /**
+     * 星座
+     */
+    private String constellation;
+
 }

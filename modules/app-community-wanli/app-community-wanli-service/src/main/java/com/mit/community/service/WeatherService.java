@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.Weather;
 import com.mit.community.entity.WeatherInfo;
+import com.mit.community.entity.WeatherVo;
 import com.mit.community.mapper.WeatherMapper;
 import com.mit.community.util.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,7 @@ import java.util.List;
 
 /**
  * 天气业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/11 15:35
  * <p>Copyright: Copyright (c) 2018</p>
@@ -29,7 +31,7 @@ public class WeatherService {
 
 
     @Cache(key = "weather{1}", expire = 60)
-    public WeatherInfo getWeather(String cityName){
+    public WeatherInfo getWeather(String cityName) {
         if (StringUtils.isNotBlank(cityName)) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("https://free-api.heweather.net/s6/weather/now?")
@@ -53,7 +55,30 @@ public class WeatherService {
     }
 
     /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/4/30 11:34
+     * @Company mitesofor
+     * @Description:~天气查询接口
+     */
+    @Cache(key = "weather{1}", expire = 60)
+    public WeatherVo getWeatherInfo(String cityName) {
+        WeatherVo weatherVo = new WeatherVo();
+        if (StringUtils.isNotBlank(cityName)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("https://www.tianqiapi.com/api/?version=v1&city=").append(cityName);
+            String url = sb.toString();
+            String res = HttpUtil.sendGet(url);
+            JSONObject json = JSON.parseObject(res);
+            JSONArray data = json.getJSONArray("data");
+            JSONObject jsonObject = data.getJSONObject(0);
+            weatherVo = JSON.toJavaObject(jsonObject, WeatherVo.class);
+        }
+        return weatherVo;
+    }
+
+    /**
      * 查询天气信息，通过城市英文
+     *
      * @param cityEnglish 城市英文
      * @return 天气信息
      * @author Mr.Deng

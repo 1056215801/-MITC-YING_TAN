@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * redis service操作类
+ *
  * @author shuyy
  * @date 2018/11/29
  * @company mitesofor
@@ -71,6 +72,7 @@ public class RedisService {
 
     /**
      * 批量删除对应的value
+     *
      * @param keys keys
      */
     public void remove(final String... keys) {
@@ -81,6 +83,7 @@ public class RedisService {
 
     /**
      * 批量删除key
+     *
      * @param pattern pattern
      */
     public void removePattern(final String pattern) {
@@ -92,6 +95,7 @@ public class RedisService {
 
     /**
      * 删除对应的value
+     *
      * @param key key
      */
     public void remove(final String key) {
@@ -102,19 +106,21 @@ public class RedisService {
 
     /**
      * 获取过期时间
+     *
      * @param key key
      * @return java.lang.Long
      * @author shuyy
      * @date 2018/12/12 14:22
      * @company mitesofor
-    */
-    public Long getExpire(String key){
+     */
+    public Long getExpire(String key) {
         Long expire = redisTemplate.getExpire(key);
         return expire;
     }
 
     /**
      * 判断缓存中是否有对应的value
+     *
      * @param key key
      * @return boolean
      */
@@ -124,6 +130,7 @@ public class RedisService {
 
     /**
      * 读取缓存
+     *
      * @param key key
      * @return Object
      */
@@ -136,6 +143,7 @@ public class RedisService {
 
     /**
      * 哈希 添加
+     *
      * @param key     key
      * @param hashKey 哈希key
      * @param value   value
@@ -148,6 +156,7 @@ public class RedisService {
 
     /**
      * 哈希获取数据
+     *
      * @param key     ksy
      * @param hashKey 哈希key
      * @return object
@@ -159,6 +168,7 @@ public class RedisService {
 
     /**
      * 列表添加
+     *
      * @param k key
      * @param v value
      */
@@ -169,6 +179,7 @@ public class RedisService {
 
     /**
      * 列表获取
+     *
      * @param k  key
      * @param l  l
      * @param l1 l
@@ -181,6 +192,7 @@ public class RedisService {
 
     /**
      * 集合添加
+     *
      * @param key   key
      * @param value value
      */
@@ -191,6 +203,7 @@ public class RedisService {
 
     /**
      * 集合获取
+     *
      * @param key key
      * @return Set<Object>
      */
@@ -201,6 +214,7 @@ public class RedisService {
 
     /**
      * 有序集合添加
+     *
      * @param key    key
      * @param value  value
      * @param scoure scoure
@@ -212,6 +226,7 @@ public class RedisService {
 
     /**
      * 有序集合获取
+     *
      * @param key     key
      * @param scoure  scoure
      * @param scoure1 scoure
@@ -224,6 +239,7 @@ public class RedisService {
 
     /**
      * 自增
+     *
      * @param key
      * @param delta
      * @return void
@@ -231,8 +247,8 @@ public class RedisService {
      * @author shuyy
      * @date 2019-01-29 10:03
      * @company mitesofor
-    */
-    public void increment(String key, Integer delta){
+     */
+    public void increment(String key, Integer delta) {
         ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
         operations.increment(key, delta);
     }

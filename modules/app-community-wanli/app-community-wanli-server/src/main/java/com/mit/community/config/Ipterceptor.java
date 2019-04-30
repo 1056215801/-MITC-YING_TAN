@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 public class Ipterceptor extends HandlerInterceptorAdapter {
 
 
-
     @Autowired
     private RedisService redisService;
 
@@ -39,17 +38,18 @@ public class Ipterceptor extends HandlerInterceptorAdapter {
         String ip = request.getRemoteHost();
         String key = IP_PREFIX + ip;
         Object value = redisService.get(BLACK_PREFIX + ip);
-        if(value != null){
+        if (value != null) {
             // 在黑名单则不让访问
-            return false;
+            //return false;
+            return true;
         }
         Object o = redisService.get(key);
-        if(o == null){
+        if (o == null) {
             redisService.set(key, 1, 2L);
-        } else if(o.equals(50)){
+        } else if (o.equals(50)) {
             // 2秒超过50个请求就屏蔽掉,放入黑名单,1小时候之后不能访问
             redisService.set(BLACK_PREFIX + ip, 1, 3600L);
-        }else{
+        } else {
             redisService.increment(key, 1);
         }
         return true;
