@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2019-03-30
  * @company mitesofor
  */
-public class authorizeStatusUtil {
+public class AuthorizeStatusUtil {
 
     /**
      * 判断授权类型
