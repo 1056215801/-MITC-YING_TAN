@@ -269,17 +269,12 @@ public class ApplyKeyService {
                                 applyKey.setCheckPerson(checkPerson);
                                 this.update(applyKey);
                             } else {
-                                //未进行APP授权，调用狄耐克住户APP授权接口
                                 // 添加授权设备组（狄耐克授权接口）
                                 Integer householdId = houseHold.getHouseholdId();
                                 /**
                                  * 更新本地钥匙到期时间
                                  */
                                 try {
-                                    //String setSql = "residence_time = " + " ' " + residenceTime + " ' ";
-                                    //EntityWrapper<HouseHold> ew1 = new EntityWrapper<>();
-                                    //ew1.eq("residence_time", householdId);
-                                    //houseHoldMapper.updateForSet(setSql, ew1);
                                     houseHoldMapper.updateObjectById(residenceTime, householdId);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -327,20 +322,6 @@ public class ApplyKeyService {
                                         result = "fail";
                                         throw new RuntimeException("更新本地授权类型出现异常!");
                                     }
-                                    // 本地数据库保存关联设备组
-//                                    List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
-//                                    deviceGroupIdList.forEach(item -> {
-//                                        AuthorizeAppHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeAppHouseholdDeviceGroup(householdId, Integer.parseInt(item));
-//                                        List<AuthorizeAppHouseholdDeviceGroup> groups = authorizeAppHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
-//                                        if (groups.size() == 0) {
-//                                            authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
-//                                            authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
-//                                            authorizeAppHouseholdDeviceGroups.add(authorizeAppHouseholdDeviceGroup);
-//                                        }
-//                                    });
-//                                    if (authorizeAppHouseholdDeviceGroups.size() != 0) {
-//                                        authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDeviceGroups);
-//                                    }
                                     /**
                                      * 同步本地授权列表
                                      */
@@ -374,10 +355,6 @@ public class ApplyKeyService {
                              * 更新本地钥匙到期时间
                              */
                             try {
-                                //String setSql = "residence_time = " + " ' " + residenceTime + " ' ";
-                                //EntityWrapper<HouseHold> ew1 = new EntityWrapper<>();
-                                //ew1.eq("residence_time", householdId);
-                                //houseHoldMapper.updateForSet(setSql, ew1);
                                 houseHoldMapper.updateObjectById(residenceTime, householdId);
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -430,83 +407,79 @@ public class ApplyKeyService {
                             String idCard = applyKey.getIdCard();
                             String residenceTimeStr = DateUtils.format(residenceTime, null);
                             IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
+                            //调用狄耐克接口添加房屋（修改）
                             JSONObject jsonObject = dnakeAppApiService.editHouseholdRoom(householdId, applyKey.getCommunityCode(), cellphone, idCardInfo.getGender(),
                                     applyKey.getContactPerson(), residenceTimeStr, houseList);
                             if (jsonObject.get("errorCode") != null && !jsonObject.get("errorCode").equals(0)) {
                                 throw new RuntimeException(jsonObject.get("msg").toString());
-                            } else {
-                                //未进行APP授权，调用狄耐克住户APP授权接口
-                                // 添加授权设备组（狄耐克授权接口）
+                            }
+                            // 添加授权设备组（狄耐克授权接口）
+                            /**
+                             * 首先，要对待授权列表进行判断，计算出未进行授权的设备
+                             */
+                            List<String> deviceGroupIdNewList = new ArrayList<>();
+                            for (int i = 0; i < deviceGroupIdList.size(); i++) {
+                                if (!groupList.contains(deviceGroupIdList.get(i))) {
+                                    deviceGroupIdNewList.add(deviceGroupIdList.get(i));
+                                }
+                            }
+                            if (deviceGroupIdNewList.size() != 0) {
                                 JSONObject json = dnakeAppApiService.authorizeHouse(
                                         applyKey.getCommunityCode(),//小区code
                                         householdId,//住户信息id
                                         DateUtils.format(residenceTime, null),//授权失效时间
                                         "1",
-                                        deviceGroupIdList//设备组编号
+                                        deviceGroupIdNewList//设备组编号
                                 );
                                 if (json.get("errorCode") != null && !json.get("errorCode").equals(0)) {
                                     throw new RuntimeException(json.get("msg").toString());
                                 }
-                                // 更新申请钥匙记录状态
-                                applyKey.setCheckTime(LocalDateTime.now());
-                                applyKey.setStatus(2);//通过审核
-                                applyKey.setCheckPerson(checkPerson);
-                                this.update(applyKey);
-                                if (!list.contains(10)) {
-                                    //更新本地住户授权类型，添加APP授权类型
-                                    try {
-                                        String setSql = "authorize_status = " + " ' " + (authorizeStatus + 2) + " ' ";
-                                        EntityWrapper<HouseHold> ew1 = new EntityWrapper<>();
-                                        ew1.eq("household_id", householdId);
-                                        houseHoldMapper.updateForSet(setSql, ew1);
-                                    } catch (Exception e) {
-                                        result = "fail";
-                                        e.printStackTrace();
-                                    }
-                                }
-                                // 本地数据库保存关联设备组
-//                                List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
-//                                deviceGroupIdList.forEach(item -> {
-//                                    AuthorizeAppHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeAppHouseholdDeviceGroup(householdId, Integer.parseInt(item));
-//                                    List<AuthorizeAppHouseholdDeviceGroup> groups = authorizeAppHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
-//                                    if (groups.size() == 0) {
-//                                        authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
-//                                        authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
-//                                        authorizeAppHouseholdDeviceGroups.add(authorizeAppHouseholdDeviceGroup);
-//                                    }
-//                                });
-//                                if (authorizeAppHouseholdDeviceGroups.size() != 0) {
-//                                    authorizeAppHouseholdDeviceGroupService.insertBatch(authorizeAppHouseholdDeviceGroups);
-//                                }
-                                // 关联房屋
-                                HouseholdRoom household_Room = new HouseholdRoom(applyKey.getCommunityCode(),
-                                        applyKey.getCommunityName(),
-                                        applyKey.getZoneId(), applyKey.getZoneName(),
-                                        applyKey.getBuildingId(), applyKey.getBuildingName(),
-                                        applyKey.getUnitId(), applyKey.getUnitName(),
-                                        applyKey.getRoomId(), applyKey.getRoomNum(),
-                                        applyKey.getHouseholdType(), householdId, null);
-                                householdRoomService.save(household_Room);
-                                /**
-                                 * 同步本地授权列表
-                                 */
-                                List<AuthorizeHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
-                                deviceGroupIdList.forEach(item -> {
-                                    AuthorizeHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup(householdId, Integer.parseInt(item));
-                                    List<AuthorizeHouseholdDeviceGroup> groups = authorizeHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
-                                    if (groups.size() == 0) {
-                                        authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
-                                        authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
-                                        groupsList.add(authorizeAppHouseholdDeviceGroup);
-                                    }
-                                });
-                                if (groupsList.size() != 0) {
-                                    authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
-                                }
-                                //更新用户住户id
-                                userService.updateCellphoneByHouseholdId(cellphone, householdId);
-                                result = "success";//成功
                             }
+                            // 更新申请钥匙记录状态
+                            applyKey.setCheckTime(LocalDateTime.now());
+                            applyKey.setStatus(2);//通过审核
+                            applyKey.setCheckPerson(checkPerson);
+                            this.update(applyKey);
+                            if (!list.contains(10)) {
+                                //更新本地住户授权类型，添加APP授权类型
+                                try {
+                                    String setSql = "authorize_status = " + " ' " + (authorizeStatus + 2) + " ' ";
+                                    EntityWrapper<HouseHold> ew1 = new EntityWrapper<>();
+                                    ew1.eq("household_id", householdId);
+                                    houseHoldMapper.updateForSet(setSql, ew1);
+                                } catch (Exception e) {
+                                    result = "fail";
+                                    e.printStackTrace();
+                                }
+                            }
+                            // 关联房屋
+                            HouseholdRoom household_Room = new HouseholdRoom(applyKey.getCommunityCode(),
+                                    applyKey.getCommunityName(),
+                                    applyKey.getZoneId(), applyKey.getZoneName(),
+                                    applyKey.getBuildingId(), applyKey.getBuildingName(),
+                                    applyKey.getUnitId(), applyKey.getUnitName(),
+                                    applyKey.getRoomId(), applyKey.getRoomNum(),
+                                    applyKey.getHouseholdType(), householdId, null);
+                            householdRoomService.save(household_Room);
+                            /**
+                             * 同步本地授权列表
+                             */
+                            List<AuthorizeHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
+                            deviceGroupIdList.forEach(item -> {
+                                AuthorizeHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup(householdId, Integer.parseInt(item));
+                                List<AuthorizeHouseholdDeviceGroup> groups = authorizeHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
+                                if (groups.size() == 0) {
+                                    authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
+                                    authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
+                                    groupsList.add(authorizeAppHouseholdDeviceGroup);
+                                }
+                            });
+                            if (groupsList.size() != 0) {
+                                authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
+                            }
+                            //更新用户住户id
+                            userService.updateCellphoneByHouseholdId(cellphone, householdId);
+                            result = "success";//成功
                         }
                     }
                 }
