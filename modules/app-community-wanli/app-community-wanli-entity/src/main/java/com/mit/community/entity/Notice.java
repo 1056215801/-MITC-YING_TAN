@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 通知通告表
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:35
  * <p>Copyright: Copyright (c) 2018</p>
@@ -21,6 +22,15 @@ import java.time.LocalDateTime;
 @Data
 public class Notice extends BaseEntity {
 
+    /**
+     * 主键
+     */
+    private Integer id;
+    /**
+     * 小区名称
+     */
+    @TableField(exist = false)
+    private String communityName;
     /**
      * 小区
      */
@@ -79,7 +89,7 @@ public class Notice extends BaseEntity {
     @TableField("cover_picture_url")
     private String coverPictureUrl;
     /**
-     * 状态：1、以启用；2、已停用；3、已过期
+     * 状态：1、启用；2、停用；3、已过期
      */
     private Integer status;
     /**
@@ -91,4 +101,22 @@ public class Notice extends BaseEntity {
      */
     @TableField(exist = false)
     private Boolean readStatus;
+
+    /**
+     * 图片域名
+     */
+    @TableField("portrait_filedomain")
+    private String portraitFileDomain;
+
+    /**
+     * 图片名称
+     */
+    @TableField("portrait_filename")
+    private String portraitFileName;
+
+    /**
+     * 删除标识
+     */
+    private Integer isdel;
+
 }

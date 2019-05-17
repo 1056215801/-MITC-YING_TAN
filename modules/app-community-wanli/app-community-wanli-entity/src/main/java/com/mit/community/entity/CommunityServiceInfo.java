@@ -68,9 +68,13 @@ public class CommunityServiceInfo extends BaseEntity {
      */
     private String image;
     /**
-     * 社区服务类型。关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家
+     * 社区服务类型。关联字典code community_service_type
+     * 社区服务类型:
+     * 1、社区门诊
+     * 2、开锁换锁
+     * 3、送水到家
      */
-    private String type;
+    private Integer type;
     /**
      * 创建人。关联user表id
      */
@@ -92,5 +96,10 @@ public class CommunityServiceInfo extends BaseEntity {
      * 评价星级（1-5星）
      */
     private Integer appraise;
+
+    /**
+     * 删除标识
+     */
+    private Integer isdel;
 
 }

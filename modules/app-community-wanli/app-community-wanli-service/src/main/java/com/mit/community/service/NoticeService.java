@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * 通知通告业务表
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:36
  * <p>Copyright: Copyright (c) 2018</p>
@@ -39,6 +40,7 @@ public class NoticeService {
 
     /**
      * 添加通知通告数据
+     *
      * @param notice 通知通告数据
      * @author Mr.Deng
      * @date 16:29 2018/11/29
@@ -51,6 +53,7 @@ public class NoticeService {
 
     /**
      * 修改通知通告数据
+     *
      * @param notice 通知通告数据
      * @return 修改数据数量
      * @author Mr.Deng
@@ -63,6 +66,7 @@ public class NoticeService {
 
     /**
      * 查询所有的通知通告信息
+     *
      * @return 通知通告信息列表
      * @author Mr.Deng
      * @date 16:26 2018/12/3
@@ -79,13 +83,14 @@ public class NoticeService {
 
     /**
      * 统计通知通告消息条数
+     *
      * @param communityCode
      * @return java.lang.Integer
      * @throws
      * @author shuyy
      * @date 2019-01-02 15:05
      * @company mitesofor
-    */
+     */
     public List<Map<String, Object>> selectIdByCommunityCode(String communityCode) {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
@@ -96,6 +101,7 @@ public class NoticeService {
 
     /**
      * 查询通知信息，通过通知信息id
+     *
      * @param noticeId 通知信息id
      * @return notic
      * @author Mr.Deng
@@ -107,6 +113,7 @@ public class NoticeService {
 
     /**
      * 获取该小区的通知通告总数
+     *
      * @param communityCode 小区code
      * @return 总条数
      * @author Mr.Deng
@@ -120,6 +127,7 @@ public class NoticeService {
 
     /**
      * 查询通知详情信息
+     *
      * @param noticeId 通知信息id
      * @return 通知信息
      * @author Mr.Deng
@@ -138,6 +146,7 @@ public class NoticeService {
 
     /**
      * 发布通知通告
+     *
      * @param title     标题
      * @param code      类型(查询字典notice_type)
      * @param synopsis  简介
@@ -148,30 +157,43 @@ public class NoticeService {
      * @date 10:31 2018/11/30
      */
     @Transactional(rollbackFor = Exception.class)
-    public void releaseWebNotice(String communityCode, String title, String code, String publishWay, String synopsis, String publisher,
-                              Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime, String imageUrl) {
-        Notice notice = new Notice(communityCode, title, code, publishWay, releaseTime, validateTime,synopsis, publisher ,creator, 0, null, imageUrl, 1, 0,false);
-        this.save(notice);
-        NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
-        noticeContentService.save(noticeContent);
+    public void releaseWebNotice(String communityCode, Integer id, String title, String code, String publishWay, String synopsis, String publisher,
+                                 Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime, String imageUrl,
+                                 String portraitFileDomain, String portraitFileName) {
+        if (id == null) {
+            Notice notice = new Notice(id, null, communityCode, title, code, publishWay, releaseTime, validateTime, synopsis, publisher, creator, 0, null, imageUrl, 1, 0, false, portraitFileDomain, portraitFileName, 0);
+            this.save(notice);
+            NoticeContent noticeContent = new NoticeContent(notice.getId(), synopsis);
+            noticeContentService.save(noticeContent);
+        } else {
+            Notice notice = new Notice(id, null, communityCode, title, code, publishWay, releaseTime, validateTime, synopsis, publisher, creator, 0, null, imageUrl, 1, 0, false, portraitFileDomain, portraitFileName, 0);
+            this.update(notice);
+            NoticeContent noticeContent = new NoticeContent(id, synopsis);
+            noticeContentService.update(noticeContent);
+        }
     }
 
+    /**
+     * 发布通知通告
+     *
+     * @param communityCode
+     * @param title
+     * @param code
+     * @param synopsis
+     * @param publisher
+     * @param creator
+     * @param content
+     * @param releaseTime
+     * @param validateTime
+     */
     @Transactional(rollbackFor = Exception.class)
-    public void releaseNotice(String communityCode, String title, String code,String synopsis,
+    public void releaseNotice(String communityCode, String title, String code, String synopsis,
                               String publisher, Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime) {
-        Notice notice = new Notice(communityCode, title, code, null, releaseTime, validateTime, synopsis, publisher, creator, 0, null, null, 0,0,false);
+        Notice notice = new Notice(null, null, communityCode, title, code, null, releaseTime, validateTime, synopsis, publisher, creator, 0, null, null, 0, 0, false, null, null, 0);
         this.save(notice);
         NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
         noticeContentService.save(noticeContent);
     }
-    /*@Transactional(rollbackFor = Exception.class)
-    public void releaseWebNotice(String communityCode, String title, String type,String publishWay, String synopsis,
-                              String publisher, Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime, LocalDateTime beginTime) {
-        WebNotice notice = new WebNotice(communityCode, title, type, publishWay, releaseTime, validateTime, beginTime, synopsis, publisher, creator, 0, null, null, null);
-        this.save(notice);
-        NoticeContent noticeContent = new NoticeContent(notice.getId(), content);
-        noticeContentService.save(noticeContent);
-    }*/
 
     /**
      * @param id        id
@@ -217,6 +239,7 @@ public class NoticeService {
 
     /**
      * 删除
+     *
      * @param noticeId 通知通告id
      * @author shuyy
      * @date 2018/12/26 9:39
@@ -230,6 +253,7 @@ public class NoticeService {
 
     /**
      * 查询所有通知信息和读取状态
+     *
      * @param userId 用户id
      * @return 通知信息
      * @author Mr.Deng
@@ -258,6 +282,7 @@ public class NoticeService {
 
     /**
      * 分页查询
+     *
      * @param communityCode     小区code
      * @param releaseTimeStart  发布开始时间
      * @param releaseTimeEnd    发布结束时间
@@ -272,62 +297,35 @@ public class NoticeService {
      * @company mitesofor
      */
     public Page<Notice> listPage(String communityCode, LocalDateTime validateTimeStart, LocalDateTime validateTimeEnd,
-                                  String title, String code, Integer status, Integer pageNum, Integer pageSize) {
+                                 String title, String code, Integer status, Integer pageNum, Integer pageSize) {
         Page<Notice> page = new Page<>(pageNum, pageSize);
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         if (StringUtils.isNotBlank(communityCode)) {
-            wrapper.eq("community_code", communityCode);
+            wrapper.eq("a.community_code", communityCode);
         }
         if (validateTimeStart != null) {
-            wrapper.ge("validate_time", validateTimeStart);
+            wrapper.ge("a.validate_time", validateTimeStart);
         }
         if (validateTimeEnd != null) {
-            wrapper.le("validate_time", validateTimeEnd);
+            wrapper.le("a.validate_time", validateTimeEnd);
         }
         if (StringUtils.isNotBlank(code)) {
-            wrapper.eq("code", code);
+            wrapper.eq("a.code", code);
         }
         if (status != null) {
-            wrapper.eq("status", status);
+            wrapper.eq("a.status", status);
         }
         if (StringUtils.isNotBlank(title)) {
-            wrapper.like("title", title, SqlLike.RIGHT);
+            wrapper.like("a.title", title, SqlLike.RIGHT);
         }
-        List<Notice> notices = noticeMapper.selectPage(page, wrapper);
+        List<Notice> notices = noticeMapper.selectMyPage(page, wrapper);
         page.setRecords(notices);
         return page;
     }
-    /*public Page<Notice> listPage(String communityCode, LocalDateTime releaseTimeStart,
-                                 LocalDateTime releaseTimeEnd,
-                                 LocalDateTime validateTimeStart,
-                                 LocalDateTime validateTimeEnd, String publisher, Integer pageNum, Integer pageSize) {
-        Page<Notice> page = new Page<>(pageNum, pageSize);
-        EntityWrapper<Notice> wrapper = new EntityWrapper<>();
-        if (StringUtils.isNotBlank(communityCode)) {
-            wrapper.eq("community_code", communityCode);
-        }
-        if (releaseTimeStart != null) {
-            wrapper.ge("release_time", releaseTimeStart);
-        }
-        if (releaseTimeEnd != null) {
-            wrapper.le("release_time", releaseTimeEnd);
-        }
-        if (validateTimeStart != null) {
-            wrapper.ge("validate_time", releaseTimeStart);
-        }
-        if (validateTimeEnd != null) {
-            wrapper.le("validate_time", validateTimeEnd);
-        }
-        if (StringUtils.isNotBlank(publisher)) {
-            wrapper.like("publisher", publisher, SqlLike.RIGHT);
-        }
-        List<Notice> notices = noticeMapper.selectPage(page, wrapper);
-        page.setRecords(notices);
-        return page;
-    }*/
 
     /**
      * 未读数
+     *
      * @param communityCode 小区code
      * @param userId        用户id
      * @return 未读数

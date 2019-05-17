@@ -1,5 +1,6 @@
 package com.mit.community.module.communityservice;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.CommunityPhone;
 import com.mit.community.entity.SysUser;
@@ -38,41 +39,39 @@ public class CommunityPhoneController {
     private RedisService redisService;
 
     /**
-     *
-     * @param request request
+     * @param request       request
      * @param communityCode 小区code
-     * @param name 姓名
-     * @param phone 电话
-     * @param type 类型
+     * @param name          姓名
+     * @param phone         电话
+     * @param type          类型
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/21 20:18
      * @company mitesofor
-    */
+     */
     @PostMapping("/save")
     @ApiOperation(value = "保存社区电话", notes = "传参：name 名， communityCode 小区code，" +
             " phone 电话，" +
             "type 类型 电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话，" +
             "")
-    public Result save(HttpServletRequest request, String communityCode,
-                       String name, String phone, String type) {
+    public Result save(HttpServletRequest request, String communityCode, Integer id,
+                       String name, String phone, String type, Integer displayOrder) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         if (StringUtils.isBlank(communityCode)) {
             communityCode = user.getCommunityCode();
         }
-        communityPhoneService.save(communityCode,
-                name, phone, type, user.getId());
+        communityPhoneService.save(communityCode, id,
+                name, phone, type, user.getId(), displayOrder);
         return Result.success("保存成功");
     }
 
 
     /**
-     *
      * @param request request
-     * @param id id
-     * @param name 姓名
-     * @param phone 电话
+     * @param id      id
+     * @param name    姓名
+     * @param phone   电话
      * @return com.mit.community.util.Result
      * @author shuyy
      * @date 2018/12/21 20:18
@@ -84,7 +83,7 @@ public class CommunityPhoneController {
             "type 类型 电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话，" +
             "")
     public Result update(HttpServletRequest request, Integer id,
-                       String name, String phone) {
+                         String name, String phone) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         communityPhoneService.update(id,
@@ -98,12 +97,27 @@ public class CommunityPhoneController {
      * @author shuyy
      * @date 2018/12/21 20:22
      * @company mitesofor
-    */
-    @DeleteMapping("/remove")
+     */
+    //@DeleteMapping("/remove")
+    @RequestMapping("/remove")
     @ApiOperation(value = "删除社区电话", notes = "传参：id")
-    public Result remove( Integer id) {
+    public Result remove(Integer id) {
         communityPhoneService.remove(id);
         return Result.success("删除成功");
+    }
+
+    @RequestMapping("/enable")
+    @ApiOperation(value = "启用社区电话", notes = "传参：id")
+    public Result enable(Integer id) {
+        communityPhoneService.enable(id);
+        return Result.success("启用成功");
+    }
+
+    @RequestMapping("/stop")
+    @ApiOperation(value = "停用社区电话", notes = "传参：id")
+    public Result stop(Integer id) {
+        communityPhoneService.stop(id);
+        return Result.success("停用成功");
     }
 
     /**
@@ -111,13 +125,27 @@ public class CommunityPhoneController {
      * @author shuyy
      * @date 2018/12/21 20:23
      * @company mitesofor
-    */
-    @DeleteMapping("/list")
+     */
+    //@DeleteMapping("/list")
+    @RequestMapping("/list")
     @ApiOperation(value = "社区电话列表")
-    public Result list(String communityCode) {
-        List<CommunityPhone> list = communityPhoneService.listByCommunityCode(communityCode);
-        return Result.success(list);
+    public Result list(HttpServletRequest request,
+                       String communityCode,
+                       String search_phoneName,
+                       Integer search_phoneType,
+                       Integer search_dataStatus,
+                       Integer search_displayOrder,
+                       Integer pageNum, Integer pageSize) {
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
+        Page<CommunityPhone> page = communityPhoneService.listByCommunityCode(communityCode, search_phoneName, search_phoneType,
+                search_dataStatus, search_displayOrder, pageNum, pageSize);
+//        List<CommunityPhone> list = communityPhoneService.listByCommunityCode(communityCode, search_phoneName, search_phoneType,
+//                search_dataStatus, search_displayOrder, pageNum, pageSize);
+        return Result.success(page);
     }
-
 
 }

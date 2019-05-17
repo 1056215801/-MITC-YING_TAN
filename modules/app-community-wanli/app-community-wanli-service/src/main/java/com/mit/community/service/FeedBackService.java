@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
  * 反馈表业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/6 18:04
  * <p>Copyright: Copyright (c) 2018</p>
@@ -33,8 +35,10 @@ public class FeedBackService {
 
     @Autowired
     private WebFeedBackMapper webFeedBackMapper;
+
     /**
      * 添加反馈信息
+     *
      * @param feedBack 反馈信息
      * @return 添加成功数
      * @author Mr.Deng
@@ -48,6 +52,7 @@ public class FeedBackService {
 
     /**
      * 提交反馈意见
+     *
      * @param title     标题
      * @param content   反馈内容
      * @param type      类型。关联数据字典。code为feedback_type。1、APP功能反馈。2、物业/小区问题
@@ -70,6 +75,7 @@ public class FeedBackService {
 
     /**
      * 查询所有意见反馈信息
+     *
      * @param communityCode
      * @param status
      * @param gmtCreateTimeStart
@@ -78,11 +84,12 @@ public class FeedBackService {
      * @param pageSize
      * @return 反馈的信息、反馈人个人信息
      */
-    public Page<WebFeedBack> listPage(String communityCode, String status, LocalDateTime gmtCreateTimeStart, LocalDateTime gmtCreateTimeEnd, Integer pageNum, Integer pageSize){
+    public Page<WebFeedBack> listPage(String communityCode, String status,
+                                      LocalDateTime gmtCreateTimeStart, LocalDateTime gmtCreateTimeEnd,
+                                      Integer pageNum, Integer pageSize) {
         EntityWrapper<WebFeedBack> wrapper = new EntityWrapper<>();
-        //wrapper.setSqlSelect("a.id,a.content,a.gmt_create,a.status,b.cellphone as feedBackMoblie,c.household_name as feedBackName,d.community_name as communityName,d.zone_name as zoneName,d.building_name as buildingName,d.unit_name as unitName,d.room_num as roomNum");
         if (StringUtils.isNotBlank(communityCode)) {
-            wrapper.eq("c.community_code", communityCode);
+            wrapper.eq("su.community_code", communityCode);
         }
         if (StringUtils.isNotBlank(status)) {
             wrapper.eq("a.status", status);
@@ -98,6 +105,31 @@ public class FeedBackService {
         List<WebFeedBack> webFeedBacks = webFeedBackMapper.selectTestPage(page, wrapper);
         page.setRecords(webFeedBacks);
         return page;
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/16 9:17
+     * @Company mitesofor
+     * @Description:~处理反馈意见
+     */
+    public String manage(Integer id, Integer handler, Integer status, String remark) {
+        String msg = "";
+        try {
+            EntityWrapper<WebFeedBack> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", id);
+            WebFeedBack feedBack = webFeedBackMapper.selectList(wrapper).get(0);
+            if (feedBack.getReceiverTime() != null) {
+                webFeedBackMapper.updateFeedback(status, handler, null, remark, id);
+            } else {
+                webFeedBackMapper.updateFeedback(status, handler, new Date(), remark, id);
+            }
+            msg = "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg = "fail";
+        }
+        return msg;
     }
 
     /*public void receive(Integer id, String receiverName) {

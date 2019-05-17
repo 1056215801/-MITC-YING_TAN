@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.CommunityPhone;
 import com.mit.community.mapper.CommunityPhoneMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -51,13 +52,28 @@ public class CommunityPhoneService {
      * @date 2018/12/21 20:11
      * @company mitesofor
      */
-    public void save(String communityCode, String name, String phone, String type, Integer creatorUserId) {
-        CommunityPhone communityPhone = new CommunityPhone(communityCode,
-                name, phone,
-                type, creatorUserId);
-        communityPhone.setGmtCreate(LocalDateTime.now());
-        communityPhone.setGmtModified(LocalDateTime.now());
-        communityPhoneMapper.insert(communityPhone);
+    public void save(String communityCode, Integer id, String name, String phone,
+                     String type, Integer creatorUserId, Integer displayOrder) {
+        if (id == null) {//新增
+            CommunityPhone communityPhone = new CommunityPhone(communityCode,
+                    name, phone,
+                    type, displayOrder, 1, creatorUserId);
+            communityPhone.setGmtCreate(LocalDateTime.now());
+            communityPhone.setGmtModified(LocalDateTime.now());
+            communityPhoneMapper.insert(communityPhone);
+        } else {//修改
+            EntityWrapper<CommunityPhone> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", id);
+            List<CommunityPhone> list = communityPhoneMapper.selectList(wrapper);
+            CommunityPhone communityPhone = list.get(0);
+            communityPhone.setName(name);
+            communityPhone.setPhone(phone);
+            communityPhone.setType(type);
+            communityPhone.setCreatorUserId(creatorUserId);
+            communityPhone.setDisplayOrder(displayOrder);
+            communityPhone.setGmtModified(LocalDateTime.now());
+            communityPhoneMapper.updateById(communityPhone);
+        }
     }
 
     /**
@@ -88,6 +104,7 @@ public class CommunityPhoneService {
 
     /**
      * 删除
+     *
      * @param id id
      * @author shuyy
      * @date 2018/12/21 20:21
@@ -105,10 +122,49 @@ public class CommunityPhoneService {
      * @date 2018/12/21 20:14
      * @company mitesofor
      */
-    public List<CommunityPhone> listByCommunityCode(String communityCode) {
+    public Page<CommunityPhone> listByCommunityCode(String communityCode,
+                                                    String search_phoneName,
+                                                    Integer search_phoneType,
+                                                    Integer search_dataStatus,
+                                                    Integer search_displayOrder,
+                                                    Integer pageNum, Integer pageSize) {
+        Page<CommunityPhone> page = new Page<>(pageNum, pageSize);
         EntityWrapper<CommunityPhone> wrapper = new EntityWrapper<>();
-        wrapper.eq("community_code", communityCode);
-        return communityPhoneMapper.selectList(wrapper);
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        if (StringUtils.isNotBlank(search_phoneName)) {
+            wrapper.eq("phone", search_phoneName);
+        }
+        if (search_phoneType != null) {
+            wrapper.eq("type", search_phoneType);
+        }
+        if (search_dataStatus != null) {
+            wrapper.eq("status", search_dataStatus);
+        }
+        if (search_displayOrder != null) {
+            wrapper.eq("display_order", search_displayOrder);
+        }
+        List<CommunityPhone> list = communityPhoneMapper.selectPage(page, wrapper);
+        page.setRecords(list);
+        return page;
     }
 
+    public void enable(Integer id) {
+        EntityWrapper<CommunityPhone> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<CommunityPhone> list = communityPhoneMapper.selectList(wrapper);
+        CommunityPhone phone = list.get(0);
+        phone.setStatus(1);
+        communityPhoneMapper.updateById(phone);
+    }
+
+    public void stop(Integer id) {
+        EntityWrapper<CommunityPhone> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<CommunityPhone> list = communityPhoneMapper.selectList(wrapper);
+        CommunityPhone phone = list.get(0);
+        phone.setStatus(0);
+        communityPhoneMapper.updateById(phone);
+    }
 }

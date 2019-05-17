@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.NoticeMapper">
+
+    <select id="selectMyPage" resultType="com.mit.community.entity.Notice">
+        select
+        a.id,
+        a.community_code as communityCode,
+        a.title,
+        a.code,
+        a.publish_way as publishWay,
+        a.release_time as releaseTime,
+        a.validate_time as validateTime,
+        a.synopsis,
+        a.publisher,
+        a.status,
+        a.views,
+        a.portrait_filedomain as portraitFileDomain,
+        a.portrait_filename as portraitFileName,
+        b.community_name as communityName
+        FROM Notice a
+        left join cluster_community b on a.community_code = b.community_code WHERE a.isdel = 0
+        ${ew.sqlSegment}
+    </select>
+
+    <select id="getNoticeById" resultType="com.mit.community.entity.NoticeVo">
+        SELECT
+        id,
+        status as noticeState,
+        title,
+        publish_way as noticeChannel,
+        code as noticeType,
+        portrait_filedomain as portraitFileDomain,
+        portrait_filename as portraitFileName,
+        release_time as startTime,
+        validate_time as endTime,
+        synopsis as noticeContent
+        from Notice
+        WHERE id = #{id}
+    </select>
+
+    <update id="deleteNoticeById">
+        UPDATE Notice set isdel = 1 WHERE id = #{id}
+    </update>
+
+    <update id="stopOrEnable">
+        UPDATE Notice set status = #{status} where id = #{id}
+    </update>
+
+</mapper>

@@ -53,6 +53,7 @@ public class CommunityServiceInfoDetailService {
 
     /**
      * 删除,通过社区服务id
+     *
      * @param communityServiceInfoId 社区服务id
      * @author shuyy
      * @date 2018/12/21 15:27

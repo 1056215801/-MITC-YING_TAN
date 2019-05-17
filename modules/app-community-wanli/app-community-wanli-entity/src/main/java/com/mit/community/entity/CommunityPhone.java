@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 社区电话表
+ *
  * @author Mr.Deng
  * @date 2018/12/5 15:47
  * <p>Copyright: Copyright (c) 2018</p>
@@ -35,9 +36,17 @@ public class CommunityPhone extends BaseEntity {
      * 电话类型.关联字典code community_phone_type   社区电话类型1、物业电话；2、紧急电话
      */
     private String type;
+
+    @TableField("display_order")
+    private Integer displayOrder;
+    /**
+     * 状态
+     */
+    private Integer status;
     /**
      * 创建人。关联user表id
      */
     @TableField("creator_user_id")
     private Integer creatorUserId;
+
 }

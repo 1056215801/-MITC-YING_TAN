@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 通知通告内容表
+ *
  * @author Mr.Deng
  * @date 2018/12/3 14:37
  * <p>Copyright: Copyright (c) 2018</p>

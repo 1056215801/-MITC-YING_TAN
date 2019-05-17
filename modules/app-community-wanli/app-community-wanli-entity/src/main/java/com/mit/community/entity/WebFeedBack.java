@@ -1,5 +1,6 @@
 package com.mit.community.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,39 +12,34 @@ import java.time.LocalDateTime;
 @NoArgsConstructor//生成无参构造函数
 @Data
 @TableName("feedback")
-public class WebFeedBack extends BaseEntity{
+public class WebFeedBack extends BaseEntity {
+    /**
+     * 社区编码
+     */
+    @TableField(exist = false)
+    private String communityCode;
+    /**
+     * 标题
+     */
+    private String title;
     /**
      * 反馈内容
      */
     private String content;
     /**
+     * 类型
+     */
+    private Integer type;
+    /**
      * 反馈人姓名
      */
+    @TableField(exist = false)
     private String feedBackName;
     /**
      * 反馈人联系电话
      */
+    @TableField(exist = false)
     private String feedBackMoblie;
-    /**
-     * 小区名称
-     */
-    private String communityName;
-    /**
-     * 到访分区名称
-     */
-    private String zoneName;
-    /**
-     * 楼栋名称
-     */
-    private String buildingName;
-    /**
-     * 单元名称
-     */
-    private String unitName;
-    /**
-     * 房间号
-     */
-    private String roomNum;
     /**
      * 处理状态
      */
@@ -51,9 +47,25 @@ public class WebFeedBack extends BaseEntity{
     /**
      * 受理人
      */
-    private String receiver;
+    @TableField("handler")
+    private Integer receiver;
+    /**
+     * 受理人姓名
+     */
+    @TableField(exist = false)
+    private String handlename;
     /**
      * 受理时间
      */
+    @TableField("handletime")
     private LocalDateTime receiverTime;
+    /**
+     * 处理备注
+     */
+    private String remark;
+    /**
+     * 创建时间
+     */
+    @TableField(exist = false)
+    private LocalDateTime createTime;
 }

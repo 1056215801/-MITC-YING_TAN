@@ -47,18 +47,31 @@ public class FeedBackController {
 
     /**
      * 意见反馈
+     *
      * @author xiong
      */
     @GetMapping("/listPage")
     @ApiOperation(value = "分页查询反馈意见", notes = "输入参数：status 处理状态（关联feedback_status数据字典表），gmtCreateTimeStart 反馈开始时间，gmtCreateTimeEnd 反馈结束时间")
     public Result listPage(HttpServletRequest request, String status,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateTimeStart,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateTimeEnd,Integer pageNum, Integer pageSize
-                           ){
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateTimeEnd,
+                           Integer pageNum, Integer pageSize) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        Page<WebFeedBack> page =feedBackService.listPage(/*user.getCommunityCode()*/"003", status, gmtCreateTimeStart, gmtCreateTimeEnd, pageNum, pageSize);
+        Page<WebFeedBack> page = feedBackService.listPage(user.getCommunityCode(), status, gmtCreateTimeStart, gmtCreateTimeEnd, pageNum, pageSize);
         return Result.success(page);
+    }
+
+    @RequestMapping("/manage")
+    @ApiOperation(value = "反馈意见处理")
+    public Result manage(HttpServletRequest request, Integer id, Integer status, String remark) {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String msg = feedBackService.manage(id, user.getId(), status, remark);
+        if (!msg.equals("success")) {
+            return Result.error("处理失败");
+        }
+        return Result.success("处理成功");
     }
 
     /*@GetMapping("/test")
