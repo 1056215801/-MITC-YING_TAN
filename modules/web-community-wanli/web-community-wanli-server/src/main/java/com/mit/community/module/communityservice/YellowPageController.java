@@ -1,6 +1,9 @@
 package com.mit.community.module.communityservice;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.mit.community.common.constant.Params;
+import com.mit.community.entity.AdditionalParameters;
+import com.mit.community.entity.TreeEntity;
 import com.mit.community.entity.YellowPages;
 import com.mit.community.entity.YellowPagesType;
 import com.mit.community.service.YellowPagesService;
@@ -14,6 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 黄页
@@ -124,11 +132,11 @@ public class YellowPageController {
      */
     @PostMapping("/savePage")
     @ApiOperation(value = "保存分页", notes = "传参：yellowPagesTypeId 黄页类型， name 黄页名， phone 电话")
-    public Result savePage(Integer yellowPagesTypeId, String name, String phone) {
-        if (yellowPagesTypeId == null || StringUtils.isBlank(phone) || StringUtils.isBlank(name)) {
+    public Result savePage(Integer id, Integer yellowPagesTypeId, String name, String phones) {
+        if (yellowPagesTypeId == null || StringUtils.isBlank(phones) || StringUtils.isBlank(name)) {
             return Result.error("参数错误");
         }
-        yellowPagesService.save(yellowPagesTypeId, name, phone);
+        yellowPagesService.save(yellowPagesTypeId, name, phones);
         return Result.success("保存成功");
     }
 
@@ -178,12 +186,83 @@ public class YellowPageController {
      * @date 2018/12/21 20:04
      * @company mitesofor
      */
-    @PostMapping("/listPageList")
+    @RequestMapping("/listPageList")
     @ApiOperation(value = "分页查询黄页", notes = "传参：yellowPagesTypeId 黄页类型id，pageNum 分页大小 pageSize 分页大小")
-    public Result listPageList(Integer yellowPagesTypeId, Integer pageNum, Integer pageSize) {
-        Page<YellowPages> page = yellowPagesService.listPage(yellowPagesTypeId, pageNum, pageSize);
+    public Result listPageList(Integer yellowPagesTypeId, String name, Integer pageNum, Integer pageSize) {
+        Page<YellowPages> page = yellowPagesService.listPage(yellowPagesTypeId, name,
+                pageNum, pageSize);
         return Result.success(page);
     }
 
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/24 15:07
+     * @Company mitesofor
+     * @Description:~查询黄页分类父级菜单
+     */
+    @RequestMapping("/listParents")
+    @ApiOperation(value = "查询分类父级菜单")
+    public Result listParents() {
+        Map<String, Object> map = new HashMap<>();
+        List<YellowPagesType> list = yellowPagesTypeService.listByParentName(Params.ParentName);
+        List<TreeEntity<YellowPagesType>> params = new ArrayList<>();
+        for (YellowPagesType type : list) {
+            TreeEntity<YellowPagesType> typeTreeEntity = new TreeEntity<>();
+            typeTreeEntity.setT(type);
+            typeTreeEntity.setName(type.getSubmenuName());
+            typeTreeEntity.setType("folder");
+            typeTreeEntity.setId(type.getId());
+            List<YellowPagesType> children = yellowPagesTypeService.listByParentName(type.getSubmenuName());
+            Map<String, Object> objectMap = new HashMap<>();
+            AdditionalParameters<YellowPagesType> parameters = new AdditionalParameters<>();
+            if (children.size() > 0) {
+                for (YellowPagesType yellowPagesType : children) {
+                    TreeEntity<YellowPagesType> treeEntity = new TreeEntity<>();
+                    treeEntity.setT(yellowPagesType);
+                    treeEntity.setName(yellowPagesType.getSubmenuName());
+                    treeEntity.setType("item");
+                    treeEntity.setId(yellowPagesType.getId());
+                    objectMap.put(yellowPagesType.getSubmenuName(), treeEntity);
+                }
+                parameters.setChildren(objectMap);
+            }
+            if (parameters != null) {
+                typeTreeEntity.setAdditionalParameters(parameters);
+            }
+            map.put(typeTreeEntity.getName(), typeTreeEntity);
+            params.add(typeTreeEntity);
+        }
+        return Result.success(map);
+    }
 
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/24 15:15
+     * @Company mitesofor
+     * @Description:~根据父级菜单名称查询子类
+     */
+    @RequestMapping("/listTypes")
+    @ApiOperation(value = "根据父级菜单名称查询子类")
+    public Result listTypes(String parentName) {
+        List<YellowPagesType> list = yellowPagesTypeService.listByParentName(parentName);
+        return Result.success(list);
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/25 14:55
+     * @Company mitesofor
+     * @Description:~弹窗选择列表
+     */
+    @RequestMapping("listDialog")
+    @ApiOperation(value = "弹窗选择列表")
+    public Result listForDialog(Integer pageNum, Integer pageSize) {
+        Page<YellowPagesType> page = new Page<>();
+        try {
+            page = yellowPagesTypeService.listDialog(pageNum, pageSize);
+        } catch (Exception e) {
+            return Result.error("[listForDialog]接口异常");
+        }
+        return Result.success(page);
+    }
 }

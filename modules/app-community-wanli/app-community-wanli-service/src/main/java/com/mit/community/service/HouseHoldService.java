@@ -373,18 +373,6 @@ public class HouseHoldService {
                     houseHold.setHousing(roomInfo.toString());
                 }
             }
-//            if (houseType != null) {
-//                List<HouseHold> list = new ArrayList<>();
-//                for (HouseHold houseHold : houseHolds) {
-//                    //查询房屋信息
-//                    List<HouseholdRoom> rooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
-//                    if (houseType == Integer.valueOf(rooms.get(0).getHouseholdType())) {
-//                        list.add(houseHold);
-//                    }
-//                }
-//                page.setRecords(list);
-//                return page;
-//            }
             page.setRecords(houseHolds);
             return page;
         }
@@ -438,26 +426,6 @@ public class HouseHoldService {
              */
             HouseHold existHouseHold = this.getByHouseholdId(householdId);
             if (existHouseHold == null) {//新增
-//            List<Map<String, Object>> houseList = Lists.newArrayListWithCapacity(10);
-//            Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
-//            for(HouseRoomsVo room : list){
-//                Integer zoneId = Integer.valueOf(room.getZoneId());
-//                Integer buildingId = Integer.valueOf(room.getBuildingId());
-//                Integer unitId = Integer.valueOf(room.getUnitId());
-//                Integer roomId = Integer.valueOf(room.getRoomId());
-//                h.put("zoneId", zoneId);
-//                h.put("buildingId", buildingId);
-//                h.put("unitId", unitId);
-//                h.put("roomId", roomId);
-//                h.put("householdType", room.getHouseholdType());
-//                houseList.add(h);
-//            }
-//            JSONObject message = dnakeAppApiService.saveHousehold(communityCode, mobile, gender,
-//                    householdName, residenceTimeStr, houseList);
-//            if (message.get("errorCode") != null && !message.get("errorCode").equals(0)) {
-//                msg = message.get("msg").toString();
-//                throw new RuntimeException(message.get("msg").toString());
-//            }
                 // 本地数据库保存住户信息
                 JSONObject householdStrJson = JSON.parseObject(householdStr);
                 Integer gender = Integer.valueOf(householdStrJson.getString("gender"));
@@ -536,10 +504,6 @@ public class HouseHoldService {
                     householdRoomService.save(householdRoom);
                 }
                 //同步修改用户手机号码
-                //String setSql1 = "cellphone = " + " ' " + mobile + " ' ";
-                //EntityWrapper<User> ew1 = new EntityWrapper<>();
-                //ew1.eq("cellphone", householdId);
-                //userMapper.updateForSet(setSql1, ew1);
                 userMapper.updateMobileByHouseholdId(mobile, householdId);
             }
         } catch (Exception e) {
@@ -610,7 +574,6 @@ public class HouseHoldService {
                         authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
                     }
                 }
-                //msg = "success";
             } else {//修改
                 authorizeAppHouseholdDeviceGroupService.deleteByHouseholdId(householdId);
                 authorizeHouseholdDeviceGroupService.deleteByHouseholdId(householdId);
@@ -646,24 +609,6 @@ public class HouseHoldService {
                         authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
                     }
                 }
-//                //注册默认账号
-//                //第一步：判断是否注册
-//                HouseHold existHouseHold = this.getByHouseholdId(householdId);
-//                User user = userService.getByCellphoneNoCache(existHouseHold.getMobile());
-//                //第二步：没有进行默认注册
-//                if (user == null) {
-//                    user = new User(existHouseHold.getMobile(), "123456", householdId, existHouseHold.getHouseholdName(), existHouseHold.getGender().shortValue(), StringUtils.EMPTY, Constants.USER_ICO_DEFULT,
-//                            Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
-//                            "普通业主", StringUtils.EMPTY, null, null, null);
-//                    userService.save(user);
-//                } else {
-//                    List<Integer> list = AuthorizeStatusUtil.Contrast(authStatus);
-//                    //修改之后不包含APP授权，重置用户的住户信息，用户依旧可以登录APP
-//                    if (!list.contains(10)) {
-//                        userMapper.updateHouseholdIdByMobile(0, existHouseHold.getMobile());
-//                    }
-//                }
-//                msg = "success";
             }
             if (appAuthFlag == 1) {
                 //注册默认账号
@@ -730,14 +675,8 @@ public class HouseHoldService {
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setHouseholdStatus(0);//注销状态
                 this.update(houseHold);
-                //EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
-                //wrapper.eq("household_id", Integer.valueOf(s));
-                //houseHoldMapper.delete(wrapper);
                 //注销用户（重置用户的住户id）
                 userMapper.updateByHouseholdId(Integer.valueOf(s));
-                //EntityWrapper<User> wrapper1 = new EntityWrapper<>();
-                //wrapper1.eq("household_id", Integer.valueOf(s));
-                //userMapper.delete(wrapper1);
             }
         }
         return msg;

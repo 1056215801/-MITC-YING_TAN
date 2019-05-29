@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.SelectionActivities;
 import com.mit.community.entity.SelectionActivitiesContent;
+import com.mit.community.mapper.SelectionActivitiesContentMapper;
 import com.mit.community.mapper.SelectionActivitiesMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.List;
 
 /**
  * 精选活动业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/19 20:42
  * <p>Copyright: Copyright (c) 2018</p>
@@ -23,13 +25,18 @@ import java.util.List;
  */
 @Service
 public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesMapper, SelectionActivities> {
+
     @Autowired
     private SelectionActivitiesMapper selectionActivitiesMapper;
     @Autowired
     private SelectionActivitiesContentService selectionActivitiesContentService;
+    @Autowired
+    private SelectionActivitiesContentMapper activitiesContentMapper;
+
 
     /**
      * 查询精品活动信息列表
+     *
      * @return 精品活动信息
      * @author Mr.Deng
      * @date 14:03 2018/12/22
@@ -43,6 +50,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 查询精品活动信息，通过id
+     *
      * @param id id
      * @return 精品活动信息
      * @author Mr.Deng
@@ -54,6 +62,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 更新精品活动数据数据
+     *
      * @param selectionActivities 精品活动数据
      * @author Mr.Deng
      * @date 14:10 2018/12/22
@@ -64,6 +73,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 增加浏览量信息
+     *
      * @param selectionActivities 精品活动信息
      * @author Mr.Deng
      * @date 15:18 2018/12/22
@@ -83,6 +93,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 记录浏览量
+     *
      * @param selectionActivities 精品活动
      * @author Mr.Deng
      * @date 14:34 2018/12/22
@@ -98,6 +109,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 查询精品活动详情信息，通过精品活动信息
+     *
      * @param selectionActivitiesId 精品活动信息id
      * @return 精品活动给详情信息
      * @author Mr.Deng
@@ -114,6 +126,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 保存
+     *
      * @param title       标题
      * @param introduce   简介
      * @param externalUrl 外接地址
@@ -128,24 +141,48 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void save(String communityCode, String title, String introduce, String externalUrl, LocalDateTime validTime,
-                     LocalDateTime issueTime, String issuer, String image, String notes, String content) {
-
-        SelectionActivities selectionActivitie = new SelectionActivities(communityCode, title, introduce,
-                externalUrl, validTime, issueTime,
-                issuer, 0, image, notes, null);
-        selectionActivitie.setGmtCreate(LocalDateTime.now());
-        selectionActivitie.setGmtModified(LocalDateTime.now());
-        selectionActivitiesMapper.insert(selectionActivitie);
-        SelectionActivitiesContent selectionActivitiesContent = new SelectionActivitiesContent(selectionActivitie.getId(),
-                content);
-        selectionActivitiesContent.setGmtCreate(LocalDateTime.now());
-        selectionActivitiesContent.setGmtModified(LocalDateTime.now());
-        selectionActivitiesContentService.save(selectionActivitiesContent);
+    public void save(String communityCode, Integer id, String title, String introduce,
+                     String externalUrl, LocalDateTime validTime, LocalDateTime issueTime,
+                     String issuer, String image, String notes, String content) {
+        if (id == null) {//新增
+            SelectionActivities selectionActivitie = new SelectionActivities(communityCode, title, introduce,
+                    externalUrl, validTime, issueTime,
+                    issuer, 0, image, notes, null, 1);
+            selectionActivitie.setGmtCreate(LocalDateTime.now());
+            selectionActivitie.setGmtModified(LocalDateTime.now());
+            selectionActivitiesMapper.insert(selectionActivitie);
+            SelectionActivitiesContent selectionActivitiesContent = new SelectionActivitiesContent(selectionActivitie.getId(),
+                    content);
+            selectionActivitiesContent.setGmtCreate(LocalDateTime.now());
+            selectionActivitiesContent.setGmtModified(LocalDateTime.now());
+            selectionActivitiesContentService.save(selectionActivitiesContent);
+        } else {//修改
+            SelectionActivities selectionActivitie = new SelectionActivities(communityCode, title, introduce,
+                    externalUrl, validTime, issueTime,
+                    issuer, 0, image, notes, null, 1);
+            selectionActivitie.setId(id);
+            selectionActivitie.setGmtModified(LocalDateTime.now());
+            selectionActivitiesMapper.updateById(selectionActivitie);
+            if (content != null) {
+                SelectionActivitiesContent con = selectionActivitiesContentService.getByselectionActivitiesId(id);
+                if (con == null) {
+                    SelectionActivitiesContent selectionActivitiesContent = new SelectionActivitiesContent(selectionActivitie.getId(),
+                            content);
+                    selectionActivitiesContent.setGmtCreate(LocalDateTime.now());
+                    selectionActivitiesContent.setGmtModified(LocalDateTime.now());
+                    selectionActivitiesContentService.save(selectionActivitiesContent);
+                } else {
+                    con.setContent(content);
+                    con.setGmtModified(LocalDateTime.now());
+                    activitiesContentMapper.updateAllColumnById(con);
+                }
+            }
+        }
     }
 
     /**
      * 更新
+     *
      * @param id          id
      * @param title       标题
      * @param introduce   简介
@@ -201,6 +238,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 删除
+     *
      * @param id
      * @return void
      * @throws
@@ -217,6 +255,7 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
 
     /**
      * 分页查询
+     *
      * @param validTimeStart 过期开始时间
      * @param validTimeEnd   过期结束时间
      * @param issueTimeStart 发布开始时间
@@ -228,13 +267,17 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
      * @date 2018/12/25 11:44
      * @company mitesofor
      */
-    public Page<SelectionActivities> listPage(String communityCode, LocalDateTime validTimeStart,
-                                              LocalDateTime validTimeEnd,
-                                              LocalDateTime issueTimeStart,
-                                              LocalDateTime issueTimeEnd,
+    public Page<SelectionActivities> listPage(String title, Integer status, String communityCode, LocalDateTime validTimeStart,
+                                              LocalDateTime validTimeEnd, LocalDateTime issueTimeStart, LocalDateTime issueTimeEnd,
                                               Integer pageNum, Integer pageSize) {
         EntityWrapper<SelectionActivities> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
+        if (StringUtils.isNotBlank(title)) {
+            wrapper.eq("title", title);
+        }
+        if (status != null) {
+            wrapper.eq("status", status);
+        }
         if (validTimeStart != null) {
             wrapper.ge("valid_time", validTimeStart);
         }
@@ -249,8 +292,59 @@ public class SelectionActivitiesService extends ServiceImpl<SelectionActivitiesM
         }
         Page<SelectionActivities> page = new Page<>(pageNum, pageSize);
         List<SelectionActivities> selectionActivities = selectionActivitiesMapper.selectPage(page, wrapper);
+        for (SelectionActivities activities : selectionActivities) {
+            SelectionActivitiesContent content = selectionActivitiesContentService.getByselectionActivitiesId(activities.getId());
+            if (content != null) {
+                activities.setContent(content.getContent());
+            }
+        }
         page.setRecords(selectionActivities);
         return page;
     }
 
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/23 17:14
+     * @Company mitesofor
+     * @Description:~启用方法
+     */
+    public String enable(Integer id) {
+        String res = "";
+        try {
+            EntityWrapper<SelectionActivities> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", id);
+            List<SelectionActivities> list = selectionActivitiesMapper.selectList(wrapper);
+            SelectionActivities activities = list.get(0);
+            activities.setStatus(1);
+            activities.setGmtModified(LocalDateTime.now());
+            selectionActivitiesMapper.updateById(activities);
+            res = "success";
+        } catch (Exception e) {
+            res = "fail";
+        }
+        return res;
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/23 17:15
+     * @Company mitesofor
+     * @Description:~停用方法
+     */
+    public String stop(Integer id) {
+        String res = "";
+        try {
+            EntityWrapper<SelectionActivities> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", id);
+            List<SelectionActivities> list = selectionActivitiesMapper.selectList(wrapper);
+            SelectionActivities activities = list.get(0);
+            activities.setStatus(0);
+            activities.setGmtModified(LocalDateTime.now());
+            selectionActivitiesMapper.updateById(activities);
+            res = "success";
+        } catch (Exception e) {
+            res = "fail";
+        }
+        return res;
+    }
 }

@@ -17,6 +17,7 @@ import java.util.Map;
 
 /**
  * <p>Description:APP通用方法 <p>
+ *
  * @author Mr.Deng
  * @date 2018/11/8 16:32
  * <p>Copyright: Copyright (c) 2018</p>

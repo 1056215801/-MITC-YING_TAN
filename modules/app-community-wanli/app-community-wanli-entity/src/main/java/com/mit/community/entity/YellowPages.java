@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 生活黄页表
+ *
  * @author Mr.Deng
  * @date 2018/12/5 17:12
  * <p>Copyright: Copyright (c) 2018</p>
@@ -32,5 +33,17 @@ public class YellowPages extends BaseEntity {
      * 电话号码
      */
     private String phone;
+
+    /**
+     * 父级菜单名称
+     */
+    @TableField(exist = false)
+    private String parentname;
+
+    /**
+     * 图片
+     */
+    @TableField(exist = false)
+    private String image;
 
 }

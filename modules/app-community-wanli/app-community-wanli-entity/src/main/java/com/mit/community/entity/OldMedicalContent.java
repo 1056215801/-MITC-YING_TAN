@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 老人体检详情表
+ *
  * @author Mr.Deng
  * @date 2018/12/18 19:34
  * <p>Copyright: Copyright (c) 2018</p>

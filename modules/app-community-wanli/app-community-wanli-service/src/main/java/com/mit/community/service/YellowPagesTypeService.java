@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 黄页类型业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/6 20:22
  * <p>Copyright: Copyright (c) 2018</p>
@@ -21,11 +23,13 @@ import java.util.Map;
  */
 @Service
 public class YellowPagesTypeService {
+
     @Autowired
     private YellowPagesTypeMapper yellowPagesTypeMapper;
 
     /**
      * 查询黄页信息，通过id
+     *
      * @param id id
      * @return 黄页信息
      * @author Mr.Deng
@@ -37,6 +41,7 @@ public class YellowPagesTypeService {
 
     /**
      * 查询父菜单
+     *
      * @return 父菜单集合
      * @author Mr.Deng
      * @date 19:33 2018/12/6
@@ -50,6 +55,7 @@ public class YellowPagesTypeService {
 
     /**
      * 查询所有的黄页类型菜单
+     *
      * @return 黄页类型菜单列表
      * @author Mr.Deng
      * @date 20:44 2018/12/6
@@ -62,6 +68,7 @@ public class YellowPagesTypeService {
 
     /**
      * 查询子菜单，通过父菜单
+     *
      * @param parentName 父菜单名称
      * @return 子菜单集合
      * @author Mr.Deng
@@ -77,6 +84,7 @@ public class YellowPagesTypeService {
 
     /**
      * 保存
+     *
      * @param parentName  父类型
      * @param image       图片地址
      * @param submenuName 子类型
@@ -93,6 +101,7 @@ public class YellowPagesTypeService {
 
     /**
      * 更新
+     *
      * @param id          id
      * @param parentName  父类型
      * @param image       图片地址
@@ -119,6 +128,7 @@ public class YellowPagesTypeService {
 
     /**
      * 删除
+     *
      * @param id id
      * @author shuyy
      * @date 2018/12/21 19:36
@@ -130,6 +140,7 @@ public class YellowPagesTypeService {
 
     /**
      * 列表
+     *
      * @param pageNum  当前页
      * @param pageSize 分页大小
      * @return com.baomidou.mybatisplus.plugins.Page<com.mit.community.entity.YellowPagesType>
@@ -141,6 +152,38 @@ public class YellowPagesTypeService {
         Page<YellowPagesType> page = new Page<>(pageNum, pageSize);
         List<YellowPagesType> yellowPagesTypes = yellowPagesTypeMapper.selectPage(page, null);
         page.setRecords(yellowPagesTypes);
+        return page;
+    }
+
+    /**
+     * 根据id查询黄页分类
+     *
+     * @param yellowPagesTypeId
+     * @return
+     */
+    public YellowPagesType getPageById(Integer yellowPagesTypeId) {
+        EntityWrapper<YellowPagesType> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", yellowPagesTypeId);
+        List<YellowPagesType> list = yellowPagesTypeMapper.selectList(wrapper);
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/25 14:59
+     * @Company mitesofor
+     * @Description:~弹窗列表封装
+     */
+    public Page<YellowPagesType> listDialog(Integer pageNum, Integer pageSize) {
+        Page<YellowPagesType> page = new Page<>(pageNum, pageSize);
+        List<YellowPagesType> list = new ArrayList<>();
+        EntityWrapper<YellowPagesType> wrapper = new EntityWrapper<>();
+        wrapper.gt("orders", 0);
+        list = yellowPagesTypeMapper.selectPage(page, wrapper);
+        page.setRecords(list);
         return page;
     }
 }

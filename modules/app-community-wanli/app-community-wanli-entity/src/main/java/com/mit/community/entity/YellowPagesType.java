@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 黄页菜单类型表
+ *
  * @author Mr.Deng
  * @date 2018/12/6 20:20
  * <p>Copyright: Copyright (c) 2018</p>
@@ -32,6 +33,8 @@ public class YellowPagesType extends BaseEntity {
      */
     @TableField("submenu_name")
     private String submenuName;
-    /**排序*/
+    /**
+     * 排序
+     */
     private Short orders;
 }

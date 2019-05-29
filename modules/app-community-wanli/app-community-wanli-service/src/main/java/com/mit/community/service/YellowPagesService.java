@@ -1,5 +1,6 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
@@ -18,6 +19,7 @@ import java.util.TreeMap;
 
 /**
  * 生活黄页业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/5 17:15
  * <p>Copyright: Copyright (c) 2018</p>
@@ -33,6 +35,7 @@ public class YellowPagesService {
 
     /**
      * 查询生活黄页信息，通过黄页类型id
+     *
      * @param yellowPagesTypeId 黄页类型id
      * @return 生活黄页信息
      * @author Mr.Deng
@@ -46,6 +49,7 @@ public class YellowPagesService {
 
     /**
      * 获取所有的黄页菜单信息
+     *
      * @return 黄页菜单信息
      * @author Mr.Deng
      * @date 19:45 2018/12/6
@@ -70,6 +74,7 @@ public class YellowPagesService {
 
     /**
      * 查询黄页号码
+     *
      * @param yellowPagesTypeId 黄页类型id
      * @return 黄页号码
      * @author Mr.Deng
@@ -89,6 +94,7 @@ public class YellowPagesService {
 
     /**
      * 查询所有的黄页号码
+     *
      * @return 黄页号码列表
      * @author Mr.Deng
      * @date 20:51 2018/12/6
@@ -111,6 +117,7 @@ public class YellowPagesService {
 
     /**
      * 保存
+     *
      * @param yellowPagesTypeId 黄页类型id
      * @param name              黄页名
      * @param phone             电话
@@ -120,7 +127,7 @@ public class YellowPagesService {
      */
     public void save(Integer yellowPagesTypeId, String name, String phone) {
         YellowPages yellowPages = new YellowPages(yellowPagesTypeId,
-                name, phone);
+                name, phone, null, null);
         yellowPages.setGmtCreate(LocalDateTime.now());
         yellowPages.setGmtModified(LocalDateTime.now());
         yellowPagesMapper.insert(yellowPages);
@@ -128,6 +135,7 @@ public class YellowPagesService {
 
     /**
      * 更新
+     *
      * @param id    name
      * @param phone 电话号码
      * @author shuyy
@@ -149,6 +157,7 @@ public class YellowPagesService {
 
     /**
      * 列表
+     *
      * @param yellowPagesTypeId 黄页id
      * @param pageNum           当前页
      * @param pageSize          分页大小
@@ -157,19 +166,29 @@ public class YellowPagesService {
      * @date 2018/12/21 19:51
      * @company mitesofor
      */
-    public Page<YellowPages> listPage(Integer yellowPagesTypeId, Integer pageNum, Integer pageSize) {
+    public Page<YellowPages> listPage(Integer yellowPagesTypeId, String subName,
+                                      Integer pageNum, Integer pageSize) {
         EntityWrapper<YellowPages> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotBlank(subName)) {
+            wrapper.like("name", subName, SqlLike.RIGHT);
+        }
         if (yellowPagesTypeId != null) {
             wrapper.eq("yellow_pages_type_id", yellowPagesTypeId);
         }
         Page<YellowPages> page = new Page<>(pageNum, pageSize);
         List<YellowPages> yellowPages = yellowPagesMapper.selectPage(page, wrapper);
+        for (YellowPages pages : yellowPages) {
+            YellowPagesType type = yellowPagesTypeService.getPageById(pages.getYellowPagesTypeId());
+            pages.setParentname(type.getParentName());
+            pages.setImage(type.getImage());
+        }
         page.setRecords(yellowPages);
         return page;
     }
 
     /**
      * 删除
+     *
      * @param id id
      * @author shuyy
      * @date 2018/12/21 19:52

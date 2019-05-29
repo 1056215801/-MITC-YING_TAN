@@ -7,6 +7,7 @@ import com.mit.community.entity.SysUser;
 import com.mit.community.service.LostFoundService;
 import com.mit.community.service.RedisService;
 import com.mit.community.util.CookieUtils;
+import com.mit.community.util.DateUtils;
 import com.mit.community.util.Result;
 import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 
 /**
  * 失物招领
+ *
  * @author shuyy
  * @date 2018/12/26
  * @company mitesofor
@@ -53,19 +56,22 @@ public class LostFoudController {
     @PostMapping("/save")
     @ApiOperation(value = "发布失物招领", notes = "输入参数：title 标题， img 图片， issuer 发布人， issuerPhone 发布电话，" +
             "picAddress 捡到地址， pickTime 捡到时间，content 内容 ")
-    public Result save(HttpServletRequest request, String title, MultipartFile img, String issuer,
+    public Result save(HttpServletRequest request, Integer id, String title, String portraitFileDomain, String portraitFileName, String issuer,
                        String issuerPhone, String picAddress, String receiverAddress,
-                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTime, String content) throws Exception {
+                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTime,
+                       String pickUpTime,
+                       String content) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        String imgUrl = UploadUtil.upload(img);
-        lostFoundService.save(title, imgUrl, issuer, issuerPhone, picAddress,
-                receiverAddress, pickTime, user.getCommunityCode(), content);
+        String imgUrl = portraitFileDomain + portraitFileName;
+        lostFoundService.save(id, title, imgUrl, issuer, issuerPhone, picAddress,
+                receiverAddress, DateUtils.dateStrToLocalDateTime(pickUpTime), user.getCommunityCode(), content);
         return Result.success("发布成功");
     }
 
     /**
      * 更新
+     *
      * @param title           标题
      * @param img             图片
      * @param issuer          发布人
@@ -100,6 +106,7 @@ public class LostFoudController {
 
     /**
      * 删除
+     *
      * @param id id
      * @return com.mit.community.util.Result
      * @author shuyy
@@ -133,17 +140,23 @@ public class LostFoudController {
     @GetMapping("/listPage")
     @ApiOperation(value = "分页查询失物招领", notes = "输入参数：title 标题，issuer 发布人， issuerPhone 发布电话，pickTimeStart 捡到开始时间，pickTimeEnd 捡到结束时间，" +
             "receiver 领取人，receivePhone 领取电话，receiverTimeStart 领取开始时间， receiverTimeEnd 领取结束时间  ")
-    public Result listPage(HttpServletRequest request, String title, String issuer, String issuerPhone,
+    public Result listPage(HttpServletRequest request,
+                           String title,
+                           @RequestParam(required = false) String issuer,
+                           @RequestParam(required = false) String issuerPhone,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTimeStart,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pickTimeEnd,
-                           String receiver, String receivePhone, String pickAddress,
+                           @RequestParam(required = false) String receiver,
+                           @RequestParam(required = false) String receivePhone,
+                           @RequestParam(required = false) String pickAddress,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTimeStart,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime receiverTimeEnd,
-                           Integer receiverStatus, Integer pageNum, Integer pageSize) {
+                           @RequestParam(required = false) Integer receiverStatus,
+                           String begin, String end, Integer pageNum, Integer pageSize) throws ParseException {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         Page<LostFound> page = lostFoundService.listPage(user.getCommunityCode(), title, issuer, issuerPhone, pickAddress,
-                pickTimeStart, pickTimeEnd,
+                DateUtils.dateStrToLocalDateTime(begin), DateUtils.dateStrToLocalDateTime(end),
                 receiver, receivePhone, receiverTimeStart, receiverTimeEnd,
                 receiverStatus, pageNum, pageSize);
         return Result.success(page);
@@ -151,6 +164,7 @@ public class LostFoudController {
 
     /**
      * 获取详情
+     *
      * @param id id
      * @return com.mit.community.util.Result
      * @author shuyy

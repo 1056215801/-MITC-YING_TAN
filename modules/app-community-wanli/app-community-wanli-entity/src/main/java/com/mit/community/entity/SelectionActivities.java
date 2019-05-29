@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 精选活动
+ *
  * @author Mr.Deng
  * @date 2018/12/19 20:14
  * <p>Copyright: Copyright (c) 2018</p>
@@ -70,5 +71,9 @@ public class SelectionActivities extends BaseEntity {
      */
     @TableField(exist = false)
     private String content;
+    /**
+     * 状态
+     */
+    private Integer status;
 
 }

@@ -48,4 +48,14 @@ public class DateUtils {
         }
         return null;
     }
+
+    public static LocalDateTime strToLocalDateTime(String dateStr) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Date date = sdf.parse(dateStr);
+        Instant instant = date.toInstant();
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
+        return localDateTime;
+    }
 }

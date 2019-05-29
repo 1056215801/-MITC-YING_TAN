@@ -112,12 +112,7 @@ public class DnakeAppApiService {
                 dnakeLoginResponse.setStatus(2);
                 return dnakeLoginResponse;
             }
-//            boolean status = this.register(cellphone, password);
-//            if (status) {
-//                this.login(cellphone, password);
-//            }
         }
-
         DnakeLoginResponse dnakeLoginResponse = JSON.parseObject(invoke, DnakeLoginResponse.class);
         dnakeLoginResponse.setStatus(1);
         return dnakeLoginResponse;
@@ -164,7 +159,7 @@ public class DnakeAppApiService {
         map.put("appUserId", dnakeAppUser.getAppUserId());
         map.put("communityCode", communityCode);
         map.put("deviceNum", deviceNum);
-        String invoke = this.invokeProxy(url, map, dnakeAppUser, cellphone);
+        String invoke = this.invokeProxy(url, map, dnakeAppUser, cellphone, deviceNum, communityCode);
         log.info(invoke);
         boolean b = dnakeReponseStatus(invoke);
         if (b) {
@@ -205,7 +200,8 @@ public class DnakeAppApiService {
      * @author Mr.Deng
      * @date 16:32 2018/12/4
      */
-    public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) {
+    public String getInviteCode(String cellphone, String dateTag, String times,
+                                String deviceGroupId, String communityCode) {
         String url = "/auth/api/common/inviteCode";
         DnakeAppUser dnakeAppUser = getDnakeAppUser(cellphone);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(6);
@@ -214,7 +210,8 @@ public class DnakeAppApiService {
         map.put("times", times);
         map.put("deviceGroupId", deviceGroupId);
         map.put("communityCode", communityCode);
-        String invoke = this.invokeProxy(url, map, dnakeAppUser, cellphone);
+        String invoke = this.invokeInviteProxy(url, map, dnakeAppUser, cellphone,
+                dateTag, times, deviceGroupId, communityCode);
         log.info(invoke);
         return invoke;
     }
@@ -312,17 +309,71 @@ public class DnakeAppApiService {
         return invoke;
     }
 
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/20 21:02
+     * @Company mitesofor
+     * @Description:~请求代理方法
+     */
     public String invokeProxy(String url, Map<String, Object> map, DnakeAppUser dnakeAppUser, String cellphone) {
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        if (invoke.equals("请登录")) {
+            User user = userService.getByCellphone(cellphone);
+            DnakeLoginResponse dnakeLoginResponse = login(cellphone, user.getPassword());
+            if (dnakeLoginResponse.getStatus() == 1) {
+                redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
+                        dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
+                invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+            }
+        }
+        return invoke;
+
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/20 21:03
+     * @Company mitesofor
+     * @Description:~httpOpenDoor请求代理
+     */
+    public String invokeProxy(String url, Map<String, Object> map, DnakeAppUser dnakeAppUser, String cellphone,
+                              String deviceNum, String communityCode) {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
         if (invoke.equals("请登录")) {
             User user = userService.getByCellphone(cellphone);
             DnakeLoginResponse dnakeLoginResponse = this.login(cellphone, user.getPassword());
             redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
                     dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
-            invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+            boolean flag = this.httpOpenDoor(cellphone, communityCode, deviceNum);
+            if (flag) {
+                invoke = "success";
+            }
         }
         return invoke;
+    }
 
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/20 21:03
+     * @Company mitesofor
+     * @Description:~申请访客邀请码请求代理
+     */
+    public String invokeInviteProxy(String url, Map<String, Object> map, DnakeAppUser dnakeAppUser,
+                                    String cellphone, String dateTag, String times,
+                                    String deviceGroupId, String communityCode) {
+        String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        if (invoke.equals("请登录")) {
+            User user = userService.getByCellphone(cellphone);
+            DnakeLoginResponse dnakeLoginResponse = this.login(cellphone, user.getPassword());
+            redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
+                    dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
+            String res = this.getInviteCode(cellphone, dateTag, times, deviceGroupId, communityCode);
+            boolean b = dnakeReponseStatus(res);
+            if (b) {
+                invoke = res;
+            }
+        }
+        return invoke;
     }
 
     /**
@@ -506,6 +557,10 @@ public class DnakeAppApiService {
      * @date 15:22 2018/12/12
      */
     private boolean dnakeReponseStatus(String invoke) {
+        //防止HTTP开门出现"系统繁忙"
+        if (invoke.equals("success")) {
+            return true;
+        }
         JSONObject json = JSONObject.parseObject(invoke);
         String errorCode = json.getString("errorCode");
         if (StringUtils.isNotBlank(errorCode)) {
@@ -531,13 +586,6 @@ public class DnakeAppApiService {
         String url = "/v1/household/saveOrUpdateHouseholdMore";
         HashMap<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         map.put("communityCode", communityCode);
-//        map.put("id", "52833");
-//        Map<String, Object> h = Maps.newHashMapWithExpectedSize(4);
-//        h.put("zoneId", "363");
-//        h.put("buildingId", "423");
-//        h.put("unitId", "565");
-//        h.put("roomId", "15448");
-//        houseList.add(h);
         String s = JSON.toJSONString(houseList);
         map.put("houseList", s);
         map.put("mobile", mobile);

@@ -60,11 +60,11 @@ public class CommunityServiceInfoController {
             "address 地址， cellphone 号码， longitude 经度，latitude 纬度，  image 图片， type 社区服务类型.关联字典code community_service_type 社区服务类型 1、社区门诊2、开锁换锁3、送水到家， detail 详情,apprais 评价星级（1-5星）")
     public Result save(HttpServletRequest request, Integer id, String name, String intro,
                        String morning, String afternoon, String portraitFileDomain, String portraitFileName,
-                       String phone, String address, String detail, Integer appraise) throws Exception {
+                       String phone, String address, String detail, Integer appraise, Integer serviceType) throws Exception {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         communityServiceInfoService.savePatientService(user.getCommunityCode(), id, name, intro,
-                morning, afternoon, portraitFileDomain, portraitFileName, phone, address, detail, appraise, user.getId());
+                morning, afternoon, portraitFileDomain, portraitFileName, phone, address, detail, appraise, user.getId(), serviceType);
         return Result.success("保存成功");
     }
 
@@ -169,14 +169,14 @@ public class CommunityServiceInfoController {
     @ApiOperation(value = "社区门诊列表")
     public Result listPatientByPage(HttpServletRequest request, String communityCode, String search_name,
                                     String search_time, Integer search_status, Integer search_appraise,
-                                    Integer pageNum, Integer pageSize) {
+                                    Integer pageNum, Integer pageSize, String type) {
         if (communityCode == null) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = user.getCommunityCode();
         }
         Page<CommunityServiceInfo> communityServiceInfoPage = communityServiceInfoService.listPatientByPage(communityCode, search_name,
-                search_time, search_status, search_appraise, pageNum, pageSize);
+                search_time, search_status, search_appraise, pageNum, pageSize, type);
         return Result.success(communityServiceInfoPage);
     }
 

@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * 快递信息业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/14 16:54
  * <p>Copyright: Copyright (c) 2018</p>
@@ -31,19 +32,26 @@ public class ExpressInfoService {
 
     /**
      * 添加快递信息
+     *
      * @param expressInfo 快递信息
      * @author Mr.Deng
      * @date 16:30 2018/12/27
      */
     @Transactional(rollbackFor = Exception.class)
     public void save(ExpressInfo expressInfo) {
-        expressInfo.setGmtCreate(LocalDateTime.now());
-        expressInfo.setGmtModified(LocalDateTime.now());
-        expressInfoMapper.insert(expressInfo);
+        if (expressInfo.getId() == null) {
+            expressInfo.setGmtCreate(LocalDateTime.now());
+            expressInfo.setGmtModified(LocalDateTime.now());
+            expressInfoMapper.insert(expressInfo);
+        }else{
+            expressInfo.setGmtModified(LocalDateTime.now());
+            expressInfoMapper.updateById(expressInfo);
+        }
     }
 
     /**
      * 修改快递信息数据
+     *
      * @author Mr.Deng
      * @date 16:55 2018/12/14
      */
@@ -79,6 +87,7 @@ public class ExpressInfoService {
 
     /**
      * 删除快递信息，根据快递信息id
+     *
      * @param id 快递信息id
      * @author Mr.Deng
      * @date 9:23 2018/12/28
@@ -90,6 +99,7 @@ public class ExpressInfoService {
 
     /**
      * 查询快递未领取个数，通过用户id和快递位置信息
+     *
      * @param userId           用户id
      * @param expressAddressId 垮堤位置信息
      * @return 快递个数
@@ -106,6 +116,7 @@ public class ExpressInfoService {
 
     /**
      * 查询快递总个数，通过用户id和快递位置信息
+     *
      * @param userId           用户id
      * @param expressAddressId 垮堤位置信息
      * @return 快递个数
@@ -121,6 +132,7 @@ public class ExpressInfoService {
 
     /**
      * 查询快递详细信息
+     *
      * @param userId           用户id
      * @param expressAddressId 快递地址信息
      * @return 快递信息
@@ -146,6 +158,7 @@ public class ExpressInfoService {
 
     /**
      * 分页查询
+     *
      * @param communityCode    小区code
      * @param userId           app用户id
      * @param expressAddressId 快递领取位置id
@@ -204,6 +217,7 @@ public class ExpressInfoService {
 
     /**
      * 未读
+     *
      * @param userId 用户id
      * @return java.lang.Integer
      * @author shuyy

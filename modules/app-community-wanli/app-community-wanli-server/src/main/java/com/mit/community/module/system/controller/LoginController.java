@@ -103,7 +103,7 @@ public class LoginController {
             "4、resultStatus: true, message: 没有授权app, object:user。<br/>" +
             "5、resultStatus: true, message: 已授权app, object:user。<br/>" +
             "householdType 与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)")
-    public Result login(String mac, String cellphone, String verificationCode, String password) {
+    public Result login(String mac, String cellphone, String verificationCode, String password, Integer mark) {
         User user;
         if (verificationCode != null) {
             // 验证码登陆
@@ -197,18 +197,20 @@ public class LoginController {
         } else {
             // 已经授权app
             ThreadPoolUtil.execute(new Thread(() -> {
-                DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
-                if (dnakeLoginResponse.getStatus().equals(2)) {
-                    // 密码错误
-                    dnakeAppApiService.resetPwd(cellphone, psd);
-                    dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
-                } else if (dnakeLoginResponse.getStatus().equals(3)) {
-                    // 用户不存在
-                    dnakeAppApiService.register(cellphone, psd);
-                    dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                if (mark == null) {
+                    DnakeLoginResponse dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                    if (dnakeLoginResponse.getStatus().equals(2)) {
+                        // 密码错误
+                        dnakeAppApiService.resetPwd(cellphone, psd);
+                        dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                    } else if (dnakeLoginResponse.getStatus().equals(3)) {
+                        // 用户不存在
+                        dnakeAppApiService.register(cellphone, psd);
+                        dnakeLoginResponse = dnakeAppApiService.login(cellphone, psd);
+                    }
+                    redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
+                            dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
                 }
-                redisService.set(RedisConstant.DNAKE_LOGIN_RESPONSE + cellphone,
-                        dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
             }));
             return Result.success(user, "已授权app");
         }
@@ -351,7 +353,7 @@ public class LoginController {
             if (status == 0) {
                 return Result.success("用户已经存在");
             } else {
-                Result login = this.login(mac, cellphone, null, password);
+                Result login = this.login(mac, cellphone, null, password, null);
                 //添加系统消息
                 sysMessagesService.addSysMessages(cellphone, "注册", "成功注册赣鄱乐生活账号！");
                 return login;
@@ -600,12 +602,7 @@ public class LoginController {
     @ApiOperation(value = "获取住户信息", notes = "传参;cellphone")
     public Result getHousehold(String mac, String cellphone) {
         User user = userService.getByCellphone(cellphone);
-        try {
-            new Thread().sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return this.login(mac, cellphone, null, user.getPassword());
+        return this.login(mac, cellphone, null, user.getPassword(), 1);
     }
 
 }
