@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 促销表
+ *
  * @author Mr.Deng
  * @date 2018/12/18 15:41
  * <p>Copyright: Copyright (c) 2018</p>

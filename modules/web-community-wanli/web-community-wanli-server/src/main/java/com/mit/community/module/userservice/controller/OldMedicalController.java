@@ -7,6 +7,7 @@ import com.mit.community.entity.SysUser;
 import com.mit.community.service.OldMedicalService;
 import com.mit.community.service.RedisService;
 import com.mit.community.util.CookieUtils;
+import com.mit.community.util.DateUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,10 +17,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 
 /**
  * 老人体检
+ *
  * @author Mr.Deng
  * @date 2019/1/2 16:49
  * <p>Copyright: Copyright (c) 2018</p>
@@ -42,6 +45,7 @@ public class OldMedicalController {
 
     /**
      * 添加老人体检信息
+     *
      * @param title     标题
      * @param contacts  联系人
      * @param phone     联系人手机号
@@ -56,17 +60,23 @@ public class OldMedicalController {
     @PostMapping("/save")
     @ApiOperation(value = "发布老人体检", notes = "输入参数：title 标题，contacts 联系人，phone 联系人手机号,address 活动地址，" +
             "content 活动详情，startTime 开始时间（yyyy-MM-dd HH:mm:ss），endTime 结束时间（yyyy-MM-dd HH:mm:ss）")
-    public Result save(HttpServletRequest request, String title, String contacts, String phone, String address, String content,
-                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
-                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime) {
+    public Result save(HttpServletRequest request, Integer id, String title,
+                       String contacts, String phone, String address, String content,
+                       String startTime, String endTime) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        oldMedicalService.save(user.getCommunityCode(), title, user.getAdminName(), contacts, phone, address, startTime, endTime, content);
+        try {
+            oldMedicalService.save(user.getCommunityCode(), id, title, user.getAdminName(), contacts, phone, address,
+                    DateUtils.dateStrToLocalDateTime(startTime), DateUtils.dateStrToLocalDateTime(endTime), content);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return Result.success("发布成功");
     }
 
     /**
      * 更新数据
+     *
      * @param id        老人体检id
      * @param title     标题
      * @param contacts  联系人
@@ -91,12 +101,13 @@ public class OldMedicalController {
 
     /**
      * 删除老人体检
+     *
      * @param oldMedicalId 老人体检id
      * @return result
      * @author Mr.Deng
      * @date 17:37 2019/1/2
      */
-    @PatchMapping("/remove")
+    @RequestMapping("/remove")
     @ApiOperation(value = "删除老人体检", notes = "输入参数：oldMedicalId 老人体检id")
     public Result remove(Integer oldMedicalId) {
         oldMedicalService.remove(oldMedicalId);
@@ -105,6 +116,7 @@ public class OldMedicalController {
 
     /**
      * 分页
+     *
      * @param request         request
      * @param title           标题
      * @param issuer          发布人
@@ -133,10 +145,11 @@ public class OldMedicalController {
             "<br/>startTimeLast 活动开始时间结束（yyyy-MM-dd HH:mm:ss）" +
             "<br/>endTime 活动结束时间开始（yyyy-MM-dd HH:mm:ss）" +
             "<br/>endTimeLast 活动结束时间结束（yyyy-MM-dd HH:mm:ss）")
-    public Result listPage(HttpServletRequest request, String title, String issuer,
+    public Result listPage(HttpServletRequest request,
+                           String title, String issuer,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issuerTimeStart,
-                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issuerTimeEnd, Integer status,
-                           String contacts, String phone, String address, Integer pageNum, Integer pageSize,
+                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime issuerTimeEnd,
+                           Integer status, String contacts, String phone, String address, Integer pageNum, Integer pageSize,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTimeLast,
                            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime,
@@ -153,6 +166,7 @@ public class OldMedicalController {
 
     /**
      * 查询详情
+     *
      * @param id id
      * @return result
      * @author Mr.Deng

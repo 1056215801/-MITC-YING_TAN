@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * 快递信息表
+ *
  * @author Mr.Deng
  * @date 2018/12/14 16:33
  * <p>Copyright: Copyright (c) 2018</p>
@@ -69,4 +70,12 @@ public class ExpressInfo extends BaseEntity {
      */
     @TableField(exist = false)
     private String address;
+    /**
+     * 联系人
+     */
+    private String linker;
+    /**
+     * 联系电话
+     */
+    private String linkphone;
 }

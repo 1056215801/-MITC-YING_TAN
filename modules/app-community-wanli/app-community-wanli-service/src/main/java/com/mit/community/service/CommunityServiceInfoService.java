@@ -273,7 +273,7 @@ public class CommunityServiceInfoService {
      * @Description:~分页查询门诊服务
      */
     public Page<CommunityServiceInfo> listPatientByPage(String communityCode, String name, String time, Integer status,
-                                                        Integer appraise, Integer pageNum, Integer pageSize) {
+                                                        Integer appraise, Integer pageNum, Integer pageSize, String type) {
         EntityWrapper<CommunityServiceInfo> wrapper = new EntityWrapper<>();
         if (StringUtils.isNotBlank(communityCode)) {
             wrapper.eq("community_code", communityCode);
@@ -294,14 +294,26 @@ public class CommunityServiceInfoService {
         if (appraise != null) {
             wrapper.eq("appraise", appraise);
         }
-        wrapper.eq("type", 1);
+        if (StringUtils.isNotBlank(type)) {
+            if (type.equals("outpatient")) {
+                wrapper.eq("type", 1);
+            }
+            if (type.equals("dooropen")) {
+                wrapper.eq("type", 2);
+            }
+            if (type.equals("waterservice")) {
+                wrapper.eq("type", 3);
+            }
+        }
         wrapper.eq("isdel", 0);
         wrapper.orderBy("gmt_create", false);
         Page<CommunityServiceInfo> page = new Page<>(pageNum, pageSize);
         List<CommunityServiceInfo> communityServiceInfos = communityServiceInfoMapper.selectPage(page, wrapper);
         for (CommunityServiceInfo serviceInfo : communityServiceInfos) {
             CommunityServiceInfoDetail detail = communityServiceInfoDetailService.getByCommunityServiceInfoId(serviceInfo.getId());
-            serviceInfo.setDetail(detail.getDetail());
+            if (detail != null) {
+                serviceInfo.setDetail(detail.getDetail());
+            }
         }
         page.setRecords(communityServiceInfos);
         return page;
@@ -316,31 +328,42 @@ public class CommunityServiceInfoService {
     public void savePatientService(String communityCode, Integer id, String name, String intro,
                                    String morning, String afternoon, String portraitFileDomain,
                                    String portraitFileName, String phone, String address, String detail,
-                                   Integer appraise, Integer userid) {
+                                   Integer appraise, Integer userid, Integer serviceType) {
         if (id == null) {//新增
             String imgUrl = portraitFileDomain + portraitFileName;
             String businessHours = morning + "," + afternoon;
             CommunityServiceInfo serviceInfo = new CommunityServiceInfo(communityCode, name, intro, businessHours, address, phone,
-                    null, null, 0, 0, imgUrl, 1, userid, null, 1, appraise, 0);
+                    null, null, 0, 0, imgUrl, serviceType, userid, null, 1, appraise, 0);
             serviceInfo.setGmtModified(LocalDateTime.now());
             serviceInfo.setGmtCreate(LocalDateTime.now());
             communityServiceInfoMapper.insert(serviceInfo);
-            CommunityServiceInfoDetail serviceInfoDetail = new CommunityServiceInfoDetail(serviceInfo.getId(), detail);
-            serviceInfoDetail.setGmtModified(LocalDateTime.now());
-            serviceInfoDetail.setGmtCreate(LocalDateTime.now());
-            communityServiceInfoDetailService.save(serviceInfoDetail);
+            if (StringUtils.isNotBlank(detail)) {
+                CommunityServiceInfoDetail serviceInfoDetail = new CommunityServiceInfoDetail(serviceInfo.getId(), detail);
+                serviceInfoDetail.setGmtModified(LocalDateTime.now());
+                serviceInfoDetail.setGmtCreate(LocalDateTime.now());
+                communityServiceInfoDetailService.save(serviceInfoDetail);
+            }
         } else {//修改
             String imgUrl = portraitFileDomain + portraitFileName;
             String businessHours = morning + "," + afternoon;
             CommunityServiceInfo serviceInfo = new CommunityServiceInfo(communityCode, name, intro, businessHours, address, phone,
-                    null, null, 0, 0, imgUrl, 1, userid, null, 1, appraise, 0);
+                    null, null, 0, 0, imgUrl, serviceType, userid, null, 1, appraise, 0);
             serviceInfo.setGmtModified(LocalDateTime.now());
             serviceInfo.setId(id);
             communityServiceInfoMapper.updateById(serviceInfo);
-            CommunityServiceInfoDetail serviceInfoDetail = communityServiceInfoDetailService.getByCommunityServiceInfoId(id);
-            serviceInfoDetail.setDetail(detail);
-            serviceInfoDetail.setGmtModified(LocalDateTime.now());
-            communityServiceInfoDetailMapper.updateById(serviceInfoDetail);
+            if (StringUtils.isNotBlank(detail)) {
+                CommunityServiceInfoDetail serviceInfoDetail = communityServiceInfoDetailService.getByCommunityServiceInfoId(id);
+                if (serviceInfoDetail != null) {
+                    serviceInfoDetail.setDetail(detail);
+                    serviceInfoDetail.setGmtModified(LocalDateTime.now());
+                    communityServiceInfoDetailMapper.updateById(serviceInfoDetail);
+                } else {
+                    CommunityServiceInfoDetail serviceDetail = new CommunityServiceInfoDetail(serviceInfo.getId(), detail);
+                    serviceInfoDetail.setGmtModified(LocalDateTime.now());
+                    serviceInfoDetail.setGmtCreate(LocalDateTime.now());
+                    communityServiceInfoDetailService.save(serviceInfoDetail);
+                }
+            }
         }
     }
 

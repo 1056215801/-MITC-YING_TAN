@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 
 /**
  * 社区快递控制类
+ *
  * @author Mr.Deng
  * @date 2018/12/26 15:49
  * <p>Copyright: Copyright (c) 2018</p>
@@ -49,6 +50,7 @@ public class ExpressContorller {
 
     /**
      * 添加快递领取地址信息
+     *
      * @param request request
      * @param name    快递名
      * @param address 领取地址
@@ -72,6 +74,7 @@ public class ExpressContorller {
 
     /**
      * 修改快递位置信息
+     *
      * @param request request
      * @param id      id
      * @param name    快递名
@@ -99,12 +102,13 @@ public class ExpressContorller {
 
     /**
      * 删除快递位置信息
+     *
      * @param id 快递位置信息 id
      * @return result
      * @author Mr.Deng
      * @date 17:33 2018/12/26
      */
-    @DeleteMapping("/removeExpressAddress")
+    @PostMapping("/removeExpressAddress")
     @ApiOperation(value = "删除快递位置信息", notes = "输入参数： id 快递位置信息id")
     public Result removeExpressAddress(Integer id) {
         if (id != null) {
@@ -116,6 +120,7 @@ public class ExpressContorller {
 
     /**
      * 分页获取本小区快递地址信息
+     *
      * @param name           快递名称
      * @param address        快递地址
      * @param createUserName 领取位置
@@ -127,16 +132,16 @@ public class ExpressContorller {
      */
     @GetMapping("/listPageExpressAddress")
     @ApiOperation(value = "分页获取小区快递地址信息", notes = "输入参数：name 快递名；address 领取位置 ；createUserName 添加人；pageNum 页数； pageSize 一页数量")
-    public Result listPageExpressAddress(HttpServletRequest request, String name, String address, String createUserName,
-                                         Integer pageNum, Integer pageSize) {
+    public Result listPageExpressAddress(HttpServletRequest request, Integer pageNum, Integer pageSize) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        Page<ExpressAddress> page = expressAddressService.listPage(user.getCommunityCode(), name, address, createUserName, pageNum, pageSize);
+        Page<ExpressAddress> page = expressAddressService.listPage(user.getCommunityCode(), null, null, null, pageNum, pageSize);
         return Result.success(page);
     }
 
     /**
      * 添加快递信息
+     *
      * @param request          request
      * @param cellphone        电话号码
      * @param expressAddressId 快递领取位置id
@@ -147,14 +152,15 @@ public class ExpressContorller {
      */
     @PostMapping("/saveExpressInfo")
     @ApiOperation(value = "添加快递信息", notes = "输入参数：cellphone 快递手机号; expressAddressId 快递位置id; waybillNum 运单编号")
-    public Result saveExpressInfo(HttpServletRequest request, String cellphone, Integer expressAddressId, String waybillNum) {
+    public Result saveExpressInfo(HttpServletRequest request,Integer id, String cellphone, Integer expressAddressId, String waybillNum) {
         if (StringUtils.isNotBlank(cellphone) && expressAddressId != null && StringUtils.isNotBlank(waybillNum)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             User user1 = userService.getByCellphone(cellphone);
             if (user1 != null) {
                 ExpressInfo expressInfo = new ExpressInfo(user.getCommunityCode(), user1.getId(), expressAddressId, waybillNum, 2, Constants.NULL_LOCAL_DATE_TIME,
-                        StringUtils.EMPTY, StringUtils.EMPTY, user.getAdminName(), null);
+                        StringUtils.EMPTY, StringUtils.EMPTY, user.getAdminName(), null, null, null);
+                expressInfo.setId(id);
                 expressInfoService.save(expressInfo);
                 return Result.success("快递信息添加成功");
             }
@@ -165,6 +171,7 @@ public class ExpressContorller {
 
     /**
      * 修改快递信息数据
+     *
      * @param request          request
      * @param id               快递信息id
      * @param userId           app用户id
@@ -196,12 +203,13 @@ public class ExpressContorller {
 
     /**
      * 删除快递信息，根据快递信息id
+     *
      * @param id 快递信息id
      * @return result
      * @author Mr.Deng
      * @date 9:26 2018/12/28
      */
-    @DeleteMapping("/removeExpressInfo")
+    @PostMapping("/removeExpressInfo")
     @ApiOperation(value = "删除快递信息，根据快递信息id", notes = "输入参数：id 快递信息id")
     public Result removeExpressInfo(Integer id) {
         if (id != null) {
@@ -213,6 +221,7 @@ public class ExpressContorller {
 
     /**
      * 分页查询快递信息
+     *
      * @param request          request
      * @param userId           app用户id
      * @param expressAddressId 快递位置信息id

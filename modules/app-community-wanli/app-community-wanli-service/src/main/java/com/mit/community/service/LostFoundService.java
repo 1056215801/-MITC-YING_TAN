@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * 失物招领业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/17 20:33
  * <p>Copyright: Copyright (c) 2018</p>
@@ -34,6 +35,7 @@ public class LostFoundService {
 
     /**
      * 查询所有失物招领简介信息
+     *
      * @return 放回失物招领简介信息
      * @author Mr.Deng
      * @date 9:19 2018/12/18
@@ -48,6 +50,7 @@ public class LostFoundService {
 
     /**
      * 查询所有失物招领简介信息
+     *
      * @return 放回失物招领简介信息
      * @author Mr.Deng
      * @date 9:19 2018/12/18
@@ -77,6 +80,7 @@ public class LostFoundService {
 
     /**
      * 查询失物招领信息 通过失物招领id
+     *
      * @param id 失物招领id
      * @return 失物招领信息
      * @author Mr.Deng
@@ -88,6 +92,7 @@ public class LostFoundService {
 
     /**
      * 查询失物招领详情信息，通过失物招领id
+     *
      * @param id 失物招领id
      * @return 失物招领详情信息
      * @author Mr.Deng
@@ -108,6 +113,7 @@ public class LostFoundService {
 
     /**
      * 保存
+     *
      * @param title         标题
      * @param imgUrl        图片地址
      * @param issuer        发布人
@@ -121,23 +127,47 @@ public class LostFoundService {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void save(String title, String imgUrl, String issuer, String issuerPhone,
-                     String picAddress, String receiverAddress, LocalDateTime pickTime, String communityCode, String content
-    ) {
-        LostFound lostFound = new LostFound(title,
-                imgUrl, issuer, issuerPhone, picAddress,
-                pickTime, StringUtils.EMPTY, StringUtils.EMPTY,
-                receiverAddress, Constants.NULL_LOCAL_DATE_TIME,
-                1, communityCode, 0, null, null);
-        lostFound.setGmtCreate(LocalDateTime.now());
-        lostFound.setGmtModified(LocalDateTime.now());
-        lostFoundMapper.insert(lostFound);
-        LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
-        lostFountContentService.save(lostFountContent);
+    public void save(Integer id, String title, String imgUrl, String issuer, String issuerPhone,
+                     String picAddress, String receiverAddress, LocalDateTime pickTime,
+                     String communityCode, String content) {
+        if (id == null) {
+            LostFound lostFound = new LostFound(title,
+                    imgUrl, issuer, issuerPhone, picAddress,
+                    pickTime, StringUtils.EMPTY, StringUtils.EMPTY,
+                    receiverAddress, Constants.NULL_LOCAL_DATE_TIME,
+                    1, communityCode, 0, null, null);
+            lostFound.setGmtCreate(LocalDateTime.now());
+            lostFound.setGmtModified(LocalDateTime.now());
+            lostFoundMapper.insert(lostFound);
+            LostFountContent lostFountContent = new LostFountContent(lostFound.getId(), content);
+            lostFountContentService.save(lostFountContent);
+        } else {
+            LostFound lostFound = new LostFound(title,
+                    imgUrl, issuer, issuerPhone, picAddress,
+                    pickTime, StringUtils.EMPTY, StringUtils.EMPTY,
+                    receiverAddress, Constants.NULL_LOCAL_DATE_TIME,
+                    1, communityCode, 0, null, null);
+            lostFound.setId(id);
+            lostFound.setGmtModified(LocalDateTime.now());
+            lostFoundMapper.updateById(lostFound);
+            if (StringUtils.isNotBlank(content)) {
+                LostFountContent lostFountContent = lostFountContentService.getObjectById(id);
+                if (lostFountContent == null) {
+                    LostFountContent fountContent = new LostFountContent(lostFound.getId(), content);
+                    lostFountContentService.save(fountContent);
+                } else {
+                    LostFountContent fountContent = new LostFountContent(lostFound.getId(), content);
+                    fountContent.setGmtCreate(LocalDateTime.now());
+                    fountContent.setGmtModified(LocalDateTime.now());
+                    lostFountContentService.save(fountContent);
+                }
+            }
+        }
     }
 
     /**
      * 更新
+     *
      * @param title           标题
      * @param imgUrl          图片地址
      * @param issuer          发布人
@@ -205,6 +235,7 @@ public class LostFoundService {
 
     /**
      * 删除
+     *
      * @param id id
      * @author shuyy
      * @date 2018/12/27 11:04
@@ -217,6 +248,7 @@ public class LostFoundService {
 
     /**
      * 分页查询
+     *
      * @param communityCode     小区code
      * @param title             标题
      * @param issuer            发布人
@@ -291,6 +323,7 @@ public class LostFoundService {
 
     /**
      * 统计未读
+     *
      * @param communityCode 小区code
      * @return java.lang.Integer
      * @author shuyy
@@ -308,6 +341,7 @@ public class LostFoundService {
 
     /**
      * 记录浏览量
+     *
      * @param lostFound 失物招领
      * @return 更新条数
      * @author Mr.Deng
@@ -324,6 +358,7 @@ public class LostFoundService {
 
     /**
      * 增加浏览量
+     *
      * @param lostFound 失物招领
      * @author Mr.Deng
      * @date 9:26 2019/1/4

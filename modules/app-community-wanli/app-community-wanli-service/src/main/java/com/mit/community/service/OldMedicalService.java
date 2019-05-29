@@ -6,17 +6,20 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.OldMedical;
 import com.mit.community.entity.OldMedicalContent;
 import com.mit.community.entity.OldMedicalReadUser;
+import com.mit.community.mapper.OldMedicalContentMapper;
 import com.mit.community.mapper.OldMedicalMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * 老人体检业务处理层
+ *
  * @author Mr.Deng
  * @date 2018/12/18 19:39
  * <p>Copyright: Copyright (c) 2018</p>
@@ -30,9 +33,12 @@ public class OldMedicalService {
     private OldMedicalContentService oldMedicalContentService;
     @Autowired
     private OldMedicalReadUserService oldMedicalReadUserService;
+    @Autowired
+    private OldMedicalContentMapper oldMedicalContentMapper;
 
     /**
      * 添加老人体检信息
+     *
      * @param communityCode 小区code
      * @param title         标题
      * @param issuer        发布人姓名
@@ -46,19 +52,45 @@ public class OldMedicalService {
      * @date 17:03 2019/1/2
      */
     @Transactional(rollbackFor = Exception.class)
-    public void save(String communityCode, String title, String issuer, String contacts, String phone, String address,
+    public void save(String communityCode, Integer id, String title, String issuer, String contacts, String phone, String address,
                      LocalDateTime startTime, LocalDateTime endTime, String content) {
-        OldMedical oldMedical = new OldMedical(communityCode, title, issuer, LocalDateTime.now(), contacts, phone,
-                address, startTime, endTime, 0, null, null, null);
-        oldMedical.setGmtCreate(LocalDateTime.now());
-        oldMedical.setGmtModified(LocalDateTime.now());
-        oldMedicalMapper.insert(oldMedical);
-        OldMedicalContent oldMedicalContent = new OldMedicalContent(oldMedical.getId(), content);
-        oldMedicalContentService.save(oldMedicalContent);
+        if (id == null) {//新增
+            OldMedical oldMedical = new OldMedical(communityCode, title, issuer, LocalDateTime.now(), contacts, phone,
+                    address, startTime, endTime, 0, null, null, null);
+            oldMedical.setGmtCreate(LocalDateTime.now());
+            oldMedical.setGmtModified(LocalDateTime.now());
+            oldMedicalMapper.insert(oldMedical);
+            OldMedicalContent oldMedicalContent = new OldMedicalContent(oldMedical.getId(), content);
+            oldMedicalContentService.save(oldMedicalContent);
+        } else {//修改
+            EntityWrapper<OldMedical> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", id);
+            List<OldMedical> list = oldMedicalMapper.selectList(wrapper);
+            OldMedical medical = list.get(0);
+            medical.setTitle(title);
+            medical.setIssuer(issuer);
+            medical.setIssuerTime(LocalDateTime.now());
+            medical.setContacts(contacts);
+            medical.setPhone(phone);
+            medical.setAddress(address);
+            medical.setStartTime(startTime);
+            medical.setEndTime(endTime);
+            medical.setReadNum(0);
+            medical.setGmtModified(LocalDateTime.now());
+            oldMedicalMapper.updateById(medical);
+            EntityWrapper<OldMedicalContent> entityWrapper = new EntityWrapper<>();
+            wrapper.eq("old_medical_id", id);
+            List<OldMedicalContent> contents = oldMedicalContentMapper.selectList(entityWrapper);
+            OldMedicalContent oldMedicalContent = contents.get(0);
+            oldMedicalContent.setContent(content);
+            oldMedicalContent.setGmtModified(LocalDateTime.now());
+            oldMedicalContentMapper.updateById(oldMedicalContent);
+        }
     }
 
     /**
      * 更新数据
+     *
      * @param id        老人体检id
      * @param title     标题
      * @param contacts  联系人
@@ -102,6 +134,7 @@ public class OldMedicalService {
 
     /**
      * 分页
+     *
      * @param communityCode   小区code
      * @param title           标题
      * @param issuer          发布人
@@ -121,10 +154,11 @@ public class OldMedicalService {
      * @author Mr.Deng
      * @date 9:06 2019/1/3
      */
-    public Page<OldMedical> listPage(String communityCode, String title, String issuer, LocalDateTime issuerTimeStart,
-                                     LocalDateTime issuerTimeEnd, Integer status,
-                                     String contacts, String phone, String address, LocalDateTime startTime, LocalDateTime startTimeLast,
-                                     LocalDateTime endTime, LocalDateTime endTimeLast, Integer pageNum, Integer pageSize) {
+    public Page<OldMedical> listPage(String communityCode, String title, String issuer,
+                                     LocalDateTime issuerTimeStart, LocalDateTime issuerTimeEnd, Integer status,
+                                     String contacts, String phone, String address, LocalDateTime startTime,
+                                     LocalDateTime startTimeLast, LocalDateTime endTime,
+                                     LocalDateTime endTimeLast, Integer pageNum, Integer pageSize) {
         EntityWrapper<OldMedical> wrapper = new EntityWrapper<>();
         Page<OldMedical> page = new Page<>(pageNum, pageSize);
         LocalDateTime nowTime = LocalDateTime.now();
@@ -193,6 +227,7 @@ public class OldMedicalService {
 
     /**
      * 删除老人体检
+     *
      * @param id 老人体检id
      * @author Mr.Deng
      * @date 17:36 2019/1/2
@@ -205,6 +240,7 @@ public class OldMedicalService {
 
     /**
      * 查询老人体检信息，通过小区code
+     *
      * @param communityCode 小区code
      * @return 老人体检信息
      * @author Mr.Deng
@@ -234,6 +270,7 @@ public class OldMedicalService {
 
     /**
      * 查询老人体检信息，通过老人体检id
+     *
      * @param id 老人体检id
      * @return 老人体检信息
      * @author Mr.Deng
@@ -245,6 +282,7 @@ public class OldMedicalService {
 
     /**
      * 查询老人体检信息，通过老人体检id
+     *
      * @param oldMedicalId 老人体检id
      * @return 老人体检信息
      * @author Mr.Deng
@@ -265,6 +303,7 @@ public class OldMedicalService {
 
     /**
      * 判断当前活动
+     *
      * @param startTime 活动开始时间
      * @param endTime   活动结束时间
      * @return 活动状态
@@ -284,6 +323,7 @@ public class OldMedicalService {
 
     /**
      * 统计未读
+     *
      * @param communityCode 小区code
      * @param userId        userId
      * @return java.lang.Integer
@@ -302,6 +342,7 @@ public class OldMedicalService {
 
     /**
      * 记录浏览量
+     *
      * @param oldMedical 老人体检
      * @return 更新成功数
      * @author Mr.Deng
@@ -318,6 +359,7 @@ public class OldMedicalService {
 
     /**
      * 增加浏览量信息
+     *
      * @param oldMedical 老人体检
      * @author Mr.Deng
      * @date 9:54 2019/1/4

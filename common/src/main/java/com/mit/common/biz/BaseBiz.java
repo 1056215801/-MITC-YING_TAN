@@ -17,10 +17,11 @@ import java.util.Map;
 
 /**
  * biz基础类
+ *
  * @author shuyy
  * @date 2018/11/7 17:00
  * @company mitesofor
-*/
+ */
 public abstract class BaseBiz<M extends Mapper<T>, T> {
     @Autowired
     protected M mapper;
@@ -43,7 +44,7 @@ public abstract class BaseBiz<M extends Mapper<T>, T> {
         return mapper.select(entity);
     }
 
-//    @TargetDataSource(DataSourceKey.DATA_SOURCE_2)
+    //    @TargetDataSource(DataSourceKey.DATA_SOURCE_2)
     public List<T> selectListAll() {
         return mapper.selectAll();
     }
@@ -98,24 +99,24 @@ public abstract class BaseBiz<M extends Mapper<T>, T> {
     public TableResultResponse<T> selectByQuery(Query query) {
         Class<T> clazz = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
-        if(query.entrySet().size()>0) {
-        	//查询条件是or还是and
-        	boolean orQuery = false;
-        	String condition = "orQuery";
-        	if(null != query.get(condition)){
-        		query.remove(condition);
-        		orQuery = true;
-        	}
+        if (query.entrySet().size() > 0) {
+            //查询条件是or还是and
+            boolean orQuery = false;
+            String condition = "orQuery";
+            if (null != query.get(condition)) {
+                query.remove(condition);
+                orQuery = true;
+            }
             int i = 0;
             Example.Criteria criteria = example.createCriteria();
             for (Map.Entry<String, Object> entry : query.entrySet()) {
-            	if(orQuery && i++ > 0){
-            		Example.Criteria orCriteria = example.createCriteria();
-            		orCriteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
-            		example.or(orCriteria);
-            	}else{
-                criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
-            	}
+                if (orQuery && i++ > 0) {
+                    Example.Criteria orCriteria = example.createCriteria();
+                    orCriteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
+                    example.or(orCriteria);
+                } else {
+                    criteria.andLike(entry.getKey(), "%" + entry.getValue().toString() + "%");
+                }
             }
         }
         Page<Object> result = PageHelper.startPage(query.getPage(), query.getLimit());

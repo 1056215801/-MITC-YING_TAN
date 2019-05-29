@@ -70,15 +70,30 @@ public class LostFountContentService {
     }
 
     /**
-     *
      * @param lostFoundId 失物招领id
      * @author shuyy
      * @date 2018/12/27 11:03
      * @company mitesofor
-    */
+     */
     public void removeByLostFoudId(Integer lostFoundId) {
         EntityWrapper<LostFountContent> wrapper = new EntityWrapper<>();
         wrapper.eq("lost_fount_id", lostFoundId);
         lostFountContentMapper.delete(wrapper);
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/5/23 13:23
+     * @Company mitesofor
+     * @Description:~根据id获取单个对象
+     */
+    public LostFountContent getObjectById(Integer id) {
+        EntityWrapper<LostFountContent> wrapper = new EntityWrapper<>();
+        wrapper.eq("lost_fount_id", id);
+        List<LostFountContent> list = lostFountContentMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 }

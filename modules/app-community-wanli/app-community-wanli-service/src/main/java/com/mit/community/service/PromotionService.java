@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.Promotion;
 import com.mit.community.entity.PromotionContent;
 import com.mit.community.entity.PromotionReadUser;
+import com.mit.community.mapper.PromotionContentMapper;
 import com.mit.community.mapper.PromotionMapper;
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.List;
 
 /**
  * 促销业务处理表
+ *
  * @author Mr.Deng
  * @date 2018/12/18 15:56
  * <p>Copyright: Copyright (c) 2018</p>
@@ -29,9 +32,12 @@ public class PromotionService {
     private PromotionContentService promotionContentService;
     @Autowired
     private PromotionReadUserService promotionReadUserService;
+    @Autowired
+    private PromotionContentMapper promotionContentMapper;
 
     /**
      * 查询所有的促销活动 ，通过小区code
+     *
      * @param communityCode 小区code
      * @return
      * @author Mr.Deng
@@ -46,6 +52,7 @@ public class PromotionService {
 
     /**
      * 查询所有的促销活动 ，通过小区code
+     *
      * @param communityCode 小区code
      * @return
      * @author Mr.Deng
@@ -77,6 +84,7 @@ public class PromotionService {
 
     /**
      * 查询促销信息，通过id
+     *
      * @param promotionId 促销id
      * @return 促销信息
      * @author Mr.Deng
@@ -88,6 +96,7 @@ public class PromotionService {
 
     /**
      * 查询促销信息详情信息，通过促销id
+     *
      * @param promotionId 促销id
      * @return 促销信息
      * @author Mr.Deng
@@ -108,6 +117,7 @@ public class PromotionService {
 
     /**
      * 判断当前活动
+     *
      * @param startTime 活动开始时间
      * @param endTime   活动结束时间
      * @return 活动状态
@@ -127,6 +137,7 @@ public class PromotionService {
 
     /**
      * 保存
+     *
      * @param promotionType    促销累并
      * @param title            标题
      * @param imgUrl           图片url
@@ -145,25 +156,49 @@ public class PromotionService {
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void save(String promotionType, String title, String imgUrl, String issuer, String issuerPhone,
+    public void save(Integer id, String promotionType, String title, String imgUrl, String issuer, String issuerPhone,
                      String promotionAddress, LocalDateTime issueTime, Float discount, String activityContent,
                      LocalDateTime startTime, LocalDateTime endTime,
                      String communityCode, String content) {
-        Promotion promotion = new Promotion(promotionType,
-                title, imgUrl, issuer, issuerPhone,
-                promotionAddress, issueTime,
-                discount, activityContent,
-                startTime, endTime, communityCode, 0, null,
-                null, null);
-        promotion.setGmtCreate(LocalDateTime.now());
-        promotion.setGmtModified(LocalDateTime.now());
-        promotionMapper.insert(promotion);
-        PromotionContent promotionContent = new PromotionContent(promotion.getId(), content);
-        promotionContentService.save(promotionContent);
+        if (id == null) {
+            Promotion promotion = new Promotion(promotionType,
+                    title, imgUrl, issuer, issuerPhone,
+                    promotionAddress, issueTime,
+                    discount, activityContent,
+                    startTime, endTime, communityCode, 0, null,
+                    null, null);
+            promotion.setGmtCreate(LocalDateTime.now());
+            promotion.setGmtModified(LocalDateTime.now());
+            promotionMapper.insert(promotion);
+            PromotionContent promotionContent = new PromotionContent(promotion.getId(), content);
+            promotionContentService.save(promotionContent);
+        } else {
+            Promotion promotion = new Promotion(promotionType,
+                    title, imgUrl, issuer, issuerPhone,
+                    promotionAddress, issueTime,
+                    discount, activityContent,
+                    startTime, endTime, communityCode, 0, null,
+                    null, null);
+            promotion.setId(id);
+            promotion.setGmtModified(LocalDateTime.now());
+            promotionMapper.updateById(promotion);
+            if (StringUtils.isNotBlank(content)) {
+                PromotionContent promotionContent = promotionContentService.getByPromotionId(id);
+                if (promotionContent == null) {
+                    PromotionContent promoContent = new PromotionContent(promotion.getId(), content);
+                    promotionContentService.save(promoContent);
+                } else {
+                    promotionContent.setContent(content);
+                    promotionContent.setGmtModified(LocalDateTime.now());
+                    promotionContentMapper.updateById(promotionContent);
+                }
+            }
+        }
     }
 
     /**
      * 更新
+     *
      * @param id
      * @param promotionType    促销累并
      * @param title            标题
@@ -202,6 +237,7 @@ public class PromotionService {
 
     /**
      * 删除
+     *
      * @param id
      * @return void
      * @throws
@@ -217,6 +253,7 @@ public class PromotionService {
 
     /**
      * 分页查询
+     *
      * @param communityCode  小区code
      * @param promotionType  促销类型
      * @param title          标题
@@ -268,12 +305,19 @@ public class PromotionService {
             wrapper.le("end_time", endTime);
         }
         List<Promotion> promotions = promotionMapper.selectPage(page, wrapper);
+        for (Promotion promotion : promotions) {
+            PromotionContent content = promotionContentService.getByPromotionId(promotion.getId());
+            if (content != null) {
+                promotion.setContent(content.getContent());
+            }
+        }
         page.setRecords(promotions);
         return page;
     }
 
     /**
      * 统计未读数
+     *
      * @param communityCode 小区code
      * @param userId        用户id
      * @return java.lang.Integer
@@ -291,6 +335,7 @@ public class PromotionService {
 
     /**
      * 记录浏览量
+     *
      * @param promotion 促销活动
      * @return 修改成功条数
      * @author Mr.Deng
@@ -307,6 +352,7 @@ public class PromotionService {
 
     /**
      * 增加浏览量
+     *
      * @param promotion 促销活动
      * @author Mr.Deng
      * @date 9:06 2019/1/4
