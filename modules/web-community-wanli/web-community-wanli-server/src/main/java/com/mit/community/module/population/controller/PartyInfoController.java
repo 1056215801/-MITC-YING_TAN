@@ -46,7 +46,7 @@ public class PartyInfoController {
             String params = inputStream2String(in, "");
             System.out.println(params);
             JSONObject jsonObject = JSONObject.fromObject(params);
-            JSONObject jwry = jsonObject.getJSONObject("jwry");
+            JSONObject jwry = jsonObject.getJSONObject("lsry");
             System.out.println(jwry + "===================");
         } catch (Exception e) {
             log.error(e.getMessage());
