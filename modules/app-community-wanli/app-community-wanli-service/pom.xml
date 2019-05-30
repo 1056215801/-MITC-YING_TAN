@@ -9,6 +9,23 @@
     <artifactId>app-community-wanli-service</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>cn.jpush.api</groupId>
+            <artifactId>jpush-client</artifactId>
+            <version>3.3.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.jpush.api</groupId>
+            <artifactId>jiguang-common</artifactId>
+            <version>1.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.6.Final</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.mit</groupId>
