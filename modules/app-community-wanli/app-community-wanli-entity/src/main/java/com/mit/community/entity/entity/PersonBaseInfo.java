@@ -8,10 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 人员基本信息
+ *
  * @author xiong
  * @date 2019/5/25
  * @company mitesofor
@@ -22,7 +23,7 @@ import java.time.LocalDate;
 @TableName("person_baseinfo")
 public class PersonBaseInfo extends BaseEntity {
     /**
-    省份证号
+     * 省份证号
      */
     @TableField("id_card_num")
     private String idCardNum;
@@ -43,7 +44,7 @@ public class PersonBaseInfo extends BaseEntity {
      * 出生日期
      */
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    private LocalDate birthday;
+    private LocalDateTime birthday;
     /**
      * 民族
      */

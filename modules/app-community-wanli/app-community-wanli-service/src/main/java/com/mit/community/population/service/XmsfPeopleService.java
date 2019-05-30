@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.XmsfPeopleInfo;
-import com.mit.community.mapper.XmsfPeopleMapper;
+import com.mit.community.entity.entity.XmsfPeopleInfo;
+import com.mit.community.mapper.mapper.XmsfPeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

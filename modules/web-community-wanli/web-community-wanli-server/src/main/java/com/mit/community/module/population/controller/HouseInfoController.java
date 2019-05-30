@@ -1,8 +1,8 @@
 package com.mit.community.module.population.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.mit.community.entity.HouseInfo;
-import com.mit.community.service.HouseInfoService;
+import com.mit.community.entity.entity.HouseInfo;
+import com.mit.community.population.service.HouseInfoService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;

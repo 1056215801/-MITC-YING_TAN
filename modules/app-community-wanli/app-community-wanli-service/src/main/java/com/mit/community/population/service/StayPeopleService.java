@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.StayPeopleInfo;
-import com.mit.community.mapper.StayPeopleMapper;
+import com.mit.community.entity.entity.StayPeopleInfo;
+import com.mit.community.mapper.mapper.StayPeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

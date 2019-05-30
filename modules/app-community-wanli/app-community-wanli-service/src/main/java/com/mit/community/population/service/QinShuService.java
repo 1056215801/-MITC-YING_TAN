@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.QinShuInfo;
-import com.mit.community.mapper.QinShuMapper;
+import com.mit.community.entity.entity.QinShuInfo;
+import com.mit.community.mapper.mapper.QinShuMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

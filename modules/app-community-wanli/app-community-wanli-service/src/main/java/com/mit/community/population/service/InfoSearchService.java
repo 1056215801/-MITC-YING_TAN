@@ -2,8 +2,8 @@ package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.mit.community.entity.InfoSearch;
-import com.mit.community.mapper.InfoSearchMapper;
+import com.mit.community.entity.entity.InfoSearch;
+import com.mit.community.mapper.mapper.InfoSearchMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,8 @@
 package com.mit.community.module.population.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.mit.community.entity.InfoSearch;
-import com.mit.community.service.InfoSearchService;
+import com.mit.community.entity.entity.InfoSearch;
+import com.mit.community.population.service.InfoSearchService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

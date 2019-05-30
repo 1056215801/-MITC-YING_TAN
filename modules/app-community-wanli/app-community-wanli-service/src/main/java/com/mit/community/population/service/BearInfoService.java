@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.BearInfo;
-import com.mit.community.mapper.BearInfoMapper;
+import com.mit.community.entity.entity.BearInfo;
+import com.mit.community.mapper.mapper.BearInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

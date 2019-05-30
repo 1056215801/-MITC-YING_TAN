@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.PartyInfo;
-import com.mit.community.mapper.PartyInfoMapper;
+import com.mit.community.entity.entity.PartyInfo;
+import com.mit.community.mapper.mapper.PartyInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

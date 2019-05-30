@@ -1,7 +1,7 @@
 package com.mit.community.mapper.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.mit.community.entity.ZDQSNCInfo;
+import com.mit.community.entity.entity.ZDQSNCInfo;
 
 public interface ZDQSNCMapper extends BaseMapper<ZDQSNCInfo> {
 }

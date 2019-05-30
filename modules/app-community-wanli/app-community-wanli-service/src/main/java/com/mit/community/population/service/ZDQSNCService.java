@@ -1,7 +1,8 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.ZDQSNCInfo;
-import com.mit.community.mapper.ZDQSNCMapper;
+
+import com.mit.community.entity.entity.ZDQSNCInfo;
+import com.mit.community.mapper.mapper.ZDQSNCMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

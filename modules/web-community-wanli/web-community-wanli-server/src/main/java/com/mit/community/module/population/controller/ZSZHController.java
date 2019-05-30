@@ -1,6 +1,6 @@
 package com.mit.community.module.population.controller;
 
-import com.mit.community.service.ZSZHService;
+import com.mit.community.population.service.ZSZHService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -1,7 +1,8 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.CXInfo;
-import com.mit.community.mapper.CXMapper;
+
+import com.mit.community.entity.entity.CXInfo;
+import com.mit.community.mapper.mapper.CXMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

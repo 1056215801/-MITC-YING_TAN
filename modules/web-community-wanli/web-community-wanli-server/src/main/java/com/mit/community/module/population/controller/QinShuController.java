@@ -1,8 +1,8 @@
 package com.mit.community.module.population.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.mit.community.entity.QinShuInfo;
-import com.mit.community.service.QinShuService;
+import com.mit.community.entity.entity.QinShuInfo;
+import com.mit.community.population.service.QinShuService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;

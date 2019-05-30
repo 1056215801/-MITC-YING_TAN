@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.AzbInfo;
-import com.mit.community.mapper.AZBMapper;
+import com.mit.community.entity.entity.AzbInfo;
+import com.mit.community.mapper.mapper.AZBMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

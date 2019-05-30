@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.CensusInfo;
-import com.mit.community.mapper.CensusInfoMapper;
+import com.mit.community.entity.entity.CensusInfo;
+import com.mit.community.mapper.mapper.CensusInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,8 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.SQJZPeopleinfo;
-import com.mit.community.mapper.SQJZPeopleMapper;
-import com.mit.community.util.Result;
+import com.mit.community.entity.entity.SQJZPeopleinfo;
+import com.mit.community.mapper.mapper.SQJZPeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

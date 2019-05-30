@@ -1,7 +1,7 @@
 package com.mit.community.mapper.mapper;
 
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.mit.community.entity.InfoSearch;
+import com.mit.community.entity.entity.InfoSearch;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 

@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.MilitaryServiceInfo;
-import com.mit.community.mapper.MilitaryServiceMapper;
+import com.mit.community.entity.entity.MilitaryServiceInfo;
+import com.mit.community.mapper.mapper.MilitaryServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

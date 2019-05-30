@@ -1,7 +1,7 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.ZSZHInfo;
-import com.mit.community.mapper.ZSZHMapper;
+import com.mit.community.entity.entity.ZSZHInfo;
+import com.mit.community.mapper.mapper.ZSZHMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
