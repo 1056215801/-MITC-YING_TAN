@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.LabelsMapper">
+
+    <select id="getLabelsInfoByUserId" resultType="com.mit.community.entity.LabelsInfo">
+        select c.id as lsryId,d.id as jwryId,e.id as dyId,f.id as jsId,g.id as byId,h.id as xmsfId,i.id as yscxId,j.id as sfId,k.id as sqjz,
+        l.id as zszhId,m.id as xdId,n.id as azbId,o.id as zdqsnId
+        from user a left join person_baseinfo b on a.id_card_num=b.id_card_num LEFT JOIN staypeople_info c ON b.id=c.person_baseinfo_id LEFT JOIN engpeople_info d on b.id=d.person_baseinfo_id LEFT JOIN party_info e on b.id=e.person_baseinfo_id LEFT JOIN bear_info f on b.id=f.person_baseinfo_id
+        LEFT JOIN militaryservice_info g on b.id=g.person_baseinfo_id LEFT JOIN xmsfpeople_info h on b.id=h.person_baseinfo_id LEFT JOIN cx_Info i on b.id=i.person_baseinfo_id
+        LEFT JOIN sfpeople_info j on b.id=j.person_baseinfo_id LEFT JOIN sqjzpeople_info k on b.id=k.person_baseinfo_id LEFT JOIN zszh_info l on b.id=l.person_baseinfo_id
+        LEFT JOIN xd_info m on b.id=m.person_baseinfo_id LEFT JOIN azb_info n on b.id=n.person_baseinfo_id LEFT JOIN zdqsn_info o on b.id=o.person_baseinfo_id where a.id=#{userid}
+    </select>
+</mapper>
