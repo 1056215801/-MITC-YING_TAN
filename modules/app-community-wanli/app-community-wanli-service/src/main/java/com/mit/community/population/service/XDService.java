@@ -18,4 +18,10 @@ public class XDService {
         xDInfo.setGmtModified(LocalDateTime.now());
         xDMapper.insert(xDInfo);
     }
+
+    public void save(XDInfo xDInfo){
+        xDInfo.setGmtCreate(LocalDateTime.now());
+        xDInfo.setGmtModified(LocalDateTime.now());
+        xDMapper.insert(xDInfo);
+    }
 }

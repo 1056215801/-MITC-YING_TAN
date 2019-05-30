@@ -22,4 +22,11 @@ public class ZSZHService {
         zSZHMapper.insert(zSZHInfo);
 
     }
+
+    public void save(ZSZHInfo zSZHInfo){
+        zSZHInfo.setGmtCreate(LocalDateTime.now());
+        zSZHInfo.setGmtModified(LocalDateTime.now());
+        zSZHMapper.insert(zSZHInfo);
+
+    }
 }

@@ -19,4 +19,10 @@ public class CXService {
         cXInfo.setGmtModified(LocalDateTime.now());
         cXMapper.insert(cXInfo);
     }
+
+    public void save(CXInfo cXInfo){
+        cXInfo.setGmtCreate(LocalDateTime.now());
+        cXInfo.setGmtModified(LocalDateTime.now());
+        cXMapper.insert(cXInfo);
+    }
 }

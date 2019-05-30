@@ -19,4 +19,10 @@ public class BearInfoService {
         bearInfo.setGmtModified(LocalDateTime.now());
         bearInfoMapper.insert(bearInfo);
     }
+
+    public void save(BearInfo bearInfo) {
+        bearInfo.setGmtCreate(LocalDateTime.now());
+        bearInfo.setGmtModified(LocalDateTime.now());
+        bearInfoMapper.insert(bearInfo);
+    }
 }
