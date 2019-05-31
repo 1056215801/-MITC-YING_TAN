@@ -52,7 +52,8 @@ public class OldMedicalService {
      * @date 17:03 2019/1/2
      */
     @Transactional(rollbackFor = Exception.class)
-    public void save(String communityCode, Integer id, String title, String issuer, String contacts, String phone, String address,
+    public void save(String communityCode, Integer id, String title,
+                     String issuer, String contacts, String phone, String address,
                      LocalDateTime startTime, LocalDateTime endTime, String content) {
         if (id == null) {//新增
             OldMedical oldMedical = new OldMedical(communityCode, title, issuer, LocalDateTime.now(), contacts, phone,
@@ -79,7 +80,7 @@ public class OldMedicalService {
             medical.setGmtModified(LocalDateTime.now());
             oldMedicalMapper.updateById(medical);
             EntityWrapper<OldMedicalContent> entityWrapper = new EntityWrapper<>();
-            wrapper.eq("old_medical_id", id);
+            entityWrapper.eq("old_medical_id", id);
             List<OldMedicalContent> contents = oldMedicalContentMapper.selectList(entityWrapper);
             OldMedicalContent oldMedicalContent = contents.get(0);
             oldMedicalContent.setContent(content);

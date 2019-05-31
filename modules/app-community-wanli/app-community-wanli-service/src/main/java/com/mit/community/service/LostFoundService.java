@@ -156,10 +156,10 @@ public class LostFoundService {
                     LostFountContent fountContent = new LostFountContent(lostFound.getId(), content);
                     lostFountContentService.save(fountContent);
                 } else {
-                    LostFountContent fountContent = new LostFountContent(lostFound.getId(), content);
-                    fountContent.setGmtCreate(LocalDateTime.now());
-                    fountContent.setGmtModified(LocalDateTime.now());
-                    lostFountContentService.save(fountContent);
+                    lostFountContent.setContent(content);
+                    lostFountContent.setGmtCreate(LocalDateTime.now());
+                    lostFountContent.setGmtModified(LocalDateTime.now());
+                    lostFountContentService.updateByLostFoudId(lostFountContent);
                 }
             }
         }

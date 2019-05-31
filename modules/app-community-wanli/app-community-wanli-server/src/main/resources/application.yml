@@ -5,7 +5,7 @@ logging:
 spring:
   redis:
     database: 2
-    host: ${REDIS_HOST:192.168.1.222}
+    host: ${REDIS_HOST:127.0.0.1}
     port: ${REDIS_PORT:6379}
     pool:
     max-active: 20
@@ -51,9 +51,9 @@ spring:
         login-username: admin
         login-password: admin
         #测试环境
-        allow: 192.168.1.222
+        #allow: 192.168.1.222
         #本地环境和正式环境
-        #allow: 127.0.0.1
+        allow: 127.0.0.1
       filter:
         stat:
           db-type: mysql
@@ -185,7 +185,7 @@ redis:
     maxActive: 300
     maxIdle: 100
     maxWait: 1000
-  host: ${REDIS_HOST:192.168.1.222}
+  host: ${REDIS_HOST:127.0.0.1}
   port:  ${REDIS_PORT:6379}
   password:
   timeout: 2000
