@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,14 +19,14 @@ public class ListController {
     @Autowired
     private ListService listService;
 
-    @RequestMapping("/getDeviceList")
+    @GetMapping("/getDeviceList")
     @ApiOperation(value = "获取设备列表")
     public Result getDeviceList() {
         ListInterfaceData data = listService.getDeviceList();
             return Result.success(data);
         }
 
-        @RequestMapping("/update")
+        @GetMapping("/update")
         @ApiOperation(value = "收藏/取消收藏",notes = "参数：id 设备id，isCollect 是否收藏（0不收藏，1收藏）")
         public Result update(Integer id, int isCollect) {
             listService.updateCollect(id, isCollect);

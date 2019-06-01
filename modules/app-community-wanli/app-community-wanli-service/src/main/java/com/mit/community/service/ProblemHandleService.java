@@ -27,7 +27,7 @@ public class ProblemHandleService {
     private HandleProblemMapper handleProblemMapper;
 
     public int getProblemCount(){
-        return problemHandleMapper.getProblemCount();
+        return problemHandleMapper.getProblemCount("停车");
     }
 
     public List<ReportProblemInfo> getProblem(){

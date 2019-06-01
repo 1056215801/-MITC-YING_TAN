@@ -11,11 +11,9 @@
                 jdbcType="VARCHAR" />
         <result property="address" column="address" javaType="String"
                 jdbcType="VARCHAR" />
-        <result property="isOpen" column="isOpen" javaType="int"
+        <result property="isOpen" column="isopen" javaType="int"
                 jdbcType="INTEGER" />
         <result property="status" column="status" javaType="int"
-                jdbcType="INTEGER" />
-        <result property="isopen" column="isopen" javaType="int"
                 jdbcType="INTEGER" />
         <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
                 jdbcType="OTHER"/>

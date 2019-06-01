@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +40,7 @@ public class ProblemHandleController {
         return Result.success(list);
     }
 
-    @GetMapping("/handleProblem")
+    @PostMapping("/handleProblem")
     @ApiOperation(value = "小区停车问题受理", notes = "输入参数：userId 受理人id，reportProblemId 事件id，dept 部门，content 内容,images 照片")
     public Result handleProblem(Integer userId ,Integer reportProblemId,String dept,String content,MultipartFile[] images) throws Exception{
         List<String> imageUrls = new ArrayList<>();
@@ -60,6 +61,4 @@ public class ProblemHandleController {
         List<HandleProblemInfo> list = problemHandleService.getHandleProblem();
         return Result.success(list);
     }
-
-
 }

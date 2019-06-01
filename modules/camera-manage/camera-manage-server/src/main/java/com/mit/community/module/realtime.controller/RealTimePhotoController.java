@@ -47,7 +47,7 @@ public class RealTimePhotoController {
 	@Autowired
 	WebApplicationContext applicationContext;
 
-	@GetMapping("/getAllUrl")
+	/*@GetMapping("/getAllUrl")
 	@ResponseBody
 	public List<String> getAllUrl(){
 		RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
@@ -62,7 +62,7 @@ public class RealTimePhotoController {
 			}
 		}
 		return urlList;
-	}
+	}*/
 
 
 	/**
@@ -71,7 +71,7 @@ public class RealTimePhotoController {
 	 * @return
 	 * 查找当天记录select * from 表名 where to_days(时间字段名) = to_days(now());
 	 */
-	@RequestMapping("/realTimePhoto")
+	@GetMapping("/realTimePhoto")
 	@ApiOperation(value = "下方实时抓拍照片滚动数据", notes = "传参：deviceId 设备的ID")
 	public Result realTimePhoto(String deviceId){
 		SnapFaceInterfaceData data = realTimePhotoService.getRealTimePhoto(deviceId);
@@ -100,7 +100,7 @@ public class RealTimePhotoController {
 	/**
 	 * 抓拍照片查询
 	 */
-	@RequestMapping("/listPage")
+	@PostMapping("/listPage")
 	@ApiOperation(value = "分页查询抓拍照片", notes = "传参：deviceId 设备的ID，age 年龄，sex 性别，race 种族，expression 表情，glasses 眼镜，mood 情绪，"  +
 			"startTime 开始时间，endTime 结束时间,Integer pageNum, Integer pageSize")
 	public Result listPage(String deviceId, @RequestParam( required = false, defaultValue = "0")Integer age, String sex, String race, String expression, String glasses, String mood,
@@ -114,7 +114,7 @@ public class RealTimePhotoController {
 	}
 	
 
-	@RequestMapping("/photoSearch")
+	@PostMapping("/photoSearch")
 	@ApiOperation(value = "根据照片查询抓拍照片", notes = "传参：photoBase64 照片base64")
 	public Result listPhotoSearch(String photoBase64) {
 		String accessToken = GetBaiDuAccessToken.getAccessToken();

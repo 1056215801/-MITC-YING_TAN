@@ -89,6 +89,6 @@
 
     <select id="getProblemCount" resultType="int">
         select count(*) from report_problem
-        where status=0
+        where status=0 and problemType=#{problemType}
     </select>
 </mapper>

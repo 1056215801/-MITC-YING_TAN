@@ -70,99 +70,119 @@ public class PartyInfoController {
             String params = inputStream2String(in, "");
             System.out.println(params);
             JSONObject jsonObject = JSONObject.fromObject(params);
-            JSONObject jwry = jsonObject.getJSONObject("jwry");
-            if (jwry != null) {
-                EngPeopleInfo engPeopleInfo = (EngPeopleInfo)JSONObject.toBean(jwry,EngPeopleInfo.class);
+            String jwry = jsonObject.getString("jwry");
+            if (!"0".equals(jwry)) {
+                JSONObject obj = jsonObject.getJSONObject("jwry");
+                EngPeopleInfo engPeopleInfo = (EngPeopleInfo)JSONObject.toBean(obj,EngPeopleInfo.class);
                 if (engPeopleInfo.getPerson_baseinfo_id() != null) {
                     engPeopleService.save(engPeopleInfo);
                 }
             }
 
-            JSONObject lsry = jsonObject.getJSONObject("lsry");
-            if (lsry != null) {
-                StayPeopleInfo stayPeopleInfo = (StayPeopleInfo)JSONObject.toBean(lsry,StayPeopleInfo.class);
+            String lsry = jsonObject.getString("lsry");
+            //JSONObject lsry = jsonObject.getJSONObject("lsry");
+            if (!"0".equals(lsry)) {
+                JSONObject obj = jsonObject.getJSONObject("lsry");
+                StayPeopleInfo stayPeopleInfo = (StayPeopleInfo)JSONObject.toBean(obj,StayPeopleInfo.class);
                 if (stayPeopleInfo.getPerson_baseinfo_id() != null) {
                     stayPeopleService.save(stayPeopleInfo);
                 }
             }
-
-            JSONObject dy = jsonObject.getJSONObject("dy");
-            if (dy != null) {
-                PartyInfo partyInfo = (PartyInfo)JSONObject.toBean(dy,PartyInfo.class);
+            String dy = jsonObject.getString("dy");
+            //JSONObject dy = jsonObject.getJSONObject("dy");
+            if (!"0".equals(dy)) {
+                JSONObject obj = jsonObject.getJSONObject("dy");
+                PartyInfo partyInfo = (PartyInfo)JSONObject.toBean(obj,PartyInfo.class);
                 if (partyInfo.getPerson_baseinfo_id() != null) {
                     partyInfoService.save(partyInfo);
                 }
             }
-
-            JSONObject js = jsonObject.getJSONObject("js");
-            if (js != null) {
-                BearInfo bearInfo = (BearInfo)JSONObject.toBean(js,BearInfo.class);
+            String js = jsonObject.getString("js");
+            //JSONObject js = jsonObject.getJSONObject("js");
+            if (!"0".equals(js)) {
+                JSONObject obj = jsonObject.getJSONObject("js");
+                BearInfo bearInfo = (BearInfo)JSONObject.toBean(obj,BearInfo.class);
                 if (bearInfo.getPerson_baseinfo_id() != null) {
                     bearInfoService.save(bearInfo);
                 }
             }
-
-            JSONObject by = jsonObject.getJSONObject("by");
-            if (by != null) {
-                MilitaryServiceInfo militaryServiceInfo = (MilitaryServiceInfo)JSONObject.toBean(by,MilitaryServiceInfo.class);
+            String by = jsonObject.getString("by");
+            //JSONObject by = jsonObject.getJSONObject("by");
+            if (!"0".equals(by)) {
+                JSONObject obj = jsonObject.getJSONObject("by");
+                MilitaryServiceInfo militaryServiceInfo = (MilitaryServiceInfo)JSONObject.toBean(obj,MilitaryServiceInfo.class);
                 if (militaryServiceInfo.getPerson_baseinfo_id() != null) {
                     militaryServiceService.save(militaryServiceInfo);
                 }
             }
-
-            JSONObject xmsf = jsonObject.getJSONObject("xmsf");
-            if (xmsf != null) {
-                XmsfPeopleInfo xmsfPeopleInfo = (XmsfPeopleInfo)JSONObject.toBean(xmsf,XmsfPeopleInfo.class);
+            String xmsf = jsonObject.getString("xmsf");
+            //JSONObject xmsf = jsonObject.getJSONObject("xmsf");
+            if (!"0".equals(xmsf)) {
+                JSONObject obj = jsonObject.getJSONObject("xmsf");
+                XmsfPeopleInfo xmsfPeopleInfo = (XmsfPeopleInfo)JSONObject.toBean(obj,XmsfPeopleInfo.class);
                 if (xmsfPeopleInfo.getPerson_baseinfo_id() != null) {
                     xmsfPeopleService.save(xmsfPeopleInfo);
                 }
             }
-
-            JSONObject yscx = jsonObject.getJSONObject("yscx");
-            if (yscx != null){
-                CXInfo cXInfo = (CXInfo)JSONObject.toBean(yscx,CXInfo.class);
+            String yscx = jsonObject.getString("yscx");
+            //JSONObject yscx = jsonObject.getJSONObject("yscx");
+            if (!"0".equals(yscx)){
+                JSONObject obj = jsonObject.getJSONObject("yscx");
+                CXInfo cXInfo = (CXInfo)JSONObject.toBean(obj,CXInfo.class);
                 if (cXInfo.getPerson_baseinfo_id() != null) {
                     cXService.save(cXInfo);
                 }
             }
-            JSONObject sfyy = jsonObject.getJSONObject("sfyy");
-            if (sfyy != null){
-                SFPeopleInfo sFPeopleInfo = (SFPeopleInfo)JSONObject.toBean(sfyy,SFPeopleInfo.class);
+            String sfyy = jsonObject.getString("sfyy");
+            //JSONObject sfyy = jsonObject.getJSONObject("sfyy");
+            if (!"0".equals(sfyy)){
+                JSONObject obj = jsonObject.getJSONObject("sfyy");
+                SFPeopleInfo sFPeopleInfo = (SFPeopleInfo)JSONObject.toBean(obj,SFPeopleInfo.class);
                 if (sFPeopleInfo.getPerson_baseinfo_id() != null) {
                     sFPeopleService.save(sFPeopleInfo);
                 }
             }
-            JSONObject sqjz = jsonObject.getJSONObject("sqjz");
-            if (sqjz != null){
-                SQJZPeopleinfo sQJZPeopleinfo = (SQJZPeopleinfo)JSONObject.toBean(sqjz,SQJZPeopleinfo.class);
+            String sqjz = jsonObject.getString("sqjz");
+            //JSONObject sqjz = jsonObject.getJSONObject("sqjz");
+            if (!"0".equals(sqjz)){
+                JSONObject obj = jsonObject.getJSONObject("sqjz");
+                SQJZPeopleinfo sQJZPeopleinfo = (SQJZPeopleinfo)JSONObject.toBean(obj,SQJZPeopleinfo.class);
                 if (sQJZPeopleinfo.getPerson_baseinfo_id() != null) {
                     sQJZPeopleService.save(sQJZPeopleinfo);
                 }
             }
-            JSONObject zszh = jsonObject.getJSONObject("zszh");
-            if (zszh != null){
-                ZSZHInfo zSZHInfo = (ZSZHInfo)JSONObject.toBean(zszh,ZSZHInfo.class);
+            String zszh = jsonObject.getString("zszh");
+            //JSONObject zszh = jsonObject.getJSONObject("zszh");
+            if (!"0".equals(zszh)){
+                JSONObject obj = jsonObject.getJSONObject("zszh");
+                ZSZHInfo zSZHInfo = (ZSZHInfo)JSONObject.toBean(obj,ZSZHInfo.class);
                 if (zSZHInfo.getPerson_baseinfo_id() != null) {
                     zSZHService.save(zSZHInfo);
                 }
             }
-            JSONObject xdry = jsonObject.getJSONObject("xdry");
-            if (xdry != null){
-                XDInfo xDInfo = (XDInfo)JSONObject.toBean(xdry,XDInfo.class);
+            String xdry = jsonObject.getString("xdry");
+            //JSONObject xdry = jsonObject.getJSONObject("xdry");
+            if (!"0".equals(xdry)){
+                JSONObject obj = jsonObject.getJSONObject("xdry");
+                XDInfo xDInfo = (XDInfo)JSONObject.toBean(obj,XDInfo.class);
                 if (xDInfo.getPerson_baseinfo_id() != null) {
                     xDService.save(xDInfo);
                 }
             }
-            JSONObject azb = jsonObject.getJSONObject("azb");
-            if (azb != null){
-                AzbInfo azbInfo = (AzbInfo)JSONObject.toBean(azb,AzbInfo.class);
+            String azb = jsonObject.getString("azb");
+            //JSONObject azb = jsonObject.getJSONObject("azb");
+            if (!"0".equals(azb)){
+                JSONObject obj = jsonObject.getJSONObject("azb");
+                AzbInfo azbInfo = (AzbInfo)JSONObject.toBean(obj,AzbInfo.class);
                 if (azbInfo.getPerson_baseinfo_id() != null) {
                     aZBService.save(azbInfo);
                 }
             }
-            JSONObject zdqsn = jsonObject.getJSONObject("zdqsn");
-            if (zdqsn != null){
-                ZDQSNCInfo zDQSNCInfo = (ZDQSNCInfo)JSONObject.toBean(zdqsn,ZDQSNCInfo.class);
+            String zdqsn = jsonObject.getString("zdqsn");
+            //JSONObject zdqsn = jsonObject.getJSONObject("zdqsn");
+            if (!"0".equals(zdqsn)){
+                JSONObject obj = jsonObject.getJSONObject("zdqsn");
+                ZDQSNCInfo zDQSNCInfo = (ZDQSNCInfo)JSONObject.toBean(obj,ZDQSNCInfo.class);
                 if (zDQSNCInfo.getPerson_baseinfo_id() != null) {
                     zDQSNCService.save(zDQSNCInfo);
                 }

@@ -20,11 +20,11 @@ public class PersonBaseInfoService {
     @Autowired
     private PersonBaseInfoMapper personBaseInfoMapper;
 
-    public Integer save(String idCardNum, String name, String formerName, String gender, LocalDateTime birthday, String nation, String nativePlace, String matrimony, String politicCountenance,
+    public Integer save(int age, String idCardNum, String name, String formerName, String gender, LocalDateTime birthday, String nation, String nativePlace, String matrimony, String politicCountenance,
                         String education, String religion, String jobType, String profession, String cellphone, String placeOfDomicile, String placeOfDomicileDetail, String placeOfReside,
                         String placeOfResideDetail, String placeOfServer, String photoBase64) {
         PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, 0);
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, age,null);
         personBaseInfo.setGmtCreate(LocalDateTime.now());
         personBaseInfo.setGmtModified(LocalDateTime.now());
         personBaseInfoMapper.insert(personBaseInfo);

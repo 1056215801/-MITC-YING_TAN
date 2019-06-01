@@ -29,7 +29,7 @@ import java.util.UUID;
  */
 @RestController
 @Slf4j
-@Api(tags = "和QQ物联摄像头交互的接口")
+@Api(tags = "和QQ物联摄像头交互的接口(非对接接口)")
 public class DeviceController {
     @Autowired
     private FaceComparisonService faceComparisonService;
@@ -42,7 +42,7 @@ public class DeviceController {
     //本机ip：192.168.1.149
 
     @RequestMapping(value = "login",produces = {"application/json;charset=utf-8"})
-    @ApiOperation(value = "设备登录接口")
+    //@ApiOperation(value = "设备登录接口")
     public String login(HttpServletRequest request, HttpServletResponse response) {
         String returnMessage = null;
         InputStream in = null;
@@ -68,7 +68,7 @@ public class DeviceController {
         return returnMessage;
     }
 
-    @ApiOperation(value = "QQ物联摄像头上传人脸比对数据", notes = "输入参数：token 设备登录时下发的token")
+    //@ApiOperation(value = "QQ物联摄像头上传人脸比对数据", notes = "输入参数：token 设备登录时下发的token")
     @RequestMapping(value = "download",produces = {"application/json;charset=utf-8"})
     public void upload(HttpServletRequest request, HttpServletResponse response,String lingPai) throws Exception{
         InputStream in = null;

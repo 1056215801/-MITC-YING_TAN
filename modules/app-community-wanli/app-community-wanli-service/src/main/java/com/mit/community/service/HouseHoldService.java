@@ -439,7 +439,7 @@ public class HouseHoldService {
                         StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                         idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                         (short) 99, null, null, null, null, null, null, null,
-                        Integer.valueOf(list.get(0).getHouseholdType()));
+                        Integer.valueOf(list.get(0).getHouseholdType()),null);
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
                 houseHoldMapper.insert(houseHold);
@@ -480,7 +480,7 @@ public class HouseHoldService {
                         StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                         idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                         (short) 99, null, null, null, null, null, null, null,
-                        Integer.valueOf(list.get(0).getHouseholdType()));
+                        Integer.valueOf(list.get(0).getHouseholdType()),null);
                 edidHousehold.setGmtModified(LocalDateTime.now());
                 houseHoldMapper.updateHouseholdByHouseholdId(edidHousehold);
                 //删除房屋信息
@@ -622,7 +622,7 @@ public class HouseHoldService {
                             "普通业主", StringUtils.EMPTY, null, null, null
                             , null, null, null, null, null, null, null, null, null,
                             existHouseHold.getHouseholdName(), existHouseHold.getCredentialNum(), existHouseHold.getProvince(),
-                            existHouseHold.getCity(), existHouseHold.getRegion(), existHouseHold.getConstellation());
+                            existHouseHold.getCity(), existHouseHold.getRegion(), existHouseHold.getConstellation(),null);
                     userService.save(user);
                 } else {//非空修改
                     user.setName(existHouseHold.getHouseholdName());

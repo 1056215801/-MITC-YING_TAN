@@ -1,23 +1,43 @@
 package com.mit.community.entity.entity;
 
+import java.util.List;
+
 public class InfoSearch {
-    private AzbInfo azbInfo;
-    private BearInfo bearInfo;
-    private CXInfo cXInfo;
-    private EngPeopleInfo engPeopleInfo;
-    private FlowPeopleInfo flowPeopleInfo;
-    private MilitaryServiceInfo militaryServiceInfo;
-    private PartyInfo partyInfo;
+
     private PersonBaseInfo personBaseInfo;
-    private SFPeopleInfo sFPeopleInfo;
+
+    /*private SFPeopleInfo sFPeopleInfo;
     private SQJZPeopleinfo sQJZPeopleinfo;
     private StayPeopleInfo stayPeopleInfo;
     private XDInfo xDInfo;
     private XmsfPeopleInfo xmsfPeopleInfo;
     private ZDQSNCInfo zDQSNCInfo;
     private ZSZHInfo zSZHInfo;
+    private AzbInfo azbInfo;
+    private BearInfo bearInfo;
+    private CXInfo cXInfo;
+    private EngPeopleInfo engPeopleInfo;
+    private FlowPeopleInfo flowPeopleInfo;
+    private MilitaryServiceInfo militaryServiceInfo;
+    private PartyInfo partyInfo;*/
 
-    public AzbInfo getAzbInfo() {
+    public PersonBaseInfo getPersonBaseInfo() {
+        return personBaseInfo;
+    }
+
+    public void setPersonBaseInfo(PersonBaseInfo personBaseInfo) {
+        this.personBaseInfo = personBaseInfo;
+    }
+
+    /*public List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
+    }*/
+
+    /*public AzbInfo getAzbInfo() {
         return azbInfo;
     }
 
@@ -73,13 +93,7 @@ public class InfoSearch {
         this.partyInfo = partyInfo;
     }
 
-    public PersonBaseInfo getPersonBaseInfo() {
-        return personBaseInfo;
-    }
 
-    public void setPersonBaseInfo(PersonBaseInfo personBaseInfo) {
-        this.personBaseInfo = personBaseInfo;
-    }
 
     public SFPeopleInfo getsFPeopleInfo() {
         return sFPeopleInfo;
@@ -135,5 +149,5 @@ public class InfoSearch {
 
     public void setzSZHInfo(ZSZHInfo zSZHInfo) {
         this.zSZHInfo = zSZHInfo;
-    }
+    }*/
 }

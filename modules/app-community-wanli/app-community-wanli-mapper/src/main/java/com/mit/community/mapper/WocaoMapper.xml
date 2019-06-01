@@ -57,130 +57,97 @@
 
 
     <select id="selectPersonBaseInfoPage" resultMap="infoSearchMap">
-        select *,ROUND(DATEDIFF(CURDATE(), @birthday)/365.2422) AS age,birthday
+        select *,birthday
         from person_baseinfo
         where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectAzbInfoPage" resultMap="infoSearchMap">
-        select b.*,ROUND(DATEDIFF(CURDATE(), @birthday)/365.2422) AS b.age
+        select b.*
         from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectAzbInfoPage" resultMap="infoSearchMap">
-        select a.id as 1id,a.grtj as 1grtj,a.sfwf as 1sfwf,a.wffzqk as 1wffzqk,a.ajlb as 1ajlb,a.gzlx as 1gzlx,a.bfqk as 1bfqk,
-        a.bfrdh as 1bfrdh,a.bfrxm as 1bfrxm,a.szqk as 1szqk,a.szjgmc as 1szjgmc,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectBearInfoPage" resultMap="infoSearchMap">
-        select a.id as 2id,a.poxm as 2poxm,a.poxb as 2poxb,a.xgzdw as 2xgzdw,a.djjhny as 2djjhny,a.hkxz as 2hkxz,a.hyzk as 2hyzk,
-        a.jysssj as 2jysssj,a.sslx as 2sslx,a.ssyy as 2ssyy,a.ccyy as 2ccyy,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from bear_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectCxInfoPage" resultMap="infoSearchMap">
-        select a.id as 3id,a.dysxcx as 3dysxcx,a.drsxcx as 3drsxcx,a.dssxcx as 3dssxcx,a.bz as 3bz,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from cx_Info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectEngPeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 4id,a.wwx as 4wwx,a.wwm as 4wwm,a.zwm as 4zwm,a.gj as 4gj,
-        a.zjxy as 4zjxy,a.zjdm as 4zjdm,a.zjhm as 4zjhm,a.zjyxq as 4zjyxq,a.lhmd as 4lhmd,
-        a.ddrq as 4ddrq,a.yjlkrq as 4yjlkrq,a.sfzdry as 4sfzdry,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from engpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectFlowPeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 5id,a.lryy as 5lryy,a.bzlx as 5bzlx,a.zjhm as 5zjhm,a.djrq as 5djrq,
-        a.zjdqrq as 5zjdqrq,a.zslx as 5zslx,a.sfzdgzry as 5sfzdgzry,a.tslxfs as 5tslxfs,a.jtzycylxfs as 5jtzycylxfs,
-        a.yhzgx as 5yhzgx,a.hzsfz as 5hzsfz,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from flow_people_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectMilitaryServiceInfoPage" resultMap="infoSearchMap">
-        select a.id as 6id,a.xyqk as 6xyqk,a.zybm as 6zybm,a.zymc as 6zymc,a.zytc as 6zytc,
-        a.cylb as 6cylb,a.jdxx as 6jdxx,a.zyzgzs as 6zyzgzs,a.hscjdcsjjsxl as 6hscjdcsjjsxl,a.sg as 6sg,
-        a.tz as 6tz,a.zylysl as 6zylysl,a.yylysl as 6yylysl,a.jkzk as 6jkzk,a.stmc as 6stmc,a.bsdc as 6bsdc,
-        a.wcqk as 6wcqk,a.zzcs as 6zzcs,a.bydjjl as 6bydjjl,a.yy as 6yy,a.djxs as 6djxs,a.sftj as 6sftj,a.bz as 6bz,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from militaryservice_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectPartyInfoPage" resultMap="infoSearchMap">
-        select a.id as 7id,a.rdsq as 7rdsq,a.zzrq as 7zzrq,a.cjgzsj as 7cjgzsj,a.rdszzb as 7rdszzb,
-        a.zzszzb as 7zzszzb,a.zzszdw as 7zzszdw,a.szdzb as 7szdzb,a.jrdzbsj as 7jrdzbsj,a.xrdnzw as 7xrdnzw,
-        a.rdjsr as 7rdjsr,a.yyjndf as 7yyjndf,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from party_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSfInfoPage" resultMap="infoSearchMap">
-        select a.id as 8id,a.sfqzxf as 8sfqzxf,a.lxcs as 8lxcs,a.ldcs as 8ldcs,a.sfsj as 8sfsj,
-        a.sfrs as 8sfrs,a.sffsdd as 8sffsdd,a.sfrysq as 8sfrysq,a.clqkbf as 8clqkbf,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from sfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSqjzpeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 9id,a.sqjzrybh as 9sqjzrybh,a.yjycs as 9yjycs,a.jzlb as 9jzlb,a.ajlb as 9ajlb,
-        a.jtzm as 9jtzm,a.ypxq as 9ypxq,a.ypxkssj as 9ypxkssj,a.ypxjssj as 9ypxjssj,
-        a.jzkssj as 9jzkssj,a.jzjssj as 9jzjssj,a.jsfs as 9jsfs,a.ssqk as 9ssqk,
-        a.sflgf as 9sflgf,a.ssqku as 9ssqku,a.sfjljzxz as 9sfjljzxz,a.jzjclx as 9jzjclx,
-        a.sfytg as 9sfytg,a.tgyy as 9tgyy,a.jcjdtgqk as 9jcjdtgqk,a.tgjzqk as 9tgjzqk,
-        a.sfylg as 9sfylg,a.lgyy as 9lgyy,a.jcjdlgqk as 9jcjdlgqk,a.lgjzqk as 9lgjzqk,
-        a.jcqk as 9jcqk,a.xfbgzx as 9xfbgzx,a.sfcxfz as 9sfcxfz,a.cxfzmc as 9cxfzmc,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from sqjzpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectStayPeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 11id,a.jkzk as 11jkzk,a.grnsr as 11grnsr,a.rhizbz as 11rhizbz,a.lsrylx as 11lsrylx,
-        a.jtzyrysfzh as 11jtzyrysfzh,a.jtzycyxm as 11jtzycyxm,a.jtzycyjkzk as 11jtzycyjkzk,a.ylsrygx as 11ylsrygx,
-        a.jtzycylxfs as 11jtzycylxfs,a.jtzycygzxxdz as 11jtzycygzxxdz,a.jtnsr as 11jtnsr,a.knjsq as 11knjsq,
-        a.bfqk as 11bfqk,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from staypeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXdPeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 22id,a.ccfxsj as 22ccfxsj,a.gkqk as 22gkqk,a.gkrxm as 22gkrxm,a.gkrlxfs as 22gkrlxfs,
-        a.jtzyrysfzh as 22bfqk,a.bfrxm as 22bfrxm,a.bfrlxfs as 22bfrlxfs,a.ywfzs as 22ywfzs,
-        a.xdqk as 22xdqk,a.xdyy as 22xdyy,a.xdhg as 22xdhg,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from xd_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXmsfPeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 33id,a.sflf as 33sflf,a.yzm as 33yzm,a.ypxq as 33ypxq,a.fxcs as 33fxcs,
-        a.sfrq as 33sfrq,a.wxxpglx as 33wxxpglx,a.xjrq as 33xjrq,a.xjqk as 33xjqk,
-        a.azrq as 33azrq,a.azqk as 33azqk,a.wazyy as 33wazyy,
-        a.bjqk as 33bjqk,a.sfcxfz as 33sfcxfz,a.cxfzzm as 33cxfzzm,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from xmsfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZdqsnPeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 44id,a.rylx as 44rylx,a.jtqk as 44jtqk,a.jhrsfz as 44jhrsfz,a.jhrxm as 44jhrxm,
-        a.yjhrgx as 44yjhrgx,a.jhrlxfs as 44jhrlxfs,a.jhrjzxxdz as 44jhrjzxxdz,a.sfwffz as 44sfwffz,
-        a.wffzqk as 44wffzqk,a.bfrlxfs as 44bfrlxfs,a.bfsd as 44bfsd,
-        a.bfqk as 44bfqk,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from zdqsn_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZszhPeopleInfoPage" resultMap="infoSearchMap">
-        select a.id as 55id,a.jtjjzk as 55jtjjzk,a.sfnrdb as 55sfnrdb,a.jhrsfzh as 55jhrsfzh,a.jhrxm as 55jhrxm,
-        a.jhrlxfs as 55jhrlxfs,a.ccfbrq as 55ccfbrq,a.mqzdlx as 55mqzdlx,a.ywzszhs as 55ywzszhs,
-        a.zszhcs as 55zszhcs,a.sczszhrq as 55sczszhrq,a.mqwxxpgdj as 55mqwxxpgdj,
-        a.zlqk as 55zlqk,a.zlyy as 55zlyy,a.sszyzlyy as 55sszyzlyy,a.jskfxljgmc as 55jskfxljgmc,
-        a.cyglry as 55cyglry,a.bfqk as 55bfqk,
-        b.*,ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422) AS age
+        select
+        b.*
         from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
