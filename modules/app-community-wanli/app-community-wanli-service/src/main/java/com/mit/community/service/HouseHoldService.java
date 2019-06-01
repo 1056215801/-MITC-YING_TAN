@@ -622,7 +622,7 @@ public class HouseHoldService {
                             "普通业主", StringUtils.EMPTY, null, null, null
                             , null, null, null, null, null, null, null, null, null,
                             existHouseHold.getHouseholdName(), existHouseHold.getCredentialNum(), existHouseHold.getProvince(),
-                            existHouseHold.getCity(), existHouseHold.getRegion(), existHouseHold.getConstellation(),null);
+                            existHouseHold.getCity(), existHouseHold.getRegion(), existHouseHold.getConstellation());
                     userService.save(user);
                 } else {//非空修改
                     user.setName(existHouseHold.getHouseholdName());
