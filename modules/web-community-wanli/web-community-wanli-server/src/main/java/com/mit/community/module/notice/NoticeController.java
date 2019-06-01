@@ -16,6 +16,7 @@ import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -82,8 +83,8 @@ public class NoticeController {
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             noticeService.releaseWebNotice(user.getCommunityCode(), id, title, noticeType,
                     noticeChannel, noticeContent, user.getAdminName(), user.getId(),
-                    null, DateUtils.dateStrToLocalDateTime(startTime),
-                    DateUtils.dateStrToLocalDateTime(endTime), null, portraitFileDomain, portraitFileName);
+                    null, DateUtils.strToLocalDateTime(startTime),
+                    DateUtils.strToLocalDateTime(endTime), null, portraitFileDomain, portraitFileName);
             return Result.success("发布成功！");
         }
         return Result.error("参数不能为空");
@@ -256,8 +257,8 @@ public class NoticeController {
             return Result.error("参数错误");
         }
         NoticeVo noticeVo = noticeMapper.getNoticeById(id);
-        noticeVo.setStartTime(noticeVo.getStartTime().substring(0, 11));
-        noticeVo.setEndTime(noticeVo.getEndTime().substring(0, 11));
+        noticeVo.setStartTime(noticeVo.getStartTime().substring(0, noticeVo.getStartTime().length() - 2));
+        noticeVo.setEndTime(noticeVo.getEndTime().substring(0, noticeVo.getEndTime().length() - 2));
         return Result.success(noticeVo);
     }
 

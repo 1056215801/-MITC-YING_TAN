@@ -75,7 +75,7 @@ public class NoticeService {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.eq("status", 1);
-        wrapper.eq("isdel", 1);
+        wrapper.eq("isdel", 0);
         //wrapper.le("release_time", endDay);
         wrapper.ge("release_time", startDay);
         wrapper.ge("validate_time", LocalDateTime.now());

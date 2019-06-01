@@ -35,6 +35,9 @@ public class DateUtils {
     }
 
     public static LocalDateTime dateStrToLocalDateTime(String dateStr) throws ParseException {
+        if (dateStr == null) {
+            return null;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         Pattern pattern = Pattern.compile("[0-9]{4}[-][0-9]{1,2}[-][0-9]{1,2}");

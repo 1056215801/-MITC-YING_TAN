@@ -67,7 +67,7 @@ public class OldMedicalController {
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         try {
             oldMedicalService.save(user.getCommunityCode(), id, title, user.getAdminName(), contacts, phone, address,
-                    DateUtils.dateStrToLocalDateTime(startTime), DateUtils.dateStrToLocalDateTime(endTime), content);
+                    DateUtils.strToLocalDateTime(startTime), DateUtils.strToLocalDateTime(endTime), content);
         } catch (ParseException e) {
             e.printStackTrace();
         }
