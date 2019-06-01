@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.HandleProblemMapper">
+    <resultMap type="com.mit.community.entity.HandleProblemInfo" id="handleProblemInfoMap">
+        <id property="id" column="id" javaType="Integer" jdbcType="INTEGER" />
+        <result property="content" column="content" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="problemType" column="problemType" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="address" column="address" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="isOpen" column="isOpen" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="status" column="status" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="isopen" column="isopen" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="userId" column="userId" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="iconUrl" column="iconUrl" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="userName" column="userName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="neirong" column="neirong" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sloveName" column="sloveName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sloveUrl" column="sloveUrl" javaType="String"
+                jdbcType="VARCHAR" />
+        <collection property="photos" ofType="com.mit.community.entity.ReportProblemPhotos">
+            <result property="base64" column="base64"
+                    javaType="String" jdbcType="VARCHAR" />
+        </collection>
+        <!--<result property="resultContent" column="resultContent" javaType="String"
+                jdbcType="VARCHAR" />-->
+        <collection property="resultPhoto" ofType="com.mit.community.entity.HandleProblemPhotos">
+            <result property="handleBase64" column="handleBase64"
+                    javaType="String" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+    <select id="getProblemSlove" resultMap="handleProblemInfoMap">
+        select a.id,a.content,a.problemType,a.address,a.isOpen,a.status,a.gmt_create,a.gmt_modified,
+        b.id as userId,b.icon_url as iconUrl,b.nickname as userName,c.base64,d.content as neirong,e.base64 as handleBase64,
+        f.icon_url as sloveUrl,f.nickname as sloveName
+        from report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN report_problem_photo c on a.id=c.reportProblemId
+        LEFT JOIN problem_schedule d on a.id=d.reportProblemId LEFT JOIN problem_schedule_photo e on d.id=e.problemScheduleId
+        LEFT JOIN user f on d.userId=f.id
+        where a.status=#{status} and a.problemType=#{problemType}
+    </select>
+</mapper>

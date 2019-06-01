@@ -21,4 +21,11 @@ public class PartyInfoService {
         partyInfoMapper.insert(partyInfo);
 
     }
+
+    public void save(PartyInfo partyInfo){
+        partyInfo.setGmtCreate(LocalDateTime.now());
+        partyInfo.setGmtModified(LocalDateTime.now());
+        partyInfoMapper.insert(partyInfo);
+
+    }
 }

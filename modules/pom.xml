@@ -20,5 +20,6 @@
 		<module>community-synchrodata</module>
 		<module>web-community-wanli</module>
         <module>dnake-api</module>
+        <module>camera-manage</module>
     </modules>
 </project>

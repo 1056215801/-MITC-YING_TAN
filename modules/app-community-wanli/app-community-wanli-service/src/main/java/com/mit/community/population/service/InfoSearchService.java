@@ -18,7 +18,7 @@ public class InfoSearchService {
     public Page<InfoSearch> listPage(Integer age, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, Integer pageNum, Integer pageSize, String rycf){
         Page<InfoSearch> page = new Page<>(pageNum, pageSize);
         EntityWrapper<InfoSearch> wrapper = new EntityWrapper<>();
-        if (StringUtils.isNotBlank(label)) {
+        if (label == null) {
             if (age != 0) {
                 wrapper.eq("ROUND(DATEDIFF(CURDATE(), @birthday)/365.2422)", age);
             }
@@ -87,6 +87,7 @@ public class InfoSearchService {
             }
             wrapper.orderBy("a.gmt_create", false);
             if ("azb".equals(label)) {
+                System.out.println("=======================");
                 List<InfoSearch> list = infoSearchMapper.selectAzbInfoPage(page, wrapper);
                 page.setRecords(list);
             } else if ("bear".equals(label)) {

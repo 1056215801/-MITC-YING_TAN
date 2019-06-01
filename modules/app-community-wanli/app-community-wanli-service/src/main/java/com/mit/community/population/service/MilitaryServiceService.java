@@ -21,4 +21,11 @@ public class MilitaryServiceService {
         militaryServiceMapper.insert(militaryServiceInfo);
 
     }
+
+    public void save(MilitaryServiceInfo militaryServiceInfo){
+        militaryServiceInfo.setGmtCreate(LocalDateTime.now());
+        militaryServiceInfo.setGmtModified(LocalDateTime.now());
+        militaryServiceMapper.insert(militaryServiceInfo);
+
+    }
 }

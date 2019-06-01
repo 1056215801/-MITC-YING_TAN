@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,6 +17,8 @@ public class HouseInfoService {
     @Transactional
     public void save(List<HouseInfo> list){
         for (HouseInfo houseInfo:list) {
+            houseInfo.setGmtCreate(LocalDateTime.now());
+            houseInfo.setGmtModified(LocalDateTime.now());
             houseInfoMapper.insert(houseInfo);
         }
     }

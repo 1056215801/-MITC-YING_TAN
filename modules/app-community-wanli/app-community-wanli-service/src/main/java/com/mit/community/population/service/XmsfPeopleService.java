@@ -19,4 +19,10 @@ public class XmsfPeopleService {
         xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
         xmsfPeopleMapper.insert(xmsfPeopleInfo);
     }
+
+    public void save(XmsfPeopleInfo xmsfPeopleInfo){
+        xmsfPeopleInfo.setGmtCreate(LocalDateTime.now());
+        xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
+        xmsfPeopleMapper.insert(xmsfPeopleInfo);
+    }
 }

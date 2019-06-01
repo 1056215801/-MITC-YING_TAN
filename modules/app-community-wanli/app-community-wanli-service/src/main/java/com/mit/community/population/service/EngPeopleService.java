@@ -19,4 +19,10 @@ public class EngPeopleService {
         engPeopleInfo.setGmtModified(LocalDateTime.now());
         engPeopleMapper.insert(engPeopleInfo);
     }
+
+    public void save(EngPeopleInfo engPeopleInfo){
+        engPeopleInfo.setGmtCreate(LocalDateTime.now());
+        engPeopleInfo.setGmtModified(LocalDateTime.now());
+        engPeopleMapper.insert(engPeopleInfo);
+    }
 }

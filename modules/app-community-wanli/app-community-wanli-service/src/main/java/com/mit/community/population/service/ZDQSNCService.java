@@ -20,4 +20,10 @@ public class ZDQSNCService {
         zDQSNCInfo.setGmtModified(LocalDateTime.now());
         zDQSNCMapper.insert(zDQSNCInfo);
     }
+
+    public void save(ZDQSNCInfo zDQSNCInfo){
+        zDQSNCInfo.setGmtCreate(LocalDateTime.now());
+        zDQSNCInfo.setGmtModified(LocalDateTime.now());
+        zDQSNCMapper.insert(zDQSNCInfo);
+    }
 }

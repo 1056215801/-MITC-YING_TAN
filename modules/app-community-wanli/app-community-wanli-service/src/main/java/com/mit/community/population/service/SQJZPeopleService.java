@@ -23,4 +23,11 @@ public class SQJZPeopleService {
         sQJZPeopleMapper.insert(sQJZPeopleinfo);
 
     }
+
+    public void save(SQJZPeopleinfo sQJZPeopleinfo){
+        sQJZPeopleinfo.setGmtCreate(LocalDateTime.now());
+        sQJZPeopleinfo.setGmtModified(LocalDateTime.now());
+        sQJZPeopleMapper.insert(sQJZPeopleinfo);
+
+    }
 }

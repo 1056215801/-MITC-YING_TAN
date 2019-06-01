@@ -19,4 +19,10 @@ public class AZBService {
         azbInfo.setGmtModified(LocalDateTime.now());
         aZBMapper.insert(azbInfo);
     }
+
+    public void save(AzbInfo azbInfo) {
+        azbInfo.setGmtCreate(LocalDateTime.now());
+        azbInfo.setGmtModified(LocalDateTime.now());
+        aZBMapper.insert(azbInfo);
+    }
 }

@@ -20,4 +20,11 @@ public class SFPeopleService {
         sFPeopleMapper.insert(sFPeopleInfo);
 
     }
+
+    public void save(SFPeopleInfo sFPeopleInfo){
+        sFPeopleInfo.setGmtCreate(LocalDateTime.now());
+        sFPeopleInfo.setGmtModified(LocalDateTime.now());
+        sFPeopleMapper.insert(sFPeopleInfo);
+
+    }
 }

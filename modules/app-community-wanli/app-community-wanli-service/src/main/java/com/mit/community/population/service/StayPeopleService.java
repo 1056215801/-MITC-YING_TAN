@@ -21,4 +21,11 @@ public class StayPeopleService {
 
     }
 
+    public void save(StayPeopleInfo stayPeopleInfo){
+        stayPeopleInfo.setGmtCreate(LocalDateTime.now());
+        stayPeopleInfo.setGmtModified(LocalDateTime.now());
+        stayPeopleMapper.insert(stayPeopleInfo);
+
+    }
+
 }
