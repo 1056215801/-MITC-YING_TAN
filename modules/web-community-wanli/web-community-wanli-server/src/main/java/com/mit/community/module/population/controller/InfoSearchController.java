@@ -24,6 +24,7 @@ public class InfoSearchController {
     @PostMapping("/listPage")
     @ApiOperation(value = "人员信息分页查询", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
     public Result listPage(@RequestParam( required = false, defaultValue = "0")Integer age, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, Integer pageNum, Integer pageSize, String rycf) {
+        System.out.println("======"+ pageNum + ","+ pageSize+","+label);
         Page<InfoSearch> page = infoSearchService.listPage(age, name, idNum, sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
         return Result.success(page);
     }

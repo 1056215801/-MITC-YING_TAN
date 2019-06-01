@@ -45,13 +45,12 @@ public class LoginController {
     private final HouseholdRoomService householdRoomService;
     private final UserTrackService userTrackService;
     private final SysMessagesService sysMessagesService;
-    private final LabelsService labelsService;
 
     @Autowired
     public LoginController(RedisService redisService, UserService userService, ClusterCommunityService clusterCommunityService,
                            DnakeAppApiService dnakeAppApiService, HouseHoldService houseHoldService,
                            HouseholdRoomService householdRoomService, UserTrackService userTrackService,
-                           SysMessagesService sysMessagesService, LabelsService labelsService) {
+                           SysMessagesService sysMessagesService) {
         this.redisService = redisService;
         this.userService = userService;
         this.clusterCommunityService = clusterCommunityService;
@@ -60,7 +59,6 @@ public class LoginController {
         this.householdRoomService = householdRoomService;
         this.userTrackService = userTrackService;
         this.sysMessagesService = sysMessagesService;
-        this.labelsService = labelsService;
     }
 
     /***
@@ -107,7 +105,6 @@ public class LoginController {
             "householdType 与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员)")
     public Result login(String mac, String cellphone, String verificationCode, String password, Integer mark) {
         User user;
-        NewUser newUser = new NewUser();
         if (verificationCode != null) {
             // 验证码登陆
             Object o = redisService.get(RedisConstant.VERIFICATION_CODE + cellphone);
@@ -135,9 +132,6 @@ public class LoginController {
         } else {
             user.setHavePassword(true);
         }
-        //获取用户标签
-        List<String> labels = labelsService.getLabelsByUserId(user.getId());
-        newUser.setLabels(labels);
         String psd = user.getPassword();
         user.setPassword(null);
         List<HouseHold> houseHoldList = houseHoldService.getByCellphone(user.getCellphone());
@@ -162,20 +156,17 @@ public class LoginController {
             Integer householdStatus = houseHold.getHouseholdStatus();
             if (householdStatus == 0) {
                 user.setHousehouldStatus(0);
-                newUser.setUser(user);
-                return Result.success(newUser, "用户已被注销");
+                return Result.success(user, "用户已被注销");
             } else if (householdStatus == 2) {
                 user.setHousehouldStatus(2);
-                newUser.setUser(user);
-                return Result.success(newUser, "用户已被停用");
+                return Result.success(user, "用户已被停用");
             } else {//判断业主权限是否过期
                 user.setHousehouldStatus(1);
                 Date validityTime = houseHold.getValidityTime();
                 Long dayInter = com.mit.community.util.DateUtils.getDateInter(new Date(), validityTime);
                 if (dayInter < 0) {//权限已过期
                     user.setHousehouldStatus(3);
-                    newUser.setUser(user);
-                    return Result.success(newUser, "用户权限已过期");
+                    return Result.success(user, "用户权限已过期");
                 }
             }
         }
@@ -202,8 +193,7 @@ public class LoginController {
         StringBuilder stringBuilder = new StringBuilder(s);
         s = stringBuilder.reverse().toString();
         if (s.equals("0") || s.charAt(1) != '1') {
-            newUser.setUser(user);
-            return Result.success(newUser, "没有授权app");
+            return Result.success(user, "没有授权app");
         } else {
             // 已经授权app
             ThreadPoolUtil.execute(new Thread(() -> {
@@ -222,8 +212,7 @@ public class LoginController {
                             dnakeLoginResponse, RedisConstant.LOGIN_EXPIRE_TIME);
                 }
             }));
-            newUser.setUser(user);
-            return Result.success(newUser, "已授权app");
+            return Result.success(user, "已授权app");
         }
     }
 

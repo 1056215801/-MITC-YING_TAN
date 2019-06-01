@@ -89,13 +89,13 @@ public class PushUtil {
 	/**
      * 客户端 给平台的一个或者一组标签发送消息（标签发送）。
      */
-    public static void sendTag(String message, String messageId, String type, List<String> tagsList)
+    public static void sendTag(String message, List<String> tagsList)
     {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey);
         // 附加字段
         Map<String, String> extras = new HashMap<String, String>();
-        extras.put("messageId", messageId);
-        extras.put("typeId", type);
+        extras.put("messageId", "");
+        extras.put("typeId", "");
 
         PushPayload payload = allPlatformAndTag(message, extras, tagsList);
         try
