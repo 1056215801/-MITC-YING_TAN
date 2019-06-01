@@ -15,13 +15,17 @@ public class InfoSearchService {
     @Autowired
     private InfoSearchMapper infoSearchMapper;
 
-    public Page<InfoSearch> listPage(Integer age, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, Integer pageNum, Integer pageSize, String rycf){
+    public Page<InfoSearch> listPage(Integer ageStart, Integer ageEnd, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, Integer pageNum, Integer pageSize, String rycf){
         Page<InfoSearch> page = new Page<>(pageNum, pageSize);
         EntityWrapper<InfoSearch> wrapper = new EntityWrapper<>();
-        if (label == null) {
-            if (age != 0) {
-                wrapper.eq("ROUND(DATEDIFF(CURDATE(), @birthday)/365.2422)", age);
+        if (label == null || "".equals(label)) {
+            if (ageStart != 0) {
+                wrapper.ge("age", ageStart);
             }
+            if (ageEnd != 0) {
+                wrapper.le("age", ageEnd);
+            }
+
             if (StringUtils.isNotBlank(name)) {
                 wrapper.eq("name", name);
             }
@@ -32,10 +36,10 @@ public class InfoSearchService {
                 wrapper.eq("gender", sex);
             }
             if (StringUtils.isNotBlank(education)) {
-                wrapper.eq("education", education);
+                wrapper.like("education", education);
             }
             if (StringUtils.isNotBlank(job)) {
-                wrapper.eq("profession", job);
+                wrapper.like("profession", job);
             }
             if (StringUtils.isNotBlank(matrimony)) {
                 wrapper.eq("matrimony", matrimony);
@@ -54,8 +58,11 @@ public class InfoSearchService {
             List<InfoSearch> list = infoSearchMapper.selectPersonBaseInfoPage(page, wrapper);
             page.setRecords(list);
         } else {
-            if (age != 0) {
-                wrapper.eq("ROUND(DATEDIFF(CURDATE(), @b.birthday)/365.2422)", age);
+            if (ageStart != 0) {
+                wrapper.ge("b.age", ageStart);
+            }
+            if (ageEnd != 0) {
+                wrapper.le("b.age", ageEnd);
             }
             if (StringUtils.isNotBlank(name)) {
                 wrapper.eq("b.name", name);

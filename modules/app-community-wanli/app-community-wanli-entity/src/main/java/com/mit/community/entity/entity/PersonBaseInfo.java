@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 人员基本信息
@@ -133,6 +134,8 @@ public class PersonBaseInfo extends BaseEntity {
     /**
      * 年龄
      */
-    @TableField(exist = false)
     private int age;
+
+    @TableField(exist = false)
+    private List<String> labels;
 }

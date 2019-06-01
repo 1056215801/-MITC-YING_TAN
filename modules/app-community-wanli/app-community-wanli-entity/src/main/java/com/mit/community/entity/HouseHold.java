@@ -122,6 +122,7 @@ public class HouseHold extends BaseEntity {
      * 业主手机号
      */
     private String mobile;
+
     /**
      * SIP账号
      */
@@ -254,4 +255,6 @@ public class HouseHold extends BaseEntity {
     private Integer housetype;
 
 
+
+    private String labels;
 }

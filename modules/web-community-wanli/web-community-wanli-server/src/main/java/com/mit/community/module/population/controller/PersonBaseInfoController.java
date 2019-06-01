@@ -49,7 +49,10 @@ public class PersonBaseInfoController {
                                      String placeOfDomicile, String placeOfDomicileDetail, String placeOfReside,
                                      String placeOfResideDetail, String placeOfServer) throws ParseException {
         //User user = userService.getUserByCardNum(idCardNum);
-        Integer id = personBaseInfoService.save(idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
+        String[] ages = birthday.split("-");
+        int age = 2019 - Integer.parseInt(ages[0]);
+
+        Integer id = personBaseInfoService.save(age,idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
                 nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
                 placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);
         return Result.success(id);

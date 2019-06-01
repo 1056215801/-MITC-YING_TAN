@@ -538,7 +538,7 @@ public class ApplyKeyService {
                     StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                     idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                     (short) 99, null, null, null, null, null, null, null,
-                    Integer.valueOf(applyKey.getHouseholdType()));
+                    Integer.valueOf(applyKey.getHouseholdType()),null);
             houseHoldService.save(houseHold);
             // 本地数据库保存关联设备组
             List<AuthorizeAppHouseholdDeviceGroup> authorizeAppHouseholdDeviceGroups = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
