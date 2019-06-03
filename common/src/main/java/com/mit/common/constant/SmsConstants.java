@@ -30,12 +30,15 @@ public class SmsConstants {
      * 模板code-登陆确认：
      * 验证码${code}，您正在登录，若非本人操作，请勿泄露。
      */
-    public static final String MODEL_CODE_LOGIN_CONFIRM = "SMS_152470942";    /**
-
+    public static final String MODEL_CODE_LOGIN_CONFIRM = "SMS_152470942";
+    /**
      * 模板code-身份验证验证码：
      * 验证码${code}，您正在进行身份验证，打死不要告诉别人哦！
      */
     public static final String MODEL_CODE_AUTHENTICATION = "SMS_152470943";
 
-
+    /**
+     * 模板code
+     */
+    public static final String MODEL_CODE_WARN = "SMS_166778828";
 }

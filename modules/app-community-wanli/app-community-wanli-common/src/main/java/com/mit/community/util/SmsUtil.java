@@ -1,4 +1,4 @@
-package com.mit.community.rest.util;
+package com.mit.community.util;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyuncs.DefaultAcsClient;
