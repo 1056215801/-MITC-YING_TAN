@@ -1,13 +1,10 @@
 package com.mit.community.entity.entity;
 
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mit.community.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,13 +16,13 @@ public class ZSZHInfo extends BaseEntity {
     private String jhrsfzh;
     private String jhrxm;
     private String jhrlxfs;
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime ccfbrq;
+    //@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private String ccfbrq;
     private String mqzdlx;
     private String ywzszhs;
     private int zszhcs;
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime sczszhrq;
+    //@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private String sczszhrq;
     private String mqwxxpgdj;
     private String zlqk;
     private String zlyy;

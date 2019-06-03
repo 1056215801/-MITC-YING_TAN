@@ -70,119 +70,119 @@ public class PartyInfoController {
             String params = inputStream2String(in, "");
             System.out.println(params);
             JSONObject jsonObject = JSONObject.fromObject(params);
+            //境外人员
             String jwry = jsonObject.getString("jwry");
             if (!"0".equals(jwry)) {
                 JSONObject obj = jsonObject.getJSONObject("jwry");
-                EngPeopleInfo engPeopleInfo = (EngPeopleInfo)JSONObject.toBean(obj,EngPeopleInfo.class);
+                EngPeopleInfo engPeopleInfo = (EngPeopleInfo) JSONObject.toBean(obj, EngPeopleInfo.class);
                 if (engPeopleInfo.getPerson_baseinfo_id() != null) {
                     engPeopleService.save(engPeopleInfo);
                 }
             }
-
+            //留守人员
             String lsry = jsonObject.getString("lsry");
-            //JSONObject lsry = jsonObject.getJSONObject("lsry");
             if (!"0".equals(lsry)) {
                 JSONObject obj = jsonObject.getJSONObject("lsry");
-                StayPeopleInfo stayPeopleInfo = (StayPeopleInfo)JSONObject.toBean(obj,StayPeopleInfo.class);
+                StayPeopleInfo stayPeopleInfo = (StayPeopleInfo) JSONObject.toBean(obj, StayPeopleInfo.class);
                 if (stayPeopleInfo.getPerson_baseinfo_id() != null) {
                     stayPeopleService.save(stayPeopleInfo);
                 }
             }
+            //党员
             String dy = jsonObject.getString("dy");
-            //JSONObject dy = jsonObject.getJSONObject("dy");
             if (!"0".equals(dy)) {
                 JSONObject obj = jsonObject.getJSONObject("dy");
-                PartyInfo partyInfo = (PartyInfo)JSONObject.toBean(obj,PartyInfo.class);
+                PartyInfo partyInfo = (PartyInfo) JSONObject.toBean(obj, PartyInfo.class);
                 if (partyInfo.getPerson_baseinfo_id() != null) {
                     partyInfoService.save(partyInfo);
                 }
             }
+            //计生人员
             String js = jsonObject.getString("js");
-            //JSONObject js = jsonObject.getJSONObject("js");
             if (!"0".equals(js)) {
                 JSONObject obj = jsonObject.getJSONObject("js");
-                BearInfo bearInfo = (BearInfo)JSONObject.toBean(obj,BearInfo.class);
+                BearInfo bearInfo = (BearInfo) JSONObject.toBean(obj, BearInfo.class);
                 if (bearInfo.getPerson_baseinfo_id() != null) {
                     bearInfoService.save(bearInfo);
                 }
             }
+            //兵役
             String by = jsonObject.getString("by");
-            //JSONObject by = jsonObject.getJSONObject("by");
             if (!"0".equals(by)) {
                 JSONObject obj = jsonObject.getJSONObject("by");
-                MilitaryServiceInfo militaryServiceInfo = (MilitaryServiceInfo)JSONObject.toBean(obj,MilitaryServiceInfo.class);
+                MilitaryServiceInfo militaryServiceInfo = (MilitaryServiceInfo) JSONObject.toBean(obj, MilitaryServiceInfo.class);
                 if (militaryServiceInfo.getPerson_baseinfo_id() != null) {
                     militaryServiceService.save(militaryServiceInfo);
                 }
             }
+            //刑满释放
             String xmsf = jsonObject.getString("xmsf");
-            //JSONObject xmsf = jsonObject.getJSONObject("xmsf");
             if (!"0".equals(xmsf)) {
                 JSONObject obj = jsonObject.getJSONObject("xmsf");
-                XmsfPeopleInfo xmsfPeopleInfo = (XmsfPeopleInfo)JSONObject.toBean(obj,XmsfPeopleInfo.class);
+                XmsfPeopleInfo xmsfPeopleInfo = (XmsfPeopleInfo) JSONObject.toBean(obj, XmsfPeopleInfo.class);
                 if (xmsfPeopleInfo.getPerson_baseinfo_id() != null) {
                     xmsfPeopleService.save(xmsfPeopleInfo);
                 }
             }
+            //疑似传销
             String yscx = jsonObject.getString("yscx");
-            //JSONObject yscx = jsonObject.getJSONObject("yscx");
-            if (!"0".equals(yscx)){
+            if (!"0".equals(yscx)) {
                 JSONObject obj = jsonObject.getJSONObject("yscx");
-                CXInfo cXInfo = (CXInfo)JSONObject.toBean(obj,CXInfo.class);
+                CXInfo cXInfo = (CXInfo) JSONObject.toBean(obj, CXInfo.class);
                 if (cXInfo.getPerson_baseinfo_id() != null) {
                     cXService.save(cXInfo);
                 }
             }
+            //上访人员
             String sfyy = jsonObject.getString("sfyy");
-            //JSONObject sfyy = jsonObject.getJSONObject("sfyy");
-            if (!"0".equals(sfyy)){
+            if (!"0".equals(sfyy)) {
                 JSONObject obj = jsonObject.getJSONObject("sfyy");
-                SFPeopleInfo sFPeopleInfo = (SFPeopleInfo)JSONObject.toBean(obj,SFPeopleInfo.class);
+                SFPeopleInfo sFPeopleInfo = (SFPeopleInfo) JSONObject.toBean(obj, SFPeopleInfo.class);
                 if (sFPeopleInfo.getPerson_baseinfo_id() != null) {
                     sFPeopleService.save(sFPeopleInfo);
                 }
             }
+            //社区矫正
             String sqjz = jsonObject.getString("sqjz");
-            //JSONObject sqjz = jsonObject.getJSONObject("sqjz");
-            if (!"0".equals(sqjz)){
+            if (!"0".equals(sqjz)) {
                 JSONObject obj = jsonObject.getJSONObject("sqjz");
-                SQJZPeopleinfo sQJZPeopleinfo = (SQJZPeopleinfo)JSONObject.toBean(obj,SQJZPeopleinfo.class);
+                SQJZPeopleinfo sQJZPeopleinfo = (SQJZPeopleinfo) JSONObject.toBean(obj, SQJZPeopleinfo.class);
                 if (sQJZPeopleinfo.getPerson_baseinfo_id() != null) {
                     sQJZPeopleService.save(sQJZPeopleinfo);
                 }
             }
+            //肇事肇祸
             String zszh = jsonObject.getString("zszh");
-            //JSONObject zszh = jsonObject.getJSONObject("zszh");
-            if (!"0".equals(zszh)){
+            if (!"0".equals(zszh)) {
                 JSONObject obj = jsonObject.getJSONObject("zszh");
-                ZSZHInfo zSZHInfo = (ZSZHInfo)JSONObject.toBean(obj,ZSZHInfo.class);
+                ZSZHInfo zSZHInfo = (ZSZHInfo) JSONObject.toBean(obj, ZSZHInfo.class);
                 if (zSZHInfo.getPerson_baseinfo_id() != null) {
                     zSZHService.save(zSZHInfo);
                 }
             }
+            //吸毒人员
             String xdry = jsonObject.getString("xdry");
-            //JSONObject xdry = jsonObject.getJSONObject("xdry");
-            if (!"0".equals(xdry)){
+            if (!"0".equals(xdry)) {
                 JSONObject obj = jsonObject.getJSONObject("xdry");
-                XDInfo xDInfo = (XDInfo)JSONObject.toBean(obj,XDInfo.class);
+                XDInfo xDInfo = (XDInfo) JSONObject.toBean(obj, XDInfo.class);
                 if (xDInfo.getPerson_baseinfo_id() != null) {
                     xDService.save(xDInfo);
                 }
             }
+            //艾滋病人员
             String azb = jsonObject.getString("azb");
-            //JSONObject azb = jsonObject.getJSONObject("azb");
-            if (!"0".equals(azb)){
+            if (!"0".equals(azb)) {
                 JSONObject obj = jsonObject.getJSONObject("azb");
-                AzbInfo azbInfo = (AzbInfo)JSONObject.toBean(obj,AzbInfo.class);
+                AzbInfo azbInfo = (AzbInfo) JSONObject.toBean(obj, AzbInfo.class);
                 if (azbInfo.getPerson_baseinfo_id() != null) {
                     aZBService.save(azbInfo);
                 }
             }
+            //重点青少年
             String zdqsn = jsonObject.getString("zdqsn");
-            //JSONObject zdqsn = jsonObject.getJSONObject("zdqsn");
-            if (!"0".equals(zdqsn)){
+            if (!"0".equals(zdqsn)) {
                 JSONObject obj = jsonObject.getJSONObject("zdqsn");
-                ZDQSNCInfo zDQSNCInfo = (ZDQSNCInfo)JSONObject.toBean(obj,ZDQSNCInfo.class);
+                ZDQSNCInfo zDQSNCInfo = (ZDQSNCInfo) JSONObject.toBean(obj, ZDQSNCInfo.class);
                 if (zDQSNCInfo.getPerson_baseinfo_id() != null) {
                     zDQSNCService.save(zDQSNCInfo);
                 }
@@ -190,7 +190,7 @@ public class PartyInfoController {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        return Result.success("保存党员信息成功");
+        return Result.success("信息保存成功");
     }
 
     /**

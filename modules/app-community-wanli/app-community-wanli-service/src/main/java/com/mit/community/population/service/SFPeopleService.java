@@ -14,10 +14,10 @@ public class SFPeopleService {
 
     public void save(String sfqzxf, int lxcs, int ldcs, LocalDateTime sfsj, int sfrs, String sffsdd, String sfrysq,
                        String clqkbf, Integer person_baseinfo_id){
-        SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj, sfrs, sffsdd, sfrysq, clqkbf, person_baseinfo_id);
+        /*SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj, sfrs, sffsdd, sfrysq, clqkbf, person_baseinfo_id);
         sFPeopleInfo.setGmtCreate(LocalDateTime.now());
         sFPeopleInfo.setGmtModified(LocalDateTime.now());
-        sFPeopleMapper.insert(sFPeopleInfo);
+        sFPeopleMapper.insert(sFPeopleInfo);*/
 
     }
 

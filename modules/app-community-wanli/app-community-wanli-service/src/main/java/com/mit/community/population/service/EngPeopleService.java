@@ -13,14 +13,14 @@ public class EngPeopleService {
     private EngPeopleMapper engPeopleMapper;
 
     public void save(String wwx, String wwm, String zwm, String gj, String zjxy, String zjdm, String zjhm,
-                     LocalDateTime zjyxq, String lhmd, LocalDateTime ddrq, LocalDateTime yjlkrq, int sfzdry, Integer person_baseinfo_id){
-        EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm, zjyxq, lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id);
+                     LocalDateTime zjyxq, String lhmd, LocalDateTime ddrq, LocalDateTime yjlkrq, int sfzdry, Integer person_baseinfo_id) {
+        /*EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm, zjyxq, lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id);
         engPeopleInfo.setGmtCreate(LocalDateTime.now());
         engPeopleInfo.setGmtModified(LocalDateTime.now());
-        engPeopleMapper.insert(engPeopleInfo);
+        engPeopleMapper.insert(engPeopleInfo);*/
     }
 
-    public void save(EngPeopleInfo engPeopleInfo){
+    public void save(EngPeopleInfo engPeopleInfo) {
         engPeopleInfo.setGmtCreate(LocalDateTime.now());
         engPeopleInfo.setGmtModified(LocalDateTime.now());
         engPeopleMapper.insert(engPeopleInfo);

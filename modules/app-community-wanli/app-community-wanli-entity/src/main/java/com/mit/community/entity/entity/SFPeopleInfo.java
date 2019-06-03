@@ -17,8 +17,8 @@ public class SFPeopleInfo extends BaseEntity {
     private String sfqzxf;
     private int lxcs;
     private int ldcs;
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime sfsj;
+    //@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private String sfsj;
     private int sfrs;
     private String sffsdd;
     private String sfrysq;
