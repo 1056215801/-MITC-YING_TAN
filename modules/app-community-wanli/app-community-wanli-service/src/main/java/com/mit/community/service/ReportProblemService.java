@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.*;
@@ -72,14 +73,17 @@ public class ReportProblemService {
 
     }
 
-    public Page<ReportProblemInfo> listPage (String userId, String time, String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{
+    public Page<ReportProblemInfo> listPage (String content, String userId, String time, String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{
         Page<ReportProblemInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<ReportProblemInfo> wrapper = new EntityWrapper<>();
         if (StringUtils.isNotBlank(time)) {
             LocalDateTime startTime = DateUtils.dateStrToLocalDateTime(time + "-01");
             LocalDateTime endTime = DateUtils.dateStrToLocalDateTime(time + "-30");
             wrapper.ge("a.gmt_create", startTime);
-            wrapper.le("gmt_create", endTime);
+            wrapper.le("a.gmt_create", endTime);
+        }
+        if (StringUtils.isNotBlank(content)) {
+            wrapper.like("a.content",content, SqlLike.DEFAULT);
         }
         if (StringUtils.isNotBlank(address)) {
             wrapper.like("a.address", address);
