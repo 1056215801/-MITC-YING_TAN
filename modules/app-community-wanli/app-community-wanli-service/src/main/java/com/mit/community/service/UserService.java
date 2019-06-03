@@ -175,7 +175,7 @@ public class UserService {
                 Constants.NULL_LOCAL_DATE, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                 "普通业主", StringUtils.EMPTY, null, null, null,
                 null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null,null);
+                null, null, null, null, null, null);
         this.save(user);
         return status;
     }
@@ -201,7 +201,7 @@ public class UserService {
         User user = new User(cellphone, null, null, nickname, gender, null, null,
                 birthday, bloodType, profession, signature, null, null, null, null,
                 null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null,null);
+                null, null, null, null, null, null, null, null, null);
         user.setId(userId);
         userService.update(user);
 //        User user = this.getById(userId);

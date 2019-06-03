@@ -52,4 +52,14 @@
         LEFT JOIN user f on d.userId=f.id
         where a.status=#{status} and a.problemType=#{problemType}
     </select>
+
+    <select id="getWebProblem" resultMap="handleProblemInfoMap">
+        select a.id,a.content,a.problemType,a.address,a.isOpen,a.status,a.gmt_create,a.gmt_modified,
+        b.id as userId,b.icon_url as iconUrl,b.nickname as userName,c.base64,d.content as neirong,e.base64 as handleBase64,
+        f.icon_url as sloveUrl,f.nickname as sloveName
+        from report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN report_problem_photo c on a.id=c.reportProblemId
+        LEFT JOIN problem_schedule d on a.id=d.reportProblemId LEFT JOIN problem_schedule_photo e on d.id=e.problemScheduleId
+        LEFT JOIN user f on d.userId=f.id
+        where 1=1 ${ew.sqlSegment}
+    </select>
 </mapper>

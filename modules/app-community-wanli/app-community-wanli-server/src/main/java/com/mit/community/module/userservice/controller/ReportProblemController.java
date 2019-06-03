@@ -60,9 +60,9 @@ public class ReportProblemController {
     }
 
     @PostMapping("/listPage")
-    @ApiOperation(value = "获取事件列表", notes = "String userId 用户id, String time 时间, String address 地址, String problemType 问题类型, Integer status 状态, Integer pageNum, Integer pageSize")
-    public Result listPage(String userId, String time, String address, String problemType, @RequestParam( required = false, defaultValue = "0")Integer status, Integer pageNum, Integer pageSize) throws Exception{
-        Page<ReportProblemInfo> page = reportProblemService.listPage(userId,time,address,problemType,status,pageNum,pageSize);
+    @ApiOperation(value = "获取事件列表", notes = "String content 搜索内容,String userId 用户id, String time 时间, String address 地址, String problemType 问题类型, Integer status 状态, Integer pageNum, Integer pageSize")
+    public Result listPage(String content, String userId, String time, String address, String problemType, @RequestParam( required = false, defaultValue = "0")Integer status, Integer pageNum, Integer pageSize) throws Exception{
+        Page<ReportProblemInfo> page = reportProblemService.listPage(content, userId,time,address,problemType,status,pageNum,pageSize);
         return Result.success(page);
     }
 

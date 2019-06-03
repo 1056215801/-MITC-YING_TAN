@@ -1,5 +1,7 @@
 package com.mit.community.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.HandleProblemInfo;
 import com.mit.community.entity.ProblemSchedule;
 import com.mit.community.entity.ProblemSchedulePhoto;
@@ -8,7 +10,9 @@ import com.mit.community.mapper.HandleProblemMapper;
 import com.mit.community.mapper.ProblemHandleMapper;
 import com.mit.community.mapper.ProblemScheduleMapper;
 import com.mit.community.mapper.ProblemSchedulePhotoMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,28 @@ public class ProblemHandleService {
 
     public List<HandleProblemInfo> getHandleProblem(){
         return handleProblemMapper.getProblemSlove(1,"停车");
+    }
+
+    public Page<HandleProblemInfo> getWebProblem(String problemType, String status, LocalDateTime gmtCreateTimeStart,
+                                                 LocalDateTime gmtCreateTimeEnd, Integer pageNum, Integer pageSize){
+        Page<HandleProblemInfo> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<HandleProblemInfo> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotBlank(problemType)) {
+            wrapper.eq("a.problemType", problemType);
+        }
+        if (StringUtils.isNotBlank(status)) {
+            wrapper.eq("a.status", status);
+        }
+        if (gmtCreateTimeStart != null) {
+            wrapper.ge("a.gmt_create", gmtCreateTimeStart);
+        }
+        if (gmtCreateTimeEnd != null) {
+            wrapper.le("a.gmt_create", gmtCreateTimeEnd);
+        }
+        wrapper.orderBy("a.gmt_create", false);
+        List<HandleProblemInfo> list = handleProblemMapper.getWebProblem(page, wrapper);
+        page.setRecords(list);
+        return page;
     }
 
     @Transactional
