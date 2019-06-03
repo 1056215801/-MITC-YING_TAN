@@ -20,7 +20,7 @@ import java.net.SocketException;
 @WebListener
 public class UDPServer implements ServletContextListener{
     public static final int MAX_UDP_DATA_SIZE = 4096;
-    public static final int UDP_PORT = 6007;
+    public static final int UDP_PORT = 6008;
     public static DatagramPacket packet = null;
     public static DatagramSocket socket = null;
 
