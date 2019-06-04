@@ -18,32 +18,27 @@ import java.util.List;
 import java.util.Map;
 
 public class WebPush {
-    private final static String masterSecret = "1f825f301e59191f353fc7d8";
-    private final static String appKey = "1633808c40ece625f09e2dbf";
+    //网格助手
+    private final static String masterSecret = "b32f4510e30674779f1504d3";
+    private final static String appKey = "0eeff9299de28dafdb535145";
     private final static String channel = "jxmxzn";
 
     /**
      * 给所有平台的所有用户发通知
      */
-    public static void sendAllsetNotification(String message)
-    {
+    public static void sendAllsetNotification(String message) {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey);
         //JPushClient jpushClient = new JPushClient(masterSecret, appKey);//第一个参数是masterSecret 第二个是appKey
         Map<String, String> extras = new HashMap<String, String>();
         // 添加附加信息
         extras.put("extMessage", "");
         PushPayload payload = buildPushObject_all_alias_alert(message, extras);
-        try
-        {
+        try {
             PushResult result = jpushClient.sendPush(payload);
             System.out.println(result);
-        }
-        catch (APIConnectionException e)
-        {
+        } catch (APIConnectionException e) {
             System.out.println(e);
-        }
-        catch (APIRequestException e)
-        {
+        } catch (APIRequestException e) {
             System.out.println(e);
             System.out.println("Error response from JPush server. Should review and fix it. " + e);
             System.out.println("HTTP Status: " + e.getStatus());
@@ -56,25 +51,19 @@ public class WebPush {
     /**
      * 客户端 给所有平台的一个或者一组用户发送信息(别名发送)
      */
-    public static void sendAlias(String message, List<String> aliasList)
-    {
+    public static void sendAlias(String message, List<String> aliasList) {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey);
         Map<String, String> extras = new HashMap<String, String>();
         // 添加附加信息
         extras.put("extMessage", "");
 
         PushPayload payload = allPlatformAndAlias(message, extras, aliasList);
-        try
-        {
+        try {
             PushResult result = jpushClient.sendPush(payload);
             System.out.println(result);
-        }
-        catch (APIConnectionException e)
-        {
+        } catch (APIConnectionException e) {
             System.out.println(e);
-        }
-        catch (APIRequestException e)
-        {
+        } catch (APIRequestException e) {
             System.out.println(e);
             System.out.println("Error response from JPush server. Should review and fix it. " + e);
             System.out.println("HTTP Status: " + e.getStatus());
@@ -85,12 +74,10 @@ public class WebPush {
     }
 
 
-
     /**
      * 客户端 给平台的一个或者一组标签发送消息（标签发送）。
      */
-    public static void sendTag(String message, List<String> tagsList)
-    {
+    public static void sendTag(String message, List<String> tagsList) {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey);
         // 附加字段
         Map<String, String> extras = new HashMap<String, String>();
@@ -98,17 +85,12 @@ public class WebPush {
         extras.put("typeId", "");
 
         PushPayload payload = allPlatformAndTag(message, extras, tagsList);
-        try
-        {
+        try {
             PushResult result = jpushClient.sendPush(payload);
             System.out.println(result);
-        }
-        catch (APIConnectionException e)
-        {
+        } catch (APIConnectionException e) {
             System.out.println(e);
-        }
-        catch (APIRequestException e)
-        {
+        } catch (APIRequestException e) {
             System.out.println(e);
             System.out.println("Error response from JPush server. Should review and fix it. " + e);
             System.out.println("HTTP Status: " + e.getStatus());
@@ -152,6 +134,7 @@ public class WebPush {
             System.out.println("Msg ID: " + e.getMsgId());
         }
     }*/
+
     /**
      * 发送通知
      *
@@ -162,8 +145,7 @@ public class WebPush {
      * @date 2017年1月13日
      */
     private static PushPayload buildPushObject_all_alias_alert(String message,
-                                                               Map<String, String> extras)
-    {
+                                                               Map<String, String> extras) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
                 // 设置平台
@@ -182,6 +164,7 @@ public class WebPush {
                 .setOptions(Options.newBuilder().setApnsProduction(true).build()).build();
         //设置ios平台环境  True 表示推送生产环境，False 表示要推送开发环境   默认是开发
     }
+
     /**
      * 发送透传消息
      *
@@ -192,8 +175,7 @@ public class WebPush {
      * @date 2017年1月13日
      */
     private static PushPayload buildPushObject_all_alias_Message(String message,
-                                                                 Map<String, String> extras)
-    {
+                                                                 Map<String, String> extras) {
         return PushPayload.newBuilder().setPlatform(Platform.all())
                 // 设置平台
                 .setAudience(Audience.all())
@@ -205,13 +187,11 @@ public class WebPush {
     }
 
 
-
     /**
      * 极光推送：生成向一个或者一组用户发送的消息。
      */
     private static PushPayload allPlatformAndAlias(String alert, Map<String, String> extras,
-                                                   List<String> aliasList)
-    {
+                                                   List<String> aliasList) {
 
         return PushPayload
                 .newBuilder()
@@ -234,8 +214,7 @@ public class WebPush {
      * 极光推送：生成向一组标签进行推送的消息。
      */
     private static PushPayload allPlatformAndTag(String alert, Map<String, String> extras,
-                                                 List<String> tagsList)
-    {
+                                                 List<String> tagsList) {
 
         return PushPayload
                 .newBuilder()
