@@ -50,8 +50,8 @@ spring:
         reset-enable: true
         login-username: admin
         login-password: admin
-        allow: 192.168.1.222
-        #allow: 127.0.0.1
+        #allow: 192.168.1.222
+        allow: 127.0.0.1
       filter:
         stat:
           db-type: mysql
@@ -100,7 +100,7 @@ mybatis:
   mapper-locations: "classpath*:mapper/*.xml"
 
 server:
-  port: 8080
+  port: 8010
   servlet:
     context-path: /cloud-service/
 
