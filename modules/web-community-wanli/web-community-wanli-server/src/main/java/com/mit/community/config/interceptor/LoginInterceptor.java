@@ -34,7 +34,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 servletPath.contains(".js") || servletPath.contains(".css")
                 || servletPath.contains(".jpg") || servletPath.contains(".png") ||
                 servletPath.contains(".gif") || servletPath.contains("/error")
-                || servletPath.contains("/login/")
+                || servletPath.contains("/login/")||servletPath.contains("/excel")
                 || servletPath.contains("/initCookie")) {
             return true;
         }

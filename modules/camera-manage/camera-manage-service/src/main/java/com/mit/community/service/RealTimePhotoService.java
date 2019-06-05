@@ -50,7 +50,8 @@ public class RealTimePhotoService {
 			}
 			for(int i=0; i<list.size();i++){
 				String[] a = list.get(i).getImageUrl().split("\\\\");
-				String path = address.getHostAddress()+":8080/cloud-service/imgs/"+a[a.length-1];
+				//String path = address.getHostAddress()+":8010/cloud-service/imgs/"+a[a.length-1];
+				String path = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
 				list.get(i).setImageUrl(path);
 			}
 
@@ -89,7 +90,7 @@ public class RealTimePhotoService {
 						snapFaceData = new SnapFaceData();
 						String imageUrl = realTimePhotoMapper.getImageUrlByUserInfo(rs.getUser_info());
 						String[] a = imageUrl.split("\\\\");
-						String path = address.getHostAddress()+":8080/cloud-service/imgs/"+a[a.length-1];
+						String path = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
 						snapFaceData.setImageUrl(path);
 						snapFaceData.setSimilarity(rs.getScore());
 						list.add(snapFaceData);
@@ -161,7 +162,7 @@ public class RealTimePhotoService {
 			}
 			for(int i=0; i<snapFaceDatas.size();i++){
 				String[] a = snapFaceDatas.get(i).getImageUrl().split("\\\\");
-				String path = address.getHostAddress()+":8080/cloud-service/imgs/"+a[a.length-1];
+				String path = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
 				snapFaceDatas.get(i).setImageUrl(path);
 			}
 

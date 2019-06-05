@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.BearInfo;
 import com.mit.community.mapper.mapper.BearInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class BearInfoService {
@@ -21,8 +23,18 @@ public class BearInfoService {
     }
 
     public void save(BearInfo bearInfo) {
-        bearInfo.setGmtCreate(LocalDateTime.now());
-        bearInfo.setGmtModified(LocalDateTime.now());
-        bearInfoMapper.insert(bearInfo);
+        EntityWrapper<BearInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", bearInfo.getPerson_baseinfo_id());
+        List<BearInfo> list = bearInfoMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            bearInfo.setGmtCreate(LocalDateTime.now());
+            bearInfo.setGmtModified(LocalDateTime.now());
+            bearInfoMapper.insert(bearInfo);
+        } else {
+            bearInfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<BearInfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", bearInfo.getPerson_baseinfo_id());
+            bearInfoMapper.update(bearInfo, update);
+        }
     }
 }

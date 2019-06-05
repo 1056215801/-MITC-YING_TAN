@@ -9,6 +9,14 @@
     <artifactId>app-community-wanli-service</artifactId>
 
     <dependencies>
+
+        <!--添加导入/出表格依赖-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+        </dependency>
+
         <dependency>
             <groupId>cn.jpush.api</groupId>
             <artifactId>jpush-client</artifactId>

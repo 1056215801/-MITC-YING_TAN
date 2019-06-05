@@ -39,7 +39,7 @@ public class ComparisonPhotoService {
 			}
 			for(int i=0; i<list.size();i++){
 				String[] a = list.get(i).getImageUrl().split("\\\\");
-				String path = address.getHostAddress()+":8080/cloud-service/imgs/"+a[a.length-1];
+				String path = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
 				list.get(i).setImageUrl(path);
 			}
 
@@ -120,7 +120,7 @@ public class ComparisonPhotoService {
 			}
 			for(int i=0; i<list.size();i++){
 				String[] a = list.get(i).getImageUrl().split("\\\\");
-				String path = address.getHostAddress()+":8080/cloud-service/imgs/"+a[a.length-1];
+				String path = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
 				list.get(i).setImageUrl(path);
 			}
 		}

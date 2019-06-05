@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.MilitaryServiceInfo;
 import com.mit.community.mapper.mapper.MilitaryServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MilitaryServiceService {
@@ -23,9 +25,20 @@ public class MilitaryServiceService {
     }
 
     public void save(MilitaryServiceInfo militaryServiceInfo){
-        militaryServiceInfo.setGmtCreate(LocalDateTime.now());
-        militaryServiceInfo.setGmtModified(LocalDateTime.now());
-        militaryServiceMapper.insert(militaryServiceInfo);
+        EntityWrapper<MilitaryServiceInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", militaryServiceInfo.getPerson_baseinfo_id());
+        List<MilitaryServiceInfo> list = militaryServiceMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            militaryServiceInfo.setGmtCreate(LocalDateTime.now());
+            militaryServiceInfo.setGmtModified(LocalDateTime.now());
+            militaryServiceMapper.insert(militaryServiceInfo);
+        } else {
+            militaryServiceInfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<MilitaryServiceInfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", militaryServiceInfo.getPerson_baseinfo_id());
+            militaryServiceMapper.update(militaryServiceInfo, update);
+        }
+
 
     }
 }

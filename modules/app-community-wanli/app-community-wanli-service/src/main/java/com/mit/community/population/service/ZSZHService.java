@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.ZSZHInfo;
 import com.mit.community.mapper.mapper.ZSZHMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ZSZHService {
@@ -24,9 +26,18 @@ public class ZSZHService {
     }
 
     public void save(ZSZHInfo zSZHInfo){
-        zSZHInfo.setGmtCreate(LocalDateTime.now());
-        zSZHInfo.setGmtModified(LocalDateTime.now());
-        zSZHMapper.insert(zSZHInfo);
-
+        EntityWrapper<ZSZHInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", zSZHInfo.getPerson_baseinfo_id());
+        List<ZSZHInfo> list = zSZHMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            zSZHInfo.setGmtCreate(LocalDateTime.now());
+            zSZHInfo.setGmtModified(LocalDateTime.now());
+            zSZHMapper.insert(zSZHInfo);
+        } else {
+            zSZHInfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<ZSZHInfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", zSZHInfo.getPerson_baseinfo_id());
+            zSZHMapper.update(zSZHInfo, update);
+        }
     }
 }

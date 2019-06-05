@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.XmsfPeopleInfo;
 import com.mit.community.mapper.mapper.XmsfPeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class XmsfPeopleService {
@@ -21,8 +23,18 @@ public class XmsfPeopleService {
     }
 
     public void save(XmsfPeopleInfo xmsfPeopleInfo){
-        xmsfPeopleInfo.setGmtCreate(LocalDateTime.now());
-        xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
-        xmsfPeopleMapper.insert(xmsfPeopleInfo);
+        EntityWrapper<XmsfPeopleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", xmsfPeopleInfo.getPerson_baseinfo_id());
+        List<XmsfPeopleInfo> list = xmsfPeopleMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            xmsfPeopleInfo.setGmtCreate(LocalDateTime.now());
+            xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
+            xmsfPeopleMapper.insert(xmsfPeopleInfo);
+        } else {
+            xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<XmsfPeopleInfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", xmsfPeopleInfo.getPerson_baseinfo_id());
+            xmsfPeopleMapper.update(xmsfPeopleInfo, update);
+        }
     }
 }
