@@ -72,10 +72,4 @@ public class ReportProblemController {
         List<HandleProblemInfo> list = reportProblemService.getSchedule(reportProblemId);
         return Result.success(list);
     }
-
-
-
-
-
-
 }

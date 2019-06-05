@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.SQJZPeopleinfo;
 import com.mit.community.mapper.mapper.SQJZPeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class SQJZPeopleService {
@@ -25,9 +27,18 @@ public class SQJZPeopleService {
     }
 
     public void save(SQJZPeopleinfo sQJZPeopleinfo){
-        sQJZPeopleinfo.setGmtCreate(LocalDateTime.now());
-        sQJZPeopleinfo.setGmtModified(LocalDateTime.now());
-        sQJZPeopleMapper.insert(sQJZPeopleinfo);
-
+        EntityWrapper<SQJZPeopleinfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", sQJZPeopleinfo.getPerson_baseinfo_id());
+        List<SQJZPeopleinfo> list = sQJZPeopleMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            sQJZPeopleinfo.setGmtCreate(LocalDateTime.now());
+            sQJZPeopleinfo.setGmtModified(LocalDateTime.now());
+            sQJZPeopleMapper.insert(sQJZPeopleinfo);
+        } else {
+            sQJZPeopleinfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<SQJZPeopleinfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", sQJZPeopleinfo.getPerson_baseinfo_id());
+            sQJZPeopleMapper.update(sQJZPeopleinfo, update);
+        }
     }
 }

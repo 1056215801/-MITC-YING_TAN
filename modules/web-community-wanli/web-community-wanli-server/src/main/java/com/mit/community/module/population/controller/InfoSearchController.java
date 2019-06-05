@@ -1,9 +1,11 @@
 package com.mit.community.module.population.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.mit.community.entity.ExcelData;
 import com.mit.community.entity.entity.InfoSearch;
 import com.mit.community.population.service.InfoSearchService;
 import com.mit.community.service.LabelsService;
+import com.mit.community.util.ExcelUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RequestMapping(value = "/infoSearch")
@@ -36,13 +44,61 @@ public class InfoSearchController {
             for(int i=0;i<list.size();i++){
                 System.out.println("==========id="+list.get(i).getPersonBaseInfo().getId());
                 List<String> labels = labelsService.getLabelsByUserId(list.get(i).getPersonBaseInfo().getId());
-                /*labels.add("zdqsnPeople");
-                labels.add("azbPeople");*/
                 list.get(i).getPersonBaseInfo().setLabels(labels);
             }
         }
         page.setRecords(list);
         return Result.success(page);
+    }
+
+    @PostMapping("/getInfoExcel")
+    @ApiOperation(value = "人员信息导出excel", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
+    public Result getInfoExcel(HttpServletResponse response, HttpServletRequest request,@RequestParam( required = false, defaultValue = "0")Integer ageStart, @RequestParam( required = false, defaultValue = "0")Integer ageEnd, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, Integer pageNum, Integer pageSize, String rycf) throws Exception{
+        System.out.println("======"+ pageNum + ","+ pageSize+",label="+label+",matrimony="+matrimony);
+        Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum, sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
+        List<InfoSearch> list = page.getRecords();
+        if(!list.isEmpty()){
+            for(int i=0;i<list.size();i++){
+                System.out.println("==========id="+list.get(i).getPersonBaseInfo().getId());
+                List<String> labels = labelsService.getLabelsByUserId(list.get(i).getPersonBaseInfo().getId());
+                list.get(i).getPersonBaseInfo().setLabels(labels);
+            }
+        }
+        ExcelData data = new ExcelData();
+        data.setName("用户信息数据");
+        List<String> titles = new ArrayList<>();
+        titles.add("姓名");
+        titles.add("性别");
+        titles.add("年龄");
+        titles.add("身份证号码");
+        titles.add("人口属性");
+        data.setTitles(titles);
+        List<List<Object>> rows = new ArrayList<>();
+        List<Object> row = null;
+        for(int i=0;i<page.getRecords().size();i++) {
+            row = new ArrayList<>();
+            row.add(page.getRecords().get(i).getPersonBaseInfo().getName());
+            row.add(page.getRecords().get(i).getPersonBaseInfo().getGender());
+            row.add(page.getRecords().get(i).getPersonBaseInfo().getAge());
+            row.add(page.getRecords().get(i).getPersonBaseInfo().getIdCardNum());
+            row.add(page.getRecords().get(i).getPersonBaseInfo().getRksx() == 1 ? "户籍人口":"流动人口");
+            rows.add(row);
+        }
+        data.setRows(rows);
+        SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String fileName=fdate.format(new Date())+".xlsx";
+        String basePath = request.getServletContext().getRealPath("excel/");
+        System.out.println("==========="+basePath);
+        //String basePath = request.getServletContext().getRealPath("imgs/");
+        File file = new File(basePath);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        ExcelUtils.generateExcel(data,basePath+fileName);
+        //ExcelUtils.exportExcel(response, fileName, data);
+
+        page.setRecords(list);
+        return Result.success("http://127.0.0.1:9766/excel/"+fileName);
     }
 
 }

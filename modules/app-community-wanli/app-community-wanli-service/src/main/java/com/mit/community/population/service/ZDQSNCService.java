@@ -1,12 +1,14 @@
 package com.mit.community.population.service;
 
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.ZDQSNCInfo;
 import com.mit.community.mapper.mapper.ZDQSNCMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ZDQSNCService {
@@ -22,8 +24,18 @@ public class ZDQSNCService {
     }
 
     public void save(ZDQSNCInfo zDQSNCInfo){
-        zDQSNCInfo.setGmtCreate(LocalDateTime.now());
-        zDQSNCInfo.setGmtModified(LocalDateTime.now());
-        zDQSNCMapper.insert(zDQSNCInfo);
+        EntityWrapper<ZDQSNCInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", zDQSNCInfo.getPerson_baseinfo_id());
+        List<ZDQSNCInfo> list = zDQSNCMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            zDQSNCInfo.setGmtCreate(LocalDateTime.now());
+            zDQSNCInfo.setGmtModified(LocalDateTime.now());
+            zDQSNCMapper.insert(zDQSNCInfo);
+        } else {
+            zDQSNCInfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<ZDQSNCInfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", zDQSNCInfo.getPerson_baseinfo_id());
+            zDQSNCMapper.update(zDQSNCInfo, update);
+        }
     }
 }

@@ -48,14 +48,19 @@ public class PersonBaseInfoController {
                                      String education, String religion, String jobType, String profession, String cellphone,
                                      String placeOfDomicile, String placeOfDomicileDetail, String placeOfReside,
                                      String placeOfResideDetail, String placeOfServer) throws ParseException {
-        //User user = userService.getUserByCardNum(idCardNum);
         String[] ages = birthday.split("-");
         int age = 2019 - Integer.parseInt(ages[0]);
-
-        Integer id = personBaseInfoService.save(age,idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
-                nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);
-        return Result.success(id);
+        if (personBaseInfoService.isExist(idCardNum)) {//已经存在就更新
+            personBaseInfoService.updateByIdCardNum(age,idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
+                    nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
+                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);
+            return Result.success("信息更新成功");
+        } else {
+            Integer id = personBaseInfoService.save(age,idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
+                    nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
+                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);
+            return Result.success(id);
+        }
     }
 
 }

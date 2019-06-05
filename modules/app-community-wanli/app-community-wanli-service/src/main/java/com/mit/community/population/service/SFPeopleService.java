@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.SFPeopleInfo;
 import com.mit.community.mapper.mapper.SFPeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class SFPeopleService {
@@ -22,9 +24,18 @@ public class SFPeopleService {
     }
 
     public void save(SFPeopleInfo sFPeopleInfo){
-        sFPeopleInfo.setGmtCreate(LocalDateTime.now());
-        sFPeopleInfo.setGmtModified(LocalDateTime.now());
-        sFPeopleMapper.insert(sFPeopleInfo);
-
+        EntityWrapper<SFPeopleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", sFPeopleInfo.getPerson_baseinfo_id());
+        List<SFPeopleInfo> list = sFPeopleMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            sFPeopleInfo.setGmtCreate(LocalDateTime.now());
+            sFPeopleInfo.setGmtModified(LocalDateTime.now());
+            sFPeopleMapper.insert(sFPeopleInfo);
+        } else {
+            sFPeopleInfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<SFPeopleInfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", sFPeopleInfo.getPerson_baseinfo_id());
+            sFPeopleMapper.update(sFPeopleInfo, update);
+        }
     }
 }

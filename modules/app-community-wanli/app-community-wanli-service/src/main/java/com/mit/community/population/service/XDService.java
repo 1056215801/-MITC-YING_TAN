@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.XDInfo;
 import com.mit.community.mapper.mapper.XDMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class XDService {
@@ -20,8 +22,18 @@ public class XDService {
     }
 
     public void save(XDInfo xDInfo){
-        xDInfo.setGmtCreate(LocalDateTime.now());
-        xDInfo.setGmtModified(LocalDateTime.now());
-        xDMapper.insert(xDInfo);
+        EntityWrapper<XDInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
+        List<XDInfo> list = xDMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            xDInfo.setGmtCreate(LocalDateTime.now());
+            xDInfo.setGmtModified(LocalDateTime.now());
+            xDMapper.insert(xDInfo);
+        } else {
+            xDInfo.setGmtModified(LocalDateTime.now());
+            EntityWrapper<XDInfo> update = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
+            xDMapper.update(xDInfo, update);
+        }
     }
 }
