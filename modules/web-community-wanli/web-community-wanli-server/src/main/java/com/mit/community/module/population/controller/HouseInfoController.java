@@ -53,4 +53,11 @@ public class HouseInfoController {
             return Result.error("房产信息保存失败");
         }
     }
+
+    @PostMapping("/getHouseInfo")
+    @ApiOperation(value = "获取房屋信息", notes = "传参：Integer person_baseinfo_id 基本信息id")
+    public Result getHouseInfo(Integer person_baseinfo_id){
+        List<HouseInfo> list = houseInfoService.getHouseInfo(person_baseinfo_id);
+        return Result.success(list);
+    }
 }

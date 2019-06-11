@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping(value = "/infoSearch")
 @RestController
@@ -52,6 +53,13 @@ public class InfoSearchController {
         }
         page.setRecords(list);
         return Result.success(page);
+    }
+
+    @PostMapping("/getLabelInfo")
+    @ApiOperation(value = "人员标签信息", notes = "传参：Integer person_baseinfo_id")
+    public Result getLabelInfo(Integer person_baseinfo_id) {
+        Map<String, Object> map = infoSearchService.getLabelInfo(person_baseinfo_id);
+        return Result.success(map);
     }
 
     @PostMapping("/getInfoExcel")

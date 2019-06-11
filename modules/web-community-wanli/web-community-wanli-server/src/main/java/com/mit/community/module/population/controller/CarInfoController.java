@@ -64,6 +64,13 @@ public class CarInfoController {
         }
     }
 
+    @PostMapping("/getCarInfo")
+    @ApiOperation(value = "获取车辆信息", notes = "传参：Integer person_baseinfo_id 基本信息id")
+    public Result getCarInfo(Integer person_baseinfo_id){
+        List<CarInfo> list = carInfoService.getCarInfo(person_baseinfo_id);
+        return Result.success(list);
+    }
+
     public String inputStream2String(InputStream in, String coding) {
         BufferedReader reader = null;
         StringBuilder sb = new StringBuilder();

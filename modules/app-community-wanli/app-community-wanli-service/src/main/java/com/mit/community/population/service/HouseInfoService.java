@@ -1,5 +1,6 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.HouseInfo;
 import com.mit.community.mapper.mapper.HouseInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,12 @@ public class HouseInfoService {
             houseInfo.setGmtModified(LocalDateTime.now());
             houseInfoMapper.insert(houseInfo);
         }
+    }
+
+    public List<HouseInfo> getHouseInfo(Integer person_baseinfo_id){
+        EntityWrapper<HouseInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", person_baseinfo_id);
+        List<HouseInfo> list = houseInfoMapper.selectList(wrapper);
+        return list;
     }
 }
