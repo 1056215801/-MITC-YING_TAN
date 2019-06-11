@@ -2,18 +2,158 @@ package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.mit.community.entity.entity.InfoSearch;
-import com.mit.community.mapper.mapper.InfoSearchMapper;
+import com.mit.community.entity.entity.*;
+import com.mit.community.mapper.mapper.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class InfoSearchService {
     @Autowired
     private InfoSearchMapper infoSearchMapper;
+    @Autowired
+    private AZBMapper aZBMapper;
+    @Autowired
+    private BearInfoMapper bearInfoMapper;
+    @Autowired
+    private CXMapper cXMapper;
+    @Autowired
+    private EngPeopleMapper engPeopleMapper;
+    @Autowired
+    private MilitaryServiceMapper militaryServiceMapper;
+    @Autowired
+    private PartyInfoMapper partyInfoMapper;
+    @Autowired
+    private SFPeopleMapper sFPeopleMapper;
+    @Autowired
+    private SQJZPeopleMapper sQJZPeopleMapper;
+    @Autowired
+    private StayPeopleMapper stayPeopleMapper;
+    @Autowired
+    private XDMapper xDMapper;
+    @Autowired
+    private XmsfPeopleMapper xmsfPeopleMapper;
+    @Autowired
+    private ZDQSNCMapper zDQSNCMapper;
+    @Autowired
+    private ZSZHMapper zSZHMapper;
+
+    @Transactional
+    public Map<String, Object> getLabelInfo(Integer person_baseinfo_id){
+        Map<String, Object> map = new HashMap<>();
+
+        EntityWrapper<AzbInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", person_baseinfo_id);
+        List<AzbInfo> list = aZBMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            AzbInfo azbInfo = list.get(0);
+            map.put("azb", azbInfo);
+        }
+
+        EntityWrapper<BearInfo> wrapper1 = new EntityWrapper<>();
+        wrapper1.eq("person_baseinfo_id", person_baseinfo_id);
+        List<BearInfo> list1 = bearInfoMapper.selectList(wrapper1);
+        if (!list1.isEmpty()) {
+            BearInfo bearInfo = list1.get(0);
+            map.put("js", bearInfo);
+        }
+
+        EntityWrapper<CXInfo> wrapper2 = new EntityWrapper<>();
+        wrapper2.eq("person_baseinfo_id", person_baseinfo_id);
+        List<CXInfo> list2 = cXMapper.selectList(wrapper2);
+        if (!list2.isEmpty()) {
+            CXInfo cXInfo = list2.get(0);
+            map.put("cx", cXInfo);
+        }
+
+        EntityWrapper<EngPeopleInfo> wrapper3 = new EntityWrapper<>();
+        wrapper3.eq("person_baseinfo_id", person_baseinfo_id);
+        List<EngPeopleInfo> list3 = engPeopleMapper.selectList(wrapper3);
+        if (!list3.isEmpty()) {
+            EngPeopleInfo engPeopleInfo = list3.get(0);
+            map.put("jw", engPeopleInfo);
+        }
+
+        EntityWrapper<MilitaryServiceInfo> wrapper4 = new EntityWrapper<>();
+        wrapper4.eq("person_baseinfo_id", person_baseinfo_id);
+        List<MilitaryServiceInfo> list4 = militaryServiceMapper.selectList(wrapper4);
+        if (!list4.isEmpty()) {
+            MilitaryServiceInfo militaryServiceInfo = list4.get(0);
+            map.put("by", militaryServiceInfo);
+        }
+
+        EntityWrapper<PartyInfo> wrapper5 = new EntityWrapper<>();
+        wrapper5.eq("person_baseinfo_id", person_baseinfo_id);
+        List<PartyInfo> list5 = partyInfoMapper.selectList(wrapper5);
+        if (!list5.isEmpty()) {
+            PartyInfo partyInfo = list5.get(0);
+            map.put("dy", partyInfo);
+        }
+
+        EntityWrapper<SFPeopleInfo> wrapper6 = new EntityWrapper<>();
+        wrapper6.eq("person_baseinfo_id", person_baseinfo_id);
+        List<SFPeopleInfo> list6 = sFPeopleMapper.selectList(wrapper6);
+        if (!list6.isEmpty()) {
+            SFPeopleInfo sFPeopleInfo = list6.get(0);
+            map.put("sf", sFPeopleInfo);
+        }
+
+        EntityWrapper<SQJZPeopleinfo> wrapper7 = new EntityWrapper<>();
+        wrapper7.eq("person_baseinfo_id", person_baseinfo_id);
+        List<SQJZPeopleinfo> list7 = sQJZPeopleMapper.selectList(wrapper7);
+        if (!list7.isEmpty()) {
+            SQJZPeopleinfo sQJZPeopleinfo = list7.get(0);
+            map.put("sqjz", sQJZPeopleinfo);
+        }
+
+        EntityWrapper<StayPeopleInfo> wrapper8 = new EntityWrapper<>();
+        wrapper8.eq("person_baseinfo_id", person_baseinfo_id);
+        List<StayPeopleInfo> list8 = stayPeopleMapper.selectList(wrapper8);
+        if (!list8.isEmpty()) {
+            StayPeopleInfo stayPeopleInfo = list8.get(0);
+            map.put("ls", stayPeopleInfo);
+        }
+
+        EntityWrapper<XDInfo> wrapper9 = new EntityWrapper<>();
+        wrapper9.eq("person_baseinfo_id", person_baseinfo_id);
+        List<XDInfo> list9 = xDMapper.selectList(wrapper9);
+        if (!list9.isEmpty()) {
+            XDInfo xDInfo = list9.get(0);
+            map.put("xd", xDInfo);
+        }
+
+        EntityWrapper<XmsfPeopleInfo> wrapper10 = new EntityWrapper<>();
+        wrapper10.eq("person_baseinfo_id", person_baseinfo_id);
+        List<XmsfPeopleInfo> list10 = xmsfPeopleMapper.selectList(wrapper10);
+        if (!list10.isEmpty()) {
+            XmsfPeopleInfo xmsfPeopleInfo = list10.get(0);
+            map.put("xmsf", xmsfPeopleInfo);
+        }
+
+        EntityWrapper<ZDQSNCInfo> wrapper11 = new EntityWrapper<>();
+        wrapper11.eq("person_baseinfo_id", person_baseinfo_id);
+        List<ZDQSNCInfo> list11 = zDQSNCMapper.selectList(wrapper11);
+        if (!list11.isEmpty()) {
+            ZDQSNCInfo zDQSNCInfo = list11.get(0);
+            map.put("zdqsn", zDQSNCInfo);
+        }
+
+        EntityWrapper<ZSZHInfo> wrapper12 = new EntityWrapper<>();
+        wrapper12.eq("person_baseinfo_id", person_baseinfo_id);
+        List<ZSZHInfo> list12 = zSZHMapper.selectList(wrapper12);
+        if (!list12.isEmpty()) {
+            ZSZHInfo zSZHInfo = list12.get(0);
+            map.put("zszh", zSZHInfo);
+        }
+
+        return map;
+    }
 
     public Page<InfoSearch> listPage(Integer ageStart, Integer ageEnd, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, Integer pageNum, Integer pageSize, String rycf){
         Page<InfoSearch> page = new Page<>(pageNum, pageSize);
@@ -141,5 +281,7 @@ public class InfoSearchService {
         }
         return page;
     }
+
+
 
 }

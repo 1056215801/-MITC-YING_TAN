@@ -1,5 +1,6 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.CarInfo;
 import com.mit.community.mapper.mapper.CarInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,12 @@ public class CarInfoService {
             carInfo.setGmtModified(LocalDateTime.now());
             carInfoMapper.insert(carInfo);
         }
+    }
+
+    public List<CarInfo> getCarInfo(Integer person_baseinfo_id){
+        EntityWrapper<CarInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", person_baseinfo_id);
+        List<CarInfo> list = carInfoMapper.selectList(wrapper);
+        return list;
     }
 }
