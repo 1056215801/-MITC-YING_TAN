@@ -16,5 +16,6 @@ public class CXInfo extends BaseEntity {
     private String dssxcx;
     private String bz;
     private Integer person_baseinfo_id;
+    private int isDelete;
 
 }

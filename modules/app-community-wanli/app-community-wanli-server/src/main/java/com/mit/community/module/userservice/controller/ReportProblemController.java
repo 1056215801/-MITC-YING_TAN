@@ -59,10 +59,17 @@ public class ReportProblemController {
         return Result.success("保存成功");
     }
 
-    @PostMapping("/listPage")
+    /*@PostMapping("/listPage")
     @ApiOperation(value = "获取事件列表", notes = "String content 搜索内容,String userId 用户id, String time 时间, String address 地址, String problemType 问题类型, Integer status 状态, Integer pageNum, Integer pageSize")
     public Result listPage(String content, String userId, String time, String address, String problemType, @RequestParam( required = false, defaultValue = "0")Integer status, Integer pageNum, Integer pageSize) throws Exception{
-        Page<ReportProblemInfo> page = reportProblemService.listPage(content, userId,time,address,problemType,status,pageNum,pageSize);
+        Page<ReportProblemInfo> page = reportProblemService.listPage(content, userId, time,"", address, problemType, status, pageNum, pageSize);
+        return Result.success(page);
+    }*/
+
+    @PostMapping("/listPage")
+    @ApiOperation(value = "获取事件列表", notes = "String content 搜索内容,String userId 用户id, String timeYear 年份, String timeMonth, String address 地址, String problemType 问题类型, Integer status 状态, Integer pageNum, Integer pageSize")
+    public Result listPage(String content, String userId, String timeYear, String timeMonth, String address, String problemType, @RequestParam( required = false, defaultValue = "0")Integer status, Integer pageNum, Integer pageSize) throws Exception{
+        Page<ReportProblemInfo> page = reportProblemService.listPage(content, userId,timeYear,timeMonth,address,problemType,status,pageNum,pageSize);
         return Result.success(page);
     }
 

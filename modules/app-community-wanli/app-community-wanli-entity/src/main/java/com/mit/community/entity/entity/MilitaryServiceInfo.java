@@ -34,4 +34,5 @@ public class MilitaryServiceInfo extends BaseEntity {
     private int sftj;
     private String bz;
     private Integer person_baseinfo_id;
+    private int isDelete;
 }

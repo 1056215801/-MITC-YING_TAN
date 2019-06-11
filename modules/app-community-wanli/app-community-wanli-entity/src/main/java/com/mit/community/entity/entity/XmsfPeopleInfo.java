@@ -31,4 +31,5 @@ public class XmsfPeopleInfo extends BaseEntity {
     private String sfcxfz;
     private String cxfzzm;
     private Integer person_baseinfo_id;
+    private int isDelete;
 }

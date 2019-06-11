@@ -63,4 +63,10 @@ public class PersonBaseInfoController {
         }
     }
 
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除人员基本信息", notes = "传参：Integer id  记录id")
+    public Result delete(Integer id){
+        personBaseInfoService.delete(id);
+        return Result.success("删除成功");
+    }
 }

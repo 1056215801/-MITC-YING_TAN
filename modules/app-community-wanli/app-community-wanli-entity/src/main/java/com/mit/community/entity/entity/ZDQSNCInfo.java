@@ -24,4 +24,5 @@ public class ZDQSNCInfo extends BaseEntity {
     private String bfsd;
     private String bfqk;
     private Integer person_baseinfo_id;
+    private int isDelete;
 }

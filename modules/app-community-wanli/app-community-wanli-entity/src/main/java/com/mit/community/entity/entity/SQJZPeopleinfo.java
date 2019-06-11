@@ -47,5 +47,6 @@ public class SQJZPeopleinfo extends BaseEntity {
     private String sfcxfz;
     private String cxfzmc;
     private Integer person_baseinfo_id;
+    private int isDelete;
 
 }

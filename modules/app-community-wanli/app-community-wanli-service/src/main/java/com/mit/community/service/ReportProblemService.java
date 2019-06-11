@@ -73,20 +73,16 @@ public class ReportProblemService {
 
     }
 
-    public Page<ReportProblemInfo> listPage (String content, String userId, String time, String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{
+    public Page<ReportProblemInfo> listPage (String content, String userId, String timeYear, String timeMonth,String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{
         Page<ReportProblemInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<ReportProblemInfo> wrapper = new EntityWrapper<>();
-        if (StringUtils.isNotBlank(time)) {
-            LocalDateTime startTime = DateUtils.dateStrToLocalDateTime(time + "-01");
-            LocalDateTime endTime = DateUtils.dateStrToLocalDateTime(time + "-30");
-            wrapper.ge("a.gmt_create", startTime);
-            wrapper.le("a.gmt_create", endTime);
-        }
+        String timeYearSql = null;
+        String timeMonthSql = null;
         if (StringUtils.isNotBlank(content)) {
             wrapper.like("a.content",content, SqlLike.DEFAULT);
         }
         if (StringUtils.isNotBlank(address)) {
-            wrapper.like("a.address", address);
+            wrapper.like("a.address", address, SqlLike.DEFAULT);
         }
         if (StringUtils.isNotBlank(problemType)) {
             wrapper.eq("a.problemType", problemType);
@@ -100,9 +96,14 @@ public class ReportProblemService {
         if (StringUtils.isNotBlank(userId)) {
             wrapper.eq("a.userId", userId);
         }
-
+        if (StringUtils.isNotBlank(timeYear)) {
+            timeYearSql = "YEAR(a.gmt_create)='"+ timeYear+"'";
+        }
+        if (StringUtils.isNotBlank(timeMonth)) {
+            timeMonthSql = "MONTH(a.gmt_create)=" + timeMonth;
+        }
         wrapper.orderBy("a.gmt_create", false);
-        List<ReportProblemInfo> list = reportProblemInfoMapper.selecInfoPage(page, wrapper);
+        List<ReportProblemInfo> list = reportProblemInfoMapper.selecInfoPage(page, wrapper, timeYearSql, timeMonthSql);
         page.setRecords(list);
         return page;
     }

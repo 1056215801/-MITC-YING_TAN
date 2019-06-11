@@ -16,7 +16,7 @@ public class StayPeopleService {
 
     public void save(String jkzk, String grnsr, String rhizbz, String lsrylx, String jtzyrysfzh, String jtzycyxm, String jtzycyjkzk, String ylsrygx, String jtzycylxfs,
                        String jtzycygzxxdz, String jtnsr, String knjsq, String bfqk, Integer person_baseinfo_id){
-        StayPeopleInfo stayPeopleInfo = new StayPeopleInfo(jkzk, grnsr, rhizbz, lsrylx, jtzyrysfzh, jtzycyxm, jtzycyjkzk, ylsrygx, jtzycylxfs, jtzycygzxxdz, jtnsr, knjsq, bfqk, person_baseinfo_id);
+        StayPeopleInfo stayPeopleInfo = new StayPeopleInfo(jkzk, grnsr, rhizbz, lsrylx, jtzyrysfzh, jtzycyxm, jtzycyjkzk, ylsrygx, jtzycylxfs, jtzycygzxxdz, jtnsr, knjsq, bfqk, person_baseinfo_id,0);
         stayPeopleInfo.setGmtCreate(LocalDateTime.now());
         stayPeopleInfo.setGmtModified(LocalDateTime.now());
         stayPeopleMapper.insert(stayPeopleInfo);
@@ -37,8 +37,19 @@ public class StayPeopleService {
             wrapper.eq("person_baseinfo_id", stayPeopleInfo.getPerson_baseinfo_id());
             stayPeopleMapper.update(stayPeopleInfo, update);
         }
+    }
 
-
+    public void delete(Integer id) {
+        EntityWrapper<StayPeopleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<StayPeopleInfo> list = stayPeopleMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            StayPeopleInfo stayPeopleInfo = list.get(0);
+            stayPeopleInfo.setIsDelete(1);
+            EntityWrapper<StayPeopleInfo> dalete = new EntityWrapper<>();
+            dalete.eq("id", id);
+            stayPeopleMapper.update(stayPeopleInfo, dalete);
+        }
     }
 
 }

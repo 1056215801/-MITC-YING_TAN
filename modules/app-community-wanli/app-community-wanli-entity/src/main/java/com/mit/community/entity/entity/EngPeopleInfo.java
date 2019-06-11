@@ -30,5 +30,6 @@ public class EngPeopleInfo extends BaseEntity {
     private LocalDateTime yjlkrq;
     private int sfzdry;
     private Integer person_baseinfo_id;
+    private int isDelete;
 
 }

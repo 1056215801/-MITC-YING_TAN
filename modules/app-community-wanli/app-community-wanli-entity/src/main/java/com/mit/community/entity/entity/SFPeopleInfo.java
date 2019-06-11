@@ -24,4 +24,5 @@ public class SFPeopleInfo extends BaseEntity {
     private String sfrysq;
     private String clqkbf;
     private Integer person_baseinfo_id;
+    private  int isDelete;
 }

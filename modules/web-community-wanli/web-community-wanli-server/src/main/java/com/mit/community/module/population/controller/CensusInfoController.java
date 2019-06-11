@@ -25,4 +25,5 @@ public class CensusInfoController {
         return Result.success("保存户籍信息成功");
 
     }
+
 }

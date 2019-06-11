@@ -30,4 +30,5 @@ public class PartyInfo extends BaseEntity {
     private String rdjsr;
     private String yyjndf;
     private Integer person_baseinfo_id;
+    private int isDelete;
 }

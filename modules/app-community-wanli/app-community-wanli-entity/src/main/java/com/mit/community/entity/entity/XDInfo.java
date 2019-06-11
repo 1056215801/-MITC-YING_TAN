@@ -27,5 +27,5 @@ public class XDInfo extends BaseEntity {
     private String xdyy;
     private String xdhg;
     private Integer person_baseinfo_id;
-
+    private int isDelete;
 }

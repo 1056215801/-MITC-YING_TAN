@@ -34,4 +34,5 @@ public class ZSZHInfo extends BaseEntity {
     private String cyglry;
     private String bfqk;
     private Integer person_baseinfo_id;
+    private int isDelete;
 }
