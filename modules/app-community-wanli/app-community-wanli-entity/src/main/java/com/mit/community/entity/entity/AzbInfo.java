@@ -25,4 +25,5 @@ public class AzbInfo extends BaseEntity {
     private String szqk;
     private String szjgmc;
     private Integer person_baseinfo_id;
+    private int isDelete;
 }

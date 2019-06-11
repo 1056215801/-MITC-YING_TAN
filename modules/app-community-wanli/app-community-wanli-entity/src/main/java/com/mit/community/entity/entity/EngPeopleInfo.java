@@ -21,14 +21,15 @@ public class EngPeopleInfo extends BaseEntity {
     private String zjxy;
     private String zjdm;
     private String zjhm;
-    //@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private String zjyxq;
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime zjyxq;
     private String lhmd;
-    //@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private String ddrq;
-    //@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private String yjlkrq;
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime ddrq;
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime yjlkrq;
     private int sfzdry;
     private Integer person_baseinfo_id;
+    private int isDelete;
 
 }

@@ -102,7 +102,10 @@
         select a.id,a.content,a.problemType,a.address,a.isOpen,a.status,a.gmt_create,a.gmt_modified,
         b.id as userId,b.icon_url as iconUrl,b.nickname as userName,c.base64
         from report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN report_problem_photo c on a.id=c.reportProblemId
-        where 1= 1 ${ew.sqlSegment}
+        where 1= 1
+        <if test="timeYear != null and timeYear != ''">and ${timeYear}</if>
+        <if test="timeMonth != null and timeMonth != ''">and ${timeMonth}</if>
+        ${ew.sqlSegment}
     </select>
 
     <select id="getSchedulePhoto" resultMap="handleProblemInfoMap">

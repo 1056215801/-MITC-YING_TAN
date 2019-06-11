@@ -25,6 +25,5 @@ public class StayPeopleInfo extends BaseEntity {
     private String knjsq;
     private String bfqk;
     private Integer person_baseinfo_id;
-
-
+    private int isDelete;
 }

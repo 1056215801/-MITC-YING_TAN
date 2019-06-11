@@ -136,6 +136,8 @@ public class PersonBaseInfo extends BaseEntity {
      */
     private int age;
 
+    private int isDelete;
+
     @TableField(exist = false)
     private List<String> labels;
 }

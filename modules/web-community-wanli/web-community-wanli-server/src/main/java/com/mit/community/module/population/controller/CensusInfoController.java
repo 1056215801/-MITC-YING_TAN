@@ -23,6 +23,6 @@ public class CensusInfoController {
     public Result save(String rhyzbz, String hh, String yhzgx, String hzsfz, Integer person_baseinfo_id) {
         censusInfoService.save(rhyzbz, hh, yhzgx, hzsfz, person_baseinfo_id);
         return Result.success("保存户籍信息成功");
-
     }
+
 }

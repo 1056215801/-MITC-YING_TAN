@@ -16,10 +16,11 @@ public class EngPeopleService {
 
     public void save(String wwx, String wwm, String zwm, String gj, String zjxy, String zjdm, String zjhm,
                      LocalDateTime zjyxq, String lhmd, LocalDateTime ddrq, LocalDateTime yjlkrq, int sfzdry, Integer person_baseinfo_id) {
-        //EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm, zjyxq, lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id);
-        //engPeopleInfo.setGmtCreate(LocalDateTime.now());
-        //engPeopleInfo.setGmtModified(LocalDateTime.now());
-        //engPeopleMapper.insert(engPeopleInfo);
+        EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm, zjyxq,
+                lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id, 0);
+        engPeopleInfo.setGmtCreate(LocalDateTime.now());
+        engPeopleInfo.setGmtModified(LocalDateTime.now());
+        engPeopleMapper.insert(engPeopleInfo);
     }
 
     public void save(EngPeopleInfo engPeopleInfo) {
@@ -35,6 +36,19 @@ public class EngPeopleService {
             EntityWrapper<EngPeopleInfo> update = new EntityWrapper<>();
             wrapper.eq("person_baseinfo_id", engPeopleInfo.getPerson_baseinfo_id());
             engPeopleMapper.update(engPeopleInfo, update);
+        }
+    }
+
+    public void delete(Integer id) {
+        EntityWrapper<EngPeopleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<EngPeopleInfo> list = engPeopleMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            EngPeopleInfo azbInfo = list.get(0);
+            azbInfo.setIsDelete(1);
+            EntityWrapper<EngPeopleInfo> dalete = new EntityWrapper<>();
+            dalete.eq("id", id);
+            engPeopleMapper.update(azbInfo, dalete);
         }
     }
 }

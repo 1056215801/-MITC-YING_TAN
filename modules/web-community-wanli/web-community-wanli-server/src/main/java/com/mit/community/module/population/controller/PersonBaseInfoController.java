@@ -72,6 +72,7 @@ public class PersonBaseInfoController {
         }
     }
 
+
     /**
      * @Author: HuShanLin
      * @Date: Create in 2019/6/6 10:56
@@ -106,5 +107,12 @@ public class PersonBaseInfoController {
             return Result.success(info);
         }
         return null;
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除人员基本信息", notes = "传参：Integer id  记录id")
+    public Result delete(Integer id) {
+        personBaseInfoService.delete(id);
+        return Result.success("删除成功");
     }
 }

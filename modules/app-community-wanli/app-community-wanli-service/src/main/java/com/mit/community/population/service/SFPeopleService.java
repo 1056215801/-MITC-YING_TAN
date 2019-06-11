@@ -15,15 +15,16 @@ public class SFPeopleService {
     private SFPeopleMapper sFPeopleMapper;
 
     public void save(String sfqzxf, int lxcs, int ldcs, LocalDateTime sfsj, int sfrs, String sffsdd, String sfrysq,
-                       String clqkbf, Integer person_baseinfo_id){
-        /*SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj, sfrs, sffsdd, sfrysq, clqkbf, person_baseinfo_id);
+                     String clqkbf, Integer person_baseinfo_id) {
+        SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj, sfrs, sffsdd,
+                sfrysq, clqkbf, person_baseinfo_id, 0);
         sFPeopleInfo.setGmtCreate(LocalDateTime.now());
         sFPeopleInfo.setGmtModified(LocalDateTime.now());
-        sFPeopleMapper.insert(sFPeopleInfo);*/
+        sFPeopleMapper.insert(sFPeopleInfo);
 
     }
 
-    public void save(SFPeopleInfo sFPeopleInfo){
+    public void save(SFPeopleInfo sFPeopleInfo) {
         EntityWrapper<SFPeopleInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", sFPeopleInfo.getPerson_baseinfo_id());
         List<SFPeopleInfo> list = sFPeopleMapper.selectList(wrapper);
@@ -36,6 +37,19 @@ public class SFPeopleService {
             EntityWrapper<SFPeopleInfo> update = new EntityWrapper<>();
             wrapper.eq("person_baseinfo_id", sFPeopleInfo.getPerson_baseinfo_id());
             sFPeopleMapper.update(sFPeopleInfo, update);
+        }
+    }
+
+    public void delete(Integer id) {
+        EntityWrapper<SFPeopleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<SFPeopleInfo> list = sFPeopleMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            SFPeopleInfo sFPeopleInfo = list.get(0);
+            sFPeopleInfo.setIsDelete(1);
+            EntityWrapper<SFPeopleInfo> dalete = new EntityWrapper<>();
+            dalete.eq("id", id);
+            sFPeopleMapper.update(sFPeopleInfo, dalete);
         }
     }
 }

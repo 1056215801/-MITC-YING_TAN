@@ -22,4 +22,5 @@ public class BearInfo extends BaseEntity {
     private String ssyy;
     private String ccyy;
     private Integer person_baseinfo_id;
+    private  int isDelete;
 }

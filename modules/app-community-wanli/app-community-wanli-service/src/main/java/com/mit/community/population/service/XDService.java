@@ -13,15 +13,17 @@ import java.util.List;
 public class XDService {
     @Autowired
     private XDMapper xDMapper;
+
     public void save(LocalDateTime ccfxsj, String gkqk, String gkrxm, String gkrlxfs, String bfqk, String bfrxm, String bfrlxfs,
-                       String ywfzs, String xdqk, String xdyy, String xdhg, Integer person_baseinfo_id){
+                     String ywfzs, String xdqk, String xdyy, String xdhg, Integer person_baseinfo_id) {
         /*XDInfo xDInfo = new XDInfo(ccfxsj, gkqk, gkrxm, gkrlxfs, bfqk, bfrxm, bfrlxfs, ywfzs, xdqk, xdyy, xdhg, person_baseinfo_id);
+        XDInfo xDInfo = new XDInfo(ccfxsj, gkqk, gkrxm, gkrlxfs, bfqk, bfrxm, bfrlxfs, ywfzs, xdqk, xdyy, xdhg, person_baseinfo_id,0);
         xDInfo.setGmtCreate(LocalDateTime.now());
         xDInfo.setGmtModified(LocalDateTime.now());
         xDMapper.insert(xDInfo);*/
     }
 
-    public void save(XDInfo xDInfo){
+    public void save(XDInfo xDInfo) {
         EntityWrapper<XDInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
         List<XDInfo> list = xDMapper.selectList(wrapper);
@@ -34,6 +36,19 @@ public class XDService {
             EntityWrapper<XDInfo> update = new EntityWrapper<>();
             wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
             xDMapper.update(xDInfo, update);
+        }
+    }
+
+    public void delete(Integer id) {
+        EntityWrapper<XDInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<XDInfo> list = xDMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            XDInfo xDInfo = list.get(0);
+            xDInfo.setIsDelete(1);
+            EntityWrapper<XDInfo> dalete = new EntityWrapper<>();
+            dalete.eq("id", id);
+            xDMapper.update(xDInfo, dalete);
         }
     }
 }

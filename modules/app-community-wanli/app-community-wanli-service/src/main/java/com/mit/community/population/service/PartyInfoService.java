@@ -16,15 +16,16 @@ public class PartyInfoService {
 
 
     public void save(LocalDateTime rdsq, LocalDateTime zzrq, LocalDateTime cjgzsj, String rdszzb, String zzszzb, String zzszdw, String szdzb,
-                       LocalDateTime jrdzbsj, String xrdnzw, String rdjsr, String yyjndf, Integer person_baseinfo_id){
+                     LocalDateTime jrdzbsj, String xrdnzw, String rdjsr, String yyjndf, Integer person_baseinfo_id) {
         /*PartyInfo partyInfo = new PartyInfo(rdsq, zzrq, cjgzsj, rdszzb, zzszzb, zzszdw, szdzb, jrdzbsj, xrdnzw, rdjsr, yyjndf, person_baseinfo_id);
+        PartyInfo partyInfo = new PartyInfo(rdsq, zzrq, cjgzsj, rdszzb, zzszzb, zzszdw, szdzb, jrdzbsj, xrdnzw, rdjsr, yyjndf, person_baseinfo_id,0);
         partyInfo.setGmtCreate(LocalDateTime.now());
         partyInfo.setGmtModified(LocalDateTime.now());
         partyInfoMapper.insert(partyInfo);*/
 
     }
 
-    public void save(PartyInfo partyInfo){
+    public void save(PartyInfo partyInfo) {
         EntityWrapper<PartyInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", partyInfo.getPerson_baseinfo_id());
         List<PartyInfo> list = partyInfoMapper.selectList(wrapper);
@@ -38,7 +39,18 @@ public class PartyInfoService {
             wrapper.eq("person_baseinfo_id", partyInfo.getPerson_baseinfo_id());
             partyInfoMapper.update(partyInfo, update);
         }
+    }
 
-
+    public void delete(Integer id) {
+        EntityWrapper<PartyInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<PartyInfo> list = partyInfoMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            PartyInfo partyInfo = list.get(0);
+            partyInfo.setIsDelete(1);
+            EntityWrapper<PartyInfo> dalete = new EntityWrapper<>();
+            dalete.eq("id", id);
+            partyInfoMapper.update(partyInfo, dalete);
+        }
     }
 }

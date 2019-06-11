@@ -17,7 +17,7 @@ public class ZDQSNCService {
 
     public void save(String rylx, String jtqk, String jhrsfz, String jhrxm, String yjhrgx, String jhrlxfs, String jhrjzxxdz,
                        String sfwffz, String wffzqk, String bfrlxfs, String bfsd, String bfqk, Integer person_baseinfo_id){
-        ZDQSNCInfo zDQSNCInfo = new ZDQSNCInfo(rylx, jtqk, jhrsfz, jhrxm, yjhrgx, jhrlxfs, jhrjzxxdz, sfwffz, wffzqk, bfrlxfs, bfsd, bfqk, person_baseinfo_id);
+        ZDQSNCInfo zDQSNCInfo = new ZDQSNCInfo(rylx, jtqk, jhrsfz, jhrxm, yjhrgx, jhrlxfs, jhrjzxxdz, sfwffz, wffzqk, bfrlxfs, bfsd, bfqk, person_baseinfo_id,0);
         zDQSNCInfo.setGmtCreate(LocalDateTime.now());
         zDQSNCInfo.setGmtModified(LocalDateTime.now());
         zDQSNCMapper.insert(zDQSNCInfo);
@@ -36,6 +36,19 @@ public class ZDQSNCService {
             EntityWrapper<ZDQSNCInfo> update = new EntityWrapper<>();
             wrapper.eq("person_baseinfo_id", zDQSNCInfo.getPerson_baseinfo_id());
             zDQSNCMapper.update(zDQSNCInfo, update);
+        }
+    }
+
+    public void delete(Integer id) {
+        EntityWrapper<ZDQSNCInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<ZDQSNCInfo> list = zDQSNCMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            ZDQSNCInfo zDQSNCInfo = list.get(0);
+            zDQSNCInfo.setIsDelete(1);
+            EntityWrapper<ZDQSNCInfo> dalete = new EntityWrapper<>();
+            dalete.eq("id", id);
+            zDQSNCMapper.update(zDQSNCInfo, dalete);
         }
     }
 }
