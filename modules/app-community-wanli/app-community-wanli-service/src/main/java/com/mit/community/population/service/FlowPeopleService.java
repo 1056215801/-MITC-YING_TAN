@@ -19,13 +19,18 @@ public class FlowPeopleService {
     private UpdateRKCFMapper updateRKCFMapper;
 
     @Transactional
-    public void save(String lryy, String bzlx, String zjhm, LocalDateTime djrq, LocalDateTime zjdqrq, String zslx,
-                     int sfzdgzry, String tslxfs, String jtzycylxfs, String yhzgx, String hzsfz, Integer person_baseinfo_id) {
+    public void save(String lryy, String bzlx, String zjhm, LocalDateTime djrq,
+                     LocalDateTime zjdqrq, String zslx, int sfzdgzry, String tslxfs,
+                     String jtzycylxfs, String yhzgx, String hzsfz, Integer person_baseinfo_id) {
+        EntityWrapper<FlowPeopleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", person_baseinfo_id);
+        flowPeopleMapper.delete(wrapper);
         FlowPeopleInfo flowPeopleInfo = new FlowPeopleInfo(lryy, bzlx, zjhm, djrq, zjdqrq, zslx,
                 sfzdgzry, tslxfs, jtzycylxfs, yhzgx, hzsfz, person_baseinfo_id);
         flowPeopleInfo.setGmtCreate(LocalDateTime.now());
         flowPeopleInfo.setGmtModified(LocalDateTime.now());
         flowPeopleMapper.insert(flowPeopleInfo);
+        //更新人口成分信息
         updateRKCFMapper.updaterkcf(person_baseinfo_id, 2);
     }
 

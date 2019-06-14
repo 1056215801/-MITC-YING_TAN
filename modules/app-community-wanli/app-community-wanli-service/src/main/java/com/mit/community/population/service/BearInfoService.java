@@ -32,9 +32,11 @@ public class BearInfoService {
             bearInfoMapper.insert(bearInfo);
         } else {
             bearInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<BearInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", bearInfo.getPerson_baseinfo_id());
-            bearInfoMapper.update(bearInfo, update);
+            bearInfo.setId(list.get(0).getId());
+            bearInfoMapper.updateById(bearInfo);
+            //EntityWrapper<BearInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", bearInfo.getPerson_baseinfo_id());
+            //bearInfoMapper.update(bearInfo, update);
         }
     }
 

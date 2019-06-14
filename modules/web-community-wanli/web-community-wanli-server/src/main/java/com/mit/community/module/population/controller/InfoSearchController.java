@@ -41,7 +41,6 @@ public class InfoSearchController {
                            @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
                            String name, String idNum, String sex, String education, String job,
                            String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) {
-        //System.out.println("======"+ pageNum + ","+ pageSize+",label="+label+",matrimony="+matrimony);
         Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
                 sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
         List<InfoSearch> list = page.getRecords();
@@ -69,7 +68,6 @@ public class InfoSearchController {
                                @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
                                String name, String idNum, String sex, String education, String job,
                                String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
-        //System.out.println("======"+ pageNum + ","+ pageSize+",label="+label+",matrimony="+matrimony);
         Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
                 sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
         List<InfoSearch> list = page.getRecords();

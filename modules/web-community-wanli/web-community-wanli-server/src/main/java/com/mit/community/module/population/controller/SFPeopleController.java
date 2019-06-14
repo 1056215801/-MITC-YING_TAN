@@ -1,6 +1,5 @@
 package com.mit.community.module.population.controller;
 
-import com.mit.community.entity.entity.SFPeopleInfo;
 import com.mit.community.population.service.SFPeopleService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -40,8 +39,8 @@ public class SFPeopleController {
             "String clqkbf 处理情况办法, Integer person_baseinfo_id")
     public Result update(String sfqzxf, @RequestParam( required = false, defaultValue = "0")Integer lxcs, @RequestParam( required = false, defaultValue = "0")Integer ldcs, LocalDateTime sfsj, @RequestParam( required = false, defaultValue = "0")Integer sfrs, String sffsdd, String sfrysq,
                        String clqkbf, Integer person_baseinfo_id, int isDelete){
-        SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj, sfrs, sffsdd, sfrysq, clqkbf, person_baseinfo_id, isDelete);
-        sFPeopleService.save(sFPeopleInfo);
+        /*SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj, sfrs, sffsdd, sfrysq, clqkbf, person_baseinfo_id, isDelete);
+        sFPeopleService.save(sFPeopleInfo);*/
         return Result.success("上访人员信息更新成功");
 
     }

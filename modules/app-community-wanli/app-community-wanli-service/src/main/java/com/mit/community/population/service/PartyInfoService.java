@@ -34,10 +34,12 @@ public class PartyInfoService {
             partyInfo.setGmtModified(LocalDateTime.now());
             partyInfoMapper.insert(partyInfo);
         } else {
+            partyInfo.setId(list.get(0).getId());
             partyInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<PartyInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", partyInfo.getPerson_baseinfo_id());
-            partyInfoMapper.update(partyInfo, update);
+            partyInfoMapper.updateById(partyInfo);
+            //EntityWrapper<PartyInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", partyInfo.getPerson_baseinfo_id());
+            //partyInfoMapper.update(partyInfo, update);
         }
     }
 

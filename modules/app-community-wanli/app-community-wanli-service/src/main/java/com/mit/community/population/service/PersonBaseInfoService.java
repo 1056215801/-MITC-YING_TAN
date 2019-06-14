@@ -49,16 +49,20 @@ public class PersonBaseInfoService {
         return flag;
     }
 
-    public void updateByIdCardNum(int age, String idCardNum, String name, String formerName, String gender, LocalDateTime birthday,
+    public void updateByIdCardNum(Integer baseId, int age, String idCardNum, String name, String formerName, String gender, LocalDateTime birthday,
                                   String nation, String nativePlace, String matrimony, String politicCountenance, String education,
                                   String religion, String jobType, String profession, String cellphone, String placeOfDomicile,
-                                  String placeOfDomicileDetail, String placeOfReside, String placeOfResideDetail, String placeOfServer, String base64) {
-        PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, 0, age, 0, null);
+                                  String placeOfDomicileDetail, String placeOfReside, String placeOfResideDetail,
+                                  String placeOfServer, String base64, Integer rksx) {
+        PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation,
+                nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, rksx, age, 0, null);
+        personBaseInfo.setId(baseId);
         personBaseInfo.setGmtModified(LocalDateTime.now());
-        EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
-        wrapper.eq("id_card_num", idCardNum);
-        personBaseInfoMapper.update(personBaseInfo, wrapper);
+        personBaseInfoMapper.updateById(personBaseInfo);
+        //EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
+        //wrapper.eq("id", baseId);
+        //personBaseInfoMapper.update(personBaseInfo, wrapper);
     }
 
     /**

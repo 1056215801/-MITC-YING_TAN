@@ -20,10 +20,14 @@ public class CensusInfoService {
 
     @Transactional
     public void save(String rhyzbz, String hh, String yhzgx, String hzsfz, Integer person_baseinfo_id) {
+        EntityWrapper<CensusInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", person_baseinfo_id);
+        censusInfoMapper.delete(wrapper);
         CensusInfo censusInfo = new CensusInfo(rhyzbz, hh, yhzgx, hzsfz, person_baseinfo_id);
         censusInfo.setGmtCreate(LocalDateTime.now());
         censusInfo.setGmtModified(LocalDateTime.now());
         censusInfoMapper.insert(censusInfo);
+        //更新人口成分信息
         updateRKCFMapper.updaterkcf(person_baseinfo_id, 1);
     }
 

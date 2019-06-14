@@ -22,13 +22,13 @@ public class SQJZPeopleinfo extends BaseEntity {
     private String jtzm;
     private String ypxq;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime ypxkssj;
+    private String ypxkssj;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime ypxjssj;
+    private String ypxjssj;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime jzkssj;
+    private String jzkssj;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime jzjssj;
+    private String jzjssj;
     private String jsfs;
     private String ssqk;
     private String sflgf;

@@ -37,7 +37,7 @@ public class WeatherService {
             stringBuilder.append("https://free-api.heweather.net/s6/weather/now?")
                     .append("location=")
                     .append(cityName)
-                    .append("&key=HE1901141248371261");
+                    .append("&key=db098c07c33b44d08c8cd2b9b6298a34");
             String url = stringBuilder.toString();
             String s = HttpUtil.sendGet(url);
             JSONObject json = JSON.parseObject(s);

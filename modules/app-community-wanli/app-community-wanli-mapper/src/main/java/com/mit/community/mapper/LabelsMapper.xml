@@ -4,33 +4,33 @@
 
 <mapper namespace="com.mit.community.mapper.LabelsMapper">
     <resultMap type="com.mit.community.entity.LabelsInfo" id="labelsInfoMap">
-       <result property="lsryId" column="lsryId" javaType="String"
-                jdbcType="VARCHAR" />
+        <result property="lsryId" column="lsryId" javaType="String"
+                jdbcType="VARCHAR"/>
         <result property="jwryId" column="jwryId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="dyId" column="dyId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="jsId" column="jsId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="byId" column="byId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="xmsfId" column="xmsfId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="yscxId" column="yscxId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="sfId" column="sfId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="sqjz" column="sqjz" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="zszhId" column="zszhId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="xdId" column="xdId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="azbId" column="azbId" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
         <result property="zdqsnId" column="zdqsnId" javaType="String"
-                jdbcType="VARCHAR" />
-     </resultMap>
+                jdbcType="VARCHAR"/>
+    </resultMap>
 
     <select id="getZdqsnId" resultType="String">
         select id from zdqsn_info where person_baseinfo_id=#{userid}

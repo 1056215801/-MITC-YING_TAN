@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -22,10 +20,10 @@ public class XmsfPeopleInfo extends BaseEntity {
     private String sfrq;
     private String wxxpglx;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime xjrq;
+    private String xjrq;
     private String xjqk;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime azrq;
+    private String azrq;
     private String azqk;
     private String wazyy;
     private String bjqk;

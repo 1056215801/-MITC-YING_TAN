@@ -16,14 +16,14 @@ public class ZDQSNCService {
     private ZDQSNCMapper zDQSNCMapper;
 
     public void save(String rylx, String jtqk, String jhrsfz, String jhrxm, String yjhrgx, String jhrlxfs, String jhrjzxxdz,
-                       String sfwffz, String wffzqk, String bfrlxfs, String bfsd, String bfqk, Integer person_baseinfo_id){
-        ZDQSNCInfo zDQSNCInfo = new ZDQSNCInfo(rylx, jtqk, jhrsfz, jhrxm, yjhrgx, jhrlxfs, jhrjzxxdz, sfwffz, wffzqk, bfrlxfs, bfsd, bfqk, person_baseinfo_id,0);
+                     String sfwffz, String wffzqk, String bfrlxfs, String bfsd, String bfqk, Integer person_baseinfo_id) {
+        ZDQSNCInfo zDQSNCInfo = new ZDQSNCInfo(rylx, jtqk, jhrsfz, jhrxm, yjhrgx, jhrlxfs, jhrjzxxdz, sfwffz, wffzqk, bfrlxfs, bfsd, bfqk, person_baseinfo_id, 0);
         zDQSNCInfo.setGmtCreate(LocalDateTime.now());
         zDQSNCInfo.setGmtModified(LocalDateTime.now());
         zDQSNCMapper.insert(zDQSNCInfo);
     }
 
-    public void save(ZDQSNCInfo zDQSNCInfo){
+    public void save(ZDQSNCInfo zDQSNCInfo) {
         EntityWrapper<ZDQSNCInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", zDQSNCInfo.getPerson_baseinfo_id());
         List<ZDQSNCInfo> list = zDQSNCMapper.selectList(wrapper);
@@ -32,10 +32,12 @@ public class ZDQSNCService {
             zDQSNCInfo.setGmtModified(LocalDateTime.now());
             zDQSNCMapper.insert(zDQSNCInfo);
         } else {
+            zDQSNCInfo.setId(list.get(0).getId());
             zDQSNCInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<ZDQSNCInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", zDQSNCInfo.getPerson_baseinfo_id());
-            zDQSNCMapper.update(zDQSNCInfo, update);
+            zDQSNCMapper.updateById(zDQSNCInfo);
+            //EntityWrapper<ZDQSNCInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", zDQSNCInfo.getPerson_baseinfo_id());
+            //zDQSNCMapper.update(zDQSNCInfo, update);
         }
     }
 

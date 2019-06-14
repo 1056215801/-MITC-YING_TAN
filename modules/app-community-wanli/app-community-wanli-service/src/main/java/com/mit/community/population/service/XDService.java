@@ -32,10 +32,12 @@ public class XDService {
             xDInfo.setGmtModified(LocalDateTime.now());
             xDMapper.insert(xDInfo);
         } else {
+            xDInfo.setId(list.get(0).getId());
             xDInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<XDInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
-            xDMapper.update(xDInfo, update);
+            xDMapper.updateById(xDInfo);
+            //EntityWrapper<XDInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
+            //xDMapper.update(xDInfo, update);
         }
     }
 

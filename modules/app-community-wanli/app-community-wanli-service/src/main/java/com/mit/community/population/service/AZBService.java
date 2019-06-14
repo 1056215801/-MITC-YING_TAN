@@ -33,10 +33,12 @@ public class AZBService {
             azbInfo.setGmtModified(LocalDateTime.now());
             aZBMapper.insert(azbInfo);
         } else {
+            azbInfo.setId(list.get(0).getId());
             azbInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<AzbInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", azbInfo.getPerson_baseinfo_id());
-            aZBMapper.update(azbInfo, update);
+            aZBMapper.updateById(azbInfo);
+            //EntityWrapper<AzbInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", azbInfo.getPerson_baseinfo_id());
+            //aZBMapper.update(azbInfo, update);
         }
     }
 

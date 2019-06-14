@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -21,12 +19,12 @@ public class ZSZHInfo extends BaseEntity {
     private String jhrxm;
     private String jhrlxfs;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime ccfbrq;
+    private String ccfbrq;
     private String mqzdlx;
     private String ywzszhs;
     private int zszhcs;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime sczszhrq;
+    private String sczszhrq;
     private String mqwxxpgdj;
     private String zlqk;
     private String zlyy;

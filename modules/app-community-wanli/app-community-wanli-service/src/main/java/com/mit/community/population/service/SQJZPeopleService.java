@@ -37,10 +37,12 @@ public class SQJZPeopleService {
             sQJZPeopleinfo.setGmtModified(LocalDateTime.now());
             sQJZPeopleMapper.insert(sQJZPeopleinfo);
         } else {
+            sQJZPeopleinfo.setId(list.get(0).getId());
             sQJZPeopleinfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<SQJZPeopleinfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", sQJZPeopleinfo.getPerson_baseinfo_id());
-            sQJZPeopleMapper.update(sQJZPeopleinfo, update);
+            sQJZPeopleMapper.updateById(sQJZPeopleinfo);
+            //EntityWrapper<SQJZPeopleinfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", sQJZPeopleinfo.getPerson_baseinfo_id());
+            //sQJZPeopleMapper.update(sQJZPeopleinfo, update);
         }
     }
 

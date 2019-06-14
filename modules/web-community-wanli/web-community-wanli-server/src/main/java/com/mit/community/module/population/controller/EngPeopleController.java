@@ -1,6 +1,5 @@
 package com.mit.community.module.population.controller;
 
-import com.mit.community.entity.entity.EngPeopleInfo;
 import com.mit.community.population.service.EngPeopleService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -43,8 +42,9 @@ public class EngPeopleController {
                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime ddrq,
                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime yjlkrq,
                          @RequestParam(required = false, defaultValue = "0") Integer sfzdry, Integer person_baseinfo_id, int isDelete) {
-        EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm, zjyxq, lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id, isDelete);
-        engPeopleService.save(engPeopleInfo);
+        /*EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm,
+                zjyxq, lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id, isDelete);
+        engPeopleService.save(engPeopleInfo);*/
         return Result.success("更新人员信息保存成功");
     }
 

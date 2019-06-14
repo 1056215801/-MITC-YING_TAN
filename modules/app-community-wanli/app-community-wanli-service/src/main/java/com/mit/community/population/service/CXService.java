@@ -15,14 +15,14 @@ public class CXService {
     @Autowired
     private CXMapper cXMapper;
 
-    public void save(String dysxcx, String drsxcx, String dssxcx, String bz, Integer person_baseinfo_id){
-        CXInfo cXInfo = new CXInfo(dysxcx, drsxcx, dssxcx, bz, person_baseinfo_id,0);
+    public void save(String dysxcx, String drsxcx, String dssxcx, String bz, Integer person_baseinfo_id) {
+        CXInfo cXInfo = new CXInfo(dysxcx, drsxcx, dssxcx, bz, person_baseinfo_id, 0);
         cXInfo.setGmtCreate(LocalDateTime.now());
         cXInfo.setGmtModified(LocalDateTime.now());
         cXMapper.insert(cXInfo);
     }
 
-    public void save(CXInfo cXInfo){
+    public void save(CXInfo cXInfo) {
         EntityWrapper<CXInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", cXInfo.getPerson_baseinfo_id());
         List<CXInfo> list = cXMapper.selectList(wrapper);
@@ -31,10 +31,12 @@ public class CXService {
             cXInfo.setGmtModified(LocalDateTime.now());
             cXMapper.insert(cXInfo);
         } else {
+            cXInfo.setId(list.get(0).getId());
             cXInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<CXInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", cXInfo.getPerson_baseinfo_id());
-            cXMapper.update(cXInfo, update);
+            cXMapper.updateById(cXInfo);
+            //EntityWrapper<CXInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", cXInfo.getPerson_baseinfo_id());
+            //cXMapper.update(cXInfo, update);
         }
     }
 

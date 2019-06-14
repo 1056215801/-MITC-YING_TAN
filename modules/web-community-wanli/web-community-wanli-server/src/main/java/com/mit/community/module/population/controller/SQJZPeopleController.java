@@ -50,9 +50,9 @@ public class SQJZPeopleController {
                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime jzkssj, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime jzjssj, String jsfs, String ssqk, String sflgf, String ssqku, String sfjljzxz, String jzjclx, String sfytg,
                          String tgyy, String jcjdtgqk, String tgjzqk, String sfylg, String lgyy, String jcjdlgqk, String lgjzqk, String jcqk, String xfbgzx,
                          String sfcxfz, String cxfzmc, Integer person_baseinfo_id, int isDelete) {
-        SQJZPeopleinfo sQJZPeopleinfo = new SQJZPeopleinfo(sqjzrybh, yjycs, jzlb, ajlb, jtzm, ypxq, ypxkssj, ypxjssj, jzkssj, jzjssj, jsfs, ssqk, sflgf, ssqku, sfjljzxz, jzjclx, sfytg,
+        /*SQJZPeopleinfo sQJZPeopleinfo = new SQJZPeopleinfo(sqjzrybh, yjycs, jzlb, ajlb, jtzm, ypxq, ypxkssj, ypxjssj, jzkssj, jzjssj, jsfs, ssqk, sflgf, ssqku, sfjljzxz, jzjclx, sfytg,
                 tgyy, jcjdtgqk, tgjzqk, sfylg, lgyy, jcjdlgqk, lgjzqk, jcqk, xfbgzx, sfcxfz, cxfzmc, person_baseinfo_id, isDelete);
-        sQJZPeopleService.save(sQJZPeopleinfo);
+        sQJZPeopleService.save(sQJZPeopleinfo);*/
         return Result.success("社区矫正人员信息更新成功");
 
     }

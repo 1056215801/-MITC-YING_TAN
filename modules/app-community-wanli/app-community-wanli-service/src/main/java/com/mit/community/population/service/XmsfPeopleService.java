@@ -15,7 +15,7 @@ public class XmsfPeopleService {
     private XmsfPeopleMapper xmsfPeopleMapper;
 
     public void save(String sflf, String yzm, String ypxq, String fxcs, String sfrq, String wxxpglx, LocalDateTime xjrq, String xjqk,
-                       LocalDateTime azrq, String azqk, String wazyy, String bjqk, String sfcxfz, String cxfzzm, Integer person_baseinfo_id){
+                     LocalDateTime azrq, String azqk, String wazyy, String bjqk, String sfcxfz, String cxfzzm, Integer person_baseinfo_id) {
         /*XmsfPeopleInfo xmsfPeopleInfo = new XmsfPeopleInfo(sflf, yzm, ypxq, fxcs, sfrq, wxxpglx, xjrq, xjqk, azrq, azqk, wazyy, bjqk, sfcxfz, cxfzzm, person_baseinfo_id);
         XmsfPeopleInfo xmsfPeopleInfo = new XmsfPeopleInfo(sflf, yzm, ypxq, fxcs, sfrq, wxxpglx, xjrq, xjqk, azrq, azqk, wazyy, bjqk, sfcxfz, cxfzzm, person_baseinfo_id,0);
         xmsfPeopleInfo.setGmtCreate(LocalDateTime.now());
@@ -23,7 +23,7 @@ public class XmsfPeopleService {
         xmsfPeopleMapper.insert(xmsfPeopleInfo);*/
     }
 
-    public void save(XmsfPeopleInfo xmsfPeopleInfo){
+    public void save(XmsfPeopleInfo xmsfPeopleInfo) {
         EntityWrapper<XmsfPeopleInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", xmsfPeopleInfo.getPerson_baseinfo_id());
         List<XmsfPeopleInfo> list = xmsfPeopleMapper.selectList(wrapper);
@@ -32,10 +32,12 @@ public class XmsfPeopleService {
             xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
             xmsfPeopleMapper.insert(xmsfPeopleInfo);
         } else {
+            xmsfPeopleInfo.setId(list.get(0).getId());
             xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<XmsfPeopleInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", xmsfPeopleInfo.getPerson_baseinfo_id());
-            xmsfPeopleMapper.update(xmsfPeopleInfo, update);
+            xmsfPeopleMapper.updateById(xmsfPeopleInfo);
+            //EntityWrapper<XmsfPeopleInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", xmsfPeopleInfo.getPerson_baseinfo_id());
+            //xmsfPeopleMapper.update(xmsfPeopleInfo, update);
         }
     }
 
