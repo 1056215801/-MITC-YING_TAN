@@ -15,16 +15,24 @@ public class HouseInfoService {
     @Autowired
     private HouseInfoMapper houseInfoMapper;
 
-    @Transactional
-    public void save(List<HouseInfo> list){
-        for (HouseInfo houseInfo:list) {
-            houseInfo.setGmtCreate(LocalDateTime.now());
-            houseInfo.setGmtModified(LocalDateTime.now());
-            houseInfoMapper.insert(houseInfo);
+    @Transactional(rollbackFor = Exception.class)
+    public void save(List<HouseInfo> list, Integer person_baseinfo_id) {
+        try {
+            //先删除房屋
+            EntityWrapper<HouseInfo> wrapper = new EntityWrapper<>();
+            wrapper.eq("person_baseinfo_id", person_baseinfo_id);
+            houseInfoMapper.delete(wrapper);
+            for (HouseInfo houseInfo : list) {
+                houseInfo.setGmtCreate(LocalDateTime.now());
+                houseInfo.setGmtModified(LocalDateTime.now());
+                houseInfoMapper.insert(houseInfo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public List<HouseInfo> getHouseInfo(Integer person_baseinfo_id){
+    public List<HouseInfo> getHouseInfo(Integer person_baseinfo_id) {
         EntityWrapper<HouseInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", person_baseinfo_id);
         List<HouseInfo> list = houseInfoMapper.selectList(wrapper);

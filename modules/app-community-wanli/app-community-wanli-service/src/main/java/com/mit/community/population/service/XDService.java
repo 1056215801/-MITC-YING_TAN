@@ -13,15 +13,17 @@ import java.util.List;
 public class XDService {
     @Autowired
     private XDMapper xDMapper;
+
     public void save(LocalDateTime ccfxsj, String gkqk, String gkrxm, String gkrlxfs, String bfqk, String bfrxm, String bfrlxfs,
-                       String ywfzs, String xdqk, String xdyy, String xdhg, Integer person_baseinfo_id){
+                     String ywfzs, String xdqk, String xdyy, String xdhg, Integer person_baseinfo_id) {
+        /*XDInfo xDInfo = new XDInfo(ccfxsj, gkqk, gkrxm, gkrlxfs, bfqk, bfrxm, bfrlxfs, ywfzs, xdqk, xdyy, xdhg, person_baseinfo_id);
         XDInfo xDInfo = new XDInfo(ccfxsj, gkqk, gkrxm, gkrlxfs, bfqk, bfrxm, bfrlxfs, ywfzs, xdqk, xdyy, xdhg, person_baseinfo_id,0);
         xDInfo.setGmtCreate(LocalDateTime.now());
         xDInfo.setGmtModified(LocalDateTime.now());
-        xDMapper.insert(xDInfo);
+        xDMapper.insert(xDInfo);*/
     }
 
-    public void save(XDInfo xDInfo){
+    public void save(XDInfo xDInfo) {
         EntityWrapper<XDInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
         List<XDInfo> list = xDMapper.selectList(wrapper);
@@ -30,10 +32,12 @@ public class XDService {
             xDInfo.setGmtModified(LocalDateTime.now());
             xDMapper.insert(xDInfo);
         } else {
+            xDInfo.setId(list.get(0).getId());
             xDInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<XDInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
-            xDMapper.update(xDInfo, update);
+            xDMapper.updateById(xDInfo);
+            //EntityWrapper<XDInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", xDInfo.getPerson_baseinfo_id());
+            //xDMapper.update(xDInfo, update);
         }
     }
 

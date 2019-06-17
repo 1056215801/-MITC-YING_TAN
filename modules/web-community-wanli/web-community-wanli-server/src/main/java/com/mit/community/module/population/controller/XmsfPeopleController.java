@@ -29,8 +29,8 @@ public class XmsfPeopleController {
     @PostMapping("/save")
     @ApiOperation(value = "保存刑满释放人员信息", notes = "传参：String sflf 是否累犯, String yzm 原罪名, String ypxq 原判刑期, String fxcs 服刑场所, String sfrq 释放日期, String wxxpglx 危险性评估类型, LocalDateTime xjrq 衔接日期, String xjqk 衔接情况,\n" +
             "LocalDateTime azrq 安置日期, String azqk 安置情况, String wazyy 未安置原因, String bjqk 帮教情况, String sfcxfz 是否重新犯罪, String cxfzzm 重新犯罪罪名")
-    public Result save(String sflf, String yzm, String ypxq, String fxcs, String sfrq, String wxxpglx, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime xjrq, String xjqk,
-                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime azrq, String azqk, String wazyy, String bjqk, String sfcxfz, String cxfzzm, Integer person_baseinfo_id){
+    public Result save(String sflf, String yzm, String ypxq, String fxcs, String sfrq, String wxxpglx, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime xjrq, String xjqk,
+                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime azrq, String azqk, String wazyy, String bjqk, String sfcxfz, String cxfzzm, Integer person_baseinfo_id) {
         xmsfPeopleService.save(sflf, yzm, ypxq, fxcs, sfrq, wxxpglx, xjrq, xjqk, azrq, azqk, wazyy, bjqk, sfcxfz, cxfzzm, person_baseinfo_id);
         return Result.success("刑满释放人员信息保存成功");
     }
@@ -38,16 +38,18 @@ public class XmsfPeopleController {
     @PostMapping("/update")
     @ApiOperation(value = "更新刑满释放人员信息", notes = "传参：String sflf 是否累犯, String yzm 原罪名, String ypxq 原判刑期, String fxcs 服刑场所, String sfrq 释放日期, String wxxpglx 危险性评估类型, LocalDateTime xjrq 衔接日期, String xjqk 衔接情况,\n" +
             "LocalDateTime azrq 安置日期, String azqk 安置情况, String wazyy 未安置原因, String bjqk 帮教情况, String sfcxfz 是否重新犯罪, String cxfzzm 重新犯罪罪名")
-    public Result update(String sflf, String yzm, String ypxq, String fxcs, String sfrq, String wxxpglx, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime xjrq, String xjqk,
-                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime azrq, String azqk, String wazyy, String bjqk, String sfcxfz, String cxfzzm, Integer person_baseinfo_id, int isDelete){
-        XmsfPeopleInfo xmsfPeopleInfo = new XmsfPeopleInfo(sflf, yzm, ypxq, fxcs, sfrq, wxxpglx, xjrq, xjqk, azrq, azqk, wazyy, bjqk, sfcxfz, cxfzzm, person_baseinfo_id, isDelete);
-        xmsfPeopleService.save(xmsfPeopleInfo);
+    public Result update(String sflf, String yzm, String ypxq, String fxcs, String sfrq, String wxxpglx, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime xjrq, String xjqk,
+                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime azrq, String azqk, String wazyy, String bjqk, String sfcxfz, String cxfzzm, Integer person_baseinfo_id, int isDelete) {
+        /*XmsfPeopleInfo xmsfPeopleInfo = new XmsfPeopleInfo(sflf, yzm, ypxq, fxcs,
+                sfrq, wxxpglx, xjrq, xjqk, azrq, azqk, wazyy, bjqk, sfcxfz,
+                cxfzzm, person_baseinfo_id, isDelete);
+        xmsfPeopleService.save(xmsfPeopleInfo);*/
         return Result.success("刑满释放人员信息更新成功");
     }
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除刑满释放人员信息", notes = "传参：Integer id  记录id")
-    public Result delete(Integer id){
+    public Result delete(Integer id) {
         xmsfPeopleService.delete(id);
         return Result.success("删除成功");
     }

@@ -16,15 +16,16 @@ public class PartyInfoService {
 
 
     public void save(LocalDateTime rdsq, LocalDateTime zzrq, LocalDateTime cjgzsj, String rdszzb, String zzszzb, String zzszdw, String szdzb,
-                       LocalDateTime jrdzbsj, String xrdnzw, String rdjsr, String yyjndf, Integer person_baseinfo_id){
+                     LocalDateTime jrdzbsj, String xrdnzw, String rdjsr, String yyjndf, Integer person_baseinfo_id) {
+        /*PartyInfo partyInfo = new PartyInfo(rdsq, zzrq, cjgzsj, rdszzb, zzszzb, zzszdw, szdzb, jrdzbsj, xrdnzw, rdjsr, yyjndf, person_baseinfo_id);
         PartyInfo partyInfo = new PartyInfo(rdsq, zzrq, cjgzsj, rdszzb, zzszzb, zzszdw, szdzb, jrdzbsj, xrdnzw, rdjsr, yyjndf, person_baseinfo_id,0);
         partyInfo.setGmtCreate(LocalDateTime.now());
         partyInfo.setGmtModified(LocalDateTime.now());
-        partyInfoMapper.insert(partyInfo);
+        partyInfoMapper.insert(partyInfo);*/
 
     }
 
-    public void save(PartyInfo partyInfo){
+    public void save(PartyInfo partyInfo) {
         EntityWrapper<PartyInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", partyInfo.getPerson_baseinfo_id());
         List<PartyInfo> list = partyInfoMapper.selectList(wrapper);
@@ -33,10 +34,12 @@ public class PartyInfoService {
             partyInfo.setGmtModified(LocalDateTime.now());
             partyInfoMapper.insert(partyInfo);
         } else {
+            partyInfo.setId(list.get(0).getId());
             partyInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<PartyInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", partyInfo.getPerson_baseinfo_id());
-            partyInfoMapper.update(partyInfo, update);
+            partyInfoMapper.updateById(partyInfo);
+            //EntityWrapper<PartyInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", partyInfo.getPerson_baseinfo_id());
+            //partyInfoMapper.update(partyInfo, update);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.mit.community.util;
+package com.mit.community.service;
 
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
@@ -17,10 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PushUtil {
-    //赣鄱乐
-    private final static String masterSecret = "1f825f301e59191f353fc7d8";
-    private final static String appKey = "1633808c40ece625f09e2dbf";
+public class WebPush {
+    private final static String masterSecret = "b32f4510e30674779f1504d3";
+    private final static String appKey = "0eeff9299de28dafdb535145";
     private final static String channel = "jxmxzn";
 
     /**

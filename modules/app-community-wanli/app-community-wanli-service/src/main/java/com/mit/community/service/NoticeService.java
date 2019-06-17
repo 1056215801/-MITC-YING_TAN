@@ -74,7 +74,9 @@ public class NoticeService {
     public List<Notice> listValidNoticeAndTime(String communityCode, LocalDate startDay, LocalDate endDay) {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        wrapper.le("release_time", endDay);
+        wrapper.eq("status", 1);
+        wrapper.eq("isdel", 0);
+        //wrapper.le("release_time", endDay);
         wrapper.ge("release_time", startDay);
         wrapper.ge("validate_time", LocalDateTime.now());
         wrapper.orderBy("release_time", false);
@@ -161,12 +163,18 @@ public class NoticeService {
                                  Integer creator, String content, LocalDateTime releaseTime, LocalDateTime validateTime, String imageUrl,
                                  String portraitFileDomain, String portraitFileName) {
         if (id == null) {
-            Notice notice = new Notice(id, null, communityCode, title, code, publishWay, releaseTime, validateTime, synopsis, publisher, creator, 0, null, imageUrl, 1, 0, false, portraitFileDomain, portraitFileName, 0);
+            Notice notice = new Notice(id, null, communityCode, title,
+                    code, publishWay, releaseTime, validateTime, synopsis, publisher,
+                    creator, 0, null, imageUrl, 1, 0,
+                    false, portraitFileDomain, portraitFileName, 0);
             this.save(notice);
             NoticeContent noticeContent = new NoticeContent(notice.getId(), synopsis);
             noticeContentService.save(noticeContent);
         } else {
-            Notice notice = new Notice(id, null, communityCode, title, code, publishWay, releaseTime, validateTime, synopsis, publisher, creator, 0, null, imageUrl, 1, 0, false, portraitFileDomain, portraitFileName, 0);
+            Notice notice = new Notice(id, null, communityCode, title,
+                    code, publishWay, releaseTime, validateTime, synopsis, publisher,
+                    creator, 0, null, imageUrl, 1, 0,
+                    false, portraitFileDomain, portraitFileName, 0);
             this.update(notice);
             NoticeContent noticeContent = new NoticeContent(id, synopsis);
             noticeContentService.update(noticeContent);

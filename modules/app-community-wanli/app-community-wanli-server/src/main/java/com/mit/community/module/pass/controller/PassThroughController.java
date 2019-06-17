@@ -111,9 +111,13 @@ public class PassThroughController {
             "cond_txt 实况天气状况描述，cond_code 实况天气状况代码")
     public Result getWeather(String mac, String cellphone, String cityName) {
         if (StringUtils.isNotBlank(cityName)) {
-            //WeatherInfo weather = weatherService.getWeatherInfo(cityName);
-            WeatherVo weather = weatherService.getWeatherInfo(cityName);
-            return Result.success(weather);
+            WeatherInfo weather = weatherService.getWeather(cityName);
+            WeatherVo weatherVo = new WeatherVo();
+            weatherVo.setAir(String.valueOf(weather.getVis()));
+            weatherVo.setWea(weather.getCond_txt());
+            weatherVo.setTem(String.valueOf(weather.getTmp()));
+            //WeatherVo weather = weatherService.getWeatherInfo(cityName);
+            return Result.success(weatherVo);
         }
         return Result.error("参数不能为空");
     }

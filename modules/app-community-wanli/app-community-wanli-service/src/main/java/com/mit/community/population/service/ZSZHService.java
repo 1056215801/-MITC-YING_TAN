@@ -15,17 +15,18 @@ public class ZSZHService {
     private ZSZHMapper zSZHMapper;
 
     public void save(String jtjjzk, String sfnrdb, String jhrsfzh, String jhrxm, String jhrlxfs, LocalDateTime ccfbrq, String mqzdlx,
-                       String ywzszhs, int zszhcs, LocalDateTime sczszhrq, String mqwxxpgdj, String zlqk, String zlyy,
-                       String sszyzlyy, String jskfxljgmc, String cyglry, String bfqk, Integer person_baseinfo_id){
-        ZSZHInfo zSZHInfo = new ZSZHInfo(jtjjzk, sfnrdb, jhrsfzh, jhrxm, jhrlxfs, ccfbrq, mqzdlx, ywzszhs, zszhcs, sczszhrq, mqwxxpgdj,
-                zlqk, zlyy, sszyzlyy, jskfxljgmc, cyglry, bfqk, person_baseinfo_id,0);
+                     String ywzszhs, int zszhcs, LocalDateTime sczszhrq, String mqwxxpgdj, String zlqk, String zlyy,
+                     String sszyzlyy, String jskfxljgmc, String cyglry, String bfqk, Integer person_baseinfo_id) {
+        /*ZSZHInfo zSZHInfo = new ZSZHInfo(jtjjzk, sfnrdb, jhrsfzh, jhrxm, jhrlxfs, ccfbrq,
+                mqzdlx, ywzszhs, zszhcs, sczszhrq, mqwxxpgdj, zlqk, zlyy, sszyzlyy, jskfxljgmc,
+                cyglry, bfqk, person_baseinfo_id, 0);
         zSZHInfo.setGmtCreate(LocalDateTime.now());
         zSZHInfo.setGmtModified(LocalDateTime.now());
-        zSZHMapper.insert(zSZHInfo);
+        zSZHMapper.insert(zSZHInfo);*/
 
     }
 
-    public void save(ZSZHInfo zSZHInfo){
+    public void save(ZSZHInfo zSZHInfo) {
         EntityWrapper<ZSZHInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", zSZHInfo.getPerson_baseinfo_id());
         List<ZSZHInfo> list = zSZHMapper.selectList(wrapper);
@@ -34,10 +35,12 @@ public class ZSZHService {
             zSZHInfo.setGmtModified(LocalDateTime.now());
             zSZHMapper.insert(zSZHInfo);
         } else {
+            zSZHInfo.setId(list.get(0).getId());
             zSZHInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<ZSZHInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", zSZHInfo.getPerson_baseinfo_id());
-            zSZHMapper.update(zSZHInfo, update);
+            zSZHMapper.updateById(zSZHInfo);
+            //EntityWrapper<ZSZHInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", zSZHInfo.getPerson_baseinfo_id());
+            //zSZHMapper.update(zSZHInfo, update);
         }
     }
 

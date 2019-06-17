@@ -5,6 +5,7 @@ import com.mit.community.entity.entity.CarInfo;
 import com.mit.community.mapper.mapper.CarInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,15 +23,26 @@ public class CarInfoService {
         carInfoMapper.insert(carInfo);
     }*/
 
-    public void save(List<CarInfo> list){
-        for (CarInfo carInfo:list) {
-            carInfo.setGmtCreate(LocalDateTime.now());
-            carInfo.setGmtModified(LocalDateTime.now());
-            carInfoMapper.insert(carInfo);
+    @Transactional(rollbackFor = Exception.class)
+    public void save(List<CarInfo> list, Integer person_baseinfo_id) {
+        try {
+            //先删除所有车辆
+            if (person_baseinfo_id != null) {
+                EntityWrapper<CarInfo> wrapper = new EntityWrapper<>();
+                wrapper.eq("person_baseinfo_id", person_baseinfo_id);
+                carInfoMapper.delete(wrapper);
+            }
+            for (CarInfo carInfo : list) {
+                carInfo.setGmtCreate(LocalDateTime.now());
+                carInfo.setGmtModified(LocalDateTime.now());
+                carInfoMapper.insert(carInfo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public List<CarInfo> getCarInfo(Integer person_baseinfo_id){
+    public List<CarInfo> getCarInfo(Integer person_baseinfo_id) {
         EntityWrapper<CarInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", person_baseinfo_id);
         List<CarInfo> list = carInfoMapper.selectList(wrapper);

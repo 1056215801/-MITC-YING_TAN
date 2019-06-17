@@ -7,50 +7,54 @@
                      javaType="com.mit.community.entity.entity.PersonBaseInfo">
             <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
             <result property="idCardNum" column="id_card_num" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="name" column="name" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="formerName" column="former_name" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="gender" column="gender" javaType="String"
-                    jdbcType="VARCHAR" />
-            <result property="birthday" column="birthday" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
-                    jdbcType="OTHER" />
+                    jdbcType="VARCHAR"/>
+            <result property="birthday" column="birthday" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler"
+                    javaType="java.time.LocalDateTime"
+                    jdbcType="OTHER"/>
             <result property="nation" column="nation" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="nativePlace" column="native_place" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="matrimony" column="matrimony" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="politicCountenance" column="politic_countenance" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="education" column="education" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="religion" column="religion" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="jobType" column="job_type" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="profession" column="profession" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="cellphone" column="cellphone" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="placeOfDomicile" column="place_of_domicile" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="placeOfDomicileDetail" column="place_of_domicile_detail" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="placeOfReside" column="place_of_reside" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="placeOfServer" column="place_of_server" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="photoBase64" column="phot_base64" javaType="String"
-                    jdbcType="VARCHAR" />
+                    jdbcType="VARCHAR"/>
             <result property="rksx" column="rksx" javaType="int" jdbcType="INTEGER"/>
             <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
-            <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+            <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+            <result property="gmtCreate" column="gmt_create"
+                    typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
                     jdbcType="OTHER"/>
-            <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+            <result property="gmtModified" column="gmt_modified"
+                    typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
                     jdbcType="OTHER"/>
         </association>
     </resultMap>

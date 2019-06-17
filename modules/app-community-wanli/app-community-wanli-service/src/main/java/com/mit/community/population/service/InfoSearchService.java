@@ -46,9 +46,8 @@ public class InfoSearchService {
     private ZSZHMapper zSZHMapper;
 
     @Transactional
-    public Map<String, Object> getLabelInfo(Integer person_baseinfo_id){
+    public Map<String, Object> getLabelInfo(Integer person_baseinfo_id) {
         Map<String, Object> map = new HashMap<>();
-
         EntityWrapper<AzbInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", person_baseinfo_id);
         List<AzbInfo> list = aZBMapper.selectList(wrapper);
@@ -56,7 +55,6 @@ public class InfoSearchService {
             AzbInfo azbInfo = list.get(0);
             map.put("azb", azbInfo);
         }
-
         EntityWrapper<BearInfo> wrapper1 = new EntityWrapper<>();
         wrapper1.eq("person_baseinfo_id", person_baseinfo_id);
         List<BearInfo> list1 = bearInfoMapper.selectList(wrapper1);
@@ -64,7 +62,6 @@ public class InfoSearchService {
             BearInfo bearInfo = list1.get(0);
             map.put("js", bearInfo);
         }
-
         EntityWrapper<CXInfo> wrapper2 = new EntityWrapper<>();
         wrapper2.eq("person_baseinfo_id", person_baseinfo_id);
         List<CXInfo> list2 = cXMapper.selectList(wrapper2);
@@ -72,7 +69,6 @@ public class InfoSearchService {
             CXInfo cXInfo = list2.get(0);
             map.put("cx", cXInfo);
         }
-
         EntityWrapper<EngPeopleInfo> wrapper3 = new EntityWrapper<>();
         wrapper3.eq("person_baseinfo_id", person_baseinfo_id);
         List<EngPeopleInfo> list3 = engPeopleMapper.selectList(wrapper3);
@@ -80,7 +76,6 @@ public class InfoSearchService {
             EngPeopleInfo engPeopleInfo = list3.get(0);
             map.put("jw", engPeopleInfo);
         }
-
         EntityWrapper<MilitaryServiceInfo> wrapper4 = new EntityWrapper<>();
         wrapper4.eq("person_baseinfo_id", person_baseinfo_id);
         List<MilitaryServiceInfo> list4 = militaryServiceMapper.selectList(wrapper4);
@@ -88,7 +83,6 @@ public class InfoSearchService {
             MilitaryServiceInfo militaryServiceInfo = list4.get(0);
             map.put("by", militaryServiceInfo);
         }
-
         EntityWrapper<PartyInfo> wrapper5 = new EntityWrapper<>();
         wrapper5.eq("person_baseinfo_id", person_baseinfo_id);
         List<PartyInfo> list5 = partyInfoMapper.selectList(wrapper5);
@@ -104,7 +98,6 @@ public class InfoSearchService {
             SFPeopleInfo sFPeopleInfo = list6.get(0);
             map.put("sf", sFPeopleInfo);
         }
-
         EntityWrapper<SQJZPeopleinfo> wrapper7 = new EntityWrapper<>();
         wrapper7.eq("person_baseinfo_id", person_baseinfo_id);
         List<SQJZPeopleinfo> list7 = sQJZPeopleMapper.selectList(wrapper7);
@@ -112,7 +105,6 @@ public class InfoSearchService {
             SQJZPeopleinfo sQJZPeopleinfo = list7.get(0);
             map.put("sqjz", sQJZPeopleinfo);
         }
-
         EntityWrapper<StayPeopleInfo> wrapper8 = new EntityWrapper<>();
         wrapper8.eq("person_baseinfo_id", person_baseinfo_id);
         List<StayPeopleInfo> list8 = stayPeopleMapper.selectList(wrapper8);
@@ -120,7 +112,6 @@ public class InfoSearchService {
             StayPeopleInfo stayPeopleInfo = list8.get(0);
             map.put("ls", stayPeopleInfo);
         }
-
         EntityWrapper<XDInfo> wrapper9 = new EntityWrapper<>();
         wrapper9.eq("person_baseinfo_id", person_baseinfo_id);
         List<XDInfo> list9 = xDMapper.selectList(wrapper9);
@@ -128,7 +119,6 @@ public class InfoSearchService {
             XDInfo xDInfo = list9.get(0);
             map.put("xd", xDInfo);
         }
-
         EntityWrapper<XmsfPeopleInfo> wrapper10 = new EntityWrapper<>();
         wrapper10.eq("person_baseinfo_id", person_baseinfo_id);
         List<XmsfPeopleInfo> list10 = xmsfPeopleMapper.selectList(wrapper10);
@@ -136,7 +126,6 @@ public class InfoSearchService {
             XmsfPeopleInfo xmsfPeopleInfo = list10.get(0);
             map.put("xmsf", xmsfPeopleInfo);
         }
-
         EntityWrapper<ZDQSNCInfo> wrapper11 = new EntityWrapper<>();
         wrapper11.eq("person_baseinfo_id", person_baseinfo_id);
         List<ZDQSNCInfo> list11 = zDQSNCMapper.selectList(wrapper11);
@@ -144,7 +133,6 @@ public class InfoSearchService {
             ZDQSNCInfo zDQSNCInfo = list11.get(0);
             map.put("zdqsn", zDQSNCInfo);
         }
-
         EntityWrapper<ZSZHInfo> wrapper12 = new EntityWrapper<>();
         wrapper12.eq("person_baseinfo_id", person_baseinfo_id);
         List<ZSZHInfo> list12 = zSZHMapper.selectList(wrapper12);
@@ -152,11 +140,12 @@ public class InfoSearchService {
             ZSZHInfo zSZHInfo = list12.get(0);
             map.put("zszh", zSZHInfo);
         }
-
         return map;
     }
 
-    public Page<InfoSearch> listPage(Integer ageStart, Integer ageEnd, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, Integer pageNum, Integer pageSize, String rycf){
+    public Page<InfoSearch> listPage(Integer ageStart, Integer ageEnd, String name, String idNum, String sex,
+                                     String education, String job, String matrimony, String zzmm, String label,
+                                     Integer pageNum, Integer pageSize, String rycf) {
         Page<InfoSearch> page = new Page<>(pageNum, pageSize);
         EntityWrapper<InfoSearch> wrapper = new EntityWrapper<>();
         if (label == null || "".equals(label)) {
@@ -166,7 +155,6 @@ public class InfoSearchService {
             if (ageEnd != 0) {
                 wrapper.le("age", ageEnd);
             }
-
             if (StringUtils.isNotBlank(name)) {
                 wrapper.eq("name", name);
             }
@@ -195,6 +183,7 @@ public class InfoSearchService {
                     wrapper.eq("rksx", 1);
                 }
             }
+            wrapper.eq("isdelete", 0);
             wrapper.orderBy("gmt_create", false);
             List<InfoSearch> list = infoSearchMapper.selectPersonBaseInfoPage(page, wrapper);
             page.setRecords(list);
@@ -233,7 +222,8 @@ public class InfoSearchService {
                     wrapper.eq("b.rksx", 1);
                 }
             }
-            wrapper.orderBy("a.gmt_create", false);
+            wrapper.eq("b.isdelete", 0);
+            wrapper.orderBy("b.gmt_create", false);
             if ("azb".equals(label)) {
                 List<InfoSearch> list = infoSearchMapper.selectAzbInfoPage(page, wrapper);
                 page.setRecords(list);
@@ -406,7 +396,4 @@ public class InfoSearchService {
         }
         return list;
     }
-
-
-
 }

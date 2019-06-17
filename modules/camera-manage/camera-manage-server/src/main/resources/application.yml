@@ -5,7 +5,7 @@ logging:
 spring:
   redis:
     database: 2
-    host: ${REDIS_HOST:192.168.1.222}
+    host: ${REDIS_HOST:127.0.0.1}
     port: ${REDIS_PORT:6379}
     pool:
     max-active: 20
@@ -50,8 +50,8 @@ spring:
         reset-enable: true
         login-username: admin
         login-password: admin
-        allow: 192.168.1.222
-        #allow: 127.0.0.1
+        #allow: 192.168.1.222
+        allow: 127.0.0.1
       filter:
         stat:
           db-type: mysql
@@ -100,7 +100,7 @@ mybatis:
   mapper-locations: "classpath*:mapper/*.xml"
 
 server:
-  port: 8080
+  port: 8010
   servlet:
     context-path: /cloud-service/
 
@@ -182,7 +182,7 @@ redis:
     maxActive: 300
     maxIdle: 100
     maxWait: 1000
-  host: ${REDIS_HOST:192.168.1.222}
+  host: ${REDIS_HOST:127.0.0.1}
   port:  ${REDIS_PORT:6379}
   password:
   timeout: 2000
@@ -203,12 +203,14 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
 

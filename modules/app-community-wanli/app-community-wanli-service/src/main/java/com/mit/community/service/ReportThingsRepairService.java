@@ -211,7 +211,7 @@ public class ReportThingsRepairService extends ServiceImpl<ReportThingsRepairMap
         if (StringUtils.isNotBlank(maintainType)) {
             wrapper.eq("maintain_type", maintainType);
         }
-        wrapper.orderBy("appointment_time", false);
+        wrapper.orderBy("gmt_create", false);
         Page<ReportThingsRepair> page = new Page<>(pageNum, pageSize);
         List<ReportThingsRepair> reportThingsRepairList = reportThingsRepairMapper.selectPage(page, wrapper);
         if (!reportThingsRepairList.isEmpty()) {

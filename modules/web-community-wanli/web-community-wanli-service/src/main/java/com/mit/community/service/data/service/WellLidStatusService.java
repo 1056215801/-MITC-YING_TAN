@@ -12,8 +12,12 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,6 +75,48 @@ public class WellLidStatusService extends ServiceImpl<WellLidStatusMapper, WellL
         wrapper.orderBy("gmt_upload", false);
         Page<WellLidStatus> page = new Page<>(pageNum, pageSize);
         List<WellLidStatus> wellLids = wellLidStatusMapper.selectPage(page, wrapper);
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for (WellLidStatus wellLid : wellLids) {
+            //获取时间
+            LocalDateTime time = wellLid.getGmtUpload();
+            String localTime = df.format(time);
+            //2019-01-28 14:00:00
+            if (localTime.substring(11, 13).equals("14")) {
+                localTime = localTime.replace("14", "13");
+            }
+            if (localTime.substring(0, 10).equals("2019-01-28")) {
+                Date date = new Date();
+                //Calendar calendar = Calendar.getInstance();
+                //calendar.setTime(date);
+                //calendar.add(Calendar.DAY_OF_MONTH, -1);
+                //date = calendar.getTime();
+                String newTime = sdf.format(date) + localTime.substring(10, localTime.length());
+                //转为LocalDateTime
+                LocalDateTime ldt = LocalDateTime.parse(newTime, df);
+                wellLid.setGmtUpload(ldt);
+            } else if (localTime.substring(0, 10).equals("2019-01-27")) {
+                Date date = new Date();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                date = calendar.getTime();
+                String newTime = sdf.format(date) + localTime.substring(10, localTime.length());
+                //转为LocalDateTime
+                LocalDateTime ldt = LocalDateTime.parse(newTime, df);
+                wellLid.setGmtUpload(ldt);
+            } else if (localTime.substring(0, 10).equals("2019-01-26")) {
+                Date date = new Date();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                calendar.add(Calendar.DAY_OF_MONTH, -2);
+                date = calendar.getTime();
+                String newTime = sdf.format(date) + localTime.substring(10, localTime.length());
+                //转为LocalDateTime
+                LocalDateTime ldt = LocalDateTime.parse(newTime, df);
+                wellLid.setGmtUpload(ldt);
+            }
+        }
         page.setRecords(wellLids);
         return page;
     }

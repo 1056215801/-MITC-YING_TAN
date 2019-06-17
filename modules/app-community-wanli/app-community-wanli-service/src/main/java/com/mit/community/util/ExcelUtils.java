@@ -1,12 +1,5 @@
 package com.mit.community.util;
 
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.List;
-
 import com.mit.community.entity.ExcelData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
@@ -16,8 +9,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
 
+import javax.servlet.http.HttpServletResponse;
 import java.awt.Color;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.util.List;
 
 public class ExcelUtils {
     public static void exportExcel(HttpServletResponse response, String fileName, ExcelData data) throws Exception {

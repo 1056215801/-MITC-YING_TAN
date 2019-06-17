@@ -16,6 +16,7 @@ import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -76,12 +77,14 @@ public class NoticeController {
                                 String noticeContent,//公告内容
                                 @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startTime,
                                 @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endTime) throws Exception {
-        if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(noticeType) && StringUtils.isNotBlank(noticeChannel)
-                && StringUtils.isNotBlank(noticeContent)) {
+        if (StringUtils.isNotBlank(title) && StringUtils.isNotBlank(noticeType)
+                && StringUtils.isNotBlank(noticeChannel)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-            noticeService.releaseWebNotice(user.getCommunityCode(), id, title, noticeType, noticeChannel, noticeContent, user.getAdminName(), user.getId(),
-                    null, DateUtils.dateStrToLocalDateTime(startTime), DateUtils.dateStrToLocalDateTime(endTime), null, portraitFileDomain, portraitFileName);
+            noticeService.releaseWebNotice(user.getCommunityCode(), id, title, noticeType,
+                    noticeChannel, noticeContent, user.getAdminName(), user.getId(),
+                    null, DateUtils.strToLocalDateTime(startTime),
+                    DateUtils.strToLocalDateTime(endTime), null, portraitFileDomain, portraitFileName);
             return Result.success("发布成功！");
         }
         return Result.error("参数不能为空");
@@ -254,8 +257,8 @@ public class NoticeController {
             return Result.error("参数错误");
         }
         NoticeVo noticeVo = noticeMapper.getNoticeById(id);
-        noticeVo.setStartTime(noticeVo.getStartTime().substring(0, 11));
-        noticeVo.setEndTime(noticeVo.getEndTime().substring(0, 11));
+        noticeVo.setStartTime(noticeVo.getStartTime().substring(0, noticeVo.getStartTime().length() - 2));
+        noticeVo.setEndTime(noticeVo.getEndTime().substring(0, noticeVo.getEndTime().length() - 2));
         return Result.success(noticeVo);
     }
 
@@ -311,6 +314,7 @@ public class NoticeController {
      * @Company mitesofor
      * @Description:~启用公告
      */
+    @RequestMapping("/enable")
     public Result enable(HttpServletRequest request) {
         Enumeration paramNames = request.getParameterNames();
         while (paramNames.hasMoreElements()) {

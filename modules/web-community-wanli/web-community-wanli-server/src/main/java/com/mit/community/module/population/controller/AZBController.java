@@ -26,7 +26,7 @@ public class AZBController {
     @ApiOperation(value = "保存艾滋病人员信息", notes = "传参：String grtj 感染途径, String sfwf 是否有违法犯罪史, String wffzqk 违法犯罪情况, String ajlb 案件类别, String gzlx 关注类型, String bfqk 帮扶情况, String bfrdh 帮扶人联系方式\n" +
             "    ,String bfrxm 帮扶人姓名, String szqk 收治情况, String szjgmc 收治机构名称, Integer person_baseinfo_id 基本信息id")
     public Result save(String grtj, String sfwf, String wffzqk, String ajlb, String gzlx, String bfqk, String bfrdh
-    ,String bfrxm, String szqk, String szjgmc, Integer person_baseinfo_id){
+            , String bfrxm, String szqk, String szjgmc, Integer person_baseinfo_id) {
         aZBService.save(grtj, sfwf, wffzqk, ajlb, gzlx, bfqk, bfrdh, bfrxm, szqk, szjgmc, person_baseinfo_id);
         return Result.success("保存成功");
     }
@@ -35,7 +35,7 @@ public class AZBController {
     @ApiOperation(value = "更新艾滋病人员信息", notes = "传参：String grtj 感染途径, String sfwf 是否有违法犯罪史, String wffzqk 违法犯罪情况, String ajlb 案件类别, String gzlx 关注类型, String bfqk 帮扶情况, String bfrdh 帮扶人联系方式\n" +
             "    ,String bfrxm 帮扶人姓名, String szqk 收治情况, String szjgmc 收治机构名称, Integer person_baseinfo_id 基本信息id")
     public Result update(String grtj, String sfwf, String wffzqk, String ajlb, String gzlx, String bfqk, String bfrdh
-            ,String bfrxm, String szqk, String szjgmc, Integer person_baseinfo_id, int isDelete){
+            , String bfrxm, String szqk, String szjgmc, Integer person_baseinfo_id, int isDelete) {
         AzbInfo azbInfo = new AzbInfo(grtj, sfwf, wffzqk, ajlb, gzlx, bfqk, bfrdh, bfrxm, szqk, szjgmc, person_baseinfo_id, isDelete);
         aZBService.save(azbInfo);
         return Result.success("更新成功");
@@ -43,7 +43,7 @@ public class AZBController {
 
     @PostMapping("/delete")
     @ApiOperation(value = "删除艾滋病人员信息", notes = "传参：Integer id  记录id")
-    public Result delete(Integer id){
+    public Result delete(Integer id) {
         aZBService.delete(id);
         return Result.success("删除成功");
     }

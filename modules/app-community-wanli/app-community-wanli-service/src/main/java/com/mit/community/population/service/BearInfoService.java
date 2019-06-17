@@ -16,7 +16,7 @@ public class BearInfoService {
 
     public void save(String poxm, String poxb, String xgzdw, String djjhny, String hkxz, String hyzk, String jysssj
             , String sslx, String ssyy, String ccyy, Integer person_baseinfo_id) {
-        BearInfo bearInfo = new BearInfo(poxm, poxb, xgzdw, djjhny, hkxz, hyzk, jysssj, sslx, ssyy, ccyy, person_baseinfo_id,0);
+        BearInfo bearInfo = new BearInfo(poxm, poxb, xgzdw, djjhny, hkxz, hyzk, jysssj, sslx, ssyy, ccyy, person_baseinfo_id, 0);
         bearInfo.setGmtCreate(LocalDateTime.now());
         bearInfo.setGmtModified(LocalDateTime.now());
         bearInfoMapper.insert(bearInfo);
@@ -32,9 +32,11 @@ public class BearInfoService {
             bearInfoMapper.insert(bearInfo);
         } else {
             bearInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<BearInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", bearInfo.getPerson_baseinfo_id());
-            bearInfoMapper.update(bearInfo, update);
+            bearInfo.setId(list.get(0).getId());
+            bearInfoMapper.updateById(bearInfo);
+            //EntityWrapper<BearInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", bearInfo.getPerson_baseinfo_id());
+            //bearInfoMapper.update(bearInfo, update);
         }
     }
 

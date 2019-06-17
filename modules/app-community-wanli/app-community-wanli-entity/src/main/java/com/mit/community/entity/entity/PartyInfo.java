@@ -7,25 +7,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @TableName("party_info")
 public class PartyInfo extends BaseEntity {
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime rdsq;
+    private String rdsq;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime zzrq;
+    private String zzrq;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime cjgzsj;
+    private String cjgzsj;
     private String rdszzb;
     private String zzszzb;
     private String zzszdw;
     private String szdzb;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime jrdzbsj;
+    private String jrdzbsj;
     private String xrdnzw;
     private String rdjsr;
     private String yyjndf;

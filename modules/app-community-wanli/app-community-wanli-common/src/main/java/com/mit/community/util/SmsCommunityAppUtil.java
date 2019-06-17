@@ -31,7 +31,7 @@ public class SmsCommunityAppUtil {
      *
      * @param cellphone 手机号
      * @param code      验证码
-     * @param type 类型.SmsCommunityAppUtil.TYPE_REGISTER、SmsCommunityAppUtil、TYPE_REGISTER
+     * @param type      类型.SmsCommunityAppUtil.TYPE_REGISTER、SmsCommunityAppUtil、TYPE_REGISTER
      * @author shuyy
      * @date 2018/12/10 10:12
      * @company mitesofor
@@ -48,6 +48,24 @@ public class SmsCommunityAppUtil {
                         param);
             }
         } catch (ClientException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/6/2 11:30
+     * @Company mitesofor
+     * @Description:~发送报事通知
+     */
+    public static void sendMsg(String cellphone, String content) {
+        Map<String, String> param = Maps.newHashMapWithExpectedSize(1);
+        param.put("place", "");
+        param.put("thing", content);
+        param.put("detail", "");
+        try {
+            SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_WARN, param);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

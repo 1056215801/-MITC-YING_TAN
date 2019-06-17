@@ -171,17 +171,24 @@
         </dependency>
 
         <!-- fastdfs上传依赖 -->
-        <dependency>
+        <!--<dependency>
             <groupId>fastdfs_client</groupId>
             <artifactId>fastdfs_client</artifactId>
             <version>1.25</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.csource/fastdfs-client-java -->
-        <dependency>
+        <!--<dependency>
             <groupId>fastdfs_client</groupId>
             <artifactId>fastdfs_client</artifactId>
             <version>1.27</version>
+        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.csource/fastdfs-client-java -->
+        <dependency>
+            <groupId>org.csource</groupId>
+            <artifactId>fastdfs-client-java</artifactId>
+            <version>1.27-RELEASE</version>
         </dependency>
 
         <dependency>

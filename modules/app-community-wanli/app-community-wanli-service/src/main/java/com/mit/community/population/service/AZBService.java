@@ -16,8 +16,8 @@ public class AZBService {
     private AZBMapper aZBMapper;
 
     public void save(String grtj, String sfwf, String wffzqk, String ajlb, String gzlx, String bfqk, String bfrdh
-            ,String bfrxm, String szqk, String szjgmc, Integer person_baseinfo_id) {
-        AzbInfo azbInfo = new AzbInfo(grtj, sfwf, wffzqk, ajlb, gzlx, bfqk, bfrdh, bfrxm, szqk, szjgmc, person_baseinfo_id,0);
+            , String bfrxm, String szqk, String szjgmc, Integer person_baseinfo_id) {
+        AzbInfo azbInfo = new AzbInfo(grtj, sfwf, wffzqk, ajlb, gzlx, bfqk, bfrdh, bfrxm, szqk, szjgmc, person_baseinfo_id, 0);
         azbInfo.setGmtCreate(LocalDateTime.now());
         azbInfo.setGmtModified(LocalDateTime.now());
         aZBMapper.insert(azbInfo);
@@ -33,10 +33,12 @@ public class AZBService {
             azbInfo.setGmtModified(LocalDateTime.now());
             aZBMapper.insert(azbInfo);
         } else {
+            azbInfo.setId(list.get(0).getId());
             azbInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<AzbInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", azbInfo.getPerson_baseinfo_id());
-            aZBMapper.update(azbInfo, update);
+            aZBMapper.updateById(azbInfo);
+            //EntityWrapper<AzbInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", azbInfo.getPerson_baseinfo_id());
+            //aZBMapper.update(azbInfo, update);
         }
     }
 
@@ -54,10 +56,10 @@ public class AZBService {
     }
 
     public void test(Integer id) {
-            AzbInfo azbInfo = new AzbInfo();
-            azbInfo.setIsDelete(1);
-            EntityWrapper<AzbInfo> dalete = new EntityWrapper<>();
-            dalete.eq("id", id);
-            aZBMapper.update(azbInfo, dalete);
+        AzbInfo azbInfo = new AzbInfo();
+        azbInfo.setIsDelete(1);
+        EntityWrapper<AzbInfo> dalete = new EntityWrapper<>();
+        dalete.eq("id", id);
+        aZBMapper.update(azbInfo, dalete);
     }
 }

@@ -15,14 +15,15 @@ public class EngPeopleService {
     private EngPeopleMapper engPeopleMapper;
 
     public void save(String wwx, String wwm, String zwm, String gj, String zjxy, String zjdm, String zjhm,
-                     LocalDateTime zjyxq, String lhmd, LocalDateTime ddrq, LocalDateTime yjlkrq, int sfzdry, Integer person_baseinfo_id){
-        EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm, zjyxq, lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id,0);
+                     LocalDateTime zjyxq, String lhmd, LocalDateTime ddrq, LocalDateTime yjlkrq, int sfzdry, Integer person_baseinfo_id) {
+        /*EngPeopleInfo engPeopleInfo = new EngPeopleInfo(wwx, wwm, zwm, gj, zjxy, zjdm, zjhm, zjyxq,
+                lhmd, ddrq, yjlkrq, sfzdry, person_baseinfo_id, 0);
         engPeopleInfo.setGmtCreate(LocalDateTime.now());
         engPeopleInfo.setGmtModified(LocalDateTime.now());
-        engPeopleMapper.insert(engPeopleInfo);
+        engPeopleMapper.insert(engPeopleInfo);*/
     }
 
-    public void save(EngPeopleInfo engPeopleInfo){
+    public void save(EngPeopleInfo engPeopleInfo) {
         EntityWrapper<EngPeopleInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", engPeopleInfo.getPerson_baseinfo_id());
         List<EngPeopleInfo> list = engPeopleMapper.selectList(wrapper);
@@ -31,10 +32,12 @@ public class EngPeopleService {
             engPeopleInfo.setGmtModified(LocalDateTime.now());
             engPeopleMapper.insert(engPeopleInfo);
         } else {
+            engPeopleInfo.setId(list.get(0).getId());
             engPeopleInfo.setGmtModified(LocalDateTime.now());
-            EntityWrapper<EngPeopleInfo> update = new EntityWrapper<>();
-            wrapper.eq("person_baseinfo_id", engPeopleInfo.getPerson_baseinfo_id());
-            engPeopleMapper.update(engPeopleInfo, update);
+            //EntityWrapper<EngPeopleInfo> update = new EntityWrapper<>();
+            //wrapper.eq("person_baseinfo_id", engPeopleInfo.getPerson_baseinfo_id());
+            //engPeopleMapper.update(engPeopleInfo, update);
+            engPeopleMapper.updateById(engPeopleInfo);
         }
     }
 

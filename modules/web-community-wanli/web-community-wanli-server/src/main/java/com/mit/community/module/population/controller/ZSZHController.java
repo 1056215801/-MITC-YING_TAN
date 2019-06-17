@@ -1,6 +1,5 @@
 package com.mit.community.module.population.controller;
 
-import com.mit.community.entity.entity.ZSZHInfo;
 import com.mit.community.population.service.ZSZHService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -45,9 +44,9 @@ public class ZSZHController {
     public Result update(String jtjjzk, String sfnrdb, String jhrsfzh, String jhrxm, String jhrlxfs, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime ccfbrq, String mqzdlx,
                        String ywzszhs, @RequestParam( required = false, defaultValue = "0")Integer zszhcs, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")LocalDateTime sczszhrq, String mqwxxpgdj, String zlqk, String zlyy,
                        String sszyzlyy, String jskfxljgmc, String cyglry, String bfqk, Integer person_baseinfo_id, int isDelete){
-        ZSZHInfo zSZHInfo = new ZSZHInfo(jtjjzk, sfnrdb, jhrsfzh, jhrxm, jhrlxfs, ccfbrq, mqzdlx, ywzszhs, zszhcs, sczszhrq, mqwxxpgdj,
+        /*ZSZHInfo zSZHInfo = new ZSZHInfo(jtjjzk, sfnrdb, jhrsfzh, jhrxm, jhrlxfs, ccfbrq, mqzdlx, ywzszhs, zszhcs, sczszhrq, mqwxxpgdj,
                 zlqk, zlyy, sszyzlyy, jskfxljgmc, cyglry, bfqk, person_baseinfo_id, isDelete);
-        zSZHService.save(zSZHInfo);
+        zSZHService.save(zSZHInfo);*/
         return Result.success("肇事肇祸人员信息更新成功");
     }
 
