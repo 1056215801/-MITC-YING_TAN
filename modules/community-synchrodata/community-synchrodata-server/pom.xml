@@ -190,18 +190,18 @@
         </dependency>
 
         <!-- fastdfs上传依赖 -->
-        <dependency>
+        <!--<dependency>
             <groupId>fastdfs_client</groupId>
             <artifactId>fastdfs_client</artifactId>
             <version>1.27</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.csource/fastdfs-client-java -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.csource</groupId>
             <artifactId>fastdfs-client-java</artifactId>
             <version>1.27-RELEASE</version>
-        </dependency>-->
+        </dependency>
 
         <!--spring-boot-devtools 热启动依赖包-->
         <dependency>

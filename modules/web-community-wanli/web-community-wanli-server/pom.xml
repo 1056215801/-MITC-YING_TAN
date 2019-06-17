@@ -171,11 +171,11 @@
         </dependency>
 
         <!-- fastdfs上传依赖 -->
-        <dependency>
+        <!--<dependency>
             <groupId>fastdfs_client</groupId>
             <artifactId>fastdfs_client</artifactId>
             <version>1.27</version>
-        </dependency>
+        </dependency>-->
 
         <!--spring-boot-devtools 热启动依赖包-->
         <dependency>
