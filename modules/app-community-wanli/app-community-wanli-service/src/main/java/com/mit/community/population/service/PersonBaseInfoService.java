@@ -31,7 +31,7 @@ public class PersonBaseInfoService {
                         String placeOfDomicile, String placeOfDomicileDetail, String placeOfReside,
                         String placeOfResideDetail, String placeOfServer, String photoBase64) {
         PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, age, 0, null);
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, age, 0, null, null);
         personBaseInfo.setGmtCreate(LocalDateTime.now());
         personBaseInfo.setGmtModified(LocalDateTime.now());
         personBaseInfoMapper.insert(personBaseInfo);
@@ -56,7 +56,7 @@ public class PersonBaseInfoService {
                                   String placeOfServer, String base64, Integer rksx) {
         PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation,
                 nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, rksx, age, 0, null);
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, rksx, age, 0, null, null);
         personBaseInfo.setId(baseId);
         personBaseInfo.setGmtModified(LocalDateTime.now());
         personBaseInfoMapper.updateById(personBaseInfo);

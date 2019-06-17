@@ -11,5 +11,5 @@ public interface ExcelOutMapper {
     public List<AzbExcelInfo> getAzbExcel();
     public List<BearExcelInfo> getBearExcel();
     public List<CXExcelInfo> getCXExcel();
-    public List<EngPeopleExcelInfo> getEngPeopleExcel()；
+    public List<EngPeopleExcelInfo> getEngPeopleExcel();
 }

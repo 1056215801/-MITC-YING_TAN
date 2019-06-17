@@ -47,6 +47,8 @@
                     jdbcType="VARCHAR"/>
             <result property="photoBase64" column="phot_base64" javaType="String"
                     jdbcType="VARCHAR"/>
+            <result property="label" column="label" javaType="String"
+                    jdbcType="VARCHAR"/>
             <result property="rksx" column="rksx" javaType="int" jdbcType="INTEGER"/>
             <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
             <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
