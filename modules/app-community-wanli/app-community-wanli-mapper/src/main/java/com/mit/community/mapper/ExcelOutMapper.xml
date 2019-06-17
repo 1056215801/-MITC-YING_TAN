@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.ExcelOutMapper">
+    <resultMap type="com.mit.community.entity.entity.AzbExcelInfo" id="azbMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+        <result property="grtj" column="grtj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfwf" column="sfwf" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="wffzqk" column="wffzqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ajlb" column="ajlb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gzlx" column="gzlx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfqk" column="bfqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfrdh" column="bfrdh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfrxm" column="bfrxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="szqk" column="szqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="szjgmc" column="szjgmc" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.BearExcelInfo" id="bearMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="poxm" column="poxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="poxb" column="poxb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xgzdw" column="xgzdw" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="djjhny" column="djjhny" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="hkxz" column="hkxz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="hyzk" column="hyzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jysssj" column="jysssj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sslx" column="sslx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ssyy" column="ssyy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ccyy" column="ccyy" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.CXExcelInfo" id="cxMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="dysxcx" column="dysxcx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="drsxcx" column="drsxcx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="dssxcx" column="dssxcx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bz" column="bz" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getCXExcel" resultMap="cxMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM cx_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getBearExcel" resultMap="bearMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM bear_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getAzbExcel" resultMap="azbMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM azb_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+
+</mapper>

@@ -73,7 +73,7 @@ public class ReportProblemService {
 
     }
 
-    public Page<ReportProblemInfo> listPage (String content, String userId, String timeYear, String timeMonth,String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{
+    public Page<ReportProblemInfo> listPage (String content, String userId, String timeYear, String timeMonth,String address, String problemType, String status, Integer pageNum, Integer pageSize) throws Exception{
         Page<ReportProblemInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<ReportProblemInfo> wrapper = new EntityWrapper<>();
         String timeYearSql = null;
@@ -87,7 +87,7 @@ public class ReportProblemService {
         if (StringUtils.isNotBlank(problemType)) {
             wrapper.eq("a.problemType", problemType);
         }
-        if (status != 0) {
+        if (StringUtils.isNotBlank(status)) {
             wrapper.eq("a.status", status);
         }
         if (StringUtils.isBlank(userId)) {//所有人的

@@ -138,6 +138,8 @@ public class PersonBaseInfo extends BaseEntity {
 
     private int isDelete;
 
+    private String label;
+
     @TableField(exist = false)
     private List<String> labels;
 }

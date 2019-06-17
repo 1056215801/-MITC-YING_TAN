@@ -2,10 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.mit.community.entity.HandleProblemInfo;
-import com.mit.community.entity.ProblemSchedule;
-import com.mit.community.entity.ProblemSchedulePhoto;
-import com.mit.community.entity.ReportProblemInfo;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.HandleProblemMapper;
 import com.mit.community.mapper.ProblemHandleMapper;
 import com.mit.community.mapper.ProblemScheduleMapper;
@@ -92,5 +89,20 @@ public class ProblemHandleService {
             }
         }
 
+    }
+
+    public Page<WebHandleProblemInfo> getWebHandleProblem(String problemType, String status, Integer pageNum, Integer pageSize){
+        Page<WebHandleProblemInfo> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<WebHandleProblemInfo> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotBlank(problemType)) {
+            wrapper.eq("a.problemType", problemType);
+        }
+        if (StringUtils.isNotBlank(status)) {
+            Integer a = Integer.valueOf(status);
+            wrapper.eq("a.status", a);
+        }
+        List<WebHandleProblemInfo> list = handleProblemMapper.getWebHandleProblem(page, wrapper);
+        page.setRecords(list);
+        return page;
     }
 }
