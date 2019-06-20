@@ -1,10 +1,14 @@
 package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.entity.entity.StayPeopleInfo;
+import com.mit.community.mapper.mapper.PersonBaseInfoMapper;
 import com.mit.community.mapper.mapper.StayPeopleMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.List;
 public class StayPeopleService {
     @Autowired
     private StayPeopleMapper stayPeopleMapper;
+    @Autowired
+    private PersonBaseInfoMapper personBaseInfoMapper;
 
     public void save(String jkzk, String grnsr, String rhizbz, String lsrylx, String jtzyrysfzh, String jtzycyxm, String jtzycyjkzk, String ylsrygx, String jtzycylxfs,
                      String jtzycygzxxdz, String jtnsr, String knjsq, String bfqk, Integer person_baseinfo_id) {
@@ -23,6 +29,7 @@ public class StayPeopleService {
 
     }
 
+    @Transactional
     public void  save(StayPeopleInfo stayPeopleInfo) {
         EntityWrapper<StayPeopleInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", stayPeopleInfo.getPerson_baseinfo_id());
@@ -31,6 +38,18 @@ public class StayPeopleService {
             stayPeopleInfo.setGmtCreate(LocalDateTime.now());
             stayPeopleInfo.setGmtModified(LocalDateTime.now());
             stayPeopleMapper.insert(stayPeopleInfo);
+
+            PersonBaseInfo personBaseInfo = personBaseInfoMapper.selectById(stayPeopleInfo.getPerson_baseinfo_id());
+            String label = null;
+            if (StringUtils.isNotBlank(personBaseInfo.getLabel())) {
+                label = personBaseInfo.getLabel() + ",留守人员";
+            } else {
+                label = ",留守人员";
+            }
+            EntityWrapper<PersonBaseInfo> updatePerson = new EntityWrapper<>();
+            updatePerson.eq("id", personBaseInfo.getId());
+            personBaseInfo.setLabel(label);
+            personBaseInfoMapper.update(personBaseInfo, updatePerson);
         } else {
             stayPeopleInfo.setId(list.get(0).getId());
             stayPeopleInfo.setGmtModified(LocalDateTime.now());
@@ -54,6 +73,13 @@ public class StayPeopleService {
             EntityWrapper<StayPeopleInfo> dalete = new EntityWrapper<>();
             dalete.eq("id", id);
             stayPeopleMapper.update(stayPeopleInfo, dalete);
+        }
+    }
+
+    @Transactional
+    public void saveList(List<StayPeopleInfo> list) {
+        for(StayPeopleInfo azbInfo:list){
+            this.save(azbInfo);
         }
     }
 

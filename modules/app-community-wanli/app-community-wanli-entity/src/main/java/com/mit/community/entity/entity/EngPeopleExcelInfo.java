@@ -25,4 +25,17 @@ public class EngPeopleExcelInfo {
     private LocalDateTime gmtModified;
     private Integer person_baseinfo_id;
     private int isDelete;
+
+    private String wwx;
+    private String wwm;
+    private String zwm;
+    private String gj;
+    private String zjxy;
+    private String zjdm;
+    private String zjhm;
+    private String zjyxq;
+    private String lhmd;
+    private String ddrq;
+    private String yjlkrq;
+    private int sfzdry;
 }

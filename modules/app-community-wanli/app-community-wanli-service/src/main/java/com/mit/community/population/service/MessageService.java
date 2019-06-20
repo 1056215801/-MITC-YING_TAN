@@ -11,10 +11,12 @@ import com.mit.community.mapper.mapper.MessageMapper;
 import com.mit.community.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class MessageService {
     @Autowired
     private MessageMapper messageMapper;

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("message")
+@TableName("webmessage")
 public class Message extends BaseEntity {
     private String title;
     private String outline;

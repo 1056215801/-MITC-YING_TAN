@@ -266,6 +266,18 @@ public class InfoSearchService {
             } else if ("zszh".equals(label)) {
                 List<InfoSearch> list = infoSearchMapper.selectZszhPeopleInfoPage(page, wrapper);
                 page.setRecords(list);
+            } else if ("ldz".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectLdzPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
+            }else if ("wgy".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectWgyPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
+            }else if ("zyz".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectZyzPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
+            }else if ("old".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectOldPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
             }
 
         }

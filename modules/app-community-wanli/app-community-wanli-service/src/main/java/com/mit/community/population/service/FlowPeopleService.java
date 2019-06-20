@@ -34,6 +34,25 @@ public class FlowPeopleService {
         updateRKCFMapper.updaterkcf(person_baseinfo_id, 2);
     }
 
+    @Transactional
+    public void save(FlowPeopleInfo flowPeopleInfo) {
+        EntityWrapper<FlowPeopleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", flowPeopleInfo.getPerson_baseinfo_id());
+        flowPeopleMapper.delete(wrapper);
+        flowPeopleInfo.setGmtCreate(LocalDateTime.now());
+        flowPeopleInfo.setGmtModified(LocalDateTime.now());
+        flowPeopleMapper.insert(flowPeopleInfo);
+        //更新人口成分信息
+        updateRKCFMapper.updaterkcf(flowPeopleInfo.getPerson_baseinfo_id(), 2);
+    }
+
+    @Transactional
+    public void saveList(List<FlowPeopleInfo> list) {
+        for(FlowPeopleInfo azbInfo:list){
+            this.save(azbInfo);
+        }
+    }
+
     /**
      * @Author: HuShanLin
      * @Date: Create in 2019/6/6 13:03

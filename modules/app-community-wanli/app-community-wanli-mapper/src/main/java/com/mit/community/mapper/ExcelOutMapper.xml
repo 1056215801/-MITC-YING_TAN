@@ -118,6 +118,848 @@
         <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.entity.EngPeopleExcelInfo" id="engMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="wwx" column="wwx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="wwm" column="wwm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zwm" column="zwm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gj" column="gj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zjxy" column="zjxy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zjdm" column="zjdm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zjhm" column="zjhm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zjyxq" column="zjyxq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="lhmd" column="lhmd" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ddrq" column="ddrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yjlkrq" column="yjlkrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfzdry" column="sfzdry" javaType="int"
+                jdbcType="INTEGER" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.PartyExcelInfo" id="partyMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="rdsq" column="rdsq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zzrq" column="zzrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cjgzsj" column="cjgzsj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="rdszzb" column="rdszzb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zzszzb" column="zzszzb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zzszdw" column="zzszdw" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="szdzb" column="szdzb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jrdzbsj" column="jrdzbsj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xrdnzw" column="xrdnzw" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="rdjsr" column="rdjsr" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yyjndf" column="yyjndf" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.SFPeopleExcelInfo" id="sfMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="sfqzxf" column="sfqzxf" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="lxcs" column="lxcs" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="ldcs" column="ldcs" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="sfsj" column="sfsj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfrs" column="sfrs" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="sffsdd" column="sffsdd" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfrysq" column="sfrysq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="clqkbf" column="clqkbf" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.StayPeopleExcelInfo" id="stayMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="jkzk" column="jkzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="grnsr" column="grnsr" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="rhizbz" column="rhizbz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="lsrylx" column="lsrylx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzyrysfzh" column="jtzyrysfzh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycyxm" column="jtzycyxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycyjkzk" column="jtzycyjkzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ylsrygx" column="ylsrygx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycylxfs" column="jtzycylxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycygzxxdz" column="jtzycygzxxdz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtnsr" column="jtnsr" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="knjsq" column="knjsq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfqk" column="bfqk" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.XdExcelInfo" id="xdMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="ccfxsj" column="ccfxsj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gkqk" column="gkqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gkrxm" column="gkrxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gkrlxfs" column="gkrlxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfqk" column="bfqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfrxm" column="bfrxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfrlxfs" column="bfrlxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ywfzs" column="ywfzs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xdqk" column="xdqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xdyy" column="xdyy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xdhg" column="xdhg" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.XmsfExcelInfo" id="xmsfMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="sflf" column="sflf" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yzm" column="yzm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ypxq" column="ypxq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="fxcs" column="fxcs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfrq" column="sfrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="wxxpglx" column="wxxpglx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xjrq" column="xjrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xjqk" column="xjqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="azrq" column="azrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="azqk" column="azqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="wazyy" column="wazyy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bjqk" column="bjqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfcxfz" column="sfcxfz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cxfzzm" column="cxfzzm" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.ZDQSNCExcelInfo" id="zdqsnMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="rylx" column="rylx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtqk" column="jtqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrsfz" column="jhrsfz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrxm" column="jhrxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yjhrgx" column="yjhrgx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrlxfs" column="jhrlxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrjzxxdz" column="jhrjzxxdz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfwffz" column="sfwffz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="wffzqk" column="wffzqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfrlxfs" column="bfrlxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfsd" column="bfsd" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfqk" column="bfqk" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.ZSZHExcelInfo" id="zszhMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="jtjjzk" column="jtjjzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfnrdb" column="sfnrdb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrsfzh" column="jhrsfzh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrxm" column="jhrxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrlxfs" column="jhrlxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jhrlxfs" column="jhrlxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ccfbrq" column="ccfbrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="mqzdlx" column="mqzdlx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ywzszhs" column="ywzszhs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zszhcs" column="zszhcs" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="sczszhrq" column="sczszhrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="mqwxxpgdj" column="mqwxxpgdj" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zlqk" column="zlqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zlyy" column="zlyy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sszyzlyy" column="sszyzlyy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jskfxljgmc" column="jskfxljgmc" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cyglry" column="cyglry" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bfqk" column="bfqk" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.LdzExcelInfo" id="ldzMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="gddh" column="gddh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycygzdwjzw" column="jtzycygzdwjzw" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycyjkzk" column="jtzycyjkzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycylxfs" column="jtzycylxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycyxm" column="jtzycyxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzyrysfzh" column="jtzyrysfzh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="officeTime" column="officeTime" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="workCondition" column="workCondition" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.OldExcelInfo" id="oldMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="disease" column="disease" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="householdName" column="householdName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="isInsurance" column="isInsurance" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jkzk" column="jkzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycygzdwjzw" column="jtzycygzdwjzw" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycyjkzk" column="jtzycyjkzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycylxfs" column="jtzycylxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycyxm" column="jtzycyxm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzyrysfzh" column="jtzyrysfzh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="knjsq" column="knjsq" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.ZyzExcelInfo" id="zyzMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="isReg" column="isReg" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="organization" column="organization" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="regNumber" column="regNumber" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="serviceExp" column="serviceExp" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="serviceType" column="serviceType" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="specialSkills" column="specialSkills" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.CensusExcelInfo" id="hjrkMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="rhyzbz" column="rhyzbz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="hh" column="hh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yhzgx" column="yhzgx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="hzsfz" column="hzsfz" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.FlowPeopleExcelInfo" id="ldMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="lryy" column="lryy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bzlx" column="bzlx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zjhm" column="zjhm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="djrq" column="djrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zjdqrq" column="zjdqrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zslx" column="zslx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sfzdgzry" column="sfzdgzry" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="tslxfs" column="tslxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycylxfs" column="jtzycylxfs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yhzgx" column="yhzgx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="hzsfz" column="hzsfz" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.HouseExcelInfo" id="houseMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="zone_id" column="zone_id" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="zone_name" column="zone_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="building_id" column="building_id" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="building_name" column="building_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unit_id" column="unit_id" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="unit_name" column="unit_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="room_id" column="room_id" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="room_name" column="room_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="area" column="area" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="buyTime" column="buyTime" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="fwdz" column="fwdz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="houseAttr" column="houseAttr" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="houseRelation" column="houseRelation" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="houseUsage" column="houseUsage" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="mortgage" column="mortgage" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.CarExcelInfo" id="carMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="cph" column="cph" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cx" column="cx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ys" column="ys" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="pp" column="pp" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xh" column="xh" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="pl" column="pl" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="fdjh" column="fdjh" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="jsz" column="jsz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="xsz" column="xsz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="szrq" column="szrq" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gmrq" column="gmrq" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.MilitaryServiceExcelInfo" id="militaryMap">
+        <result property="idCardNum" column="id_card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellphone" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="placeOfResideDetail" column="place_of_reside_detail" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+
+        <result property="xyqk" column="xyqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zybm" column="zybm" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zymc" column="zymc" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zytc" column="zytc" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cylb" column="cylb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jdxx" column="jdxx" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zyzgzs" column="zyzgzs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="hscjdcsjjsxl" column="hscjdcsjjsxl" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sg" column="sg" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="tz" column="tz" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zylysl" column="zylysl" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yylysl" column="yylysl" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jkzk" column="jkzk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="stmc" column="stmc" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bsdc" column="bsdc" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="wcqk" column="wcqk" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zzcs" column="zzcs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="bydjjl" column="bydjjl" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="yy" column="yy" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="djxs" column="djxs" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sftj" column="sftj" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="bz" column="bz" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getCarExcel" resultMap="carMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM militaryservice_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getCarExcel" resultMap="carMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM household_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getHouseExcel" resultMap="houseMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM household_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getLdExcel" resultMap="ldMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM census_Info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getHjrkExcel" resultMap="hjrkMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM census_Info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getZyzExcel" resultMap="ldzMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM zyz_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getWgyExcel" resultMap="ldzMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM wgy_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getOldExcel" resultMap="oldMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM old_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getLdzExcel" resultMap="ldzMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM ldz_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getZszhExcel" resultMap="zszhMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM zszh_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getZdqsnExcel" resultMap="zdqsnMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM zdqsn_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getXmsfExcel" resultMap="xmsfMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM xmsfpeople_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getXdExcel" resultMap="xdMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM xd_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getStayExcel" resultMap="stayMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM staypeople_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getSfExcel" resultMap="sfMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM sfpeople_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getPartyExcel" resultMap="engMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM engpeople_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
+    <select id="getEngPeopleExcel" resultMap="partyMap">
+        SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
+        FROM party_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id
+        WHEN a.isDelete = 0
+    </select>
+
     <select id="getCXExcel" resultMap="cxMap">
         SELECT a.*,b.id_card_num,b.name,b.gender,b.age,b.cellphone,b.place_of_reside_detail
         FROM cx_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id

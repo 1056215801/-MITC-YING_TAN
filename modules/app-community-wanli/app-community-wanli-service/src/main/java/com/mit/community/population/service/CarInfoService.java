@@ -23,6 +23,23 @@ public class CarInfoService {
         carInfoMapper.insert(carInfo);
     }*/
 
+    @Transactional
+    public void save(CarInfo carInfo){
+        EntityWrapper<CarInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("person_baseinfo_id", carInfo.getPerson_baseinfo_id());
+        carInfoMapper.delete(wrapper);
+        carInfo.setGmtCreate(LocalDateTime.now());
+        carInfo.setGmtModified(LocalDateTime.now());
+        carInfoMapper.insert(carInfo);
+    }
+
+    @Transactional
+    public void saveList(List<CarInfo> list) {
+        for(CarInfo azbInfo:list){
+            this.save(azbInfo);
+        }
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void save(List<CarInfo> list, Integer person_baseinfo_id) {
         try {

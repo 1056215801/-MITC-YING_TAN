@@ -339,4 +339,21 @@ public class UserService {
     public void updateCellphoneByHouseholdId(String cellphone, Integer householdId) {
         userMapper.updateHouseholdIdByMobile(householdId, cellphone);
     }
+
+    /**
+     * 通过身份证获取用户
+     * @param IDNumber
+     * @return
+     */
+    @Transactional
+    public User getByIDNumber(String IDNumber) {
+        EntityWrapper<User> wrapper = new EntityWrapper<>();
+        wrapper.eq("id_card_num", IDNumber);
+        List<User> users = userMapper.selectList(wrapper);
+        if (users.isEmpty()) {
+            return null;
+        } else {
+            return users.get(0);
+        }
+    }
 }

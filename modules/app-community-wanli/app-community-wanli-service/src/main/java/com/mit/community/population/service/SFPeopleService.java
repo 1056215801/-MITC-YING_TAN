@@ -1,10 +1,14 @@
 package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.entity.entity.SFPeopleInfo;
+import com.mit.community.mapper.mapper.PersonBaseInfoMapper;
 import com.mit.community.mapper.mapper.SFPeopleMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,14 +17,16 @@ import java.util.List;
 public class SFPeopleService {
     @Autowired
     private SFPeopleMapper sFPeopleMapper;
+    @Autowired
+    private PersonBaseInfoMapper personBaseInfoMapper;
 
     public void save(String sfqzxf, int lxcs, int ldcs, LocalDateTime sfsj, int sfrs, String sffsdd, String sfrysq,
                      String clqkbf, Integer person_baseinfo_id) {
-        /*SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj, sfrs, sffsdd,
+        SFPeopleInfo sFPeopleInfo = new SFPeopleInfo(sfqzxf, lxcs, ldcs, sfsj.toString(), sfrs, sffsdd,
                 sfrysq, clqkbf, person_baseinfo_id, 0);
         sFPeopleInfo.setGmtCreate(LocalDateTime.now());
         sFPeopleInfo.setGmtModified(LocalDateTime.now());
-        sFPeopleMapper.insert(sFPeopleInfo);*/
+        sFPeopleMapper.insert(sFPeopleInfo);
 
     }
 
@@ -32,6 +38,18 @@ public class SFPeopleService {
             sFPeopleInfo.setGmtCreate(LocalDateTime.now());
             sFPeopleInfo.setGmtModified(LocalDateTime.now());
             sFPeopleMapper.insert(sFPeopleInfo);
+
+            PersonBaseInfo personBaseInfo = personBaseInfoMapper.selectById(sFPeopleInfo.getPerson_baseinfo_id());
+            String label = null;
+            if (StringUtils.isNotBlank(personBaseInfo.getLabel())) {
+                label = personBaseInfo.getLabel() + ",上访人员";
+            } else {
+                label = ",上访人员";
+            }
+            EntityWrapper<PersonBaseInfo> updatePerson = new EntityWrapper<>();
+            updatePerson.eq("id", personBaseInfo.getId());
+            personBaseInfo.setLabel(label);
+            personBaseInfoMapper.update(personBaseInfo, updatePerson);
         } else {
             sFPeopleInfo.setId(list.get(0).getId());
             sFPeopleInfo.setGmtModified(LocalDateTime.now());
@@ -52,6 +70,13 @@ public class SFPeopleService {
             EntityWrapper<SFPeopleInfo> dalete = new EntityWrapper<>();
             dalete.eq("id", id);
             sFPeopleMapper.update(sFPeopleInfo, dalete);
+        }
+    }
+
+    @Transactional
+    public void saveList(List<SFPeopleInfo> list) {
+        for(SFPeopleInfo azbInfo:list){
+            this.save(azbInfo);
         }
     }
 }

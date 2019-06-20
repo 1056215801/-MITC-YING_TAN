@@ -69,48 +69,23 @@ public class LabelsService {
         if (StringUtils.isNotBlank(zdqsnId)) {
             labels.add("zdqsnPeople");
         }
-        /*if (labelsInfo != null ) {
-            if (StringUtils.isNotBlank(labelsInfo.getLsryId())) {
-                labels.add("stayPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getJwryId())) {
-                labels.add("engPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getDyId())) {
-                labels.add("partyPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getJsId())) {
-                labels.add("bearPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getById())) {
-                labels.add("soliderPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getXmsfId())) {
-                labels.add("xmsfPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getYscxId())) {
-                labels.add("yscxPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getSfId())) {
-                labels.add("sfPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getSqjz())) {
-                labels.add("sqjzPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getZszhId())) {
-                labels.add("zszhPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getXdId())) {
-                labels.add("xdPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getAzbId())) {
-                labels.add("azbPeople");
-            }
-            if (StringUtils.isNotBlank(labelsInfo.getZdqsnId())) {
-                labels.add("zdqsnPeople");
-            }
+        String oldId = labelsMapper.getOldId(userid);
+        if (StringUtils.isNotBlank(oldId)) {
+            labels.add("oldPeople");
+        }
+        String zyzId = labelsMapper.getZyzId(userid);
+        if (StringUtils.isNotBlank(zyzId)) {
+            labels.add("zyzPeople");
+        }
+        String wgyId = labelsMapper.getWgyId(userid);
+        if (StringUtils.isNotBlank(wgyId)) {
+            labels.add("wgyPeople");
+        }
+        String ldzId = labelsMapper.getLdzId(userid);
+        if (StringUtils.isNotBlank(ldzId)) {
+            labels.add("ldzPeople");
+        }
 
-        }*/
         return labels;
     }
 }

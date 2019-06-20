@@ -252,6 +252,30 @@
         from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
+    <select id="selectLdzPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from ldz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectWgyPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from wgy_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectZyzPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from zyz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectOldPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from old_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
 </mapper>
 
 

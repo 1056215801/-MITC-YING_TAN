@@ -31,4 +31,12 @@ public interface LabelsMapper {
     String getAzbId(@Param("userid") Integer userid);
 
     String getZdqsnId(@Param("userid") Integer userid);
+
+    String getZyzId(@Param("userid") Integer userid);
+
+    String getWgyId(@Param("userid") Integer userid);
+
+    String getLdzId(@Param("userid") Integer userid);
+
+    String getOldId(@Param("userid") Integer userid);
 }

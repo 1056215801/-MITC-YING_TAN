@@ -38,6 +38,14 @@ public interface InfoSearchMapper {
 
     List<InfoSearch> selectZszhPeopleInfoPage(RowBounds rowBounds, @Param("ew") Wrapper<InfoSearch> wrapper);
 
+    List<InfoSearch> selectLdzPeopleInfoPage(RowBounds rowBounds, @Param("ew") Wrapper<InfoSearch> wrapper);
+
+    List<InfoSearch> selectWgyPeopleInfoPage(RowBounds rowBounds, @Param("ew") Wrapper<InfoSearch> wrapper);
+
+    List<InfoSearch> selectZyzPeopleInfoPage(RowBounds rowBounds, @Param("ew") Wrapper<InfoSearch> wrapper);
+
+    List<InfoSearch> selectOldPeopleInfoPage(RowBounds rowBounds, @Param("ew") Wrapper<InfoSearch> wrapper);
+
     List<InfoSearch> selectPersonBaseInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectAzbInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectBearInfo(@Param("ew") Wrapper<InfoSearch> wrapper);

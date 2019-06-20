@@ -30,7 +30,7 @@ public class MessagePushService {
     @Autowired
     private MessageAcceptMapper messageAcceptMapper;
 
-    public void pushMessage(Integer ageStart, Integer ageEnd, String sex, String edu, String job, String marriage, String politics,
+    public void  pushMessage(Integer ageStart, Integer ageEnd, String sex, String edu, String job, String marriage, String politics,
                              String rycf, String rysx, String title, String outline, String content, Integer userId){
         EntityWrapper<MessageUser> wrapper = new EntityWrapper<>();
         if (ageStart != 0) {
@@ -98,7 +98,8 @@ public class MessagePushService {
                     //messageAcceptList.add(messageAccept);
                     messageAcceptMapper.insert(messageAccept);
                 }
-                WebPush.sendAlias(outline, target);//需要标题
+                //WebPush.sendAlias(outline, target);//需要标题
+                WebPush.sendAllsetNotification(outline);
             }
         }
     }
