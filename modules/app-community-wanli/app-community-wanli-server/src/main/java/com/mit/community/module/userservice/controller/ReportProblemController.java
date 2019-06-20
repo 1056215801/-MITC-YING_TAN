@@ -79,7 +79,7 @@ public class ReportProblemController {
             SmsCommunityAppUtil.sendMsg(phones[i], MSG);
         }
         //消息推送
-        WebPush.sendAllsetNotification(MSG);
+        WebPush.sendAllsetNotification(MSG,"消息通知");
         return Result.success("保存成功");
     }
 

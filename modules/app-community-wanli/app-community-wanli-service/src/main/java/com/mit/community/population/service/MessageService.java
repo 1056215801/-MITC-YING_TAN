@@ -38,13 +38,13 @@ public class MessageService {
             wrapper.le("gmt_create", timeEnd);
         }
         if (StringUtils.isNotBlank(content)) {
-            wrapper.like("content",content, SqlLike.DEFAULT);
+            wrapper.like("content", content, SqlLike.DEFAULT);
         }
         wrapper.orderBy("gmt_create", false);
         List<Message> list = messageMapper.selectPage(page, wrapper);
         if (!list.isEmpty()) {
             User user = null;
-            for (int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 user = userService.getById(list.get(i).getUserId());
                 EntityWrapper<MessageAccept> messageAcceptWrapper = new EntityWrapper<>();
                 messageAcceptWrapper.eq("messageId", list.get(i).getId());

@@ -30,8 +30,8 @@ public class MessagePushService {
     @Autowired
     private MessageAcceptMapper messageAcceptMapper;
 
-    public void  pushMessage(Integer ageStart, Integer ageEnd, String sex, String edu, String job, String marriage, String politics,
-                             String rycf, String rysx, String title, String outline, String content, Integer userId){
+    public void pushMessage(Integer ageStart, Integer ageEnd, String sex, String edu, String job, String marriage, String politics,
+                            String rycf, String rysx, String title, String outline, String content, Integer userId) {
         EntityWrapper<MessageUser> wrapper = new EntityWrapper<>();
         if (ageStart != 0) {
             wrapper.ge("b.age", ageStart);
@@ -66,29 +66,29 @@ public class MessagePushService {
         if (!list.isEmpty()) {
             if (StringUtils.isNotBlank(rysx)) {
                 String[] labels = rysx.split(",");
-                Iterator iter = list.iterator() ;
-                while(iter.hasNext()){
-                    MessageUser messageUser = (MessageUser)iter.next();
-                    for(int i=0;i<labels.length;i++){
-                        if(messageUser.getLabel().contains(labels[i])){
+                Iterator iter = list.iterator();
+                while (iter.hasNext()) {
+                    MessageUser messageUser = (MessageUser) iter.next();
+                    for (int i = 0; i < labels.length; i++) {
+                        if (messageUser.getLabel().contains(labels[i])) {
                             target.add(messageUser.getUserId().toString());
                             break;
                         }
                     }
                 }
             } else {
-                for (MessageUser messageUser:list) {
+                for (MessageUser messageUser : list) {
                     target.add(messageUser.getUserId().toString());
                 }
             }
             if (!target.isEmpty()) {
-                Message message = new Message(title, outline, content, userId, null,0);
+                Message message = new Message(title, outline, content, userId, null, 0);
                 message.setGmtCreate(LocalDateTime.now());
                 message.setGmtModified(LocalDateTime.now());
                 messageMapper.insert(message);
                 //List<MessageAccept> messageAcceptList = new ArrayList<>();
                 MessageAccept messageAccept = null;
-                for (int i = 0;i < target.size(); i++) {
+                for (int i = 0; i < target.size(); i++) {
                     messageAccept = new MessageAccept();
                     messageAccept.setMessageId(message.getId());
                     messageAccept.setUserId(Integer.valueOf(target.get(i)));
@@ -99,7 +99,7 @@ public class MessagePushService {
                     messageAcceptMapper.insert(messageAccept);
                 }
                 //WebPush.sendAlias(outline, target);//需要标题
-                WebPush.sendAllsetNotification(outline);
+                WebPush.sendAllsetNotification(outline, title);
             }
         }
     }

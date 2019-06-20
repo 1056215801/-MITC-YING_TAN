@@ -16,4 +16,5 @@ public class MessageCheck {
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime getTime;
     private int status;
+    private Integer operator;
 }
