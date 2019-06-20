@@ -26,13 +26,13 @@ public class WebPush {
     /**
      * 给所有平台的所有用户发通知
      */
-    public static void sendAllsetNotification(String message) {
+    public static void sendAllsetNotification(String message, String title) {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey);
         //JPushClient jpushClient = new JPushClient(masterSecret, appKey);//第一个参数是masterSecret 第二个是appKey
         Map<String, String> extras = new HashMap<String, String>();
         // 添加附加信息
         extras.put("extMessage", "");
-        PushPayload payload = buildPushObject_all_alias_alert(message, extras);
+        PushPayload payload = buildPushObject_all_alias_alert(message, extras, title);
         try {
             PushResult result = jpushClient.sendPush(payload);
             System.out.println(result);
@@ -145,7 +145,7 @@ public class WebPush {
      * @date 2017年1月13日
      */
     private static PushPayload buildPushObject_all_alias_alert(String message,
-                                                               Map<String, String> extras) {
+                                                               Map<String, String> extras, String title) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
                 // 设置平台
@@ -156,7 +156,7 @@ public class WebPush {
                                 .newBuilder()
                                 .setAlert(message)
                                 .addPlatformNotification(
-                                        AndroidNotification.newBuilder().addExtras(extras).build())
+                                        AndroidNotification.newBuilder().addExtras(extras).setTitle(title).build())
                                 .addPlatformNotification(
                                         IosNotification.newBuilder().addExtras(extras).build())
                                 .build())

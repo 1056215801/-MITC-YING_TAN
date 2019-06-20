@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.MessagePushMapper">
+    <resultMap type="com.mit.community.entity.entity.MessageUser" id="messageUserMap">
+        <result property="userId" column="userId" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="label" column="label" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.MessageCheck" id="messageCheckMap">
+        <result property="id" column="id" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="getTime" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="status" column="status" javaType="int"
+                jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="messageAcceptListPage" resultMap="messageCheckMap">
+        select a.id as id,a.gmt_modified as getTime,a.status as status,b.name
+        from message_accept a left join user b on a.userId=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="getMessageUser" resultMap="messageUserMap">
+        select a.id as userId,b.label as label
+        from user a left join person_baseinfo b on a.id_card_num=b.id_card_num where 1= 1 ${ew.sqlSegment}
+    </select>
+</mapper>
