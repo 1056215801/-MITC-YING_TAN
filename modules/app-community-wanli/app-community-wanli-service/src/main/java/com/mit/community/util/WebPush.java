@@ -51,7 +51,7 @@ public class WebPush {
     /**
      * 客户端 给所有平台的一个或者一组用户发送信息(别名发送)
      */
-    public static void sendAlias(String message, List<String> aliasList, String title) {
+    public static void sendAlias(String title, String message, List<String> aliasList) {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey);
         Map<String, String> extras = new HashMap<String, String>();
         // 添加附加信息

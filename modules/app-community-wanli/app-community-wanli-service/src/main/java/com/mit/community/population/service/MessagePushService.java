@@ -2,6 +2,7 @@ package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.mit.community.entity.User;
 import com.mit.community.entity.entity.Message;
 import com.mit.community.entity.entity.MessageAccept;
 import com.mit.community.entity.entity.MessageCheck;
@@ -9,6 +10,7 @@ import com.mit.community.entity.entity.MessageUser;
 import com.mit.community.mapper.MessagePushMapper;
 import com.mit.community.mapper.mapper.MessageAcceptMapper;
 import com.mit.community.mapper.mapper.MessageMapper;
+import com.mit.community.service.UserService;
 import com.mit.community.util.WebPush;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class MessagePushService {
 
     @Autowired
     private MessageMapper messageMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private MessageAcceptMapper messageAcceptMapper;
@@ -94,13 +99,49 @@ public class MessagePushService {
                     messageAccept.setUserId(Integer.valueOf(target.get(i)));
                     messageAccept.setStatus(1);
                     messageAccept.setGmtCreate(LocalDateTime.now());
-                    messageAccept.setGmtModified(LocalDateTime.now());
+                    //messageAccept.setGmtModified(LocalDateTime.now());
                     //messageAcceptList.add(messageAccept);
                     messageAcceptMapper.insert(messageAccept);
                 }
                 //WebPush.sendAlias(outline, target);//需要标题
                 WebPush.sendAllsetNotification(outline, title);
             }
+        }
+    }
+
+    public void pushUser(String title, String outline, String content,Integer userId, String idNum) {
+        List<String> target = new ArrayList<>();
+        List<String> noUser = new ArrayList<>();
+        String[] idNums = idNum.split(",");
+        User user = null;
+        for (int i=0;i<idNums.length;i++) {
+            user = userService.getByIDNumber(idNums[i]);
+            if (user != null) {
+                target.add(user.getId().toString());
+            } else {
+                noUser.add(idNums[i]);
+            }
+        }
+
+        if (!target.isEmpty()) {
+            Message message = new Message(title, outline, content, userId, null, 0);
+            message.setGmtCreate(LocalDateTime.now());
+            message.setGmtModified(LocalDateTime.now());
+            messageMapper.insert(message);
+                //List<MessageAccept> messageAcceptList = new ArrayList<>();
+            MessageAccept messageAccept = null;
+            for (int i = 0; i < target.size(); i++) {
+                messageAccept = new MessageAccept();
+                messageAccept.setMessageId(message.getId());
+                messageAccept.setUserId(Integer.valueOf(target.get(i)));
+                messageAccept.setStatus(1);
+                messageAccept.setGmtCreate(LocalDateTime.now());
+                //messageAccept.setGmtModified(LocalDateTime.now());
+                    //messageAcceptList.add(messageAccept);
+                messageAcceptMapper.insert(messageAccept);
+            }
+                WebPush.sendAlias(title, outline, target);//需要标题
+                //WebPush.sendAllsetNotification(outline, title);
         }
     }
 
@@ -111,7 +152,7 @@ public class MessagePushService {
             wrapper.eq("a.messageId", messageId);
         }
         if (StringUtils.isNotBlank(name)) {
-            wrapper.eq("b.name", name);
+            wrapper.eq("c.name", name);
         }
         if (status != 0) {
             wrapper.eq("a.status", status);
@@ -119,5 +160,11 @@ public class MessagePushService {
         List<MessageCheck> list = messagePushMapper.messageAcceptListPage(page, wrapper);
         page.setRecords(list);
         return page;
+    }
+
+    public List<Message> getMessage(Integer userId){
+        //List<Message> readed = messagePushMapper
+        List<Message> readed = new ArrayList<>();
+        return readed;
     }
 }

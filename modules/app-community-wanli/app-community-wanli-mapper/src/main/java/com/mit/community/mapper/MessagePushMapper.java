@@ -12,4 +12,5 @@ import java.util.List;
 public interface MessagePushMapper {
     List<MessageUser> getMessageUser(@Param("ew") Wrapper<MessageUser> wrapper);
     List<MessageCheck> messageAcceptListPage(RowBounds rowBounds, @Param("ew") EntityWrapper<MessageCheck> wrapper);
+    int getMessageCountByStatus(@Param("userId")Integer userId, @Param("status")int status);
 }

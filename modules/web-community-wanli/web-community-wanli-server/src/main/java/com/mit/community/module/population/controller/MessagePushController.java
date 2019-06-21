@@ -54,6 +54,20 @@ public class MessagePushController {
         return Result.success("通知发送成功");
     }
 
+    @PostMapping("/pushUser")
+    @ApiOperation(value = "指定人员消息推送", notes = "")
+    public Result pushUser(HttpServletRequest request, String title, String outline, String content, String idNum) {
+        Integer userId = null;
+        if (userId == null) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            userId = user.getId();
+        }
+        messagePushService.pushUser(title, outline, content, userId, idNum);
+        return Result.success("通知发送成功");
+    }
+
+
     @GetMapping("/messageListPage")
     @ApiOperation(value = "分页查询消息", notes = "输入参数：validateTimeStart 起始有效时间，validateTimeEnd 停止有效时间，title 标题 ，code 分类，status 状态 ")
     public Result listPage(
