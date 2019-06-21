@@ -109,12 +109,12 @@ public class MessagePushService {
         }
     }
 
-    public void pushUser(String title, String outline, String content,Integer userId, String idNum) {
+    public void pushUser(String title, String outline, String content, Integer userId, String idNum) {
         List<String> target = new ArrayList<>();
         List<String> noUser = new ArrayList<>();
         String[] idNums = idNum.split(",");
         User user = null;
-        for (int i=0;i<idNums.length;i++) {
+        for (int i = 0; i < idNums.length; i++) {
             user = userService.getByIDNumber(idNums[i]);
             if (user != null) {
                 target.add(user.getId().toString());
@@ -128,7 +128,7 @@ public class MessagePushService {
             message.setGmtCreate(LocalDateTime.now());
             message.setGmtModified(LocalDateTime.now());
             messageMapper.insert(message);
-                //List<MessageAccept> messageAcceptList = new ArrayList<>();
+            //List<MessageAccept> messageAcceptList = new ArrayList<>();
             MessageAccept messageAccept = null;
             for (int i = 0; i < target.size(); i++) {
                 messageAccept = new MessageAccept();
@@ -137,15 +137,16 @@ public class MessagePushService {
                 messageAccept.setStatus(1);
                 messageAccept.setGmtCreate(LocalDateTime.now());
                 //messageAccept.setGmtModified(LocalDateTime.now());
-                    //messageAcceptList.add(messageAccept);
+                //messageAcceptList.add(messageAccept);
                 messageAcceptMapper.insert(messageAccept);
             }
-                WebPush.sendAlias(title, outline, target);//需要标题
-                //WebPush.sendAllsetNotification(outline, title);
+            WebPush.sendAlias(title, outline, target);//需要标题
+            //WebPush.sendAllsetNotification(outline, title);
         }
     }
 
-    public Page<MessageCheck> messageAcceptListPage(Integer messageId, String name, Integer status, Integer pageNum, Integer pageSize) {
+    public Page<MessageCheck> messageAcceptListPage(Integer messageId, LocalDateTime pushTime, String name, Integer status,
+                                                    Integer pageNum, Integer pageSize) {
         Page<MessageCheck> page = new Page<>(pageNum, pageSize);
         EntityWrapper<MessageCheck> wrapper = new EntityWrapper<>();
         if (messageId != null) {
@@ -158,11 +159,14 @@ public class MessagePushService {
             wrapper.eq("a.status", status);
         }
         List<MessageCheck> list = messagePushMapper.messageAcceptListPage(page, wrapper);
+        for (MessageCheck check : list) {
+            check.setPushTime(pushTime);
+        }
         page.setRecords(list);
         return page;
     }
 
-    public List<Message> getMessage(Integer userId){
+    public List<Message> getMessage(Integer userId) {
         //List<Message> readed = messagePushMapper
         List<Message> readed = new ArrayList<>();
         return readed;
