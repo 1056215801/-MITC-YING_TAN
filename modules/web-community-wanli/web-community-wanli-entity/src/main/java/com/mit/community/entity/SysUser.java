@@ -88,4 +88,23 @@ public class SysUser implements Serializable {
      */
     @TableField("management_unit")
     private String managementUnit;
+    /**
+     * 管辖范围
+     */
+    @TableField("managerment_scope")
+    private String managementScope;
+    /**
+     * 账号类型
+     */
+    @TableField("account_type")
+    private String accountType;
+    public SysUser(){}
+    public SysUser(String username, String password, String role, String managementScope, String accountType,String phone) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.managementScope = managementScope;
+        this.accountType = accountType;
+        this.phone=phone;
+    }
 }

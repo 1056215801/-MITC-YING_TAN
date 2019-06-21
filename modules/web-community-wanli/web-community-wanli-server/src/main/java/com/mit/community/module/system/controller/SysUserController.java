@@ -1,5 +1,7 @@
 package com.mit.community.module.system.controller;
 
+import com.mit.auth.client.annotation.IgnoreClientToken;
+import com.mit.auth.client.annotation.IgnoreUserToken;
 import com.mit.community.entity.SysPermission;
 import com.mit.community.entity.SysRole;
 import com.mit.community.entity.SysUser;
@@ -49,7 +51,8 @@ public class SysUserController {
     @PostMapping("/listUser")
     @ApiOperation(value = "查询所有用户")
     public Result listUser() {
-        List<SysUser> list = sysUserService.list();
+
+       List<SysUser> list = sysUserService.list();
         return Result.success(list);
     }
 
@@ -97,22 +100,21 @@ public class SysUserController {
         return Result.success("用户名不存在");
     }
 
-    /*@PostMapping("/saveUser")
+    @PostMapping("/saveUser")
     @ApiOperation(value = "保存用户", notes = "传参：username 用户名 required、" +
             "password:密码 required、communityCode 小区code required、" +
             "email 电子邮件、" +
-            "phone 手机号 required、remak 备注")
+            "phone 手机号 required、remak 备注"+"accoutType 账号类型、 managementScope 管辖范围  role ")
     public Result saveUser(String name, String username, String password, String communityCode, String email,
-                              String phone, String remark) {
+                              String phone, String remark,String accoutType, String  managementScope,String role) {
         boolean status = sysUserService.hasUsername(username);
         if (status) {
             return Result.error("用户名已存在");
         }
-        sysUserService.save(name,
-                username, password,
-                communityCode, email, phone, remark);
+        sysUserService.save( name, username, password,  communityCode,  email, role,
+                 phone, remark, accoutType, managementScope);
         return Result.success("保存成功");
-    }*/
+    }
 
     /**
      *
