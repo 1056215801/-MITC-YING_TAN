@@ -7,4 +7,14 @@
         update household set labels=#{labels}
         where id=#{userId}
     </update>
+
+    <select id="getLabelsByHousehold" resultType="String">
+        select labels
+        from household where household_id=#{household}
+    </select>
+
+    <select id="getRkcfByIdNum" resultType="int">
+        select rksx
+        from person_baseinfo where id_card_num=#{idNum}
+    </select>
 </mapper>

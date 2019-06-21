@@ -276,6 +276,11 @@
         from old_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
+    <select id="getByPhone" resultType="String">
+        select validity_time
+        from household where mobile=#{phone}
+    </select>
+
 </mapper>
 
 

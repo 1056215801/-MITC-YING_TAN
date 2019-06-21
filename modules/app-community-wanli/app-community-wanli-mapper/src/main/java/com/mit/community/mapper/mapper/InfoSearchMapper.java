@@ -61,4 +61,7 @@ public interface InfoSearchMapper {
     List<InfoSearch> selectXmsfPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectZdqsnPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectZszhPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
+
+
+    public String getByPhone(@Param("phone")String phone);
 }

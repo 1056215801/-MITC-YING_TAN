@@ -13,4 +13,12 @@ public class PersonLabelsService {
         labelsMapper.saveLabels(labels, userId);
     }
 
+    public String getLabelsByHousehold(Integer household){
+        return labelsMapper.getLabelsByHousehold(household);
+    }
+
+    public int getRkcfByIdNum(String idNum){
+        return labelsMapper.getRkcfByIdNum(idNum);
+    }
+
 }
