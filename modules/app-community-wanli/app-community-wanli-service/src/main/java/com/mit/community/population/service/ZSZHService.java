@@ -1,10 +1,14 @@
 package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.entity.entity.ZSZHInfo;
+import com.mit.community.mapper.mapper.PersonBaseInfoMapper;
 import com.mit.community.mapper.mapper.ZSZHMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.List;
 public class ZSZHService {
     @Autowired
     private ZSZHMapper zSZHMapper;
+    @Autowired
+    private PersonBaseInfoMapper personBaseInfoMapper;
 
     public void save(String jtjjzk, String sfnrdb, String jhrsfzh, String jhrxm, String jhrlxfs, LocalDateTime ccfbrq, String mqzdlx,
                      String ywzszhs, int zszhcs, LocalDateTime sczszhrq, String mqwxxpgdj, String zlqk, String zlyy,
@@ -34,6 +40,18 @@ public class ZSZHService {
             zSZHInfo.setGmtCreate(LocalDateTime.now());
             zSZHInfo.setGmtModified(LocalDateTime.now());
             zSZHMapper.insert(zSZHInfo);
+
+            PersonBaseInfo personBaseInfo = personBaseInfoMapper.selectById(zSZHInfo.getPerson_baseinfo_id());
+            String label = null;
+            if (StringUtils.isNotBlank(personBaseInfo.getLabel())) {
+                label = personBaseInfo.getLabel() + ",肇事肇祸";
+            } else {
+                label = ",肇事肇祸";
+            }
+            EntityWrapper<PersonBaseInfo> updatePerson = new EntityWrapper<>();
+            updatePerson.eq("id", personBaseInfo.getId());
+            personBaseInfo.setLabel(label);
+            personBaseInfoMapper.update(personBaseInfo, updatePerson);
         } else {
             zSZHInfo.setId(list.get(0).getId());
             zSZHInfo.setGmtModified(LocalDateTime.now());
@@ -54,6 +72,13 @@ public class ZSZHService {
             EntityWrapper<ZSZHInfo> dalete = new EntityWrapper<>();
             dalete.eq("id", id);
             zSZHMapper.update(zSZHInfo, dalete);
+        }
+    }
+
+    @Transactional
+    public void saveList(List<ZSZHInfo> list) {
+        for(ZSZHInfo azbInfo:list){
+            this.save(azbInfo);
         }
     }
 }

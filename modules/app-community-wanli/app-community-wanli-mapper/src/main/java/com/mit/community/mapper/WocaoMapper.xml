@@ -47,6 +47,8 @@
                     jdbcType="VARCHAR"/>
             <result property="photoBase64" column="phot_base64" javaType="String"
                     jdbcType="VARCHAR"/>
+            <result property="label" column="label" javaType="String"
+                    jdbcType="VARCHAR"/>
             <result property="rksx" column="rksx" javaType="int" jdbcType="INTEGER"/>
             <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
             <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
@@ -61,10 +63,10 @@
 
 
     <select id="selectPersonBaseInfoPage" resultMap="infoSearchMap">
-        select *,birthday
-        from person_baseinfo
-        where 1= 1 ${ew.sqlSegment}
-    </select>
+    select *,birthday
+    from person_baseinfo
+    where 1= 1 ${ew.sqlSegment}
+</select>
 
     <select id="selectAzbInfoPage" resultMap="infoSearchMap">
         select b.*
@@ -153,6 +155,125 @@
         select
         b.*
         from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectPersonBaseInfo" resultMap="infoSearchMap">
+        select *,birthday
+        from person_baseinfo
+        where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectAzbInfo" resultMap="infoSearchMap">
+        select b.*
+        from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectAzbInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectBearInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from bear_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectCxInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from cx_Info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectEngPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from engpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectFlowPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from flow_people_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectMilitaryServiceInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from militaryservice_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectPartyInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from party_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectSfInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from sfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectSqjzpeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from sqjzpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectStayPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from staypeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectXdPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from xd_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectXmsfPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from xmsfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectZdqsnPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from zdqsn_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectZszhPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*
+        from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectLdzPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from ldz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectWgyPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from wgy_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectZyzPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from zyz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectOldPeopleInfoPage" resultMap="infoSearchMap">
+        select
+        b.*
+        from old_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
 </mapper>

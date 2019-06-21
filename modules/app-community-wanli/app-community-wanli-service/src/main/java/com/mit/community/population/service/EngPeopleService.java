@@ -2,9 +2,13 @@ package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.entity.EngPeopleInfo;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.mapper.EngPeopleMapper;
+import com.mit.community.mapper.mapper.PersonBaseInfoMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.List;
 public class EngPeopleService {
     @Autowired
     private EngPeopleMapper engPeopleMapper;
+    @Autowired
+    private PersonBaseInfoMapper personBaseInfoMapper;
 
     public void save(String wwx, String wwm, String zwm, String gj, String zjxy, String zjdm, String zjhm,
                      LocalDateTime zjyxq, String lhmd, LocalDateTime ddrq, LocalDateTime yjlkrq, int sfzdry, Integer person_baseinfo_id) {
@@ -23,6 +29,7 @@ public class EngPeopleService {
         engPeopleMapper.insert(engPeopleInfo);*/
     }
 
+    @Transactional
     public void save(EngPeopleInfo engPeopleInfo) {
         EntityWrapper<EngPeopleInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", engPeopleInfo.getPerson_baseinfo_id());
@@ -31,6 +38,18 @@ public class EngPeopleService {
             engPeopleInfo.setGmtCreate(LocalDateTime.now());
             engPeopleInfo.setGmtModified(LocalDateTime.now());
             engPeopleMapper.insert(engPeopleInfo);
+
+            PersonBaseInfo personBaseInfo = personBaseInfoMapper.selectById(engPeopleInfo.getPerson_baseinfo_id());
+            String label = null;
+            if (StringUtils.isNotBlank(personBaseInfo.getLabel())) {
+                label = personBaseInfo.getLabel() + ",境外人员";
+            } else {
+                label = ",境外人员";
+            }
+            EntityWrapper<PersonBaseInfo> updatePerson = new EntityWrapper<>();
+            updatePerson.eq("id", personBaseInfo.getId());
+            personBaseInfo.setLabel(label);
+            personBaseInfoMapper.update(personBaseInfo, updatePerson);
         } else {
             engPeopleInfo.setId(list.get(0).getId());
             engPeopleInfo.setGmtModified(LocalDateTime.now());

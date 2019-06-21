@@ -76,6 +76,23 @@
     <select id="getYscxId" resultType="String">
         select id from cx_Info where person_baseinfo_id=#{userid}
     </select>
+
+    <select id="getZyzId" resultType="String">
+        select id from zyz_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getWgyId" resultType="String">
+        select id from wgy_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getLdzId" resultType="String">
+        select id from ldz_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getOldId" resultType="String">
+        select id from old_info where person_baseinfo_id=#{userid}
+    </select>
+
     <select id="getLabelsInfoByUserId" resultMap="labelsInfoMap">
         select c.id as lsryId
         from person_baseinfo b LEFT JOIN staypeople_info c ON b.id=c.person_baseinfo_id LEFT JOIN engpeople_info d on b.id=d.person_baseinfo_id LEFT JOIN party_info e on b.id=e.person_baseinfo_id LEFT JOIN bear_info f on b.id=f.person_baseinfo_id

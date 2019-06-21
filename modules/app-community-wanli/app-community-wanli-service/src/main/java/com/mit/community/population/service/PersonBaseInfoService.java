@@ -1,8 +1,10 @@
 package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.entity.User;
 import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.mapper.PersonBaseInfoMapper;
+import com.mit.community.service.UserService;
 import com.mit.community.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +26,56 @@ import java.util.List;
 public class PersonBaseInfoService {
     @Autowired
     private PersonBaseInfoMapper personBaseInfoMapper;
+    @Autowired
+    private UserService userService;
 
+    @Transactional
     public Integer save(int age, String idCardNum, String name, String formerName, String gender, LocalDateTime birthday,
                         String nation, String nativePlace, String matrimony, String politicCountenance,
                         String education, String religion, String jobType, String profession, String cellphone,
                         String placeOfDomicile, String placeOfDomicileDetail, String placeOfReside,
                         String placeOfResideDetail, String placeOfServer, String photoBase64) {
+        User user = userService.getByIDNumber(idCardNum);
+        if (user != null) {
+            if(StringUtils.isNotBlank(user.getName())){
+                name = user.getName();
+            }
+            if(StringUtils.isNotBlank(user.getCellphone())){
+                cellphone = user.getCellphone();
+            }
+        }
         PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, age, 0, null);
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, age, 0, null, null);
         personBaseInfo.setGmtCreate(LocalDateTime.now());
         personBaseInfo.setGmtModified(LocalDateTime.now());
-        personBaseInfoMapper.insert(personBaseInfo);
-        return personBaseInfo.getId();
+        if(this.getIdByCardNum(idCardNum) == null){
+            personBaseInfoMapper.insert(personBaseInfo);
+            return personBaseInfo.getId();
+        } else {
+            return null;
+        }
+    }
+
+    @Transactional
+    public void save(PersonBaseInfo personBaseInfo) {
+        User user = userService.getByIDNumber(personBaseInfo.getIdCardNum());
+        if (user != null) {
+            if(StringUtils.isNotBlank(user.getName())){
+                personBaseInfo.setName(user.getName());
+            }
+            if(StringUtils.isNotBlank(user.getCellphone())){
+                personBaseInfo.setCellphone(user.getCellphone());
+            }
+        }
+        personBaseInfo.setGmtCreate(LocalDateTime.now());
+        personBaseInfo.setGmtModified(LocalDateTime.now());
+        Integer id = this.getIdByCardNum(personBaseInfo.getIdCardNum());
+        if( id == null){
+            personBaseInfoMapper.insert(personBaseInfo);
+        } else {
+            personBaseInfo.setId(id);
+            personBaseInfoMapper.updateById(personBaseInfo);
+        }
     }
 
     public boolean isExist(String idCardNum) {
@@ -56,7 +96,7 @@ public class PersonBaseInfoService {
                                   String placeOfServer, String base64, Integer rksx) {
         PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation,
                 nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, rksx, age, 0, null);
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, rksx, age, 0, null, null);
         personBaseInfo.setId(baseId);
         personBaseInfo.setGmtModified(LocalDateTime.now());
         personBaseInfoMapper.updateById(personBaseInfo);
@@ -88,6 +128,24 @@ public class PersonBaseInfoService {
         EntityWrapper<PersonBaseInfo> dalete = new EntityWrapper<>();
         dalete.eq("id", id);
         personBaseInfoMapper.update(personBaseInfo, dalete);
+    }
+
+    public Integer getIdByCardNum(String idCardNum) {
+        Integer id = null;
+        EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id_card_num", idCardNum);
+        List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            id = list.get(0).getId();
+        }
+        return id;
+    }
+
+    @Transactional
+    public void saveList(List<PersonBaseInfo> list) {
+        for(PersonBaseInfo azbInfo:list){
+            this.save(azbInfo);
+        }
     }
 
 }

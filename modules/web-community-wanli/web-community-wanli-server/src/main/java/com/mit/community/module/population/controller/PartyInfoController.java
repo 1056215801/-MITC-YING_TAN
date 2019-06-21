@@ -1,7 +1,15 @@
 package com.mit.community.module.population.controller;
 
+import com.mit.community.entity.LdzInfo;
+import com.mit.community.entity.OldInfo;
+import com.mit.community.entity.WgyInfo;
+import com.mit.community.entity.ZyzInfo;
 import com.mit.community.entity.entity.*;
 import com.mit.community.population.service.*;
+import com.mit.community.service.LdzService;
+import com.mit.community.service.OldService;
+import com.mit.community.service.WgyService;
+import com.mit.community.service.ZyzService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,6 +60,14 @@ public class PartyInfoController {
     private AZBService aZBService;
     @Autowired
     private ZDQSNCService zDQSNCService;
+    @Autowired
+    private ZyzService zyzService;
+    @Autowired
+    private OldService oldService;
+    @Autowired
+    private WgyService wgyService;
+    @Autowired
+    private LdzService ldzService;
 
 
     @PostMapping("/saveParty")
@@ -199,6 +215,42 @@ public class PartyInfoController {
                 ZDQSNCInfo zDQSNCInfo = (ZDQSNCInfo) JSONObject.toBean(obj, ZDQSNCInfo.class);
                 if (zDQSNCInfo.getPerson_baseinfo_id() != null) {
                     zDQSNCService.save(zDQSNCInfo);
+                }
+            }
+            //志愿者
+            String zyz = jsonObject.getString("zyz");
+            if (!"0".equals(zyz)) {
+                JSONObject obj = jsonObject.getJSONObject("zyz");
+                ZyzInfo zyzInfo = (ZyzInfo) JSONObject.toBean(obj, ZyzInfo.class);
+                if (zyzInfo.getPerson_baseinfo_id() != null) {
+                    zyzService.save(zyzInfo);
+                }
+            }
+            //60岁以上老人
+            String old = jsonObject.getString("old");
+            if (!"0".equals(old)) {
+                JSONObject obj = jsonObject.getJSONObject("old");
+                OldInfo oldInfo = (OldInfo) JSONObject.toBean(obj, OldInfo.class);
+                if (oldInfo.getPerson_baseinfo_id() != null) {
+                    oldService.save(oldInfo);
+                }
+            }
+            //网格员
+            String wgy = jsonObject.getString("wgy");
+            if (!"0".equals(wgy)) {
+                JSONObject obj = jsonObject.getJSONObject("wgy");
+                WgyInfo wgyInfo = (WgyInfo) JSONObject.toBean(obj, WgyInfo.class);
+                if (wgyInfo.getPerson_baseinfo_id() != null) {
+                    wgyService.save(wgyInfo);
+                }
+            }
+            //楼栋长
+            String ldz = jsonObject.getString("ldz");
+            if (!"0".equals(ldz)) {
+                JSONObject obj = jsonObject.getJSONObject("ldz");
+                LdzInfo ldzInfo = (LdzInfo) JSONObject.toBean(obj, LdzInfo.class);
+                if (ldzInfo.getPerson_baseinfo_id() != null) {
+                    ldzService.save(ldzInfo);
                 }
             }
         } catch (Exception e) {

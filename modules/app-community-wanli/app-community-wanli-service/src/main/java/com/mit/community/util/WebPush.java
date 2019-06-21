@@ -51,13 +51,13 @@ public class WebPush {
     /**
      * 客户端 给所有平台的一个或者一组用户发送信息(别名发送)
      */
-    public static void sendAlias(String message, List<String> aliasList) {
+    public static void sendAlias(String message, List<String> aliasList, String title) {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey);
         Map<String, String> extras = new HashMap<String, String>();
         // 添加附加信息
         extras.put("extMessage", "");
 
-        PushPayload payload = allPlatformAndAlias(message, extras, aliasList);
+        PushPayload payload = allPlatformAndAlias(message, extras, aliasList, title);
         try {
             PushResult result = jpushClient.sendPush(payload);
             System.out.println(result);
@@ -191,7 +191,7 @@ public class WebPush {
      * 极光推送：生成向一个或者一组用户发送的消息。
      */
     private static PushPayload allPlatformAndAlias(String alert, Map<String, String> extras,
-                                                   List<String> aliasList) {
+                                                   List<String> aliasList,String title) {
 
         return PushPayload
                 .newBuilder()
@@ -202,7 +202,7 @@ public class WebPush {
                                 .newBuilder()
                                 .setAlert(alert)
                                 .addPlatformNotification(
-                                        AndroidNotification.newBuilder().addExtras(extras).build())
+                                        AndroidNotification.newBuilder().addExtras(extras).setTitle(title).build())
                                 .addPlatformNotification(
                                         IosNotification.newBuilder().addExtras(extras).build())
                                 .build())

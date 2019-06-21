@@ -87,7 +87,7 @@ public class ReportProblemService {
         if (StringUtils.isNotBlank(problemType)) {
             wrapper.eq("a.problemType", problemType);
         }
-        if (status != 0) {
+        if (status != null) {
             wrapper.eq("a.status", status);
         }
         if (StringUtils.isBlank(userId)) {//所有人的

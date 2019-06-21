@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -265,9 +266,146 @@ public class InfoSearchService {
             } else if ("zszh".equals(label)) {
                 List<InfoSearch> list = infoSearchMapper.selectZszhPeopleInfoPage(page, wrapper);
                 page.setRecords(list);
+            } else if ("ldz".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectLdzPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
+            }else if ("wgy".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectWgyPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
+            }else if ("zyz".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectZyzPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
+            }else if ("old".equals(label)) {
+                List<InfoSearch> list = infoSearchMapper.selectOldPeopleInfoPage(page, wrapper);
+                page.setRecords(list);
             }
 
         }
         return page;
+    }
+
+    public List<InfoSearch> list(Integer ageStart, Integer ageEnd, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, String rycf){
+        EntityWrapper<InfoSearch> wrapper = new EntityWrapper<>();
+        List<InfoSearch> list = new ArrayList<>();
+        if (label == null || "".equals(label)) {
+            if (ageStart != 0) {
+                wrapper.ge("age", ageStart);
+            }
+            if (ageEnd != 0) {
+                wrapper.le("age", ageEnd);
+            }
+
+            if (StringUtils.isNotBlank(name)) {
+                wrapper.eq("name", name);
+            }
+            if (StringUtils.isNotBlank(idNum)) {
+                wrapper.eq("id_card_num", idNum);
+            }
+            if (StringUtils.isNotBlank(sex)) {
+                wrapper.eq("gender", sex);
+            }
+            if (StringUtils.isNotBlank(education)) {
+                wrapper.like("education", education);
+            }
+            if (StringUtils.isNotBlank(job)) {
+                wrapper.like("profession", job);
+            }
+            if (StringUtils.isNotBlank(matrimony)) {
+                wrapper.eq("matrimony", matrimony);
+            }
+            if (StringUtils.isNotBlank(zzmm)) {
+                wrapper.eq("politic_countenance", zzmm);
+            }
+            if (StringUtils.isNotBlank(rycf)) {
+                if ("flow".equals(rycf)) {
+                    wrapper.eq("rksx", 2);
+                } else if ("census".equals(rycf)) {
+                    wrapper.eq("rksx", 1);
+                }
+            }
+            wrapper.orderBy("gmt_create", false);
+            list = infoSearchMapper.selectPersonBaseInfo( wrapper);
+        } else {
+            if (ageStart != 0) {
+                wrapper.ge("b.age", ageStart);
+            }
+            if (ageEnd != 0) {
+                wrapper.le("b.age", ageEnd);
+            }
+            if (StringUtils.isNotBlank(name)) {
+                wrapper.eq("b.name", name);
+            }
+            if (StringUtils.isNotBlank(idNum)) {
+                wrapper.eq("b.id_card_num", idNum);
+            }
+            if (StringUtils.isNotBlank(sex)) {
+                wrapper.eq("b.gender", sex);
+            }
+            if (StringUtils.isNotBlank(education)) {
+                wrapper.eq("b.education", education);
+            }
+            if (StringUtils.isNotBlank(job)) {
+                wrapper.eq("b.profession", job);
+            }
+            if (StringUtils.isNotBlank(matrimony)) {
+                wrapper.eq("b.matrimony", matrimony);
+            }
+            if (StringUtils.isNotBlank(zzmm)) {
+                wrapper.eq("b.politic_countenance", zzmm);
+            }
+            if (StringUtils.isNotBlank(rycf)) {
+                if ("flow".equals(rycf)) {
+                    wrapper.eq("b.rksx", 2);
+                } else if ("census".equals(rycf)) {
+                    wrapper.eq("b.rksx", 1);
+                }
+            }
+            wrapper.orderBy("a.gmt_create", false);
+            if ("azb".equals(label)) {
+                list = infoSearchMapper.selectAzbInfo(wrapper);
+
+            } else if ("bear".equals(label)) {
+                list = infoSearchMapper.selectBearInfo(wrapper);
+
+            } else if ("cx".equals(label)) {
+                list = infoSearchMapper.selectCxInfo(wrapper);
+
+            } else if ("engPeople".equals(label)) {
+                list = infoSearchMapper.selectEngPeopleInfo(wrapper);
+
+            } else if ("flowPeople".equals(label)) {
+                list = infoSearchMapper.selectFlowPeopleInfo(wrapper);
+
+            } else if ("militaryService".equals(label)) {
+                list = infoSearchMapper.selectMilitaryServiceInfo(wrapper);
+
+            } else if ("party".equals(label)) {
+                list = infoSearchMapper.selectPartyInfo(wrapper);
+
+            } else if ("sf".equals(label)) {
+                list = infoSearchMapper.selectSfInfo(wrapper);
+
+            } else if ("sqjzpeople".equals(label)) {
+                list = infoSearchMapper.selectSqjzpeopleInfo(wrapper);
+
+            } else if ("stayPeople".equals(label)) {
+                list = infoSearchMapper.selectStayPeopleInfo(wrapper);
+
+            } else if ("xd".equals(label)) {
+                list = infoSearchMapper.selectXdPeopleInfo(wrapper);
+
+            } else if ("xmsf".equals(label)) {
+                list = infoSearchMapper.selectXmsfPeopleInfo(wrapper);
+
+            } else if ("zdqsn".equals(label)) {
+                list = infoSearchMapper.selectZdqsnPeopleInfo(wrapper);
+
+            } else if ("zszh".equals(label)) {
+                list = infoSearchMapper.selectZszhPeopleInfo(wrapper);
+
+            }
+
+        }
+        return list;
     }
 }
