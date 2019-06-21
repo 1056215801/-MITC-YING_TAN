@@ -6,6 +6,16 @@ public class InfoSearch {
 
     private PersonBaseInfo personBaseInfo;
 
+    private int validityDays;
+
+    public int getValidityDays() {
+        return validityDays;
+    }
+
+    public void setValidityDays(int validityDays) {
+        this.validityDays = validityDays;
+    }
+
     /*private SFPeopleInfo sFPeopleInfo;
     private SQJZPeopleinfo sQJZPeopleinfo;
     private StayPeopleInfo stayPeopleInfo;

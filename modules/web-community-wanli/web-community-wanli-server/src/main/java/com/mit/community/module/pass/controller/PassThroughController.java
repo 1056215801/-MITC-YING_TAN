@@ -8,6 +8,7 @@ import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.User;
 import com.mit.community.feigin.PassThroughFeign;
+import com.mit.community.population.service.PersonLabelsService;
 import com.mit.community.service.*;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
@@ -55,6 +56,9 @@ public class PassThroughController {
     private final PassThroughFeign passThroughFeign;
 
     private final HouseHoldService houseHoldService;
+
+    @Autowired
+    private PersonLabelsService personLabelsService;
 
 
     @Autowired
@@ -230,6 +234,20 @@ public class PassThroughController {
         //分页查询
         Page<HouseHold> page = houseHoldService.listHouseholdByPage(request, zoneId, communityCode, buildingId, unitId, roomId, contactPerson, contactCellphone, householdType, status,
                 search_validEndFlag, select_autyType, pageNum, pageSize);
+        List<HouseHold> list = page.getRecords();
+        if(!list.isEmpty()) {
+            for (int i=0; i < list.size(); i++) {
+                if(StringUtils.isNotBlank(list.get(i).getCredentialNum())) {
+                    int rkcf = personLabelsService.getRkcfByIdNum(list.get(i).getCredentialNum());
+                    if (rkcf == 1){
+                        list.get(i).setRkcf("户籍人口");
+                    } else if (rkcf == 2) {
+                        list.get(i).setRkcf("流动人口");
+                    }
+                }
+            }
+            page.setRecords(list);
+        }
         return Result.success(page);
     }
 

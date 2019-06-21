@@ -10,6 +10,7 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -111,5 +112,47 @@ public class InfoSearchController {
         page.setRecords(list);
         return Result.success("http://127.0.0.1:9766/api/web/communitywanli/excel/" + fileName);
     }
+
+
+
+    @PostMapping("/flowListPage")
+    @ApiOperation(value = "流动人口信息查询", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
+    public Result flowListPage(@RequestParam(required = false, defaultValue = "0") Integer ageStart,
+                           @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
+                           String name, String idNum, String sex, String education, String job,
+                           String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
+        Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
+                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
+        List<InfoSearch> list = page.getRecords();
+        if (!list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                List<String> labels = labelsService.getLabelsByUserId(list.get(i).getPersonBaseInfo().getId());
+                list.get(i).getPersonBaseInfo().setLabels(labels);
+                String validityDay = infoSearchService.getByPhone(list.get(i).getPersonBaseInfo().getCellphone());//通过电话关联上
+                if (StringUtils.isNotBlank(validityDay)) {
+                    //先把字符串转成Date类型
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    //此处会抛异常
+                    Date date = sdf.parse(validityDay);
+                    //获取截止日期毫秒数
+                    long longDate = date.getTime();
+                    long now = System.currentTimeMillis();
+                    int days = (int) ((longDate - now) / (1000*3600*24));
+                    list.get(i).setValidityDays(days);
+                }
+            }
+        }
+        page.setRecords(list);
+        return Result.success(page);
+    }
+
+    /*@PostMapping("/test")
+    @ApiOperation(value = "人员信息分页查询", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
+    public Result test() {
+        String day = infoSearchService.getById(1372220);
+        return Result.success(day);
+    }*/
+
+
 
 }

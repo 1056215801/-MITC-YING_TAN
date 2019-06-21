@@ -257,4 +257,7 @@ public class HouseHold extends BaseEntity {
 
 
     private String labels;
+
+    @TableField(exist = false)
+    private String rkcf;
 }

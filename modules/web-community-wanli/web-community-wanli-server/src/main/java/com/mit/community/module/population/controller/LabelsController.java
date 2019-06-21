@@ -26,4 +26,11 @@ public class LabelsController {
         return Result.success("保存成功");
     }
 
+    @PostMapping("/getLabels")
+    @ApiOperation(value = "获取人员标签", notes = "输入参数：")
+    public Result save(Integer household){
+        String labels = personLabelsService.getLabelsByHousehold(household);
+        return Result.success(labels);
+    }
+
 }

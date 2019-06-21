@@ -408,4 +408,8 @@ public class InfoSearchService {
         }
         return list;
     }
+
+    public String getByPhone(String phone){
+        return infoSearchMapper.getByPhone(phone);
+    }
 }
