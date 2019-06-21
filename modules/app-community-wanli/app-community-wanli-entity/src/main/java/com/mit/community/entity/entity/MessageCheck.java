@@ -17,4 +17,9 @@ public class MessageCheck {
     private LocalDateTime getTime;
     private int status;
     private Integer operator;
+    /**
+     * 推送时间
+     */
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime pushTime;
 }

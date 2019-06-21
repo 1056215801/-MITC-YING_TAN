@@ -79,11 +79,12 @@ public class MessagePushController {
     }
 
     @GetMapping("/messageAcceptListPage")
-    @ApiOperation(value = "消息详情", notes = "")
-    public Result messageAcceptListPage(Integer messageId, String name,
-                                        @RequestParam(required = false, defaultValue = "0") Integer status,
+    @ApiOperation(value = "消息详情")
+    public Result messageAcceptListPage(Integer messageId,
+                                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pushTime,
+                                        String name, @RequestParam(required = false, defaultValue = "0") Integer status,
                                         Integer pageNum, Integer pageSize) {
-        Page<MessageCheck> page = messagePushService.messageAcceptListPage(messageId, name, status, pageNum, pageSize);
+        Page<MessageCheck> page = messagePushService.messageAcceptListPage(messageId, pushTime, name, status, pageNum, pageSize);
         return Result.success(page);
     }
 

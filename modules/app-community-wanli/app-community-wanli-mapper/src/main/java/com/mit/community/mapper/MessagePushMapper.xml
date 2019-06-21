@@ -5,25 +5,26 @@
 <mapper namespace="com.mit.community.mapper.MessagePushMapper">
     <resultMap type="com.mit.community.entity.entity.MessageUser" id="messageUserMap">
         <result property="userId" column="userId" javaType="int"
-                jdbcType="INTEGER" />
+                jdbcType="INTEGER"/>
         <result property="label" column="label" javaType="String"
-                jdbcType="VARCHAR" />
+                jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap type="com.mit.community.entity.entity.MessageCheck" id="messageCheckMap">
         <result property="id" column="id" javaType="int"
-                jdbcType="INTEGER" />
+                jdbcType="INTEGER"/>
         <result property="name" column="name" javaType="String"
-                jdbcType="VARCHAR" />
-        <result property="getTime" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="VARCHAR"/>
+        <result property="getTime" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler"
+                javaType="java.time.LocalDateTime"
                 jdbcType="OTHER"/>
         <result property="status" column="status" javaType="int"
-                jdbcType="INTEGER" />
+                jdbcType="INTEGER"/>
     </resultMap>
 
     <select id="messageAcceptListPage" resultMap="messageCheckMap">
         select a.id as id,a.gmt_modified as getTime,a.status as status,c.name
-        from message_accept a left join user b on a.userId=b.id LEFT JOIN person_baseinfo c on a.id_card_num=c.id_card_num  where 1= 1 ${ew.sqlSegment}
+        from message_accept a left join user b on a.userId=b.id LEFT JOIN person_baseinfo c on b.id_card_num=c.id_card_num  where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="getMessageUser" resultMap="messageUserMap">
