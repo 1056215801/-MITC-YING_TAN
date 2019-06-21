@@ -27,14 +27,14 @@ public class WebHandleProblemInfo {
     private String sloveName;
     private String sloveUrl;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    protected LocalDateTime solveTime;
+    private LocalDateTime handletime;
 
-    public LocalDateTime getSolveTime() {
-        return solveTime;
+    public LocalDateTime getHandletime() {
+        return handletime;
     }
 
-    public void setSolveTime(LocalDateTime solveTime) {
-        this.solveTime = solveTime;
+    public void setHandletime(LocalDateTime handletime) {
+        this.handletime = handletime;
     }
 
     public String getSloveName() {

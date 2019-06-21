@@ -38,9 +38,9 @@ public class ExcelOutController {
 
     @PostMapping("/getMilitaryExcel")
     @ApiOperation(value = "兵役excel", notes = "")
-    public Result getMilitaryExcel(HttpServletRequest request) throws Exception{
+    public Result getMilitaryExcel(HttpServletRequest request) throws Exception {
         List<MilitaryServiceExcelInfo> list = excelOutService.getMilitaryExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("兵役信息");
             List<String> titles = new ArrayList<>();
@@ -77,7 +77,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -106,21 +106,21 @@ public class ExcelOutController {
                 row.add(list.get(i).getBydjjl());
                 row.add(list.get(i).getYy());
                 row.add(list.get(i).getDjxs());
-                row.add(list.get(i).getSftj() == 1 ? "是":"否");
+                row.add(list.get(i).getSftj() == 1 ? "是" : "否");
                 row.add(list.get(i).getBz());
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="兵役信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "兵役信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -128,9 +128,9 @@ public class ExcelOutController {
 
     @PostMapping("/getZyzExcel")
     @ApiOperation(value = "志愿者excel", notes = "")
-    public Result getZyzExcel(HttpServletRequest request) throws Exception{
+    public Result getZyzExcel(HttpServletRequest request) throws Exception {
         List<ZyzExcelInfo> list = excelOutService.getZyzExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("志愿者信息");
             List<String> titles = new ArrayList<>();
@@ -162,7 +162,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -191,16 +191,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="志愿者信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "志愿者信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -208,9 +208,9 @@ public class ExcelOutController {
 
     @PostMapping("/getWgyExcel")
     @ApiOperation(value = "网格员excel", notes = "")
-    public Result getWgyExcel(HttpServletRequest request) throws Exception{
+    public Result getWgyExcel(HttpServletRequest request) throws Exception {
         List<LdzExcelInfo> list = excelOutService.getWgyExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("网格员信息");
             List<String> titles = new ArrayList<>();
@@ -242,7 +242,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -271,16 +271,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="网格员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "网格员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -288,9 +288,9 @@ public class ExcelOutController {
 
     @PostMapping("/getOldExcel")
     @ApiOperation(value = "60岁老人excel", notes = "")
-    public Result getOldExcel(HttpServletRequest request) throws Exception{
+    public Result getOldExcel(HttpServletRequest request) throws Exception {
         List<OldExcelInfo> list = excelOutService.getOldExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("60岁以上老人基本信息");
             List<String> titles = new ArrayList<>();
@@ -322,7 +322,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -351,16 +351,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="60岁以上老人信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "60岁以上老人信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -368,9 +368,9 @@ public class ExcelOutController {
 
     @PostMapping("/getLdzExcel")
     @ApiOperation(value = "楼栋长excel", notes = "")
-    public Result getLdzExcel(HttpServletRequest request) throws Exception{
+    public Result getLdzExcel(HttpServletRequest request) throws Exception {
         List<LdzExcelInfo> list = excelOutService.getLdzExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("楼栋长基本信息");
             List<String> titles = new ArrayList<>();
@@ -402,7 +402,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -431,16 +431,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="楼栋长信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "楼栋长信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -448,7 +448,10 @@ public class ExcelOutController {
 
     @PostMapping("/getInfoExcel")
     @ApiOperation(value = "人员信息导出excel", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
-    public Result getInfoExcel(HttpServletResponse response, HttpServletRequest request, @RequestParam( required = false, defaultValue = "0")Integer ageStart, @RequestParam( required = false, defaultValue = "0")Integer ageEnd, String name, String idNum, String sex, String education, String job, String matrimony, String zzmm, String label, String rycf) throws Exception{
+    public Result getInfoExcel(HttpServletResponse response, HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer ageStart,
+                               @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
+                               String name, String idNum, String sex, String education, String job,
+                               String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
         List<InfoSearch> list = infoSearchService.list(ageStart, ageEnd, name, idNum, sex, education, job, matrimony, zzmm, label, rycf);
         ExcelData data = new ExcelData();
         data.setName("用户基本信息");
@@ -478,7 +481,7 @@ public class ExcelOutController {
         data.setTitles(titles);
         List<List<Object>> rows = new ArrayList<>();
         List<Object> row = null;
-        for(int i=0;i<list.size();i++) {
+        for (int i = 0; i < list.size(); i++) {
             row = new ArrayList<>();
             row.add(i);
             row.add(list.get(i).getPersonBaseInfo().getIdCardNum());
@@ -500,28 +503,27 @@ public class ExcelOutController {
             row.add(list.get(i).getPersonBaseInfo().getPlaceOfReside());
             row.add(list.get(i).getPersonBaseInfo().getPlaceOfResideDetail());
             row.add(list.get(i).getPersonBaseInfo().getPlaceOfServer());
-            row.add(list.get(i).getPersonBaseInfo().getRksx() == 1 ? "户籍人口":"流动人口");
+            row.add(list.get(i).getPersonBaseInfo().getRksx() == 1 ? "户籍人口" : "流动人口");
             rows.add(row);
         }
         data.setRows(rows);
-        SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        String fileName=fdate.format(new Date())+".xlsx";
+        SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String fileName = "人员基本信息" + fdate.format(new Date()) + ".xlsx";
         String basePath = request.getServletContext().getRealPath("excel/");
-        System.out.println("==========="+basePath);
         File file = new File(basePath);
         if (!file.exists()) {
             file.mkdir();
         }
-        ExcelUtils.generateExcel(data,basePath+fileName);
-        return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+        ExcelUtils.generateExcel(data, basePath + fileName);
+        return Result.success("http://127.0.0.1:9766/api/web/communitywanli/excel/" + fileName);
     }
 
     @PostMapping("/getAzbExcel")
     @ApiOperation(value = "艾滋病人excel", notes = "")
-    public Result getAzbExcel(HttpServletRequest request) throws Exception{
+    public Result getAzbExcel(HttpServletRequest request) throws Exception {
         String fileName = null;
         List<AzbExcelInfo> list = excelOutService.getAzbExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("艾滋病人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -544,7 +546,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -565,16 +567,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            fileName="艾滋病人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            fileName = "艾滋病人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -582,9 +584,9 @@ public class ExcelOutController {
 
     @PostMapping("/getBearExcel")
     @ApiOperation(value = "计生excel", notes = "")
-    public Result getBearExcel(HttpServletRequest request) throws Exception{
+    public Result getBearExcel(HttpServletRequest request) throws Exception {
         List<BearExcelInfo> list = excelOutService.getBearExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("计生人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -608,7 +610,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -629,16 +631,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="计生人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "计生人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -646,9 +648,9 @@ public class ExcelOutController {
 
     @PostMapping("/getCXExcel")
     @ApiOperation(value = "传销excel", notes = "")
-    public Result getCXExcel(HttpServletRequest request) throws Exception{
+    public Result getCXExcel(HttpServletRequest request) throws Exception {
         List<CXExcelInfo> list = excelOutService.getCXExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("传销人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -666,7 +668,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -681,16 +683,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="传销人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "传销人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -698,9 +700,9 @@ public class ExcelOutController {
 
     @PostMapping("/getEngPeopleExcel")
     @ApiOperation(value = "境外excel", notes = "")
-    public Result getEngPeopleExcel(HttpServletRequest request) throws Exception{
+    public Result getEngPeopleExcel(HttpServletRequest request) throws Exception {
         List<EngPeopleExcelInfo> list = excelOutService.getEngPeopleExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("境外人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -727,7 +729,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -751,16 +753,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="境外人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "境外人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -768,9 +770,9 @@ public class ExcelOutController {
 
     @PostMapping("/getPartyExcel")
     @ApiOperation(value = "党员excel", notes = "")
-    public Result getPartyExcel(HttpServletRequest request) throws Exception{
+    public Result getPartyExcel(HttpServletRequest request) throws Exception {
         List<PartyExcelInfo> list = excelOutService.getPartyExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("党员基本信息");
             List<String> titles = new ArrayList<>();
@@ -796,7 +798,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -819,16 +821,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="党员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "党员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -836,9 +838,9 @@ public class ExcelOutController {
 
     @PostMapping("/getSfExcel")
     @ApiOperation(value = "上访人员excel", notes = "")
-    public Result getSfExcel(HttpServletRequest request) throws Exception{
+    public Result getSfExcel(HttpServletRequest request) throws Exception {
         List<SFPeopleExcelInfo> list = excelOutService.getSfExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("上访人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -861,7 +863,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -881,16 +883,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="上访人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "上访人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -898,9 +900,9 @@ public class ExcelOutController {
 
     @PostMapping("/getStayExcel")
     @ApiOperation(value = "留守人员excel", notes = "")
-    public Result getStayExcel(HttpServletRequest request) throws Exception{
+    public Result getStayExcel(HttpServletRequest request) throws Exception {
         List<StayPeopleExcelInfo> list = excelOutService.getStayExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("留守人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -927,7 +929,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -952,16 +954,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="留守人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "留守人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -969,9 +971,9 @@ public class ExcelOutController {
 
     @PostMapping("/getXdExcel")
     @ApiOperation(value = "吸毒人员excel", notes = "")
-    public Result getXdExcel(HttpServletRequest request) throws Exception{
+    public Result getXdExcel(HttpServletRequest request) throws Exception {
         List<XdExcelInfo> list = excelOutService.getXdExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("吸毒人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -997,7 +999,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1020,16 +1022,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="吸毒人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "吸毒人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1037,9 +1039,9 @@ public class ExcelOutController {
 
     @PostMapping("/getXmsfExcel")
     @ApiOperation(value = "刑满释放人员excel", notes = "")
-    public Result getXmsfExcel(HttpServletRequest request) throws Exception{
+    public Result getXmsfExcel(HttpServletRequest request) throws Exception {
         List<XmsfExcelInfo> list = excelOutService.getXmsfExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("刑满释放人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -1067,7 +1069,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1093,16 +1095,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="刑满释放人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "刑满释放人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1110,9 +1112,9 @@ public class ExcelOutController {
 
     @PostMapping("/getZdqsnExcel")
     @ApiOperation(value = "重点青少年excel", notes = "")
-    public Result getZdqsnExcel(HttpServletRequest request) throws Exception{
+    public Result getZdqsnExcel(HttpServletRequest request) throws Exception {
         List<ZDQSNCExcelInfo> list = excelOutService.getZdqsnExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("重点青少年基本信息");
             List<String> titles = new ArrayList<>();
@@ -1138,7 +1140,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1162,16 +1164,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="重点青少年信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "重点青少年信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1179,9 +1181,9 @@ public class ExcelOutController {
 
     @PostMapping("/getZszhExcel")
     @ApiOperation(value = "肇事肇祸excel", notes = "")
-    public Result getZszhExcel(HttpServletRequest request) throws Exception{
+    public Result getZszhExcel(HttpServletRequest request) throws Exception {
         List<ZSZHExcelInfo> list = excelOutService.getZszhExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("肇事肇祸人员基本信息");
             List<String> titles = new ArrayList<>();
@@ -1213,7 +1215,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1242,16 +1244,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="肇事肇祸人员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "肇事肇祸人员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1259,9 +1261,9 @@ public class ExcelOutController {
 
     @PostMapping("/getDyExcel")
     @ApiOperation(value = "党员excel", notes = "")
-    public Result getDyExcel(HttpServletRequest request) throws Exception{
+    public Result getDyExcel(HttpServletRequest request) throws Exception {
         List<ZSZHExcelInfo> list = excelOutService.getZszhExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("党员基本信息");
             List<String> titles = new ArrayList<>();
@@ -1293,7 +1295,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1322,16 +1324,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="党员信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "党员信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1339,9 +1341,9 @@ public class ExcelOutController {
 
     @PostMapping("/getHjrkExcel")
     @ApiOperation(value = "户籍人口信息excel", notes = "")
-    public Result getHjrkExcel(HttpServletRequest request) throws Exception{
+    public Result getHjrkExcel(HttpServletRequest request) throws Exception {
         List<CensusExcelInfo> list = excelOutService.getHjrkExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("户籍人口信息");
             List<String> titles = new ArrayList<>();
@@ -1360,7 +1362,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1376,16 +1378,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="户籍人口信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "户籍人口信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1393,9 +1395,9 @@ public class ExcelOutController {
 
     @PostMapping("/getLdExcel")
     @ApiOperation(value = "流动人口信息excel", notes = "")
-    public Result getLdExcel(HttpServletRequest request) throws Exception{
+    public Result getLdExcel(HttpServletRequest request) throws Exception {
         List<FlowPeopleExcelInfo> list = excelOutService.getLdExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("流动人口信息");
             List<String> titles = new ArrayList<>();
@@ -1421,7 +1423,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1444,16 +1446,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="流动人口信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "流动人口信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1461,9 +1463,9 @@ public class ExcelOutController {
 
     @PostMapping("/getHouseExcel")
     @ApiOperation(value = "房屋信息excel", notes = "")
-    public Result getHouseExcel(HttpServletRequest request) throws Exception{
+    public Result getHouseExcel(HttpServletRequest request) throws Exception {
         List<HouseExcelInfo> list = excelOutService.getHouseExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("流动人口信息");
             List<String> titles = new ArrayList<>();
@@ -1489,7 +1491,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1512,16 +1514,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="房屋信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "房屋信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1529,9 +1531,9 @@ public class ExcelOutController {
 
     @PostMapping("/getCarExcel")
     @ApiOperation(value = "车辆信息excel", notes = "")
-    public Result getCarExcel(HttpServletRequest request) throws Exception{
+    public Result getCarExcel(HttpServletRequest request) throws Exception {
         List<CarExcelInfo> list = excelOutService.getCarExcel();
-        if(!list.isEmpty()) {
+        if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("车辆信息");
             List<String> titles = new ArrayList<>();
@@ -1557,7 +1559,7 @@ public class ExcelOutController {
             data.setTitles(titles);
             List<List<Object>> rows = new ArrayList<>();
             List<Object> row = null;
-            for(int i=0;i<list.size();i++) {
+            for (int i = 0; i < list.size(); i++) {
                 row = new ArrayList<>();
                 row.add(list.get(i).getName());
                 row.add(list.get(i).getGender());
@@ -1580,16 +1582,16 @@ public class ExcelOutController {
                 rows.add(row);
             }
             data.setRows(rows);
-            SimpleDateFormat fdate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            String fileName="车辆信息" + fdate.format(new Date())+".xlsx";
+            SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+            String fileName = "车辆信息" + fdate.format(new Date()) + ".xlsx";
             String basePath = request.getServletContext().getRealPath("excel/");
-            System.out.println("==========="+basePath);
+            System.out.println("===========" + basePath);
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            ExcelUtils.generateExcel(data,basePath+fileName);
-            return Result.success("http://127.0.0.1:9766/excel/"+fileName);
+            ExcelUtils.generateExcel(data, basePath + fileName);
+            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }

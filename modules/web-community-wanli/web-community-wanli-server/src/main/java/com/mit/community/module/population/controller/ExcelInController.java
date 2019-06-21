@@ -12,11 +12,13 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+//import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import java.util.UUID;
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @RequestMapping(value = "/excelIn")
 @RestController
@@ -80,16 +83,16 @@ public class ExcelInController {
 
     @PostMapping("/Military")
     @ApiOperation(value = "兵役excel导入", notes = "传参：")
-    public Result Military(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result Military(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         MilitaryServiceInfo militaryServiceInfo = null;
         List<MilitaryServiceInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -143,8 +146,8 @@ public class ExcelInController {
             String djxs = cell24.getContents();
             String sftjStr = cell25.getContents();
             int sftj = 0;
-            if(StringUtils.isNotBlank(sftjStr)){
-                if("是".equals(sftjStr)){
+            if (StringUtils.isNotBlank(sftjStr)) {
+                if ("是".equals(sftjStr)) {
                     sftj = 1;
                 }
             }
@@ -152,13 +155,13 @@ public class ExcelInController {
 
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             militaryServiceInfo = new MilitaryServiceInfo(xyqk, zybm, zymc, zytc, cylb, jdxx, zyzgzs, hscjdcsjjsxl, sg, tz, zylysl, yylysl, jkzk, stmc, bsdc, wcqk, zzcs,
@@ -171,16 +174,16 @@ public class ExcelInController {
 
     @PostMapping("/zyz")
     @ApiOperation(value = "志愿者excel导入", notes = "传参：")
-    public Result zyz(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result zyz(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         ZyzInfo zyzInfo = null;
         List<ZyzInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -205,16 +208,16 @@ public class ExcelInController {
             String specialSkills = cell10.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            zyzInfo = new ZyzInfo(person_baseinfo_id, 0,isReg,organization,regNumber,serviceExp,serviceType,specialSkills);
+            zyzInfo = new ZyzInfo(person_baseinfo_id, 0, isReg, organization, regNumber, serviceExp, serviceType, specialSkills);
             list.add(zyzInfo);
         }
         zyzService.saveList(list);
@@ -223,16 +226,16 @@ public class ExcelInController {
 
     @PostMapping("/wgy")
     @ApiOperation(value = "网格员excel导入", notes = "传参：")
-    public Result wgy(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result wgy(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         WgyInfo wgyInfo = null;
         List<WgyInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -261,16 +264,16 @@ public class ExcelInController {
             String workCondition = cell12.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            wgyInfo = new WgyInfo(person_baseinfo_id, 0,gddh,jtzycygzdwjzw,jtzycyjkzk,jtzycylxfs,jtzycyxm,jtzyrysfzh,officeTime,workCondition);
+            wgyInfo = new WgyInfo(person_baseinfo_id, 0, gddh, jtzycygzdwjzw, jtzycyjkzk, jtzycylxfs, jtzycyxm, jtzyrysfzh, officeTime, workCondition);
             list.add(wgyInfo);
         }
         wgyService.saveList(list);
@@ -279,16 +282,16 @@ public class ExcelInController {
 
     @PostMapping("/old")
     @ApiOperation(value = "60岁老人excel导入", notes = "传参：")
-    public Result old(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result old(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         OldInfo oldInfo = null;
         List<OldInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -321,16 +324,16 @@ public class ExcelInController {
             String knjsq = cell14.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            oldInfo = new OldInfo(person_baseinfo_id, 0,disease,householdName,isInsurance,jkzk,jtzycygzdwjzw,jtzycyjkzk,jtzycylxfs,jtzycyxm,jtzyrysfzh,knjsq);
+            oldInfo = new OldInfo(person_baseinfo_id, 0, disease, householdName, isInsurance, jkzk, jtzycygzdwjzw, jtzycyjkzk, jtzycylxfs, jtzycyxm, jtzyrysfzh, knjsq);
             list.add(oldInfo);
         }
         oldService.saveList(list);
@@ -339,16 +342,16 @@ public class ExcelInController {
 
     @PostMapping("/ldz")
     @ApiOperation(value = "楼栋长excel导入", notes = "传参：")
-    public Result ldz(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result ldz(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         LdzInfo ldzInfo = null;
         List<LdzInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -378,16 +381,16 @@ public class ExcelInController {
 
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            ldzInfo = new LdzInfo(person_baseinfo_id, 0,gddh,jtzycygzdwjzw,jtzycyjkzk,jtzycylxfs,jtzycyxm,jtzyrysfzh,officeTime,workCondition);
+            ldzInfo = new LdzInfo(person_baseinfo_id, 0, gddh, jtzycygzdwjzw, jtzycyjkzk, jtzycylxfs, jtzycyxm, jtzyrysfzh, officeTime, workCondition);
             list.add(ldzInfo);
         }
         ldzService.saveList(list);
@@ -396,16 +399,16 @@ public class ExcelInController {
 
     @PostMapping("/zszh")
     @ApiOperation(value = "肇事肇祸excel导入", notes = "传参：")
-    public Result zszh(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result zszh(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         ZSZHInfo zSZHInfo = null;
         List<ZSZHInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -452,13 +455,13 @@ public class ExcelInController {
             String bfqk = cell21.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             zSZHInfo = new ZSZHInfo(jtjjzk, sfnrdb, jhrsfzh, jhrxm, jhrlxfs, ccfbrq,
@@ -472,16 +475,16 @@ public class ExcelInController {
 
     @PostMapping("/zdqsn")
     @ApiOperation(value = "重点青少年excel导入", notes = "传参：")
-    public Result zdqsn(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result zdqsn(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         ZDQSNCInfo zDQSNCInfo = null;
         List<ZDQSNCInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -518,13 +521,13 @@ public class ExcelInController {
             String bfqk = cell16.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             zDQSNCInfo = new ZDQSNCInfo(rylx, jtqk, jhrsfz, jhrxm, yjhrgx, jhrlxfs, jhrjzxxdz, sfwffz, wffzqk, bfrlxfs, bfsd, bfqk, person_baseinfo_id, 0);
@@ -536,16 +539,16 @@ public class ExcelInController {
 
     @PostMapping("/xmsf")
     @ApiOperation(value = "刑满释放人员excel导入", notes = "传参：")
-    public Result xmsf(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result xmsf(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         XmsfPeopleInfo xmsfPeopleInfo = null;
         List<XmsfPeopleInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -586,16 +589,16 @@ public class ExcelInController {
             String cxfzzm = cell18.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            xmsfPeopleInfo = new XmsfPeopleInfo(sflf, yzm, ypxq, fxcs, sfrq, wxxpglx, xjrq, xjqk, azrq, azqk, wazyy, bjqk, sfcxfz, cxfzzm, person_baseinfo_id,0);
+            xmsfPeopleInfo = new XmsfPeopleInfo(sflf, yzm, ypxq, fxcs, sfrq, wxxpglx, xjrq, xjqk, azrq, azqk, wazyy, bjqk, sfcxfz, cxfzzm, person_baseinfo_id, 0);
             list.add(xmsfPeopleInfo);
         }
         xmsfPeopleService.saveList(list);
@@ -604,16 +607,16 @@ public class ExcelInController {
 
     @PostMapping("/xd")
     @ApiOperation(value = "吸毒人员excel导入", notes = "传参：")
-    public Result xd(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result xd(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         XDInfo xDInfo = null;
         List<XDInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -648,13 +651,13 @@ public class ExcelInController {
             String xdhg = cell15.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             //xDInfo = new XDInfo(ccfxsj, gkqk, gkrxm, gkrlxfs, bfqk, bfrxm, bfrlxfs, ywfzs, xdqk, xdyy, xdhg, person_baseinfo_id, 0);
@@ -666,17 +669,17 @@ public class ExcelInController {
 
     @PostMapping("/azb")
     @ApiOperation(value = "艾滋病excel导入", notes = "传参：")
-    public Result azb(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result azb(HttpServletRequest request, MultipartFile excel) throws Exception {
         AzbInfo azbInfo = null;
         List<AzbInfo> list = new ArrayList<>();
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         //int columns=sheet.getColumns();
         Integer person_baseinfo_id = null;
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -708,13 +711,13 @@ public class ExcelInController {
             String szjgmc = cell14.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             azbInfo = new AzbInfo(grtj, sfwf, wffzqk, ajlb, gzlx, bfqk, bfrdh, bfrxm, szqk, szjgmc, person_baseinfo_id, 0);
@@ -726,16 +729,16 @@ public class ExcelInController {
 
     @PostMapping("/bear")
     @ApiOperation(value = "计生excel导入", notes = "传参：")
-    public Result bear(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result bear(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         BearInfo bearInfo = null;
         List<BearInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -767,13 +770,13 @@ public class ExcelInController {
             String ccyy = cell14.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             bearInfo = new BearInfo(poxm, poxb, xgzdw, djjhny, hkxz, hyzk, jysssj, sslx, ssyy, ccyy, person_baseinfo_id, 0);
@@ -785,16 +788,16 @@ public class ExcelInController {
 
     @PostMapping("/cx")
     @ApiOperation(value = "传销excel导入", notes = "传参：")
-    public Result cx(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result cx(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         CXInfo cXInfo = null;
         List<CXInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -816,13 +819,13 @@ public class ExcelInController {
 
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             cXInfo = new CXInfo(dysxcx, drsxcx, dssxcx, bz, person_baseinfo_id, 0);
@@ -834,16 +837,16 @@ public class ExcelInController {
 
     @PostMapping("/sf")
     @ApiOperation(value = "上访excel导入", notes = "传参：")
-    public Result sf(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result sf(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         SFPeopleInfo sFPeopleInfo = null;
         List<SFPeopleInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -872,13 +875,13 @@ public class ExcelInController {
             String clqkbf = cell12.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             sFPeopleInfo = new SFPeopleInfo(sfqzxf, Integer.valueOf(lxcs), Integer.valueOf(ldcs), sfsj, Integer.valueOf(sfrs), sffsdd,
@@ -891,16 +894,16 @@ public class ExcelInController {
 
     @PostMapping("/sqjz")
     @ApiOperation(value = "社区矫正excel导入", notes = "传参：")
-    public Result sqjz(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result sqjz(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         SQJZPeopleinfo sQJZPeopleinfo = null;
         List<SQJZPeopleinfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -969,17 +972,17 @@ public class ExcelInController {
             String cxfzmc = cell32.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             sQJZPeopleinfo = new SQJZPeopleinfo(sqjzrybh, yjycs, jzlb, ajlb, jtzm, ypxq, ypxkssj, ypxjssj, jzkssj, jzjssj, jsfs, ssqk, sflgf, ssqku, sfjljzxz, jzjclx, sfytg,
-                    tgyy, jcjdtgqk, tgjzqk, sfylg, lgyy, jcjdlgqk, lgjzqk, jcqk, xfbgzx, sfcxfz, cxfzmc, person_baseinfo_id,0);
+                    tgyy, jcjdtgqk, tgjzqk, sfylg, lgyy, jcjdlgqk, lgjzqk, jcqk, xfbgzx, sfcxfz, cxfzmc, person_baseinfo_id, 0);
             list.add(sQJZPeopleinfo);
         }
         sQJZPeopleService.saveList(list);
@@ -988,16 +991,16 @@ public class ExcelInController {
 
     @PostMapping("/stay")
     @ApiOperation(value = "留守人员excel导入", notes = "传参：")
-    public Result stay(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result stay(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         StayPeopleInfo stayPeopleInfo = null;
         List<StayPeopleInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -1036,13 +1039,13 @@ public class ExcelInController {
             String bfqk = cell17.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             stayPeopleInfo = new StayPeopleInfo(jkzk, grnsr, rhizbz, lsrylx, jtzyrysfzh, jtzycyxm, jtzycyjkzk, ylsrygx, jtzycylxfs, jtzycygzxxdz, jtnsr, knjsq, bfqk, person_baseinfo_id, 0);
@@ -1055,16 +1058,16 @@ public class ExcelInController {
 
     @PostMapping("/dy")
     @ApiOperation(value = "党员excel导入", notes = "传参：")
-    public Result dy(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result dy(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         PartyInfo partyInfo = null;
         List<PartyInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -1099,34 +1102,40 @@ public class ExcelInController {
             String yyjndf = cell15.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            partyInfo = new PartyInfo(rdsq, zzrq, cjgzsj, rdszzb, zzszzb, zzszdw, szdzb, jrdzbsj, xrdnzw, rdjsr, yyjndf, person_baseinfo_id,0);
+            partyInfo = new PartyInfo(rdsq, zzrq, cjgzsj, rdszzb, zzszzb, zzszdw, szdzb, jrdzbsj, xrdnzw, rdjsr, yyjndf, person_baseinfo_id, 0);
             list.add(partyInfo);
         }
         partyInfoService.saveList(list);
         return Result.success("保存成功");
     }
 
-    @PostMapping("/person")
+    @RequestMapping(value = "/person", produces = "text/html;charset=utf-8", method = RequestMethod.POST)
     @ApiOperation(value = "人员基本信息excel导入", notes = "传参：")
-    public Result person(HttpServletRequest request, MultipartFile excel) throws Exception{
-        String filePath = saveFile(request, excel);
+    public Result person(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws Exception {
+        //String filePath = saveFile(request, excel);
+        //System.out.println("======filePath="+filePath);
+        //把MultipartFile转化为File
+        //boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        //CommonsMultipartFile cf = (CommonsMultipartFile) file;
+        //DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+        //File fo = fi.getStoreLocation();
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(file.getInputStream());
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         PersonBaseInfo personBaseInfo = null;
         List<PersonBaseInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idCardNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -1189,16 +1198,16 @@ public class ExcelInController {
 
     @PostMapping("/census")
     @ApiOperation(value = "户籍人口excel导入", notes = "传参：")
-    public Result census(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result census(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         CensusInfo censusInfo = null;
         List<CensusInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -1219,13 +1228,13 @@ public class ExcelInController {
             String hzsfz = cell8.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             censusInfo = new CensusInfo(rhyzbz, hh, yhzgx, hzsfz, person_baseinfo_id);
@@ -1237,16 +1246,16 @@ public class ExcelInController {
 
     @PostMapping("/ld")
     @ApiOperation(value = "流动人口信息excel导入", notes = "传参：")
-    public Result ld(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result ld(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         FlowPeopleInfo flowPeopleInfo = null;
         List<FlowPeopleInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -1285,7 +1294,7 @@ public class ExcelInController {
             String sfzdgzryStr = cell11.getContents();
             int sfzdgzry = 0;
             if (StringUtils.isNotBlank(sfzdgzryStr)) {
-                if("是".equals(sfzdgzryStr)){
+                if ("是".equals(sfzdgzryStr)) {
                     sfzdgzry = 1;
                 }
             }
@@ -1295,13 +1304,13 @@ public class ExcelInController {
             String hzsfz = cell15.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             flowPeopleInfo = new FlowPeopleInfo(lryy, bzlx, zjhm, djrq, zjdqrq, zslx,
@@ -1314,16 +1323,16 @@ public class ExcelInController {
 
     @PostMapping("/car")
     @ApiOperation(value = "车辆excel导入", notes = "传参：")
-    public Result car(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public Result car(HttpServletRequest request, MultipartFile excel) throws Exception {
         String filePath = saveFile(request, excel);
         Workbook book;
-        book= Workbook.getWorkbook(new File(filePath));
+        book = Workbook.getWorkbook(new File(filePath));
         Sheet sheet = book.getSheet(0);
-        int rows=sheet.getRows();
+        int rows = sheet.getRows();
         Integer person_baseinfo_id = null;
         CarInfo carInfo = null;
         List<CarInfo> list = new ArrayList<>();
-        for(int i=1; i<rows;i++){
+        for (int i = 1; i < rows; i++) {
             Cell cell = sheet.getCell(1, i);
             String idNum = cell.getContents();
             Cell cell2 = sheet.getCell(2, i);
@@ -1358,13 +1367,13 @@ public class ExcelInController {
             String gmrq = cell15.getContents();
             if (StringUtils.isNotBlank(idNum)) {
                 Integer id = personBaseInfoService.getIdByCardNum(idNum);
-                if(id != null){
+                if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0,idNum,userName,null,gender,null,null,null,null,null,
-                            null,null,null,null,cellphone,null,null,null,null,null,null);
+                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                            null, null, null, null, cellphone, null, null, null, null, null, null);
                 }
-            }else{
+            } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
             carInfo = new CarInfo(cph, cx, ys, pp, xh, pl, fdjh, jsz, xsz, szrq, gmrq, person_baseinfo_id);
@@ -1374,7 +1383,7 @@ public class ExcelInController {
         return Result.success("保存成功");
     }
 
-    public String saveFile(HttpServletRequest request, MultipartFile excel) throws Exception{
+    public String saveFile(HttpServletRequest request, MultipartFile excel) throws Exception {
         String name = excel.getOriginalFilename();
         String ext = "";//文件后缀
         if (name.contains(".")) {
@@ -1382,12 +1391,12 @@ public class ExcelInController {
         }
         String fileName = UUID.randomUUID().toString() + ext;
         String basePath = request.getServletContext().getRealPath("excel/");
-        System.out.println("==========="+basePath);
+        System.out.println("===========" + basePath);
         File file = new File(basePath);
         if (!file.exists()) {
             file.mkdir();
         }
-        String filePath = basePath+fileName;
+        String filePath = basePath + fileName;
         File localFile = new File(filePath);
         excel.transferTo(localFile);
         return filePath;
