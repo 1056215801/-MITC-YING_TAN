@@ -28,9 +28,15 @@
 	</resultMap>
 	
 	
-	<select id="getRealTimePhoto" resultMap="snapFaceDataMap">
+	<!--<select id="getRealTimePhoto" resultMap="snapFaceDataMap">
 		select image_url as imageUrl,gmt_create as shoot_time from snap_face_data
 		where device_id=#{deviceId} and to_days(gmt_create) = to_days(now())
+		order by gmt_create desc
+	</select>-->
+
+	<select id="getRealTimePhoto" resultMap="snapFaceDataMap">
+		select image_url as imageUrl,gmt_create as shoot_time from snap_face_data
+		where device_id=#{deviceId}
 		order by gmt_create desc
 	</select>
 	

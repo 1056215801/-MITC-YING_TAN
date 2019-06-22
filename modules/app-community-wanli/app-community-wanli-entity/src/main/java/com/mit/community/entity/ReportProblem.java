@@ -16,4 +16,5 @@ public class ReportProblem extends BaseEntity {
     private String address;
     private int isOpen;
     private int status;
+    private int mqlzd;//目前流转到什么地方
 }

@@ -3,8 +3,11 @@ package com.mit.community.module.userservice.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.HandleProblemInfo;
 import com.mit.community.entity.ReportProblemInfo;
+import com.mit.community.entity.TaskMessage;
+import com.mit.community.population.service.TaskMessageService;
 import com.mit.community.service.ReportProblemService;
 import com.mit.community.service.UserService;
+import com.mit.community.service.WgyService;
 import com.mit.community.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +30,10 @@ public class ReportProblemController {
     private ReportProblemService reportProblemService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private WgyService wgyService;
+    @Autowired
+    private TaskMessageService taskMessageService;
 
     public static final String MSG = "收到新的问题反馈，请登录网格助手进行处理";
 
@@ -53,7 +60,7 @@ public class ReportProblemController {
                 imageUrls.add(imageUrl);
             }
         }
-        reportProblemService.save(userId, content, problemType, address, isOpen, imageUrls);
+        Integer id = reportProblemService.save(userId, content, problemType, address, isOpen, imageUrls);
         InputStream in = null;
         String[] phones = null;
         try {
@@ -79,7 +86,10 @@ public class ReportProblemController {
             SmsCommunityAppUtil.sendMsg(phones[i], MSG);
         }
         //消息推送
-        WebPush.sendAllsetNotification(MSG,"消息通知");
+        String title = "消息通知";
+        WebPush.sendAllsetNotification(MSG,title);
+        Integer wgyId = wgyService.getWgyIdByJb("居委");
+        taskMessageService.save(id,title,MSG,wgyId,0,0,null);
         return Result.success("保存成功");
     }
 

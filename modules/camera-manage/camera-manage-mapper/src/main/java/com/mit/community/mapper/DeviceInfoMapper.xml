@@ -7,4 +7,9 @@
 		token=#{token}
 		where device_id=#{deviceId}
 	</update>
+
+	<update id="updateOutCount">
+		update out_people set
+		outCount = outCount + 1
+	</update>
 </mapper>

@@ -1,24 +1,30 @@
 package com.mit.community.module.population.controller;
 
 
+import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.SysUser;
 import com.mit.community.entity.entity.CensusInfo;
 import com.mit.community.entity.entity.FlowPeopleInfo;
 import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.population.service.CensusInfoService;
 import com.mit.community.population.service.FlowPeopleService;
 import com.mit.community.population.service.PersonBaseInfoService;
+import com.mit.community.service.RedisService;
 import com.mit.community.service.UserService;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.DateUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 
 /**
@@ -44,11 +50,14 @@ public class PersonBaseInfoController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RedisService redisService;
+
     @PostMapping("/savePersonBaseInfo")
     @ApiOperation(value = "保存人员基本信息", notes = "传参：String idCardNum 公民身份号码, String name 姓名, String formerName 曾用名, String gender 性别, LocalDate birthday 出生日期, String nation 民族, String nativePlace 籍贯, String matrimony 婚姻状况, String politicCountenance 政治面貌,\n" +
             "String education 学历, String religion 宗教信仰, String jobType 职业类别, String profession 职业, String cellphone 联系方式, String placeOfDomicile 户籍地, String placeOfDomicileDetail 户籍门详址, String placeOfReside 现住地,\n" +
             "String placeOfResideDetail 现住门详址, String placeOfServer 服务处所, String photoBase64 照片base64")
-    public Result savePersonBaseInfo(Integer baseId,
+    public Result savePersonBaseInfo(HttpServletRequest request, Integer baseId,
                                      String idCardNum,
                                      String name,
                                      String formerName,
@@ -58,6 +67,12 @@ public class PersonBaseInfoController {
                                      String education, String religion, String jobType, String profession, String cellphone,
                                      String placeOfDomicile, String placeOfDomicileDetail, String placeOfReside,
                                      String placeOfResideDetail, String placeOfServer, Integer rksx) throws ParseException {
+
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            String communityCode = sysUser.getCommunityCode();
+
+
         String[] ages = birthday.split("-");
         int age = 2019 - Integer.parseInt(ages[0]);
         //if (personBaseInfoService.isExist(idCardNum)) {//已经存在就更新
@@ -69,12 +84,12 @@ public class PersonBaseInfoController {
             personBaseInfoService.updateByIdCardNum(baseId, age, idCardNum, name, formerName, gender,
                     DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
                     politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null, rksx);
+                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null, rksx,communityCode);
             return Result.success("信息更新成功");
         } else {
             Integer id = personBaseInfoService.save(age, idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
                     nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);
+                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null,communityCode);
             return Result.success(id);
         }
     }

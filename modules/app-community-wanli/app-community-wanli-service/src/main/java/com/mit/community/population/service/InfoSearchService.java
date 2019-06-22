@@ -145,49 +145,67 @@ public class InfoSearchService {
 
     public Page<InfoSearch> listPage(Integer ageStart, Integer ageEnd, String name, String idNum, String sex,
                                      String education, String job, String matrimony, String zzmm, String label,
-                                     Integer pageNum, Integer pageSize, String rycf) {
+                                     Integer pageNum, Integer pageSize, String rycf, String accountType, String streetName, String areaName) {
         Page<InfoSearch> page = new Page<>(pageNum, pageSize);
         EntityWrapper<InfoSearch> wrapper = new EntityWrapper<>();
         if (label == null || "".equals(label)) {
+            if (StringUtils.isNotBlank(accountType)) {
+                if ("区级账号".equals(accountType)) {
+                    wrapper.eq("b.area_name", areaName);
+                }
+                if ("镇/街道账号".equals(accountType)) {
+                    wrapper.eq("b.street_name", streetName);
+                }
+            }
+
             if (ageStart != 0) {
-                wrapper.ge("age", ageStart);
+                wrapper.ge("a.age", ageStart);
             }
             if (ageEnd != 0) {
-                wrapper.le("age", ageEnd);
+                wrapper.le("a.age", ageEnd);
             }
             if (StringUtils.isNotBlank(name)) {
-                wrapper.eq("name", name);
+                wrapper.eq("a.name", name);
             }
             if (StringUtils.isNotBlank(idNum)) {
-                wrapper.eq("id_card_num", idNum);
+                wrapper.eq("a.id_card_num", idNum);
             }
             if (StringUtils.isNotBlank(sex)) {
-                wrapper.eq("gender", sex);
+                wrapper.eq("a.gender", sex);
             }
             if (StringUtils.isNotBlank(education)) {
-                wrapper.like("education", education);
+                wrapper.like("a.education", education);
             }
             if (StringUtils.isNotBlank(job)) {
-                wrapper.like("profession", job);
+                wrapper.like("a.profession", job);
             }
             if (StringUtils.isNotBlank(matrimony)) {
-                wrapper.eq("matrimony", matrimony);
+                wrapper.eq("a.matrimony", matrimony);
             }
             if (StringUtils.isNotBlank(zzmm)) {
-                wrapper.eq("politic_countenance", zzmm);
+                wrapper.eq("a.politic_countenance", zzmm);
             }
             if (StringUtils.isNotBlank(rycf)) {
                 if ("flow".equals(rycf)) {
-                    wrapper.eq("rksx", 2);
+                    wrapper.eq("a.rksx", 2);
                 } else if ("census".equals(rycf)) {
-                    wrapper.eq("rksx", 1);
+                    wrapper.eq("a.rksx", 1);
                 }
             }
-            wrapper.eq("isdelete", 0);
-            wrapper.orderBy("gmt_create", false);
+            //wrapper.eq("a.isdelete", 0);
+            wrapper.orderBy("a.gmt_create", false);
             List<InfoSearch> list = infoSearchMapper.selectPersonBaseInfoPage(page, wrapper);
             page.setRecords(list);
         } else {
+            if (StringUtils.isNotBlank(accountType)) {
+                if ("区级账号".equals(accountType)) {
+                    wrapper.eq("c.area_name", areaName);
+                }
+                if ("镇/街道账号".equals(accountType)) {
+                    wrapper.eq("c.street_name", streetName);
+                }
+            }
+
             if (ageStart != 0) {
                 wrapper.ge("b.age", ageStart);
             }

@@ -142,4 +142,6 @@ public class PersonBaseInfo extends BaseEntity {
 
     @TableField(exist = false)
     private List<String> labels;
+
+    private String community_code;
 }

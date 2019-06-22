@@ -17,4 +17,45 @@
         select rksx
         from person_baseinfo where id_card_num=#{idNum}
     </select>
+
+    <select id="getSirPersonBaseInfoId" resultType="INTEGER">
+        select a.person_baseinfo_id
+        from wgy_info a where a.id=(select b.sirid from wgy_info b where b.id=#{id})
+    </select>
+
+    <select id="getSirUserIdBySirPersonBaseInfoId" resultType="com.mit.community.entity.TaskMessageSirInfo">
+        select a.id as userId,b.id as wgyId
+        from user a LEFT JOIN  person_baseinfo b on a.id_card_num=b.id_card_num where b.id=#{person_baseinfo_id}
+    </select>
+
+    <select id="getTaskMessageContent" resultType="com.mit.community.entity.TaskMessageContent">
+        select c.name as wgyName,c.cellphone as cellPhone,d.gmt_create as gmtCreate,d.problemType as problemType,e.name
+        from task_message a LEFT JOIN  wgy_info b on a.wgyId=b.id LEFT JOIN person_baseinfo c on b.person_baseinfo_id=c.id
+        LEFT JOIN report_problem d on a.reportProblemId=d.id LEFT JOIN user e on d.userId=e.id
+        where a.reportProblemId=#{reportProblemId} and a.wgyId=#{wgyId}
+    </select>
+
+    <select id="getPeopleCount" resultType="int">
+        select count(*)
+        from access_control where community_code='ab497a8a46194311ad724e6bf79b56de'
+    </select>
+
+    <select id="getOutCount" resultType="int">
+        select outCount
+        from out_people
+    </select>
+
+    <select id="getSirPhoneByPersonBaseInfoId" resultType="String">
+        select cellphone
+        from person_baseinfo where id=#{person_baseinfo_id}
+    </select>
+
+    <update id="updateMqlzd">
+        update report_problem set mqlzd = mqlzd + 1
+        where id=#{id}
+    </update>
+
+    <select id="getPeopleOue" resultType="String">
+        select gmt_create from face_comparison_data order by gmt_create desc limit 1
+    </select>
 </mapper>

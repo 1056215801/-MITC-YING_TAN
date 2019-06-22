@@ -34,7 +34,7 @@ public class PersonBaseInfoService {
                         String nation, String nativePlace, String matrimony, String politicCountenance,
                         String education, String religion, String jobType, String profession, String cellphone,
                         String placeOfDomicile, String placeOfDomicileDetail, String placeOfReside,
-                        String placeOfResideDetail, String placeOfServer, String photoBase64) {
+                        String placeOfResideDetail, String placeOfServer, String photoBase64, String communityCode) {
         User user = userService.getByIDNumber(idCardNum);
         if (user != null) {
             if(StringUtils.isNotBlank(user.getName())){
@@ -45,7 +45,7 @@ public class PersonBaseInfoService {
             }
         }
         PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, age, 0, null, null);
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, photoBase64, 0, age, 0, null, null,communityCode);
         personBaseInfo.setGmtCreate(LocalDateTime.now());
         personBaseInfo.setGmtModified(LocalDateTime.now());
         if(this.getIdByCardNum(idCardNum) == null){
@@ -93,10 +93,10 @@ public class PersonBaseInfoService {
                                   String nation, String nativePlace, String matrimony, String politicCountenance, String education,
                                   String religion, String jobType, String profession, String cellphone, String placeOfDomicile,
                                   String placeOfDomicileDetail, String placeOfReside, String placeOfResideDetail,
-                                  String placeOfServer, String base64, Integer rksx) {
+                                  String placeOfServer, String base64, Integer rksx,String communityCode) {
         PersonBaseInfo personBaseInfo = new PersonBaseInfo(idCardNum, name, formerName, gender, birthday, nation,
                 nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, rksx, age, 0, null, null);
+                placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, base64, rksx, age, 0, null, null,communityCode);
         personBaseInfo.setId(baseId);
         personBaseInfo.setGmtModified(LocalDateTime.now());
         personBaseInfoMapper.updateById(personBaseInfo);
