@@ -1,10 +1,14 @@
 package com.mit.community.module.population.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ExcelData;
+import com.mit.community.entity.SysUser;
 import com.mit.community.entity.entity.InfoSearch;
 import com.mit.community.population.service.InfoSearchService;
 import com.mit.community.service.LabelsService;
+import com.mit.community.service.RedisService;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.ExcelUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -35,15 +39,23 @@ public class InfoSearchController {
     private InfoSearchService infoSearchService;
     @Autowired
     private LabelsService labelsService;
+    @Autowired
+    private RedisService redisService;
 
     @PostMapping("/listPage")
     @ApiOperation(value = "人员信息分页查询", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
-    public Result listPage(@RequestParam(required = false, defaultValue = "0") Integer ageStart,
+    public Result listPage(HttpServletRequest request,@RequestParam(required = false, defaultValue = "0") Integer ageStart,
                            @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
                            String name, String idNum, String sex, String education, String job,
                            String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String accountType = sysUser.getAccountType();
+        String streetName = sysUser.getStreetName();
+        String areaName = sysUser.getAreaName();
+
         Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
-                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
+                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf, accountType, streetName, areaName);
         List<InfoSearch> list = page.getRecords();
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
@@ -69,8 +81,14 @@ public class InfoSearchController {
                                @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
                                String name, String idNum, String sex, String education, String job,
                                String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String accountType = sysUser.getAccountType();
+        String streetName = sysUser.getStreetName();
+        String areaName = sysUser.getAreaName();
+
         Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
-                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
+                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf, accountType, streetName, areaName);
         List<InfoSearch> list = page.getRecords();
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
@@ -114,14 +132,21 @@ public class InfoSearchController {
     }
 
 
+
     @PostMapping("/flowListPage")
     @ApiOperation(value = "流动人口信息查询", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
-    public Result flowListPage(@RequestParam(required = false, defaultValue = "0") Integer ageStart,
-                               @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
-                               String name, String idNum, String sex, String education, String job,
-                               String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
+    public Result flowListPage(HttpServletRequest request,@RequestParam(required = false, defaultValue = "0") Integer ageStart,
+                           @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
+                           String name, String idNum, String sex, String education, String job,
+                           String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String accountType = sysUser.getAccountType();
+        String streetName = sysUser.getStreetName();
+        String areaName = sysUser.getAreaName();
+
         Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
-                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf);
+                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf, accountType, streetName, areaName);
         List<InfoSearch> list = page.getRecords();
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
@@ -136,7 +161,7 @@ public class InfoSearchController {
                     //获取截止日期毫秒数
                     long longDate = date.getTime();
                     long now = System.currentTimeMillis();
-                    int days = (int) ((longDate - now) / (1000 * 3600 * 24));
+                    int days = (int) ((longDate - now) / (1000*3600*24));
                     list.get(i).setValidityDays(days);
                 }
             }
@@ -151,6 +176,7 @@ public class InfoSearchController {
         String day = infoSearchService.getById(1372220);
         return Result.success(day);
     }*/
+
 
 
 }

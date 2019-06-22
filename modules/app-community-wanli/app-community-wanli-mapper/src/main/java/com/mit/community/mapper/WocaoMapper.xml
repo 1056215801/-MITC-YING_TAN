@@ -49,6 +49,8 @@
                     jdbcType="VARCHAR"/>
             <result property="label" column="label" javaType="String"
                     jdbcType="VARCHAR"/>
+            <result property="community_code" column="community_code" javaType="String"
+                    jdbcType="VARCHAR"/>
             <result property="rksx" column="rksx" javaType="int" jdbcType="INTEGER"/>
             <result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
             <result property="isDelete" column="isDelete" javaType="int" jdbcType="INTEGER"/>
@@ -64,97 +66,97 @@
 
     <select id="selectPersonBaseInfoPage" resultMap="infoSearchMap">
     select *,birthday
-    from person_baseinfo
+    from person_baseinfo a LEFT JOIN cluster_community b on a.community_code=b.community_code
     where 1= 1 ${ew.sqlSegment}
 </select>
 
     <select id="selectAzbInfoPage" resultMap="infoSearchMap">
         select b.*
-        from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectAzbInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectBearInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from bear_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from bear_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectCxInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from cx_Info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from cx_Info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectEngPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from engpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from engpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectFlowPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from flow_people_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from flow_people_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectMilitaryServiceInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from militaryservice_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from militaryservice_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectPartyInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from party_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from party_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSfInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from sfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from sfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSqjzpeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from sqjzpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from sqjzpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectStayPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from staypeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from staypeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXdPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from xd_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from xd_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXmsfPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from xmsfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from xmsfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZdqsnPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from zdqsn_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from zdqsn_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZszhPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*
-        from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
+        from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectPersonBaseInfo" resultMap="infoSearchMap">
@@ -168,11 +170,11 @@
         from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
     </select>
 
-    <select id="selectAzbInfo" resultMap="infoSearchMap">
+    <!--<select id="selectAzbInfo" resultMap="infoSearchMap">
         select
         b.*
         from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id where 1= 1 ${ew.sqlSegment}
-    </select>
+    </select>-->
 
     <select id="selectBearInfo" resultMap="infoSearchMap">
         select

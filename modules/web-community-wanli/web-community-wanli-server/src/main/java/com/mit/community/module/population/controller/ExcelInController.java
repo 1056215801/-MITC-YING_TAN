@@ -1,12 +1,11 @@
 package com.mit.community.module.population.controller;
 
-import com.mit.community.entity.LdzInfo;
-import com.mit.community.entity.OldInfo;
-import com.mit.community.entity.WgyInfo;
-import com.mit.community.entity.ZyzInfo;
+import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.*;
 import com.mit.community.entity.entity.*;
 import com.mit.community.population.service.*;
 import com.mit.community.service.*;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.DateUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -80,10 +79,15 @@ public class ExcelInController {
     private CarInfoService carInfoService;
     @Autowired
     private MilitaryServiceService militaryServiceService;
+    @Autowired
+    private RedisService redisService;
 
     @PostMapping("/Military")
     @ApiOperation(value = "兵役excel导入", notes = "传参：")
     public Result Military(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -159,7 +163,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -175,6 +179,9 @@ public class ExcelInController {
     @PostMapping("/zyz")
     @ApiOperation(value = "志愿者excel导入", notes = "传参：")
     public Result zyz(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -212,7 +219,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -227,6 +234,9 @@ public class ExcelInController {
     @PostMapping("/wgy")
     @ApiOperation(value = "网格员excel导入", notes = "传参：")
     public Result wgy(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -268,12 +278,12 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            wgyInfo = new WgyInfo(person_baseinfo_id, 0, gddh, jtzycygzdwjzw, jtzycyjkzk, jtzycylxfs, jtzycyxm, jtzyrysfzh, officeTime, workCondition);
+            wgyInfo = new WgyInfo(person_baseinfo_id, 0, gddh, jtzycygzdwjzw, jtzycyjkzk, jtzycylxfs, jtzycyxm, jtzyrysfzh, officeTime, workCondition, null, null);
             list.add(wgyInfo);
         }
         wgyService.saveList(list);
@@ -283,6 +293,9 @@ public class ExcelInController {
     @PostMapping("/old")
     @ApiOperation(value = "60岁老人excel导入", notes = "传参：")
     public Result old(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -328,7 +341,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -343,6 +356,9 @@ public class ExcelInController {
     @PostMapping("/ldz")
     @ApiOperation(value = "楼栋长excel导入", notes = "传参：")
     public Result ldz(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -385,7 +401,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -400,6 +416,9 @@ public class ExcelInController {
     @PostMapping("/zszh")
     @ApiOperation(value = "肇事肇祸excel导入", notes = "传参：")
     public Result zszh(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -459,7 +478,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -476,6 +495,9 @@ public class ExcelInController {
     @PostMapping("/zdqsn")
     @ApiOperation(value = "重点青少年excel导入", notes = "传参：")
     public Result zdqsn(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -525,7 +547,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -540,6 +562,9 @@ public class ExcelInController {
     @PostMapping("/xmsf")
     @ApiOperation(value = "刑满释放人员excel导入", notes = "传参：")
     public Result xmsf(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -593,7 +618,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -608,6 +633,9 @@ public class ExcelInController {
     @PostMapping("/xd")
     @ApiOperation(value = "吸毒人员excel导入", notes = "传参：")
     public Result xd(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -655,7 +683,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -670,6 +698,9 @@ public class ExcelInController {
     @PostMapping("/azb")
     @ApiOperation(value = "艾滋病excel导入", notes = "传参：")
     public Result azb(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         AzbInfo azbInfo = null;
         List<AzbInfo> list = new ArrayList<>();
         String filePath = saveFile(request, excel);
@@ -715,7 +746,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -730,6 +761,9 @@ public class ExcelInController {
     @PostMapping("/bear")
     @ApiOperation(value = "计生excel导入", notes = "传参：")
     public Result bear(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -774,7 +808,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -789,6 +823,9 @@ public class ExcelInController {
     @PostMapping("/cx")
     @ApiOperation(value = "传销excel导入", notes = "传参：")
     public Result cx(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -823,7 +860,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -838,6 +875,9 @@ public class ExcelInController {
     @PostMapping("/sf")
     @ApiOperation(value = "上访excel导入", notes = "传参：")
     public Result sf(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -879,7 +919,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -895,6 +935,9 @@ public class ExcelInController {
     @PostMapping("/sqjz")
     @ApiOperation(value = "社区矫正excel导入", notes = "传参：")
     public Result sqjz(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -976,7 +1019,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -992,6 +1035,9 @@ public class ExcelInController {
     @PostMapping("/stay")
     @ApiOperation(value = "留守人员excel导入", notes = "传参：")
     public Result stay(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -1043,7 +1089,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -1059,6 +1105,9 @@ public class ExcelInController {
     @PostMapping("/dy")
     @ApiOperation(value = "党员excel导入", notes = "传参：")
     public Result dy(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -1106,7 +1155,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -1121,6 +1170,9 @@ public class ExcelInController {
     @RequestMapping(value = "/person", produces = "text/html;charset=utf-8", method = RequestMethod.POST)
     @ApiOperation(value = "人员基本信息excel导入", notes = "传参：")
     public Result person(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         //String filePath = saveFile(request, excel);
         //System.out.println("======filePath="+filePath);
         //把MultipartFile转化为File
@@ -1189,7 +1241,7 @@ public class ExcelInController {
             }
             personBaseInfo = new PersonBaseInfo(idCardNum, userName, formerName, gender, birthday, nation,
                     nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null, 0, age, 0, null, null);
+                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null, 0, age, 0, null, null,communityCode);
             list.add(personBaseInfo);
         }
         personBaseInfoService.saveList(list);
@@ -1199,6 +1251,9 @@ public class ExcelInController {
     @PostMapping("/census")
     @ApiOperation(value = "户籍人口excel导入", notes = "传参：")
     public Result census(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -1232,7 +1287,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -1247,6 +1302,9 @@ public class ExcelInController {
     @PostMapping("/ld")
     @ApiOperation(value = "流动人口信息excel导入", notes = "传参：")
     public Result ld(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -1308,7 +1366,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -1324,6 +1382,9 @@ public class ExcelInController {
     @PostMapping("/car")
     @ApiOperation(value = "车辆excel导入", notes = "传参：")
     public Result car(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String filePath = saveFile(request, excel);
         Workbook book;
         book = Workbook.getWorkbook(new File(filePath));
@@ -1371,7 +1432,7 @@ public class ExcelInController {
                     person_baseinfo_id = id;
                 } else {
                     person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
-                            null, null, null, null, cellphone, null, null, null, null, null, null);
+                            null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
                 return Result.success("存在未填写身份证信息的记录");
@@ -1384,6 +1445,9 @@ public class ExcelInController {
     }
 
     public String saveFile(HttpServletRequest request, MultipartFile excel) throws Exception {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
         String name = excel.getOriginalFilename();
         String ext = "";//文件后缀
         if (name.contains(".")) {

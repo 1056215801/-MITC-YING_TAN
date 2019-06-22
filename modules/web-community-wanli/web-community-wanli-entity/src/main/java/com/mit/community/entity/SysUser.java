@@ -88,4 +88,13 @@ public class SysUser implements Serializable {
      */
     @TableField("management_unit")
     private String managementUnit;
+
+    @TableField("management_scope")
+    private String managementScope;
+
+    @TableField("account_type")
+    private String accountType;
+
+    @TableField("community_name")
+    private String communityName;
 }

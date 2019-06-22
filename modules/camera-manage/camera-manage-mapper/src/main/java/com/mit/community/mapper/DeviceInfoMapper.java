@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Param;
 
 public interface DeviceInfoMapper extends BaseMapper<DeviceInfo> {
     void updateToken(@Param("deviceId")String deviceId, @Param("token")String token);
+    public void updateOutCount();
 }

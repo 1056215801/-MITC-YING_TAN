@@ -33,4 +33,20 @@ public class LabelsController {
         return Result.success(labels);
     }
 
+    @PostMapping("/getPeopleCount")
+    @ApiOperation(value = "获取驻留人数", notes = "输入参数：")
+    public Result getPeopleCount(){//正式的需要传入楼栋信息，摄像头的地址要和小区关联
+        int count = personLabelsService.getPeopleCount();
+        int outCount = personLabelsService.getOutCount();
+        int peopleCount = count - outCount;
+        return Result.success(peopleCount);
+    }
+
+    @PostMapping("/getPeopleOue")
+    @ApiOperation(value = "获取出去的人", notes = "输入参数：")
+    public Result getPeopleOue(){//正式的需要传入楼栋信息，摄像头的地址要和小区关联
+        String time = personLabelsService.getPeopleOue();
+        return Result.success(time);
+    }
+
 }

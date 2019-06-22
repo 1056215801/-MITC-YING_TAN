@@ -73,13 +73,14 @@ public class DeviceController {
     public void upload(HttpServletRequest request, HttpServletResponse response,String lingPai) throws Exception{
         InputStream in = null;
         try{
-            System.out.println("===========进入download上传比对数据=" + lingPai);
+            //System.out.println("===========进入download上传比对数据=" + lingPai);
             in = request.getInputStream();
             String model = Utils.inputStream2String(in, "");
             if (model != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 UploadFaceComparisonData data = mapper.readValue(model, UploadFaceComparisonData.class);
                 String basePath = request.getServletContext().getRealPath("imgs/");
+                //System.out.println("=====================文件夹路径="+ basePath );
                 File file = new File(basePath);
                 if (!file.exists()) {
                     file.mkdir();
@@ -109,6 +110,7 @@ public class DeviceController {
             if (!file.exists()) {
                 file.mkdir();
             }
+            deviceService.updateOutCount();
             realTimePhotoService.saveSnapPhoto(basePath, deviceNum, photoBase64, time);
         } catch (Exception e){
             e.printStackTrace();

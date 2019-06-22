@@ -12,6 +12,7 @@ public class WebHandleProblemInfo {
     private String address;
     private int isOpen;
     private int status;
+    private int mqlzd;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     protected LocalDateTime gmtCreate;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -28,6 +29,14 @@ public class WebHandleProblemInfo {
     private String sloveUrl;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime handletime;
+
+    public int getMqlzd() {
+        return mqlzd;
+    }
+
+    public void setMqlzd(int mqlzd) {
+        this.mqlzd = mqlzd;
+    }
 
     public LocalDateTime getHandletime() {
         return handletime;

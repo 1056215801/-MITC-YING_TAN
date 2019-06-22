@@ -14,6 +14,7 @@ import util.Utils;
 import javax.imageio.stream.FileImageOutputStream;
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,9 @@ public class FaceComparisonService {
 
     @Autowired
     private DeviceInfoMapper deviceInfoMapper;
+
+    @Autowired
+    private ReportProblemService ReportProblemService;
 
     /**
      * 保存QQ物联摄像头上传的比对照片
@@ -58,6 +62,14 @@ public class FaceComparisonService {
             faceComparisonData.setGmtCreate(LocalDateTime.now());
             faceComparisonData.setGmtModified(LocalDateTime.now());
             faceComparisonMapper.insert(faceComparisonData);
+            String[] a = path.split("\\\\");
+            //String path = address.getHostAddress()+":8010/cloud-service/imgs/"+a[a.length-1];
+            String url = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
+            List<String> urls = new ArrayList<>();
+            urls.add(url);
+            if ("艾武德".equals(data.getData().getName())) {
+                ReportProblemService.save(91,"上访人员外出","停车","东湖区",1, urls);
+            }
         }
     }
 }

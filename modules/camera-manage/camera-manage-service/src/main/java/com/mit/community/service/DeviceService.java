@@ -35,4 +35,8 @@ public class DeviceService {
             deviceInfoMapper.updateToken(deviceId, token);
         }
     }
+
+    public void updateOutCount(){
+        deviceInfoMapper.updateOutCount();
+    }
 }

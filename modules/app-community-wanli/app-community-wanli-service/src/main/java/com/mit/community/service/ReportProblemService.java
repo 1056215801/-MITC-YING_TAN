@@ -31,7 +31,7 @@ public class ReportProblemService {
 
     @Transactional
     public void save(Integer userId, String content, String problemType, String address, int isOpen, String base64PhotoJsonArray){
-        ReportProblem reportProblem = new ReportProblem(userId, content, problemType, address, isOpen, 0);
+        ReportProblem reportProblem = new ReportProblem(userId, content, problemType, address, isOpen, 0,0);
         reportProblem.setGmtCreate(LocalDateTime.now());
         reportProblem.setGmtModified(LocalDateTime.now());
         reportProblemMapper.insert(reportProblem);
@@ -51,8 +51,8 @@ public class ReportProblemService {
         }
     }
 
-    public void save(Integer userId, String content, String problemType, String address, Integer isOpen, List<String>imageUrls){
-        ReportProblem reportProblem = new ReportProblem(userId, content, problemType, address, isOpen, 0);
+    public Integer save(Integer userId, String content, String problemType, String address, Integer isOpen, List<String>imageUrls){
+        ReportProblem reportProblem = new ReportProblem(userId, content, problemType, address, isOpen, 0,0);
         reportProblem.setGmtCreate(LocalDateTime.now());
         reportProblem.setGmtModified(LocalDateTime.now());
         reportProblemMapper.insert(reportProblem);
@@ -70,7 +70,7 @@ public class ReportProblemService {
                 reportProblemPhotoMapper.insert(reportProblemPhoto);
             }
         }
-
+        return id;
     }
 
     public Page<ReportProblemInfo> listPage (String content, String userId, String timeYear, String timeMonth,String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{

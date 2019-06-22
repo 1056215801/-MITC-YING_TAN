@@ -58,4 +58,15 @@ public class WgyService {
         }
     }
 
+    public Integer getWgyIdByJb(String jb){
+        Integer id = null;
+        EntityWrapper<WgyInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("jb", jb);
+        List<WgyInfo> list = wgyMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            id = list.get(0).getId();
+        }
+        return id;
+    }
+
 }

@@ -55,6 +55,8 @@
                 jdbcType="INTEGER"/>
         <result property="status" column="status" javaType="int"
                 jdbcType="INTEGER"/>
+        <result property="mqlzd" column="mqlzd" javaType="int"
+                jdbcType="INTEGER"/>
         <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler"
                 javaType="java.time.LocalDateTime"
                 jdbcType="OTHER"/>
@@ -97,7 +99,7 @@
     </select>
 
     <select id="getWebHandleProblem" resultMap="webHandleProblemInfoMap">
-        select a.id,a.content,a.problemType,a.address,a.isOpen,a.status,a.gmt_create,a.gmt_modified,
+        select a.id,a.content,a.problemType,a.address,a.isOpen,a.status,a.gmt_create,a.gmt_modified,a.mqlzd,
         b.id as userId,b.icon_url as iconUrl,b.nickname as userName,c.base64,d.content as neirong,d.gmt_create handletime,e.base64 as handleBase64,
         f.icon_url as sloveUrl,f.nickname as sloveName
         from report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN report_problem_photo c on a.id=c.reportProblemId
