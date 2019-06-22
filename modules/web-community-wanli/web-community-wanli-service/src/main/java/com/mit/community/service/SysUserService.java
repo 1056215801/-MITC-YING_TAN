@@ -103,6 +103,11 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
     /**
      * 保存用户
      *
+     *
+     * @param username1
+     * @param password1
+     * @param s
+     * @param scope
      * @param name          姓名
      * @param username      用户名
      * @param password      密码
@@ -115,15 +120,16 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
      * @company mitesofor
      */
    @Transactional(rollbackFor = Exception.class)
-    public void save(String name, String username, String password, String communityCode, String email,String role,
-                     String phone, String remark,String accoutType,String managementScope) {
+    public void save(String username,String  password,  String role,String managementScope, String  accountType,String phone, String provinceName,
+                     String cityName,  String areaName,String streetName, String address, String communityCode, String communityName,String adminName,String email,String remark) {
         if (StringUtils.isBlank(email)) {
             email = StringUtils.EMPTY;
         }
         if (StringUtils.isBlank(remark)) {
             remark = StringUtils.EMPTY;
         }
-        SysUser sysUser = new SysUser(username,password,role,managementScope,accoutType,phone);
+        SysUser sysUser = new SysUser(username, password,  role,managementScope,  accountType,phone, provinceName,
+                cityName,  areaName,streetName, address, communityCode, communityName,adminName);
      /*   sysUser.setGmtCreate(LocalDateTime.now());
         sysUser.setGmtModified(LocalDateTime.now());*/
         sysUserMapper.insert(sysUser);

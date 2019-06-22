@@ -2,23 +2,28 @@ package com.mit.community.module.system.controller;
 
 import com.mit.auth.client.annotation.IgnoreClientToken;
 import com.mit.auth.client.annotation.IgnoreUserToken;
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.SysPermission;
 import com.mit.community.entity.SysRole;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.SysUserRole;
+import com.mit.community.service.RedisService;
 import com.mit.community.service.SysRolePermissionService;
 import com.mit.community.service.SysUserRoleService;
 import com.mit.community.service.SysUserService;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +46,9 @@ public class SysUserController {
     private SysUserRoleService sysUserRoleService;
     @Autowired
     private SysRolePermissionService sysRolePermissionService;
+
+    @Autowired
+    private RedisService redisService;
 
     /**
      * @return com.mit.community.util.Result
@@ -100,19 +108,30 @@ public class SysUserController {
         return Result.success("用户名不存在");
     }
 
+
     @PostMapping("/saveUser")
     @ApiOperation(value = "保存用户", notes = "传参：username 用户名 required、" +
             "password:密码 required、communityCode 小区code required、" +
             "email 电子邮件、" +
-            "phone 手机号 required、remak 备注"+"accoutType 账号类型、 managementScope 管辖范围  role ")
+            "phone 手机号 required、remak 备注"+"accoutType 账号类型、 managementScope 管辖范围  role 、 provinceName 省份名称 required、"+
+            "cityName 城市名称 required、 areaName 区/县名称 required 、streetName 镇/街道 required 、communityCode 小区code required、 " +
+            "communityName 小区名称 required 、 adminName 管理员名称、address 地址"
+    )
     public Result saveUser(String name, String username, String password, String communityCode, String email,
-                              String phone, String remark,String accoutType, String  managementScope,String role) {
+                           String phone, String remark, String accountType, String  managementScope, String role, String provinceName, String cityName,
+                           String areaName, String streetName, String address , String communityName, String adminName, HttpServletRequest request) {
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
+
         boolean status = sysUserService.hasUsername(username);
         if (status) {
             return Result.error("用户名已存在");
         }
-        sysUserService.save( name, username, password,  communityCode,  email, role,
-                 phone, remark, accoutType, managementScope);
+        sysUserService.save( username, password,  role,managementScope,  accountType,phone, provinceName,
+                cityName,  areaName,streetName, address, communityCode, communityName,adminName,email,remark);
         return Result.success("保存成功");
     }
 
