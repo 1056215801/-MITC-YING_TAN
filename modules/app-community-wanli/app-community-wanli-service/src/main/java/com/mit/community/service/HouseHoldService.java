@@ -439,7 +439,7 @@ public class HouseHoldService {
                         StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                         idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                         (short) 99, null, null, null, null, null, null, null,
-                        Integer.valueOf(list.get(0).getHouseholdType()),null);
+                        Integer.valueOf(list.get(0).getHouseholdType()),null,null);
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
                 houseHoldMapper.insert(houseHold);
@@ -480,7 +480,7 @@ public class HouseHoldService {
                         StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                         idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                         (short) 99, null, null, null, null, null, null, null,
-                        Integer.valueOf(list.get(0).getHouseholdType()),null);
+                        Integer.valueOf(list.get(0).getHouseholdType()),null,null);
                 edidHousehold.setGmtModified(LocalDateTime.now());
                 houseHoldMapper.updateHouseholdByHouseholdId(edidHousehold);
                 //删除房屋信息

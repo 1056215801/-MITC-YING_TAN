@@ -59,10 +59,10 @@ public class SysUserController {
      * @author shuyy
      * @date 2018/12/18 10:16
      * @company mitesofor
-    */
+     */
     @PostMapping("/listUserByRoleId")
     @ApiOperation(value = "查询角色下的用户")
-    public Result listUserByRoleId(Integer roleId){
+    public Result listUserByRoleId(Integer roleId) {
         List<SysUser> sysUsers = sysUserService.listByRoleId(roleId);
         return Result.success(sysUsers);
     }
@@ -76,7 +76,7 @@ public class SysUserController {
      */
     @PostMapping("/listRoleByUserId")
     @ApiOperation(value = "查询用户下的所有角色")
-    public Result listRoleByUserId(Integer userId){
+    public Result listRoleByUserId(Integer userId) {
         List<SysRole> sysRoles = sysUserService.listByUserId(userId);
         return Result.success(sysRoles);
     }
@@ -115,17 +115,16 @@ public class SysUserController {
     }*/
 
     /**
-     *
      * @param roleIdList
      * @param uid
      * @return void
      * @author shuyy
      * @date 2018/12/17 20:13
      * @company mitesofor
-    */
+     */
     @PostMapping("/saveUserRole")
     @ApiOperation(value = "保存用户角色", notes = "传参：roleIdList 角色id列表、 uid 用户id")
-    public Result saveUserRole(@RequestParam("roleIdList") List<Integer> roleIdList, Integer uid){
+    public Result saveUserRole(@RequestParam("roleIdList") List<Integer> roleIdList, Integer uid) {
         sysUserRoleService.save(roleIdList, uid);
         return Result.success("保存成功");
     }
@@ -137,10 +136,10 @@ public class SysUserController {
      * @author shuyy
      * @date 2018/12/17 20:23
      * @company mitesofor
-    */
+     */
     @PostMapping("/listPermissionByUserId")
     @ApiOperation(value = "查询用户权限，通过用户id", notes = "传参：uid 用户id")
-    public Result listPermissionByUserId(Integer uid){
+    public Result listPermissionByUserId(Integer uid) {
         List<SysUserRole> sysUserRoles = sysUserRoleService.listByUserId(uid);
         List<Integer> list = sysUserRoles.parallelStream().map(SysUserRole::getRoleId).collect(Collectors.toList());
         List<SysPermission> sysPermissions = sysRolePermissionService.listByRoleIdList(list);

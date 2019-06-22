@@ -9,15 +9,15 @@ public class PersonLabelsService {
     @Autowired
     private PersonLabelsMapper labelsMapper;
 
-    public void saveLabels(String labels,Integer userId){
+    public void saveLabels(String labels, Integer userId) {
         labelsMapper.saveLabels(labels, userId);
     }
 
-    public String getLabelsByHousehold(Integer household){
+    public String getLabelsByHousehold(Integer household) {
         return labelsMapper.getLabelsByHousehold(household);
     }
 
-    public int getRkcfByIdNum(String idNum){
+    public String getRkcfByIdNum(String idNum) {
         return labelsMapper.getRkcfByIdNum(idNum);
     }
 

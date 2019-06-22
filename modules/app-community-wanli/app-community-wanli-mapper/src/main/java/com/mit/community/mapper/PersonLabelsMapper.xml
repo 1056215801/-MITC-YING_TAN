@@ -13,7 +13,7 @@
         from household where household_id=#{household}
     </select>
 
-    <select id="getRkcfByIdNum" resultType="int">
+    <select id="getRkcfByIdNum" resultType="String">
         select rksx
         from person_baseinfo where id_card_num=#{idNum}
     </select>
