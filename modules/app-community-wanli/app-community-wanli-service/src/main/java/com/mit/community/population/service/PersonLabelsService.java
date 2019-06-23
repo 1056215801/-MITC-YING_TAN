@@ -6,6 +6,8 @@ import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class PersonLabelsService {
     @Autowired
@@ -53,6 +55,14 @@ public class PersonLabelsService {
 
     public String getPeopleOue() {
         return labelsMapper.getPeopleOue();
+    }
+
+    public String getMenJinTime(String name){
+        return labelsMapper.getMenJinTime(name);
+    }
+
+    public String getContentByTime(LocalDateTime time){
+        return labelsMapper.getContentByTime(time);
     }
 
 }

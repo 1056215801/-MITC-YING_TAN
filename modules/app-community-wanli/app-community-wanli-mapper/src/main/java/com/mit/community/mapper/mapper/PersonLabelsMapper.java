@@ -4,6 +4,8 @@ import com.mit.community.entity.TaskMessageContent;
 import com.mit.community.entity.TaskMessageSirInfo;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
+
 public interface PersonLabelsMapper {
     public void saveLabels(@Param("labels") String labels, @Param("userId") Integer userId);
 
@@ -26,4 +28,6 @@ public interface PersonLabelsMapper {
     public void updateMqlzd(@Param("id") Integer id);
 
     public String getPeopleOue();
+    public String getMenJinTime(@Param("name")String name);
+    public String getContentByTime(@Param("time")LocalDateTime time);
 }

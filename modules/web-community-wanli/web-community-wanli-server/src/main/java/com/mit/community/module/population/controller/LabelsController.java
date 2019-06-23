@@ -42,7 +42,7 @@ public class LabelsController {
         return Result.success(peopleCount);
     }
 
-    @PostMapping("/getPeopleOue")
+    @GetMapping("/getPeopleOue")
     @ApiOperation(value = "获取出去的人", notes = "输入参数：")
     public Result getPeopleOue(){//正式的需要传入楼栋信息，摄像头的地址要和小区关联
         String time = personLabelsService.getPeopleOue();

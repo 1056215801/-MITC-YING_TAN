@@ -283,7 +283,7 @@ public class ExcelInController {
             } else {
                 return Result.success("存在未填写身份证信息的记录");
             }
-            wgyInfo = new WgyInfo(person_baseinfo_id, 0, gddh, jtzycygzdwjzw, jtzycyjkzk, jtzycylxfs, jtzycyxm, jtzyrysfzh, officeTime, workCondition, null, null);
+            wgyInfo = new WgyInfo(person_baseinfo_id, 0, gddh, jtzycygzdwjzw, jtzycyjkzk, jtzycylxfs, jtzycyxm, jtzyrysfzh, officeTime, workCondition);
             list.add(wgyInfo);
         }
         wgyService.saveList(list);

@@ -20,6 +20,6 @@ public class WgyInfo extends BaseEntity{
     private String jtzyrysfzh;
     private String officeTime;
     private String workCondition;
-    private String jb;
-    private Integer sirid;
+   /* private String jb;
+    private Integer sirid;*/
 }

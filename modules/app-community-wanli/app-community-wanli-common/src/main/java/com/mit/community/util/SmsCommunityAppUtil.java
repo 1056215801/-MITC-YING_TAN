@@ -71,6 +71,23 @@ public class SmsCommunityAppUtil {
     }
 
     /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/6/2 11:30
+     * @Company mitesofor
+     * @Description:~发送处理通知
+     */
+    public static void sendHandleMsg(String cellphone, String lower,String higher) {
+        Map<String, String> param = Maps.newHashMapWithExpectedSize(1);
+        param.put("lowerLevel", lower);
+        param.put("higherLevel", higher);
+        try {
+            SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_SJCL, param);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 生成随机验证码
      *
      * @return java.lang.String
