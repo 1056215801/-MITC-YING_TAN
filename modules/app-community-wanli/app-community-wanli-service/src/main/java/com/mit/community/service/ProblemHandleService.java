@@ -27,16 +27,16 @@ public class ProblemHandleService {
     @Autowired
     private HandleProblemMapper handleProblemMapper;
 
-    public int getProblemCount(){
-        return problemHandleMapper.getProblemCount("停车");
+    public int getProblemCount(String type){
+        return problemHandleMapper.getProblemCount(type);
     }
 
-    public List<ReportProblemInfo> getProblem(){
-        return problemHandleMapper.getProblem(0,"停车");
+    public List<ReportProblemInfo> getProblem(String type){
+        return problemHandleMapper.getProblem(0,type);
     }
 
-    public List<HandleProblemInfo> getHandleProblem(){
-        return handleProblemMapper.getProblemSlove(1,"停车");
+    public List<HandleProblemInfo> getHandleProblem(String type){
+        return handleProblemMapper.getProblemSlove(1,type);
     }
 
     public Page<HandleProblemInfo> getWebProblem(String problemType, String status, LocalDateTime gmtCreateTimeStart,
@@ -101,6 +101,7 @@ public class ProblemHandleService {
             Integer a = Integer.valueOf(status);
             wrapper.eq("a.status", a);
         }
+        wrapper.orderBy("a.gmt_create",false);
         List<WebHandleProblemInfo> list = handleProblemMapper.getWebHandleProblem(page, wrapper);
         page.setRecords(list);
         return page;

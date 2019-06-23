@@ -88,8 +88,8 @@ public class ReportProblemController {
         //消息推送
         String title = "消息通知";
         WebPush.sendAllsetNotification(MSG,title);
-        Integer wgyId = wgyService.getWgyIdByJb("居委");
-        taskMessageService.save(id,title,MSG,wgyId,0,0,null);
+        //Integer wgyId = wgyService.getWgyIdByJb("居委");
+        //taskMessageService.save(id,title,MSG,wgyId,0,0,null);
         return Result.success("保存成功");
     }
 

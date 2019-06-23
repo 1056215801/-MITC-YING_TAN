@@ -149,14 +149,14 @@ public class InfoSearchService {
         Page<InfoSearch> page = new Page<>(pageNum, pageSize);
         EntityWrapper<InfoSearch> wrapper = new EntityWrapper<>();
         if (label == null || "".equals(label)) {
-            if (StringUtils.isNotBlank(accountType)) {
+            /*if (StringUtils.isNotBlank(accountType)) {
                 if ("区级账号".equals(accountType)) {
                     wrapper.eq("b.area_name", areaName);
                 }
                 if ("镇/街道账号".equals(accountType)) {
                     wrapper.eq("b.street_name", streetName);
                 }
-            }
+            }*/
 
             if (ageStart != 0) {
                 wrapper.ge("a.age", ageStart);
@@ -197,14 +197,14 @@ public class InfoSearchService {
             List<InfoSearch> list = infoSearchMapper.selectPersonBaseInfoPage(page, wrapper);
             page.setRecords(list);
         } else {
-            if (StringUtils.isNotBlank(accountType)) {
+            /*if (StringUtils.isNotBlank(accountType)) {
                 if ("区级账号".equals(accountType)) {
                     wrapper.eq("c.area_name", areaName);
                 }
                 if ("镇/街道账号".equals(accountType)) {
                     wrapper.eq("c.street_name", streetName);
                 }
-            }
+            }*/
 
             if (ageStart != 0) {
                 wrapper.ge("b.age", ageStart);

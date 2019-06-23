@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class TaskMessageSirInfo {
     private Integer userId;
     private Integer wgyId;
+    private String jb;//上级部门名称
 }

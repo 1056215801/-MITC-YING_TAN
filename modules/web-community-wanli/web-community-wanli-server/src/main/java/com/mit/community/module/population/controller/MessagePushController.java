@@ -88,5 +88,14 @@ public class MessagePushController {
         return Result.success(page);
     }
 
+    @GetMapping("/cb")
+    @ApiOperation(value = "催办")
+    public Result cb() {
+        String title = "消息通知";
+        String MSG = "收到新的问题反馈，请登录网格助手进行处理";
+        WebPush.sendAllsetNotification(MSG,title);
+        return Result.success("催办成功");
+    }
+
 
 }

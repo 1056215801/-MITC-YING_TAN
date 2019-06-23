@@ -73,6 +73,28 @@ public class ReportProblemService {
         return id;
     }
 
+    public Integer save(Integer userId, String content, String problemType, String address, Integer isOpen, List<String>imageUrls,LocalDateTime create){
+        ReportProblem reportProblem = new ReportProblem(userId, content, problemType, address, isOpen, 0,0);
+        reportProblem.setGmtCreate(create);
+        reportProblem.setGmtModified(LocalDateTime.now());
+        reportProblemMapper.insert(reportProblem);
+        Integer id = reportProblem.getId();
+        if (!imageUrls.isEmpty()) {
+            ReportProblemPhoto reportProblemPhoto = null;
+            for (int i=0; i < imageUrls.size(); i++) {
+                reportProblemPhoto = new ReportProblemPhoto();
+                reportProblemPhoto.setReportProblemId(id);
+                //reportProblemPhoto.setBase64((String) parseArray.get(i));
+                reportProblemPhoto.setBase64(imageUrls.get(i));
+                reportProblemPhoto.setGmtCreate(LocalDateTime.now());
+                reportProblemPhoto.setGmtModified(LocalDateTime.now());
+                System.out.println("===================0000");
+                reportProblemPhotoMapper.insert(reportProblemPhoto);
+            }
+        }
+        return id;
+    }
+
     public Page<ReportProblemInfo> listPage (String content, String userId, String timeYear, String timeMonth,String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{
         Page<ReportProblemInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<ReportProblemInfo> wrapper = new EntityWrapper<>();
@@ -110,5 +132,18 @@ public class ReportProblemService {
 
     public List<HandleProblemInfo> getSchedule(Integer reportProblemId){
         return reportProblemInfoMapper.getSchedulePhoto(reportProblemId);
+    }
+
+   public List<ReportProblem> getXdAndSf(){
+        EntityWrapper<ReportProblem> wrapper = new EntityWrapper<>();
+        wrapper.eq("status",0);
+        String[] type = {"吸毒","上访"};
+        wrapper.in("problemType",type);
+        List<ReportProblem> list = reportProblemMapper.selectList(wrapper);
+        return list;
+    }
+
+    public void saveSendAfter(ReportProblem reportProblem){
+        reportProblemMapper.updateById(reportProblem);
     }
 }

@@ -6,6 +6,8 @@ import com.mit.community.entity.FaceComparisonData;
 import com.mit.community.entity.UploadFaceComparisonData;
 import com.mit.community.mapper.DeviceInfoMapper;
 import com.mit.community.mapper.FaceComparisonMapper;
+import com.mit.community.util.SmsCommunityAppUtil;
+import com.mit.community.util.WebPush;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,7 @@ public class FaceComparisonService {
     private DeviceInfoMapper deviceInfoMapper;
 
     @Autowired
-    private ReportProblemService ReportProblemService;
+    private ReportProblemService reportProblemService;
 
     /**
      * 保存QQ物联摄像头上传的比对照片
@@ -67,8 +69,11 @@ public class FaceComparisonService {
             String url = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
             List<String> urls = new ArrayList<>();
             urls.add(url);
-            if ("艾武德".equals(data.getData().getName())) {
-                ReportProblemService.save(91,"上访人员外出","停车","东湖区",1, urls);
+            if ("熊起".equals(data.getData().getName())) {
+                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                String title = "消息通知";
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理",title);
+                reportProblemService.save(91,"上访人员外出","上访","东湖区",1, urls);
             }
         }
     }

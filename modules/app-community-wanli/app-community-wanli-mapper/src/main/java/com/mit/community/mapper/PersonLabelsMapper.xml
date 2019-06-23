@@ -24,8 +24,8 @@
     </select>
 
     <select id="getSirUserIdBySirPersonBaseInfoId" resultType="com.mit.community.entity.TaskMessageSirInfo">
-        select a.id as userId,b.id as wgyId
-        from user a LEFT JOIN  person_baseinfo b on a.id_card_num=b.id_card_num where b.id=#{person_baseinfo_id}
+        select a.id as userId,c.id as wgyId,c.jb
+        from user a LEFT JOIN  person_baseinfo b on a.id_card_num=b.id_card_num LEFT JOIN wgy_info c on c.person_baseinfo_id=b.id where b.id=#{person_baseinfo_id}
     </select>
 
     <select id="getTaskMessageContent" resultType="com.mit.community.entity.TaskMessageContent">
@@ -57,5 +57,13 @@
 
     <select id="getPeopleOue" resultType="String">
         select gmt_create from face_comparison_data order by gmt_create desc limit 1
+    </select>
+
+    <select id="getMenJinTime" resultType="String">
+        select gmt_create from access_control where household_name=#{name} order by gmt_create desc limit 1
+    </select>
+
+    <select id="getContentByTime" resultType="String">
+        select content from report_problem where gmt_create=#{time}
     </select>
 </mapper>

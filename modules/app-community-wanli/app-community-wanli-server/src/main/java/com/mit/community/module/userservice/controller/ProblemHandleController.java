@@ -29,20 +29,21 @@ public class ProblemHandleController {
     @GetMapping("/getProblemCount")
     @ApiOperation(value = "获取小区停车问题个数", notes = "输入参数：")
     public Result getProblemCount(){
-        int count = problemHandleService.getProblemCount();
+        int count = problemHandleService.getProblemCount("停车");
         return Result.success(count);
     }
 
     @GetMapping("/getProblem")
     @ApiOperation(value = "获取小区停车问题", notes = "输入参数：")
     public Result getProblem(){
-        List<ReportProblemInfo> list = problemHandleService.getProblem();
+        List<ReportProblemInfo> list = problemHandleService.getProblem("停车");
         return Result.success(list);
     }
 
     @PostMapping("/handleProblem")
-    @ApiOperation(value = "小区停车问题受理", notes = "输入参数：userId 受理人id，reportProblemId 事件id，dept 部门，content 内容,images 照片")
+    @ApiOperation(value = "小区事件受理", notes = "输入参数：userId 受理人id，reportProblemId 事件id，dept 部门，content 内容,images 照片")
     public Result handleProblem(Integer userId ,Integer reportProblemId,String dept,String content,MultipartFile[] images) throws Exception{
+        System.out.println("=========保存成功");
         List<String> imageUrls = new ArrayList<>();
         if (images != null) {
             System.out.println("=====================2222");
@@ -51,14 +52,37 @@ public class ProblemHandleController {
                 String imageUrl = UploadUtil.upload(image);
                 imageUrls.add(imageUrl);
             }
-        }problemHandleService.save(userId,reportProblemId,dept,content,imageUrls);
+        }
+        problemHandleService.save(userId,reportProblemId,dept,content,imageUrls);
         return Result.success("保存成功");
     }
 
     @GetMapping("/getHandleProblem")
     @ApiOperation(value = "获取以处理的小区停车问题", notes = "输入参数：")
     public Result getHandleProblem(){
-        List<HandleProblemInfo> list = problemHandleService.getHandleProblem();
+        List<HandleProblemInfo> list = problemHandleService.getHandleProblem("停车");
+        return Result.success(list);
+    }
+
+
+    @GetMapping("/getDiffProblemCount")
+    @ApiOperation(value = "获取问题个数", notes = "输入参数：")
+    public Result getDiffProblemCount(String type){
+        int count = problemHandleService.getProblemCount(type);
+        return Result.success(count);
+    }
+
+    @GetMapping("/getDiffProblem")
+    @ApiOperation(value = "获取问题", notes = "输入参数：")
+    public Result getDiffProblem(String type){
+        List<ReportProblemInfo> list = problemHandleService.getProblem(type);
+        return Result.success(list);
+    }
+
+    @GetMapping("/getDiffHandleProblem")
+    @ApiOperation(value = "获取以处理的问题", notes = "输入参数：")
+    public Result getDiffHandleProblem(String type){
+        List<HandleProblemInfo> list = problemHandleService.getHandleProblem(type);
         return Result.success(list);
     }
 }

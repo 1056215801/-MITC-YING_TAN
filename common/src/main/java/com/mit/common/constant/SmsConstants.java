@@ -38,7 +38,11 @@ public class SmsConstants {
     public static final String MODEL_CODE_AUTHENTICATION = "SMS_152470943";
 
     /**
-     * 模板code
+     * 事件上报模板code
      */
     public static final String MODEL_CODE_WARN = "SMS_166778828";
+    /**
+     * 事件处理模板code
+     */
+    public static final String MODEL_CODE_SJCL = "SMS_168587002";
 }
