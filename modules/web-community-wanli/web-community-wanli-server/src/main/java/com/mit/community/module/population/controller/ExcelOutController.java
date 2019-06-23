@@ -515,7 +515,7 @@ public class ExcelOutController {
             file.mkdir();
         }
         ExcelUtils.generateExcel(data, basePath + fileName);
-        return Result.success("http://127.0.0.1:9766/api/web/communitywanli/excel/" + fileName);
+        return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
     }
 
     @PostMapping("/getAzbExcel")

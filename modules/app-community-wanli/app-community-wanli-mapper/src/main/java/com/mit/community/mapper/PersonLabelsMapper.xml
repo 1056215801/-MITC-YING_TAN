@@ -3,6 +3,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mit.community.mapper.mapper.PersonLabelsMapper">
+    <resultMap type="com.mit.community.entity.MenJinInfo" id="menJinInfoMap">
+        <result property="createTime" column="createTime" javaType="String"
+                jdbcType="OTHER" />
+        <result property="url" column="url" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getMenJinList" resultMap="menJinInfoMap">
+        select gmt_create as createTime,access_img_url as url from access_control where household_name=#{name} order by gmt_create desc limit 1
+    </select>
+
     <update id="saveLabels">
         update household set labels=#{labels}
         where id=#{userId}
@@ -56,7 +67,7 @@
     </update>
 
     <select id="getPeopleOue" resultType="String">
-        select gmt_create from face_comparison_data order by gmt_create desc limit 1
+        select gmt_create from face_comparison_data where name='熊起' order by gmt_create desc limit 1
     </select>
 
     <select id="getMenJinTime" resultType="String">

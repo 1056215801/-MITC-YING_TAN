@@ -128,7 +128,7 @@ public class InfoSearchController {
         ExcelUtils.generateExcel(data, basePath + fileName);
         //ExcelUtils.exportExcel(response, fileName, data);
         page.setRecords(list);
-        return Result.success("http://127.0.0.1:9766/api/web/communitywanli/excel/" + fileName);
+        return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
     }
 
 

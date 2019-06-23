@@ -1,5 +1,6 @@
 package com.mit.community.population.service;
 
+import com.mit.community.entity.MenJinInfo;
 import com.mit.community.entity.TaskMessageContent;
 import com.mit.community.entity.TaskMessageSirInfo;
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PersonLabelsService {
@@ -63,6 +65,10 @@ public class PersonLabelsService {
 
     public String getContentByTime(LocalDateTime time){
         return labelsMapper.getContentByTime(time);
+    }
+
+    public List<MenJinInfo> getMenJinList(String name){
+        return labelsMapper.getMenJinList(name);
     }
 
 }

@@ -1,10 +1,12 @@
 package com.mit.community.mapper.mapper;
 
+import com.mit.community.entity.MenJinInfo;
 import com.mit.community.entity.TaskMessageContent;
 import com.mit.community.entity.TaskMessageSirInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface PersonLabelsMapper {
     public void saveLabels(@Param("labels") String labels, @Param("userId") Integer userId);
@@ -30,4 +32,5 @@ public interface PersonLabelsMapper {
     public String getPeopleOue();
     public String getMenJinTime(@Param("name")String name);
     public String getContentByTime(@Param("time")LocalDateTime time);
+    public List<MenJinInfo> getMenJinList(@Param("name")String name);
 }
