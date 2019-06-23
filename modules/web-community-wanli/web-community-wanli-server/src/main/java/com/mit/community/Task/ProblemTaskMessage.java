@@ -1,9 +1,6 @@
 package com.mit.community.Task;
 
-import com.mit.community.entity.ReportProblem;
-import com.mit.community.entity.TaskMessage;
-import com.mit.community.entity.TaskMessageContent;
-import com.mit.community.entity.TaskMessageSirInfo;
+import com.mit.community.entity.*;
 import com.mit.community.population.service.PersonLabelsService;
 import com.mit.community.population.service.TaskMessageService;
 import com.mit.community.service.ReportProblemService;
@@ -104,24 +101,26 @@ public class ProblemTaskMessage {
     @Scheduled(cron = "0/1 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void menJin(){
-        String create_Time = personLabelsService.getMenJinTime("艾武德");
-        //List<>
-        String  createTime = create_Time.substring(0,create_Time.length()-2);
-        System.out.println("=============发现吸毒事件"+createTime);
-        long create = DateUtil.parseStringToLong(createTime);
-        long bd = DateUtil.parseStringToLong("2019-06-22 12:00:00");
-        if (create > bd) {
-            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime time = LocalDateTime.parse(createTime,df);
-            String content = personLabelsService.getContentByTime(time);
-            List<String> list = new ArrayList<>();
-            if(!StringUtils.isNotBlank(content)){
-                System.out.println("=============发现吸毒");
-                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
-                reportProblemService.save(91,"吸毒人员聚集","吸毒","东湖区",1, list,time);
+        List<MenJinInfo> infoList = personLabelsService.getMenJinList("艾武德");
+        if(!infoList.isEmpty()) {
+            String create_Time = infoList.get(0).getCreateTime();
+            String  createTime = create_Time.substring(0,create_Time.length()-2);
+            System.out.println("=============发现吸毒事件"+createTime);
+            long create = DateUtil.parseStringToLong(createTime);
+            long bd = DateUtil.parseStringToLong("2019-06-22 12:00:00");
+            if (create > bd) {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime time = LocalDateTime.parse(createTime,df);
+                String content = personLabelsService.getContentByTime(time);
+                List<String> list = new ArrayList<>();
+                list.add(infoList.get(0).getUrl());
+                if(!StringUtils.isNotBlank(content)){
+                    System.out.println("=============发现吸毒");
+                    SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                    reportProblemService.save(91,"吸毒人员聚集","吸毒","东湖区",1, list,time);
+                }
             }
         }
-
     }
 
     @Scheduled(cron = "0/1 * * * * ?")

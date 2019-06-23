@@ -45,6 +45,7 @@ public class MessagePushController {
                              String edu, String job, String marriage, String politics,
                              String rycf, String rysx, String title, String outline, String content, Integer userId,
                              HttpServletRequest request) {
+        WebPush.sendAllsetNotification(outline, title);
         if (userId == null) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);

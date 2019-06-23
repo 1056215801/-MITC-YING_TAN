@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class MenJinInfo {
     private String createTime;
-    private String Url;
+    private String url;
 }
