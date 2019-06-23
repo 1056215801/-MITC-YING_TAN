@@ -22,7 +22,7 @@ import java.io.PrintWriter;
  * @company mitesofor
  */
 @Configuration
-public class LoginInterceptor extends HandlerInterceptorAdapter {
+public class    LoginInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private RedisService redisService;

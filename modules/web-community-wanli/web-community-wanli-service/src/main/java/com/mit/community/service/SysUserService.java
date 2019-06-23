@@ -7,9 +7,12 @@ import com.mit.community.entity.SysRole;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.SysUserRole;
 import com.mit.community.mapper.SysUserMapper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,6 +103,11 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
     /**
      * 保存用户
      *
+     *
+     * @param username1
+     * @param password1
+     * @param s
+     * @param scope
      * @param name          姓名
      * @param username      用户名
      * @param password      密码
@@ -111,24 +119,22 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
      * @date 2018/12/17 19:56
      * @company mitesofor
      */
- /*   @Transactional(rollbackFor = Exception.class)
-    public void save(String name, String username, String password, String communityCode, String email,
-                     String phone, String remark) {
+   @Transactional(rollbackFor = Exception.class)
+    public void save(String username,String  password,  String role,String managementScope, String  accountType,String phone, String provinceName,
+                     String cityName,  String areaName,String streetName, String address, String communityCode, String communityName,String adminName,String email,String remark) {
         if (StringUtils.isBlank(email)) {
             email = StringUtils.EMPTY;
         }
         if (StringUtils.isBlank(remark)) {
             remark = StringUtils.EMPTY;
         }
-        SysUser sysUser = new SysUser(name, username,
-                password, StringUtils.EMPTY, (byte) 1,
-                communityCode, email, Constants.NULL_LOCAL_DATE_TIME,
-                phone, remark);
-        sysUser.setGmtCreate(LocalDateTime.now());
-        sysUser.setGmtModified(LocalDateTime.now());
+        SysUser sysUser = new SysUser(username, password,  role,managementScope,  accountType,phone, provinceName,
+                cityName,  areaName,streetName, address, communityCode, communityName,adminName);
+     /*   sysUser.setGmtCreate(LocalDateTime.now());
+        sysUser.setGmtModified(LocalDateTime.now());*/
         sysUserMapper.insert(sysUser);
     }
-*/
+
     /**
      * 获取用户， 根据用户名
      * @param username 用户名
@@ -146,4 +152,6 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         }
         return sysUsers.get(0);
     }
+
+
 }
