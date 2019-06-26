@@ -76,12 +76,28 @@ public class SmsCommunityAppUtil {
      * @Company mitesofor
      * @Description:~发送处理通知
      */
-    public static void sendHandleMsg(String cellphone, String lower,String higher) {
+    public static void sendHandleMsg(String cellphone, String lower, String higher) {
         Map<String, String> param = Maps.newHashMapWithExpectedSize(1);
         param.put("lowerLevel", lower);
         param.put("higherLevel", higher);
         try {
             SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_SJCL, param);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @Author: HuShanLin
+     * @Date: Create in 2019/6/2 11:30
+     * @Company mitesofor
+     * @Description:~发送车位占用
+     */
+    public static void sendCWZY(String cellphone, String place) {
+        Map<String, String> param = Maps.newHashMapWithExpectedSize(1);
+        param.put("place", place);
+        try {
+            SmsUtil.sendSms(cellphone, SmsConstants.SIGN_MXKJ, SmsConstants.MODEL_CODE_CWZY, param);
         } catch (Exception e) {
             e.printStackTrace();
         }

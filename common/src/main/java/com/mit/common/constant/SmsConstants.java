@@ -45,4 +45,8 @@ public class SmsConstants {
      * 事件处理模板code
      */
     public static final String MODEL_CODE_SJCL = "SMS_168587002";
+    /**
+     * 车位占用模板code
+     */
+    public static final String MODEL_CODE_CWZY = "SMS_153331544";
 }
