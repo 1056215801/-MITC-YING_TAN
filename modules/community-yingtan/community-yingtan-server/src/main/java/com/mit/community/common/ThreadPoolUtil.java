@@ -16,9 +16,9 @@ import java.util.concurrent.*;
 @Component
 public class ThreadPoolUtil implements CommandLineRunner {
 
-        private static ExecutorService threadPoolExecutor;
+    private static ExecutorService threadPoolExecutor;
 
-    private static void init(){
+    private static void init() {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("custom-pool-%d").build();
         threadPoolExecutor = new ThreadPoolExecutor(3, 3,
@@ -32,11 +32,11 @@ public class ThreadPoolUtil implements CommandLineRunner {
      * @author shuyy
      * @date 2018/11/14 9:33
      * @company mitesofor
-    */
-    public static void execute(Runnable thread){
-        if(threadPoolExecutor  == null){
-            synchronized (threadPoolExecutor){
-                if(threadPoolExecutor == null){
+     */
+    public static void execute(Runnable thread) {
+        if (threadPoolExecutor == null) {
+            synchronized (threadPoolExecutor) {
+                if (threadPoolExecutor == null) {
                     init();
                 }
             }
@@ -44,10 +44,10 @@ public class ThreadPoolUtil implements CommandLineRunner {
         threadPoolExecutor.execute(thread);
     }
 
-    public static Future<?> submit(Callable thread){
-        if(threadPoolExecutor  == null){
-            synchronized (threadPoolExecutor){
-                if(threadPoolExecutor == null){
+    public static Future<?> submit(Callable thread) {
+        if (threadPoolExecutor == null) {
+            synchronized (threadPoolExecutor) {
+                if (threadPoolExecutor == null) {
                     init();
                 }
             }

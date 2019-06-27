@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
+public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     private final HouseHoldMapper houseHoldMapper;
 
     private final ClusterCommunityService clusterCommunityService;
@@ -112,6 +112,7 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 统计住户列表信息,通过一组小区code
+     *
      * @param communityCodes 小区code列表
      * @return 住户列表信息
      * @author Mr.Deng
@@ -122,8 +123,10 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         wrapper.in("community_code", communityCodes);
         return houseHoldMapper.selectList(wrapper);
     }
+
     /**
      * 查询小区男女人数,通过小区code
+     *
      * @param communityCode 小区code
      * @return 男女人数
      * @author Mr.Deng
@@ -139,6 +142,7 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 查询男女人数 通过一组communityCode
+     *
      * @param communityCodes communityCode列表
      * @return 男女人数
      * @author Mr.Deng
@@ -158,7 +162,7 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      *
      * @param communityCode 小区code列表
      * @return java.util.Map
-      map:{
+    map:{
      *     field:外地人口,
      *     local:本地人口,
      *     other:其他人口
@@ -226,7 +230,6 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
     }
 
 
-
     /***
      * 统计人员分布，精确到省， 通过小区code
      * @param communityCode 小区code
@@ -280,6 +283,7 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 统计各个身份类型人数、通过小区code列表
+     *
      * @param communityCodeList 小区code列表
      * @return List
      * @author shuyy
@@ -295,6 +299,7 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 统计各个身份类型人数、通过小区code
+     *
      * @param communityCode 小区code
      * @return List
      * @author shuyy
@@ -307,7 +312,6 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         wrapper.setSqlSelect("identity_type, count(*) as num");
         return houseHoldMapper.selectMaps(wrapper);
     }
-
 
 
     /***
@@ -525,7 +529,7 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         List<HouseHold> result = Lists.newArrayListWithCapacity(list.size());
         int tmp = 500;
         for (int i = 0; i < list.size(); i++) {
-            if(i > tmp){
+            if (i > tmp) {
                 tmp += 500;
                 try {
                     Thread.sleep(1000);
@@ -796,6 +800,7 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     /**
      * 获取住户，通过cellphone和communityCode
+     *
      * @param cellphone
      * @param communityCode
      * @return com.mit.community.entity.HouseHold
@@ -803,17 +808,53 @@ public class  HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author shuyy
      * @date 2019-01-15 14:56
      * @company mitesofor
-    */
-    public HouseHold getByHouseholdByCellphoneAndCommunityCode(String cellphone, String communityCode){
+     */
+    public HouseHold getByHouseholdByCellphoneAndCommunityCode(String cellphone, String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.eq("mobile", cellphone);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
-        if(houseHolds.isEmpty()){
+        if (houseHolds.isEmpty()) {
             return null;
         }
         return houseHolds.get(0);
     }
 
+    /**
+     * @Author HuShanLin
+     * @Date 15:50 2019/6/27
+     * @Description:~查询湾里区感知数据
+     */
+    public Map<String, Integer> getFieldLocalPeopleWithWanli(String communityCode) {
+        Map<String, Integer> map = Maps.newHashMapWithExpectedSize(2);
+        Integer field = 0, local = 0, other = 0;
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as local");
+        wrapper.eq("region", "湾里区");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        local = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("local").toString());
 
+        wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as field")
+                .ne("region", "湾里区")
+                .ne("region", "");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        field = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("field").toString());
+
+        wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect("count(*) as other")
+                .eq("region", "");
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        other = Integer.parseInt(houseHoldMapper.selectMaps(wrapper).get(0).get("other").toString());
+        map.put("field", field);
+        map.put("local", local);
+        map.put("other", other);
+        return map;
+    }
 }

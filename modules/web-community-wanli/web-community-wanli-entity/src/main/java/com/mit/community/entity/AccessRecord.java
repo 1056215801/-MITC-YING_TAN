@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
  * @Author HuShanLin
  * @Date Created in 17:46 2019/6/27
  * @Company: mitesofor </p>
- * @Description:~车辆信息
+ * @Description:~车辆通行记录
  */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("vehicle_info")
-public class VehicleInfo extends BaseEntity {
+@TableName("access_record")
+public class AccessRecord extends BaseEntity {
 
     @TableField("car_num")
     private String carnum;

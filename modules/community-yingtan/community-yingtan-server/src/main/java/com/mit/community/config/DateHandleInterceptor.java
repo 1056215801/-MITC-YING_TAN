@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 /**
  * 日期全局处理拦截器
+ *
  * @author asus
  */
 @Intercepts({@Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class,

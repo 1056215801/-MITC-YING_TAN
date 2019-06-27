@@ -31,6 +31,7 @@ import java.util.Objects;
 
 /**
  * 登录
+ *
  * @author shuyy
  * @date 2018/11/14
  * @company mitesofor
@@ -50,6 +51,7 @@ public class LoginController {
 
     /**
      * 生成验证码
+     *
      * @param request  httpRequest
      * @param response httpResponse
      * @author shuyy
@@ -113,14 +115,60 @@ public class LoginController {
             //判断是否是集群管理账户访问不同的登录接口
             //是集群账户
             boolean loginWhether = false;
+            //鹰潭月湖总账号
             if ("ytyuehu".equals(username)) {
                 httpLogin.loginAdmin();
                 String cookie = httpLogin.getCookie();
                 String result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
-                System.out.println(result);
             } else {
-                //是小区管理账户
-                httpLogin.loginUser();
+                //湾里区总账号（胡山林）
+                if ("ncwanli".equals(username)) {
+                    SysUser sysUser = sysUserService.getSysUser(username);
+                    if (sysUser != null) {
+                        return Result.error("账号不存在");
+                    } else {
+                        String menuUser = "小区管理员";
+                        String menuAdmin = "集群管理员";
+                        String adminName = sysUser.getAdminName();
+                        String communityCode = sysUser.getCommunityCode();
+                        String role = sysUser.getRole();
+                        String menu = StringUtils.EMPTY;
+                        map.put("username", sysUser.getUsername());
+                        map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
+                        map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
+                        map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
+                        map.put("isAdmin", menu);
+                        map.put("isWanli", true);
+                        map.put("accountType", 2);
+                        return Result.success(map, "登录成功");
+                    }
+                } else {
+                    SysUser sysUser = sysUserService.getSysUser(username);
+                    if (sysUser != null) {
+                        return Result.error("账号不存在");
+                    } else {
+                        //湾里小区账号（胡山林）
+                        if ("南昌市".equals(sysUser.getCityName()) && "湾里区".equals(sysUser.getAreaName())) {
+                            String menuUser = "小区管理员";
+                            String menuAdmin = "集群管理员";
+                            String adminName = sysUser.getAdminName();
+                            String communityCode = sysUser.getCommunityCode();
+                            String role = sysUser.getRole();
+                            String menu = StringUtils.EMPTY;
+                            map.put("username", sysUser.getUsername());
+                            map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
+                            map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
+                            map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
+                            map.put("isAdmin", menu);
+                            map.put("isWanli", true);
+                            map.put("accountType", 2);
+                            return Result.success(map, "登录成功");
+                        } else {
+                            //其他小区管理账户
+                            httpLogin.loginUser();
+                        }
+                    }
+                }
             }
             //判断是否登录成功
             for (Header h : httpLogin.getHeaders()) {
@@ -179,6 +227,8 @@ public class LoginController {
                     }
                     request.getSession().setAttribute("session", httpLogin.getCookie());
                     map.put("isAdmin", menu);
+                    map.put("isWanli", false);
+                    map.put("accountType", 1);
                     return Result.success(map, "登录成功");
                 } else {
                     return Result.error("用户名或密码错误");
@@ -190,28 +240,28 @@ public class LoginController {
 
     /**
      * 是否登录
+     *
      * @param session
      * @return com.mit.community.util.Result
      * @throws
      * @author shuyy
      * @date 2018/12/28 16:28
      * @company mitesofor
-    */
+     */
     @RequestMapping(value = "/isLogin", method = RequestMethod.GET)
     @ApiOperation(value = "是否登录")
-    public Result isLogin(HttpSession session){
+    public Result isLogin(HttpSession session) {
         Integer role = (Integer) session.getAttribute("role");
         String cookie = (String) session.getAttribute("session");
         String result;
-
-        if(role == 0){
+        if (role == 0) {
             result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/cmp/index?menuId=indexManageLi", cookie);
-        }else{
+        } else {
             result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
         }
-        if(result.contains(" <title>登录</title>")){
+        if (result.contains(" <title>登录</title>")) {
             return Result.success(false);
-        }else {
+        } else {
             return Result.success(true);
         }
     }

@@ -95,17 +95,39 @@ public class ClusterCommunityService {
         wrapper.eq("city_name", cityName);
         return clusterCommunityMapper.selectList(wrapper);
     }
+
     /**
      * 查询社区code列表，通过城市名
+     *
      * @param cityName 城市名
      * @return java.util.List<java.lang.String>
      * @author shuyy
      * @date 2018/11/22 15:15
      * @company mitesofor
-    */
-    public List<String> listCommunityCodeListByCityName(String cityName){
+     */
+    public List<String> listCommunityCodeListByCityName(String cityName) {
         List<ClusterCommunity> clusterCommunities = this.listByCityName(cityName);
         return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
     }
 
+    /**
+     * @Author HuShanLin
+     * @Date 15:26 2019/6/27
+     * @Description:~查询社区code列表，通过地区名
+     */
+    public List<ClusterCommunity> listByAreaName(String areaName) {
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.eq("area_name", areaName);
+        return clusterCommunityMapper.selectList(wrapper);
+    }
+
+    /**
+     * @Author HuShanLin
+     * @Date 16:10 2019/6/27
+     * @Description:~查询社区code列表，通过区县名
+     */
+    public List<String> listCommunityCodeListByAreaName(String areaName) {
+        List<ClusterCommunity> clusterCommunities = this.listByAreaName(areaName);
+        return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
+    }
 }
