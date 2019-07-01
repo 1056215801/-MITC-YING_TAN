@@ -75,6 +75,24 @@ public class FaceComparisonService {
                 WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理",title);
                 reportProblemService.save(91,"上访人员外出","上访","东湖区",1, urls);
             }
+            if ("艾武德".equals(data.getData().getName())) {
+                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                String title = "消息通知";
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理",title);
+                reportProblemService.save(70,"上访人员外出","上访","东湖区",1, urls);
+            }
+            if ("柯尊勇".equals(data.getData().getName())) {
+                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                String title = "消息通知";
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理",title);
+                reportProblemService.save(65,"上访人员外出","上访","东湖区",1, urls);
+            }
+            if ("徐韶群".equals(data.getData().getName())) {
+                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                String title = "消息通知";
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理",title);
+                reportProblemService.save(80,"上访人员外出","上访","东湖区",1, urls);
+            }
         }
     }
 }

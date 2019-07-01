@@ -1,8 +1,6 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.MenJinInfo;
-import com.mit.community.entity.TaskMessageContent;
-import com.mit.community.entity.TaskMessageSirInfo;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,8 +52,13 @@ public class PersonLabelsService {
         labelsMapper.updateMqlzd(id);
     }
 
-    public String getPeopleOue(){
-        return labelsMapper.getPeopleOue();
+    public PeopleOut getPeopleOue(){
+        List<PeopleOut> list = labelsMapper.getPeopleOue();
+        if (!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 
     public String getMenJinTime(String name){
@@ -68,6 +71,14 @@ public class PersonLabelsService {
 
     public List<MenJinInfo> getMenJinList(String name){
         return labelsMapper.getMenJinList(name);
+    }
+
+    public List<WgyInfo> getWgyList(Integer wgyId) {
+        return labelsMapper.getWgyList(wgyId);
+    }
+
+    public String getWgyDeptById(Integer id){
+        return labelsMapper.getWgyDeptById(id);
     }
 
 }

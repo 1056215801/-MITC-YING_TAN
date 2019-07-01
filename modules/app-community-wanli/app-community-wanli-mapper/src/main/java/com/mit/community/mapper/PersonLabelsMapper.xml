@@ -10,6 +10,31 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.PeopleOut" id="peopleOutMap">
+        <result property="gmtModified" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.WgyInfo" id="wgyInfoMap">
+        <result property="id" column="id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="jb" column="jb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="dept" column="dept" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycylxfs" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getWgyList" resultMap="wgyInfoMap">
+        select a.id,a.jb,a.dept,b.cellphone,c.id as person_baseinfo_id from wgy_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN user c on b.id_card_num=c.id_card_num
+        where a.dept=(select d.sjDept from wgy_info d where d.id=#{wgyId}) and a.isFzr=1
+    </select>
+
     <select id="getMenJinList" resultMap="menJinInfoMap">
         select gmt_create as createTime,access_img_url as url from access_control where household_name=#{name} order by gmt_create desc limit 1
     </select>
@@ -66,8 +91,8 @@
         where id=#{id}
     </update>
 
-    <select id="getPeopleOue" resultType="String">
-        select gmt_create from face_comparison_data where name='熊起' order by gmt_create desc limit 1
+    <select id="getPeopleOue" resultMap="peopleOutMap">
+        select name,gmt_create from face_comparison_data where name IN ('熊起','艾武德','柯尊勇','徐韶群') order by gmt_create desc limit 1
     </select>
 
     <select id="getMenJinTime" resultType="String">
@@ -76,5 +101,10 @@
 
     <select id="getContentByTime" resultType="String">
         select content from report_problem where gmt_create=#{time}
+    </select>
+
+    <select id="getWgyDeptById" resultType="String">
+        select dept from wgy_info
+         where id=#{id}
     </select>
 </mapper>

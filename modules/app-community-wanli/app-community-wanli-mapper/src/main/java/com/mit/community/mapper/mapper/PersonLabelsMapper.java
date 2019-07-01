@@ -1,8 +1,6 @@
 package com.mit.community.mapper.mapper;
 
-import com.mit.community.entity.MenJinInfo;
-import com.mit.community.entity.TaskMessageContent;
-import com.mit.community.entity.TaskMessageSirInfo;
+import com.mit.community.entity.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
@@ -19,8 +17,10 @@ public interface PersonLabelsMapper {
     public int getOutCount();
     public String getSirPhoneByPersonBaseInfoId(@Param("person_baseinfo_id")Integer person_baseinfo_id);
     public void updateMqlzd(@Param("id")Integer id);
-    public String getPeopleOue();
+    public List<PeopleOut> getPeopleOue();
     public String getMenJinTime(@Param("name")String name);
     public String getContentByTime(@Param("time")LocalDateTime time);
     public List<MenJinInfo> getMenJinList(@Param("name")String name);
+    public List<WgyInfo> getWgyList(@Param("wgyId")Integer wgyId);
+    public String getWgyDeptById(@Param("id")Integer id);
 }
