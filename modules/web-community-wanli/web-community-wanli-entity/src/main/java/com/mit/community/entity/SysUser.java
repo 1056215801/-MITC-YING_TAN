@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 用户
+ *
  * @author shuyy
  * @date 2018/11/14
  * @company mitesofor
@@ -104,26 +106,40 @@ public class SysUser implements Serializable {
      */
     @TableField("community_name")
     private String communityName;
-    public SysUser(){
+
+    @TableField("gmt_modified")
+    private LocalDateTime alterTime;
+
+    @TableField("gmt_create")
+    private LocalDateTime createtime;
+
+    public SysUser() {
         super();
     }
-    public SysUser(String username, String password, String role, String managementScope, String accountType,String phone,String provinceName,
-                   String cityName, String areaName,String streetName,String address,String communityCode,String communityName,String adminName
 
-                   ) {
+    public SysUser(String username, String password, String communityCode, String provinceName, String cityName, String areaName, String streetName,
+                   String address, String adminName, String role, String logo, String phone, String remark, String managementCommunity, String managementUnit,
+                   String managementScope, String accountType, String communityName, LocalDateTime alterTime, LocalDateTime createtime) {
+        this.id = id;
         this.username = username;
         this.password = password;
+        this.communityCode = communityCode;
+        this.provinceName = provinceName;
+        this.cityName = cityName;
+        this.areaName = areaName;
+        this.streetName = streetName;
+        this.address = address;
+        this.adminName = adminName;
         this.role = role;
+        this.logo = logo;
+        this.phone = phone;
+        this.remark = remark;
+        this.managementCommunity = managementCommunity;
+        this.managementUnit = managementUnit;
         this.managementScope = managementScope;
         this.accountType = accountType;
-        this.phone=phone;
-        this.provinceName=provinceName;
-        this.cityName=cityName;
-        this.areaName=areaName;
-        this.streetName=streetName;
-        this.address=address;
-        this.communityCode=communityCode;
-        this.communityName=communityName;
-        this.adminName=adminName;
+        this.communityName = communityName;
+        this.alterTime = alterTime;
+        this.createtime = createtime;
     }
 }

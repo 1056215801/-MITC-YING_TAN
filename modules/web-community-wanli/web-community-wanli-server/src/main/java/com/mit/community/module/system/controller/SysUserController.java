@@ -58,9 +58,10 @@ public class SysUserController {
      */
     @PostMapping("/listUser")
     @ApiOperation(value = "查询所有用户")
-    public Result listUser() {
-
-       List<SysUser> list = sysUserService.list();
+    public Result listUser(HttpServletRequest request) {
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        List<SysUser> list = sysUserService.list(sysUser.getCommunityCode());
         return Result.success(list);
     }
 
@@ -113,25 +114,33 @@ public class SysUserController {
     @ApiOperation(value = "保存用户", notes = "传参：username 用户名 required、" +
             "password:密码 required、communityCode 小区code required、" +
             "email 电子邮件、" +
-            "phone 手机号 required、remak 备注"+"accoutType 账号类型、 managementScope 管辖范围  role 、 provinceName 省份名称 required、"+
+            "phone 手机号 required、remak 备注" + "accoutType 账号类型、 managementScope 管辖范围  role 、 provinceName 省份名称 required、" +
             "cityName 城市名称 required、 areaName 区/县名称 required 、streetName 镇/街道 required 、communityCode 小区code required、 " +
-            "communityName 小区名称 required 、 adminName 管理员名称、address 地址"
-    )
-    public Result saveUser(String name, String username, String password, String communityCode, String email,
-                           String phone, String remark, String accountType, String  managementScope, String role, String provinceName, String cityName,
-                           String areaName, String streetName, String address , String communityName, String adminName, HttpServletRequest request) {
+            "communityName 小区名称 required 、 adminName 管理员名称、address 地址")
+    public Result saveUser(Integer id, String username, String password, String communityCode, String email,
+                           String phone, String remark, String accountType, String managementScope, String role, String provinceName, String cityName,
+                           String areaName, String streetName, String address, String communityName, String adminName, HttpServletRequest request) {
         if (StringUtils.isBlank(communityCode)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = sysUser.getCommunityCode();
         }
-
-        boolean status = sysUserService.hasUsername(username);
-        if (status) {
-            return Result.error("用户名已存在");
+        SysUser sysUser = sysUserService.existUsername(username);
+        if (sysUser == null) {
+            sysUserService.save(id, username, password, role, managementScope, accountType, phone, provinceName,
+                    cityName, areaName, streetName, address, communityCode, communityName, adminName, email, remark);
+        } else {
+            if (id == null) {
+                return Result.success("用户名已存在");
+            } else {
+                if (id == sysUser.getId()) {
+                    sysUserService.save(id, username, password, role, managementScope, accountType, phone, provinceName,
+                            cityName, areaName, streetName, address, communityCode, communityName, adminName, email, remark);
+                } else {
+                    return Result.success("用户名已存在");
+                }
+            }
         }
-        sysUserService.save( username, password,  role,managementScope,  accountType,phone, provinceName,
-                cityName,  areaName,streetName, address, communityCode, communityName,adminName,email,remark);
         return Result.success("保存成功");
     }
 
@@ -167,4 +176,13 @@ public class SysUserController {
         return Result.success(sysPermissions);
     }
 
+    /**
+     * @Author HuShanLin
+     * @Date 17:02 2019/7/1
+     * @Description:~删除用户
+     */
+    public Result delete(Integer id) {
+        sysUserService.remove(id);
+        return Result.success("删除成功");
+    }
 }

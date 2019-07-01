@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 
 /**
  * java通过httpclient获取cookie模拟登录
+ *
  * @author shuyy
  * @date 2018/11/14 15:17
  * @company mitesofor
@@ -45,6 +46,7 @@ public class HttpLogin implements CommandLineRunner {
 
     /**
      * 小区登录
+     *
      * @author Mr.Deng
      * @date 15:32 2018/11/28
      */
@@ -70,7 +72,6 @@ public class HttpLogin implements CommandLineRunner {
             for (Cookie c : cookies) {
                 tmpCookies.append(c.toString())
                         .append(";");
-                System.out.println("cookies = " + c.toString() + "");
             }
             this.cookie = tmpCookies.toString();
             this.headers = postMethod.getResponseHeaders();
@@ -81,6 +82,7 @@ public class HttpLogin implements CommandLineRunner {
 
     /**
      * 集群登录
+     *
      * @author Mr.Deng
      * @date 15:32 2018/11/28
      */
@@ -127,10 +129,10 @@ public class HttpLogin implements CommandLineRunner {
      */
     public String post(String url, NameValuePair[] data, String cookie) {
         HttpClient httpClient = new HttpClient();
-        httpClient.getParams().setBooleanParameter( "http.protocol.expect-continue" , false );
+        httpClient.getParams().setBooleanParameter("http.protocol.expect-continue", false);
         httpClient.getParams().setContentCharset("utf-8");
         PostMethod postMethod = new PostMethod(url);
-        postMethod.addRequestHeader( "Connection", "close");
+        postMethod.addRequestHeader("Connection", "close");
         postMethod.setRequestBody(data);
         if (StringUtils.isNotBlank(cookie)) {
             postMethod.setRequestHeader("cookie", cookie);
@@ -156,7 +158,6 @@ public class HttpLogin implements CommandLineRunner {
         } finally {
             postMethod.releaseConnection();
         }
-
         return result;
     }
 

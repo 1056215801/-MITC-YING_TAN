@@ -15,10 +15,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 /**
@@ -53,10 +57,33 @@ public class VehicleController {
         return Result.success(page);
     }
 
+    @PostMapping("/save")
+    @ApiOperation(value = "保存车辆信息", notes = "")
+    public Result save(HttpServletRequest request, String communityCode, Integer id, String carnum, String brand, String carmodel, String carcolor,
+                       String proDate, String purchaseDate, String displacement, String driverLicense, String vehicleLicense, String ownerPhone) throws ParseException {
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = user.getCommunityCode();
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        vehicleInfoService.save(communityCode, id, carnum, brand, carmodel, carcolor, StringUtils.isBlank(proDate) ? null : format.parse(proDate),
+                StringUtils.isBlank(purchaseDate) ? null : format.parse(purchaseDate), displacement, driverLicense, vehicleLicense, ownerPhone);
+        return Result.success("保存成功");
+    }
+
+    @RequestMapping("/delete")
+    @ApiOperation(value = "删除车辆信息", notes = "")
+    public Result delete(Integer id) {
+        vehicleInfoService.delete(id);
+        return Result.success("删除成功");
+    }
+
     @RequestMapping("/listRecords")
     @ApiOperation(value = "进出记录列表", notes = "")
     public Result listRecords(HttpServletRequest request, String communityCode, String carnum, String accessType, String carphone,
-                              LocalDateTime begintime, LocalDateTime endtime, Integer pageNum, Integer pageSize) {
+                              @RequestParam(required = false) LocalDateTime begintime, @RequestParam(required = false) LocalDateTime endtime,
+                              Integer pageNum, Integer pageSize) {
         if (StringUtils.isBlank(communityCode)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);

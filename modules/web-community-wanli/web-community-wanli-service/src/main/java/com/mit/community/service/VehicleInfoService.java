@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,9 +45,51 @@ public class VehicleInfoService {
         if (StringUtils.isNotBlank(brand)) {
             wrapper.eq("car_brand", brand);
         }
+        wrapper.eq("isdel", 0);
         wrapper.orderBy("gmt_create", false);
         List<VehicleInfo> list = vehicleInfoMapper.selectPage(page, wrapper);
         page.setRecords(list);
         return page;
+    }
+
+    /**
+     * @Author HuShanLin
+     * @Date 11:13 2019/6/28
+     * @Description:~插入车辆信息
+     */
+    public void save(String communityCode, Integer id, String carnum, String brand, String model, String color, Date prodTime, Date purchaseTime,
+                     String displacement, String driverLicense, String vehicleLicense, String phone) {
+        if (id == null) {//新增
+            VehicleInfo vehicleInfo = new VehicleInfo(communityCode, carnum, brand, model, color, prodTime, purchaseTime,
+                    Double.valueOf(displacement), driverLicense, vehicleLicense, phone, 0);
+            vehicleInfo.setGmtModified(LocalDateTime.now());
+            vehicleInfo.setGmtCreate(LocalDateTime.now());
+            vehicleInfoMapper.insert(vehicleInfo);
+        } else {//修改
+            EntityWrapper<VehicleInfo> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", id);
+            VehicleInfo vehicleInfo = new VehicleInfo(communityCode, carnum, brand, model, color, prodTime, purchaseTime,
+                    Double.valueOf(displacement), driverLicense, vehicleLicense, phone, 0);
+            vehicleInfo.setId(id);
+            vehicleInfo.setGmtModified(LocalDateTime.now());
+            vehicleInfoMapper.updateById(vehicleInfo);
+        }
+    }
+
+    /**
+     * @Author HuShanLin
+     * @Date 11:13 2019/6/28
+     * @Description:~删除车辆信息
+     */
+    public void delete(Integer id) {
+        EntityWrapper<VehicleInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", id);
+        List<VehicleInfo> list = vehicleInfoMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            VehicleInfo vehicleInfo = list.get(0);
+            vehicleInfo.setIsdel(1);
+            vehicleInfo.setGmtModified(LocalDateTime.now());
+            vehicleInfoMapper.updateById(vehicleInfo);
+        }
     }
 }

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * 设备业务层
+ *
  * @author Mr.Deng
  * @date 2018/11/15 10:08
  * <p>Copyright: Copyright (c) 2018</p>
@@ -36,6 +37,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 
     /**
      * 添加设备信息
+     *
      * @param device 设备信息
      * @author Mr.Deng
      * @date 10:09 2018/11/15
@@ -46,6 +48,7 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 
     /**
      * 获取所有设备信息
+     *
      * @return 设备信息列表
      * @author Mr.Deng
      * @date 10:10 2018/11/15
@@ -93,7 +96,10 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
      */
     public List<Device> listInOrOutByCommunityCode(String communityCode, String flag) {
         List<Device> devices = this.listByCommunityCode(communityCode);
-        return devices.parallelStream().filter(item -> item.getDeviceName().contains(flag)).collect(Collectors.toList());
+        if (!devices.isEmpty()) {
+            return devices.parallelStream().filter(item -> item.getDeviceName().contains(flag)).collect(Collectors.toList());
+        }
+        return null;
     }
 
     /***
@@ -149,12 +155,12 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
      * @author shuyy
      * @date 2019-01-15 11:18
      * @company mitesofor
-    */
-    public Device getByDevice(String deviceName){
+     */
+    public Device getByDevice(String deviceName) {
         EntityWrapper<Device> wrapper = new EntityWrapper<>();
         wrapper.eq("device_name", deviceName);
         List<Device> devices = deviceMapper.selectList(wrapper);
-        if(devices.isEmpty()){
+        if (devices.isEmpty()) {
             return null;
         }
         return devices.get(0);

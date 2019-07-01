@@ -34,6 +34,9 @@ public class AccessRecord extends BaseEntity {
     @TableField("owner_phone")
     private String ownerPhone;
 
+    @TableField("owner_house")
+    private String ownerHouse;
+
     @TableField("car_num_patch")
     private String image;
 }

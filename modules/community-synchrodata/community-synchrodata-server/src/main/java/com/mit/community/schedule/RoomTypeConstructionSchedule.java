@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * 房间类型定时统计
+ *
  * @author LW
  * @creatTime 2018-11-23 11:17
  * @company mitesofor
@@ -33,13 +34,15 @@ public class RoomTypeConstructionSchedule {
      * 删除然后导入
      */
     @Transactional(rollbackFor = Exception.class)
-    @Scheduled(cron = "0 30 3 * * ?")
+    //@Scheduled(cron = "0 30 3 * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     public void removeAndiImport() {
         List<String> communityCodes;
         //删除所有
         roomTypeConstructionService.remove();
         //查找所有的鹰潭的小区id
         communityCodes = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodes.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         if (!communityCodes.isEmpty()) {
             for (String communityCode : communityCodes) {
                 //遍历出人口类型结构数据再保存

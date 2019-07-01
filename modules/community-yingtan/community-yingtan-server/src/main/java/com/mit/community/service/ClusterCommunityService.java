@@ -130,4 +130,16 @@ public class ClusterCommunityService {
         List<ClusterCommunity> clusterCommunities = this.listByAreaName(areaName);
         return clusterCommunities.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
     }
+
+    /**
+     * @Author HuShanLin
+     * @Date 14:49 2019/6/29
+     * @Description:~根据区名称查询小区数
+     */
+    public List<ClusterCommunity> getByAreaName(String areaName) {
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.eq("area_name", areaName);
+        List<ClusterCommunity> list = clusterCommunityMapper.selectList(wrapper);
+        return list;
+    }
 }

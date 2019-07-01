@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * 用户
+ *
  * @author shuyy
  * @date 2018/11/14
  * @company mitesofor
@@ -25,6 +26,7 @@ public class SysUserService {
 
     /**
      * 查询小区管理员的账户信息
+     *
      * @return 用户信息列表
      * @author Mr.Deng
      * @date 14:56 2018/11/27
@@ -37,6 +39,7 @@ public class SysUserService {
 
     /**
      * 修改密码
+     *
      * @param sysUser 修改的数据
      * @return 改变条数
      * @author Mr.Deng
@@ -48,6 +51,7 @@ public class SysUserService {
 
     /**
      * 添加用户信息
+     *
      * @param sysUser 用户信息
      * @return 添加数据
      * @author Mr.Deng
@@ -74,5 +78,17 @@ public class SysUserService {
         } else {
             return list.get(0);
         }
+    }
+
+    /**
+     * @Author HuShanLin
+     * @Date 11:29 2019/6/29
+     * @Description:~根据地区名称查询用户列表
+     */
+    public List<SysUser> listUsesByArea(String areaName) {
+        EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("area_name", areaName);
+        List<SysUser> list = sysUserMapper.selectList(wrapper);
+        return list;
     }
 }

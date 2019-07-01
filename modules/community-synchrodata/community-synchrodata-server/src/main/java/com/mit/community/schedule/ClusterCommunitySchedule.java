@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * 小区定时器
+ *
  * @author shuyy
  * @date 2018/11/30
  * @company mitesofor
@@ -28,10 +29,12 @@ public class ClusterCommunitySchedule {
 
     /**
      * 用先删除后添加的方式同步数据
+     *
      * @author Mr.Deng
      * @date 10:45 2019/3/7
      */
-    @Scheduled(cron = "0 0 0 1 * ?")
+    //@Scheduled(cron = "0 0 0 1 * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     @CacheClear(pre = "community")
     @Transactional(rollbackFor = Exception.class)
     public void removeAndImport() {

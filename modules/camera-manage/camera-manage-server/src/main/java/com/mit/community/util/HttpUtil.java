@@ -27,45 +27,44 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 public class HttpUtil {
+    private static final CloseableHttpClient HTTP_CLIENT = HttpClients.createDefault();
+
     public HttpUtil() {
     }
 
     public static Response httpGet(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        headers = initialBasicHeader("GET", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+        headers = initialBasicHeader("GET", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         HttpClient httpClient = wrapClient(host);
         Response r = null;
-
         try {
             httpClient.getParams().setParameter("http.connection.timeout", getTimeout(connectTimeout));
             HttpGet get = new HttpGet(initUrl(host, path, querys));
             Iterator var11 = headers.entrySet().iterator();
 
-            while(var11.hasNext()) {
-                Entry<String, String> e = (Entry)var11.next();
-                get.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+            while (var11.hasNext()) {
+                Entry<String, String> e = (Entry) var11.next();
+                get.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
             }
-
             HttpResponse rp = httpClient.execute(get);
             r = convert(rp);
         } catch (ClientProtocolException var18) {
@@ -85,7 +84,7 @@ public class HttpUtil {
     }
 
     public static Response httpImgGet(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        headers = initialBasicHeader("GET", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+        headers = initialBasicHeader("GET", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         HttpClient httpClient = wrapClient(host);
         Response r = null;
 
@@ -95,9 +94,9 @@ public class HttpUtil {
                 HttpGet get = new HttpGet(initUrl(host, path, querys));
                 Iterator var11 = headers.entrySet().iterator();
 
-                while(var11.hasNext()) {
-                    Entry<String, String> e = (Entry)var11.next();
-                    get.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+                while (var11.hasNext()) {
+                    Entry<String, String> e = (Entry) var11.next();
+                    get.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
                 }
 
                 HttpResponse rp = httpClient.execute(get);
@@ -117,20 +116,18 @@ public class HttpUtil {
     }
 
 
-
-
     public static Response httpPost(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, String body, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        String contentType = (String)headers.get("Content-Type");
+        String contentType = (String) headers.get("Content-Type");
         if ("application/x-www-form-urlencoded;charset=UTF-8".equals(contentType)) {
             Map<String, String> paramMap = strToMap(body);
-            String modelDatas = (String)paramMap.get("modelDatas");
+            String modelDatas = (String) paramMap.get("modelDatas");
             if (StringUtils.isNotBlank(modelDatas)) {
                 paramMap.put("modelDatas", URLDecoder.decode(modelDatas));
             }
 
             headers = initialBasicHeader("POST", path, headers, querys, paramMap, signHeaderPrefixList, appKey, appSecret);
         } else {
-            headers = initialBasicHeader("POST", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+            headers = initialBasicHeader("POST", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         }
 
         HttpClient httpClient = wrapClient(host);
@@ -138,9 +135,9 @@ public class HttpUtil {
         HttpPost post = new HttpPost(initUrl(host, path, querys));
         Iterator var12 = headers.entrySet().iterator();
 
-        while(var12.hasNext()) {
-            Entry<String, String> e = (Entry)var12.next();
-            post.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+        while (var12.hasNext()) {
+            Entry<String, String> e = (Entry) var12.next();
+            post.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
         }
 
         if (StringUtils.isNotBlank(body)) {
@@ -151,17 +148,17 @@ public class HttpUtil {
     }
 
     public static Response httpImgPost(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, String body, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        String contentType = (String)headers.get("Content-Type");
+        String contentType = (String) headers.get("Content-Type");
         if ("application/x-www-form-urlencoded;charset=UTF-8".equals(contentType)) {
             Map<String, String> paramMap = strToMap(body);
-            String modelDatas = (String)paramMap.get("modelDatas");
+            String modelDatas = (String) paramMap.get("modelDatas");
             if (StringUtils.isNotBlank(modelDatas)) {
                 paramMap.put("modelDatas", URLDecoder.decode(modelDatas));
             }
 
             headers = initialBasicHeader("POST", path, headers, querys, paramMap, signHeaderPrefixList, appKey, appSecret);
         } else {
-            headers = initialBasicHeader("POST", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+            headers = initialBasicHeader("POST", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         }
 
         HttpClient httpClient = wrapClient(host);
@@ -169,9 +166,9 @@ public class HttpUtil {
         HttpPost post = new HttpPost(initUrl(host, path, querys));
         Iterator var12 = headers.entrySet().iterator();
 
-        while(var12.hasNext()) {
-            Entry<String, String> e = (Entry)var12.next();
-            post.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+        while (var12.hasNext()) {
+            Entry<String, String> e = (Entry) var12.next();
+            post.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
         }
 
         if (StringUtils.isNotBlank(body)) {
@@ -182,15 +179,15 @@ public class HttpUtil {
     }
 
     public static Response httpPost(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, byte[] bodys, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        headers = initialBasicHeader("POST", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+        headers = initialBasicHeader("POST", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         HttpClient httpClient = wrapClient(host);
         httpClient.getParams().setParameter("http.connection.timeout", getTimeout(connectTimeout));
         HttpPost post = new HttpPost(initUrl(host, path, querys));
         Iterator var11 = headers.entrySet().iterator();
 
-        while(var11.hasNext()) {
-            Entry<String, String> e = (Entry)var11.next();
-            post.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+        while (var11.hasNext()) {
+            Entry<String, String> e = (Entry) var11.next();
+            post.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
         }
 
         if (bodys != null) {
@@ -201,15 +198,15 @@ public class HttpUtil {
     }
 
     public static Response httpPut(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, String body, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        headers = initialBasicHeader("PUT", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+        headers = initialBasicHeader("PUT", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         HttpClient httpClient = wrapClient(host);
         httpClient.getParams().setParameter("http.connection.timeout", getTimeout(connectTimeout));
         HttpPut put = new HttpPut(initUrl(host, path, querys));
         Iterator var11 = headers.entrySet().iterator();
 
-        while(var11.hasNext()) {
-            Entry<String, String> e = (Entry)var11.next();
-            put.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+        while (var11.hasNext()) {
+            Entry<String, String> e = (Entry) var11.next();
+            put.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
         }
 
         if (StringUtils.isNotBlank(body)) {
@@ -220,15 +217,15 @@ public class HttpUtil {
     }
 
     public static Response httpPut(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, byte[] bodys, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        headers = initialBasicHeader("PUT", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+        headers = initialBasicHeader("PUT", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         HttpClient httpClient = wrapClient(host);
         httpClient.getParams().setParameter("http.connection.timeout", getTimeout(connectTimeout));
         HttpPut put = new HttpPut(initUrl(host, path, querys));
         Iterator var11 = headers.entrySet().iterator();
 
-        while(var11.hasNext()) {
-            Entry<String, String> e = (Entry)var11.next();
-            put.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+        while (var11.hasNext()) {
+            Entry<String, String> e = (Entry) var11.next();
+            put.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
         }
 
         if (bodys != null) {
@@ -239,15 +236,15 @@ public class HttpUtil {
     }
 
     public static Response httpDelete(String host, String path, int connectTimeout, Map<String, String> headers, Map<String, String> querys, List<String> signHeaderPrefixList, String appKey, String appSecret) throws Exception {
-        headers = initialBasicHeader("DELETE", path, headers, querys, (Map)null, signHeaderPrefixList, appKey, appSecret);
+        headers = initialBasicHeader("DELETE", path, headers, querys, (Map) null, signHeaderPrefixList, appKey, appSecret);
         HttpClient httpClient = wrapClient(host);
         httpClient.getParams().setParameter("http.connection.timeout", getTimeout(connectTimeout));
         HttpDelete delete = new HttpDelete(initUrl(host, path, querys));
         Iterator var10 = headers.entrySet().iterator();
 
-        while(var10.hasNext()) {
-            Entry<String, String> e = (Entry)var10.next();
-            delete.addHeader((String)e.getKey(), MessageDigestUtil.utf8ToIso88591((String)e.getValue()));
+        while (var10.hasNext()) {
+            Entry<String, String> e = (Entry) var10.next();
+            delete.addHeader((String) e.getKey(), MessageDigestUtil.utf8ToIso88591((String) e.getValue()));
         }
 
         return convert(httpClient.execute(delete));
@@ -260,9 +257,9 @@ public class HttpUtil {
             List<NameValuePair> nameValuePairList = new ArrayList();
             Iterator var2 = formParam.keySet().iterator();
 
-            while(var2.hasNext()) {
-                String key = (String)var2.next();
-                nameValuePairList.add(new BasicNameValuePair(key, (String)formParam.get(key)));
+            while (var2.hasNext()) {
+                String key = (String) var2.next();
+                nameValuePairList.add(new BasicNameValuePair(key, (String) formParam.get(key)));
             }
 
             UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(nameValuePairList, "UTF-8");
@@ -282,21 +279,21 @@ public class HttpUtil {
             StringBuilder sbQuery = new StringBuilder();
             Iterator var5 = querys.entrySet().iterator();
 
-            while(var5.hasNext()) {
-                Entry<String, String> query = (Entry)var5.next();
+            while (var5.hasNext()) {
+                Entry<String, String> query = (Entry) var5.next();
                 if (0 < sbQuery.length()) {
                     sbQuery.append("&");
                 }
 
-                if (StringUtils.isBlank((CharSequence)query.getKey()) && !StringUtils.isBlank((CharSequence)query.getValue())) {
-                    sbQuery.append((String)query.getValue());
+                if (StringUtils.isBlank((CharSequence) query.getKey()) && !StringUtils.isBlank((CharSequence) query.getValue())) {
+                    sbQuery.append((String) query.getValue());
                 }
 
-                if (!StringUtils.isBlank((CharSequence)query.getKey())) {
-                    sbQuery.append((String)query.getKey());
-                    if (!StringUtils.isBlank((CharSequence)query.getValue())) {
+                if (!StringUtils.isBlank((CharSequence) query.getKey())) {
+                    sbQuery.append((String) query.getKey());
+                    if (!StringUtils.isBlank((CharSequence) query.getValue())) {
                         sbQuery.append("=");
-                        sbQuery.append(URLEncoder.encode((String)query.getValue(), "UTF-8"));
+                        sbQuery.append(URLEncoder.encode((String) query.getValue(), "UTF-8"));
                     }
                 }
             }
@@ -314,11 +311,11 @@ public class HttpUtil {
             headers = new HashMap();
         }
 
-        ((Map)headers).put("x-ca-timestamp", String.valueOf((new Date()).getTime()));
-        ((Map)headers).put("x-ca-nonce", UUID.randomUUID().toString());
-        ((Map)headers).put("x-ca-key", appKey);
-        ((Map)headers).put("x-ca-signature", SignUtil.sign(appSecret, method, path, (Map)headers, querys, bodys, signHeaderPrefixList));
-        return (Map)headers;
+        ((Map) headers).put("x-ca-timestamp", String.valueOf((new Date()).getTime()));
+        ((Map) headers).put("x-ca-nonce", UUID.randomUUID().toString());
+        ((Map) headers).put("x-ca-key", appKey);
+        ((Map) headers).put("x-ca-signature", SignUtil.sign(appSecret, method, path, (Map) headers, querys, bodys, signHeaderPrefixList));
+        return (Map) headers;
     }
 
     private static int getTimeout(int timeout) {
@@ -332,7 +329,7 @@ public class HttpUtil {
             Header[] var2 = response.getAllHeaders();
             int var3 = var2.length;
 
-            for(int var4 = 0; var4 < var3; ++var4) {
+            for (int var4 = 0; var4 < var3; ++var4) {
                 Header header = var2[var4];
                 res.setHeader(header.getName(), MessageDigestUtil.iso88591ToUtf8(header.getValue()));
             }
@@ -341,7 +338,7 @@ public class HttpUtil {
             res.setRequestId(res.getHeader("X-Ca-Request-Id"));
             res.setErrorMessage(res.getHeader("X-Ca-Error-Message"));
             if (response.getEntity() == null) {
-                res.setBody((String)null);
+                res.setBody((String) null);
             } else {
                 res.setBody(readStreamAsStr(response.getEntity().getContent()));
             }
@@ -370,7 +367,7 @@ public class HttpUtil {
             Header[] var8 = response.getAllHeaders();
             int var9 = var8.length;
 
-            for(int var10 = 0; var10 < var9; ++var10) {
+            for (int var10 = 0; var10 < var9; ++var10) {
                 Header header = var8[var10];
                 res.setHeader(header.getName(), MessageDigestUtil.iso88591ToUtf8(header.getValue()));
             }
@@ -393,7 +390,7 @@ public class HttpUtil {
         ReadableByteChannel src = Channels.newChannel(is);
         ByteBuffer bb = ByteBuffer.allocate(4096);
 
-        while(src.read(bb) != -1) {
+        while (src.read(bb) != -1) {
             bb.flip();
             dest.write(bb);
             bb.clear();
@@ -407,7 +404,7 @@ public class HttpUtil {
     public static String readImageAsStr(byte[] src) throws IOException {
         StringBuilder stringBuilder = new StringBuilder("");
         if (src != null && src.length > 0) {
-            for(int i = 0; i < src.length; ++i) {
+            for (int i = 0; i < src.length; ++i) {
                 int v = src[i] & 255;
                 String hv = Integer.toHexString(v);
                 if (hv.length() < 2) {
@@ -429,7 +426,7 @@ public class HttpUtil {
         boolean var3 = true;
 
         int len;
-        while((len = src.read(buf)) != -1) {
+        while ((len = src.read(buf)) != -1) {
             baos.write(buf, 0, len);
         }
 
@@ -459,7 +456,7 @@ public class HttpUtil {
                 public void checkServerTrusted(X509Certificate[] xcs, String str) {
                 }
             };
-            ctx.init((KeyManager[])null, new TrustManager[]{tm}, (SecureRandom)null);
+            ctx.init((KeyManager[]) null, new TrustManager[]{tm}, (SecureRandom) null);
             SSLSocketFactory ssf = new SSLSocketFactory(ctx);
             ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             ClientConnectionManager ccm = httpClient.getConnectionManager();
@@ -480,7 +477,7 @@ public class HttpUtil {
             String[] var3 = params;
             int var4 = params.length;
 
-            for(int var5 = 0; var5 < var4; ++var5) {
+            for (int var5 = 0; var5 < var4; ++var5) {
                 String param = var3[var5];
                 String[] a = param.split("=");
                 map.put(a[0], a[1]);
@@ -490,5 +487,42 @@ public class HttpUtil {
         } catch (Exception var8) {
             throw new RuntimeException(var8);
         }
+    }
+
+    /**
+     * 发送HttpGet请求
+     *
+     * @param url 地址
+     * @return json
+     */
+    public static String sendGet(String url) {
+
+        HttpGet httpget = new HttpGet(url);
+        httpget.addHeader("Connection", "close");
+        CloseableHttpResponse response = null;
+        try {
+            response = HTTP_CLIENT.execute(httpget);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        String result = null;
+        try {
+            HttpEntity entity = response != null ? response.getEntity() : null;
+            if (entity != null) {
+                result = EntityUtils.toString(entity);
+            }
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (response != null) {
+                    response.close();
+                }
+                httpget.releaseConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 }

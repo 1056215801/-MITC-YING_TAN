@@ -4,11 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mit.community.entity.AccessControl;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.Device;
-import com.mit.community.entity.RoomTypeConstruction;
+import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.*;
 import com.mit.community.service.*;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,12 +48,15 @@ public class PerceptionController {
     private final WarningService warningService;
     private final HouseholdRoomService householdRoomService;
     private final DeviceService deviceService;
+    private final RedisService redisService;
+    private SysUser user;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
                                 HouseHoldService houseHoldService, ClusterCommunityService clusterCommunityService,
                                 VisitorService visitorService, AccessControlService accessControlService,
-                                RoomTypeConstructionService roomTypeConstructionService, WarningService warningService, HouseholdRoomService householdRoomService, DeviceService deviceService) {
+                                RoomTypeConstructionService roomTypeConstructionService, WarningService warningService,
+                                HouseholdRoomService householdRoomService, DeviceService deviceService, RedisService redisService) {
         this.buildingService = buildingService;
         this.roomService = roomService;
         this.houseHoldService = houseHoldService;
@@ -64,7 +67,14 @@ public class PerceptionController {
         this.warningService = warningService;
         this.householdRoomService = householdRoomService;
         this.deviceService = deviceService;
+        this.redisService = redisService;
     }
+
+    private void SetSysUser(HttpServletRequest request) {
+        String sessionId = CookieUtils.getSessionId(request);
+        user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+    }
+
 
     /**
      * 查询当前地区天气
@@ -124,7 +134,8 @@ public class PerceptionController {
                     "ParkingSpace 车位总数、buildingManager 栋长人数、\n" +
                     "人员信息统计：realTimeVisitor 已到访实时访客、attention 关爱/关注进出" +
                     "neighborhoodCommittee 居委干部、property 物业人员、CommunityPolice 社区民警")
-    public Result countCommunityStatistics(String communityCode, Integer accountType) {
+    public Result countCommunityStatistics(HttpServletRequest request, String communityCode) {
+        SetSysUser(request);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(10);
         Integer buildingSize = 0;
         Integer roomSize = 0;
@@ -149,8 +160,12 @@ public class PerceptionController {
             // 物业
             map.put("property", 20);
         } else {
-            if (accountType == 1) {
-                List<String> communityCodeList = listCommunityCodes("鹰潭市");
+            if (user == null) {
+                return Result.error("请登录");
+            }
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                List<String> communityCodeList = listCommunityCodesByArea("湾里区");
                 buildingSize = buildingService.countByCommunityCodes(communityCodeList);
                 roomSize = roomService.countByCommunityCodes(communityCodeList);
                 houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
@@ -166,9 +181,8 @@ public class PerceptionController {
                 map.put("buildingManager", 10);
                 // 物业
                 map.put("property", 20);
-            }
-            if (accountType == 2) {
-                List<String> communityCodeList = listCommunityCodesByArea("湾里区");
+            } else {
+                List<String> communityCodeList = listCommunityCodes("鹰潭市");
                 buildingSize = buildingService.countByCommunityCodes(communityCodeList);
                 roomSize = roomService.countByCommunityCodes(communityCodeList);
                 houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
@@ -217,16 +231,21 @@ public class PerceptionController {
      */
     @GetMapping("/countSex")
     @ApiOperation(value = "男女比例", notes = "参数：communityCode 小区code")
-    public Result countSex(String communityCode, Integer accountType) {
+    public Result countSex(HttpServletRequest request, String communityCode) {
+        SetSysUser(request);
         Map<String, Object> sex = null;
         if (StringUtils.isNoneBlank(communityCode)) {
             sex = houseHoldService.mapSexByCommunityCode(communityCode);
         } else {
-            if (accountType == 1) {
-                List<String> list = listCommunityCodes("鹰潭市");
+            if (user == null) {
+                return Result.error("请登录");
+            }
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                List<String> list = listCommunityCodesByArea("湾里区");
                 sex = houseHoldService.listSexByCommunityCodeList(list);
             } else {
-                List<String> list = listCommunityCodesByArea("湾里区");
+                List<String> list = listCommunityCodes("鹰潭市");
                 sex = houseHoldService.listSexByCommunityCodeList(list);
             }
         }
@@ -243,10 +262,15 @@ public class PerceptionController {
     @GetMapping("/countPopulationDataPerception")
     @ApiOperation(value = "人口数据感知", notes = "返回参数：localPopulation 本地人口、foreignPopulation 外地人口、" +
             "overseasPopulation 境外人口、other 其他")
-    public Result countPopulationDataPerception(String communityCode, Integer accountType) {
+    public Result countPopulationDataPerception(HttpServletRequest request, String communityCode) {
+        SetSysUser(request);
         Map<String, Integer> map = Maps.newHashMapWithExpectedSize(4);
-        if (accountType == 1) {
-            Map<String, Integer> fieldLocalPeople = houseHoldService.getFieldLocalPeople(communityCode);
+        if (user == null) {
+            return Result.error("请登录");
+        }
+        String areaName = user.getAreaName();
+        if ("湾里区".equals(areaName)) {
+            Map<String, Integer> fieldLocalPeople = houseHoldService.getFieldLocalPeopleWithWanli(communityCode);
             //本地人口
             map.put("localPopulation", fieldLocalPeople.get("local"));
             //外地人口
@@ -256,7 +280,7 @@ public class PerceptionController {
             //其他
             map.put("other", fieldLocalPeople.get("other"));
         } else {
-            Map<String, Integer> fieldLocalPeople = houseHoldService.getFieldLocalPeopleWithWanli(communityCode);
+            Map<String, Integer> fieldLocalPeople = houseHoldService.getFieldLocalPeople(communityCode);
             //本地人口
             map.put("localPopulation", fieldLocalPeople.get("local"));
             //外地人口
@@ -279,7 +303,8 @@ public class PerceptionController {
     @GetMapping("/countPerception")
     @ApiOperation(value = "人口总数、驻留总数、总通行次数、预警总数", notes = "返回参数：totalPopulation 人口总数、" +
             "totalResident 驻留总数、realTimeAccess 实时进出、totalEarlyWarning 预警总数")
-    public Result countPerception(String communityCode, Integer accountType) {
+    public Result countPerception(HttpServletRequest request, String communityCode) {
+        SetSysUser(request);
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(4);
         Integer houseHoldSize = 0;
         Integer accessControlSize = 0;
@@ -294,20 +319,23 @@ public class PerceptionController {
             // 预警总数
             totalEarlySize = warningService.countByCommunityCode(communityCode);
         } else {
-            if (accountType == 1) {//鹰潭市
+            if (user == null) {
+                return Result.error("请登录");
+            }
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                List<String> list = listCommunityCodesByArea("湾里区");
+                houseHoldSize = houseHoldService.countByCommunityCodeList(list);
+                accessControlSize = accessControlService.countByCommunityCodes(list);
+                remainNum = accessControlService.countRemainPeopleByCommunityCodes(list);
+                totalEarlySize = warningService.countByCommunityCodeList(list);
+            } else {
                 List<String> list = listCommunityCodes("鹰潭市");
                 houseHoldSize = houseHoldService.countByCommunityCodeList(list);
                 accessControlSize = accessControlService.countByCommunityCodes(list);
                 remainNum = accessControlService.countRemainPeopleByCommunityCodes(list);
                 totalEarlySize = warningService.countByCommunityCodeList(list);
                 map.put("totalEarlyWarning", 50);
-            }
-            if (accountType == 2) {//湾里
-                List<String> list = listCommunityCodesByArea("湾里区");
-                houseHoldSize = houseHoldService.countByCommunityCodeList(list);
-                accessControlSize = accessControlService.countByCommunityCodes(list);
-                remainNum = accessControlService.countRemainPeopleByCommunityCodes(list);
-                totalEarlySize = warningService.countByCommunityCodeList(list);
             }
         }
         remainNum = remainNum < 0 ? 0 : remainNum;
@@ -342,16 +370,21 @@ public class PerceptionController {
             "本市人口自住房屋数量 innerSelf;" +
             "本市人口租赁房屋数量 innerRent;" +
             "本市人口闲置房屋数量 innerLeisure;")
-    public Result countHousingDataPerception(String communityCode, Integer accountType) {
+    public Result countHousingDataPerception(HttpServletRequest request, String communityCode) {
+        SetSysUser(request);
         List<String> communityCodes;
         RoomTypeConstruction roomTypeConstruction;
         if (StringUtils.isNotBlank(communityCode)) {
             roomTypeConstruction = roomTypeConstructionService.getByCommunityCode(communityCode);
         } else {
-            if (accountType == 1) {
-                communityCodes = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
-            } else {
+            if (user == null) {
+                return Result.error("请登录");
+            }
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
                 communityCodes = clusterCommunityService.listCommunityCodeListByAreaName("湾里区");
+            } else {
+                communityCodes = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
             }
             Integer innerPopulation = 0;
             Integer foreignPopulation = 0;
@@ -366,16 +399,18 @@ public class PerceptionController {
             if (!communityCodes.isEmpty()) {
                 for (String code : communityCodes) {
                     RoomTypeConstruction byCommunityCode = roomTypeConstructionService.getByCommunityCode(code);
-                    innerPopulation += byCommunityCode.getInnerPopulation();
-                    foreignPopulation += byCommunityCode.getForeignPopulation();
-                    foreignOther += byCommunityCode.getForeignOther();
-                    foreignSelf += byCommunityCode.getForeignSelf();
-                    foreignRent += byCommunityCode.getForeignRent();
-                    foreignLeisure += byCommunityCode.getForeignLeisure();
-                    innerOther += byCommunityCode.getInnerOther();
-                    innerSelf += byCommunityCode.getInnerSelf();
-                    innerRent += byCommunityCode.getInnerRent();
-                    innerLeisure += byCommunityCode.getInnerLeisure();
+                    if (byCommunityCode != null) {
+                        innerPopulation += byCommunityCode.getInnerPopulation() == null ? 0 : byCommunityCode.getInnerPopulation();
+                        foreignPopulation += byCommunityCode.getForeignPopulation() == null ? 0 : byCommunityCode.getForeignPopulation();
+                        foreignOther += byCommunityCode.getForeignOther() == null ? 0 : byCommunityCode.getForeignOther();
+                        foreignSelf += byCommunityCode.getForeignSelf() == null ? 0 : byCommunityCode.getForeignSelf();
+                        foreignRent += byCommunityCode.getForeignRent() == null ? 0 : byCommunityCode.getForeignRent();
+                        foreignLeisure += byCommunityCode.getForeignLeisure() == null ? 0 : byCommunityCode.getForeignLeisure();
+                        innerOther += byCommunityCode.getInnerOther() == null ? 0 : byCommunityCode.getInnerOther();
+                        innerSelf += byCommunityCode.getInnerSelf() == null ? 0 : byCommunityCode.getInnerSelf();
+                        innerRent += byCommunityCode.getInnerRent() == null ? 0 : byCommunityCode.getInnerRent();
+                        innerLeisure += byCommunityCode.getInnerLeisure() == null ? 0 : byCommunityCode.getInnerLeisure();
+                    }
                 }
             }
             roomTypeConstruction = new RoomTypeConstruction();

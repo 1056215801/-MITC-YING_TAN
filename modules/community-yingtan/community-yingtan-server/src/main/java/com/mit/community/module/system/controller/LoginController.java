@@ -5,9 +5,15 @@ import com.google.code.kaptcha.Producer;
 import com.google.common.collect.Maps;
 import com.mit.common.util.HttpClientUtil;
 import com.mit.community.common.HttpLogin;
-import com.mit.community.entity.SysUser;
+import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.*;
+import com.mit.community.service.ClusterCommunityService;
+import com.mit.community.service.DeviceService;
+import com.mit.community.service.RedisService;
 import com.mit.community.service.SysUserService;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,6 +50,13 @@ public class LoginController {
 
     private final Producer producer;
     private final SysUserService sysUserService;
+    @Autowired
+    private DeviceService deviceService;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private ClusterCommunityService clusterCommunityService;
+
 
     @Autowired
     public LoginController(SysUserService sysUserService, Producer producer) {
@@ -103,10 +118,11 @@ public class LoginController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ApiOperation(value = "数据展示前台项目登录", notes = "数据展示前台项目登录 返回参数：adminName 管理员姓名、role 账号角色信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "kaptcha", value = "验证码", dataType = "string", paramType = "query")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "kaptcha", value = "验证码", dataType = "string", paramType = "query")})
     public Result login(String username, String password, String kaptcha, HttpServletRequest request) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
+        String sessionId = CookieUtils.getSessionId(request);
+        List<String> list = new ArrayList<>();
         String code = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
         if (StringUtils.isBlank(kaptcha) || !kaptcha.equalsIgnoreCase(code)) {
             return Result.error("验证码错误");
@@ -122,47 +138,27 @@ public class LoginController {
                 String result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
             } else {
                 //湾里区总账号（胡山林）
-                if ("ncwanli".equals(username)) {
+                if ("nanchwl".equals(username)) {
                     SysUser sysUser = sysUserService.getSysUser(username);
-                    if (sysUser != null) {
+                    if (sysUser == null) {
                         return Result.error("账号不存在");
                     } else {
-                        String menuUser = "小区管理员";
-                        String menuAdmin = "集群管理员";
-                        String adminName = sysUser.getAdminName();
-                        String communityCode = sysUser.getCommunityCode();
-                        String role = sysUser.getRole();
-                        String menu = StringUtils.EMPTY;
-                        map.put("username", sysUser.getUsername());
-                        map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
-                        map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
-                        map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
-                        map.put("isAdmin", menu);
-                        map.put("isWanli", true);
-                        map.put("accountType", 2);
-                        return Result.success(map, "登录成功");
+                        // redis中保存session用户
+                        redisService.set(RedisConstant.SESSION_ID + sessionId,
+                                sysUser, RedisConstant.LOGIN_EXPIRE_TIME);
+                        return Result.success("登录成功");
                     }
                 } else {
                     SysUser sysUser = sysUserService.getSysUser(username);
-                    if (sysUser != null) {
+                    if (sysUser == null) {
                         return Result.error("账号不存在");
                     } else {
                         //湾里小区账号（胡山林）
                         if ("南昌市".equals(sysUser.getCityName()) && "湾里区".equals(sysUser.getAreaName())) {
-                            String menuUser = "小区管理员";
-                            String menuAdmin = "集群管理员";
-                            String adminName = sysUser.getAdminName();
-                            String communityCode = sysUser.getCommunityCode();
-                            String role = sysUser.getRole();
-                            String menu = StringUtils.EMPTY;
-                            map.put("username", sysUser.getUsername());
-                            map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
-                            map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
-                            map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
-                            map.put("isAdmin", menu);
-                            map.put("isWanli", true);
-                            map.put("accountType", 2);
-                            return Result.success(map, "登录成功");
+                            // redis中保存session用户
+                            redisService.set(RedisConstant.SESSION_ID + sessionId,
+                                    sysUser, RedisConstant.LOGIN_EXPIRE_TIME);
+                            return Result.success("登录成功");
                         } else {
                             //其他小区管理账户
                             httpLogin.loginUser();
@@ -228,7 +224,8 @@ public class LoginController {
                     request.getSession().setAttribute("session", httpLogin.getCookie());
                     map.put("isAdmin", menu);
                     map.put("isWanli", false);
-                    map.put("accountType", 1);
+                    // redis中保存session用户
+                    redisService.set(RedisConstant.SESSION_ID + sessionId, sysUser, RedisConstant.LOGIN_EXPIRE_TIME);
                     return Result.success(map, "登录成功");
                 } else {
                     return Result.error("用户名或密码错误");
@@ -236,6 +233,47 @@ public class LoginController {
             }
         }
         return Result.error("登录失败");
+    }
+
+    @RequestMapping("/getUserInfo")
+    @ApiOperation(value = "获取用户信息")
+    public Result getUserInfo(HttpServletRequest request) {
+        UserInfo userInfo = new UserInfo();
+        List<Community> list = new ArrayList<>();
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        if (sysUser == null || sessionId == null) {
+            return Result.error("请登录");
+        }
+        String accountType = sysUser.getAccountType();
+        userInfo.setUserName(sysUser.getUsername());
+        userInfo.setCityName(sysUser.getCityName());
+        userInfo.setAreaName(sysUser.getAreaName());
+        userInfo.setAdminName(sysUser.getAdminName());
+        userInfo.setAccountType(accountType);
+        if ("小区账号".equals(accountType)) {
+            userInfo.setStreetName(sysUser.getStreetName());
+            Community community = new Community();
+            String communityCode = sysUser.getCommunityCode();
+            ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(communityCode);
+            community.setCommunityCode(communityCode);
+            community.setCommunityName(clusterCommunity.getCommunityName());
+            list.add(community);
+        } else {
+            userInfo.setStreetName("");
+            String areaName = sysUser.getAreaName();
+            List<ClusterCommunity> clusterCommunities = clusterCommunityService.getByAreaName(areaName);
+            if (clusterCommunities.size() != 0) {
+                for (ClusterCommunity clusterCommunity : clusterCommunities) {
+                    Community community = new Community();
+                    community.setCommunityCode(clusterCommunity.getCommunityCode());
+                    community.setCommunityName(clusterCommunity.getCommunityName());
+                    list.add(community);
+                }
+            }
+        }
+        userInfo.setCommunities(list);
+        return Result.success(userInfo);
     }
 
     /**

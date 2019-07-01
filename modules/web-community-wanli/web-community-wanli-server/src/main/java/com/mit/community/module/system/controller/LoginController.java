@@ -130,10 +130,9 @@ public class LoginController {
         if (StringUtils.isBlank(kaptcha) || !kaptcha.equalsIgnoreCase(code)) {
             return Result.error("验证码错误");
         }*/
-        if(false){
+        if (false) {
 
-        }
-        else {
+        } else {
             HttpLogin httpLogin = new HttpLogin(username, password);
             //判断是否是集群管理账户访问不同的登录接口
             //是集群账户
@@ -142,7 +141,6 @@ public class LoginController {
                 httpLogin.loginAdmin();
                 String cookie = httpLogin.getCookie();
                 String result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
-                System.out.println(result);
             } else {
                 //是小区管理账户
                 httpLogin.loginUser();
@@ -198,6 +196,13 @@ public class LoginController {
                     }
                     request.getSession().setAttribute("session", httpLogin.getCookie());
                     map.put("isAdmin", menu);
+                    if ("湾里区".equals(sysUser.getAreaName())) {
+                        map.put("isWanli", 1);
+                        request.getSession().setAttribute("isWanli", true);
+                    } else {
+                        map.put("isWanli", 0);
+                        request.getSession().setAttribute("isWanli", false);
+                    }
                     // redis中保存session用户
                     redisService.set(RedisConstant.SESSION_ID + sessionId,
                             sysUser, RedisConstant.LOGIN_EXPIRE_TIME);

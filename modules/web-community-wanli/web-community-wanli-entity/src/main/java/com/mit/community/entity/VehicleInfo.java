@@ -21,6 +21,9 @@ import java.util.Date;
 @TableName("vehicle_info")
 public class VehicleInfo extends BaseEntity {
 
+    @TableField("community_code")
+    private String communityCode;
+
     @TableField("car_num")
     private String carnum;
 
@@ -34,11 +37,11 @@ public class VehicleInfo extends BaseEntity {
     private String carcolor;
 
     @TableField("pro_date")
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date proDate;
 
     @TableField("purchase_date")
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date purchaseDate;
 
     private double displacement;
