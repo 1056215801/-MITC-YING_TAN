@@ -73,7 +73,7 @@ public class PerceptionController {
     }
 
     private void SetSysUser(HttpServletRequest request) {
-        String sessionId = CookieUtils.getSessionId(request);
+        String sessionId = CookieUtils.getSession(request);
         user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
     }
 
@@ -500,8 +500,13 @@ public class PerceptionController {
         }
         AccessControl accessControl = accessControlService.getCurrentAccess(deviceName, device.getCommunityCode());
         WarningInfo warningInfo = null;
+<<<<<<< HEAD
         if(accessControl != null){
             if(StringUtils.isNotBlank(accessControl.getHouseholdMobile())){
+=======
+        if (accessControl != null) {
+            if (StringUtils.isNotBlank(accessControl.getHouseholdMobile())) {
+>>>>>>> origin/feature/001-HSL
                 warningInfo = new WarningInfo();
                 HouseHold houseHold = houseHoldService.getByCellPhone(accessControl.getHouseholdMobile());
                 if (houseHold != null) {

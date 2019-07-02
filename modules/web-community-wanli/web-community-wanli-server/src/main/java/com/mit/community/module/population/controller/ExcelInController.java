@@ -162,7 +162,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -218,7 +218,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -277,7 +277,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -340,7 +340,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -400,7 +400,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -477,7 +477,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -546,7 +546,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -617,7 +617,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -682,7 +682,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -745,7 +745,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -807,7 +807,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -859,7 +859,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -918,7 +918,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -1018,7 +1018,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -1088,7 +1088,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -1154,7 +1154,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -1286,7 +1286,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -1365,7 +1365,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {
@@ -1431,7 +1431,7 @@ public class ExcelInController {
                 if (id != null) {
                     person_baseinfo_id = id;
                 } else {
-                    person_baseinfo_id = personBaseInfoService.save(0, idNum, userName, null, gender, null, null, null, null, null,
+                    person_baseinfo_id = personBaseInfoService.save(idNum, userName, null, gender, null, null, null, null, null,
                             null, null, null, null, cellphone, null, null, null, null, null, null,communityCode);
                 }
             } else {

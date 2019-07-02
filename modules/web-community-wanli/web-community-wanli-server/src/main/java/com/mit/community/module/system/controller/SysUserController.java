@@ -181,6 +181,8 @@ public class SysUserController {
      * @Date 17:02 2019/7/1
      * @Description:~删除用户
      */
+    @RequestMapping("/delete")
+    @ApiOperation(value = "删除本地用户信息", notes = "传参：id 用户id")
     public Result delete(Integer id) {
         sysUserService.remove(id);
         return Result.success("删除成功");
