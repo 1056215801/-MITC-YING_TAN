@@ -6,15 +6,18 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 用户
+ *
  * @author shuyy
  * @date 2018/11/14
  * @company mitesofor
  */
 @TableName("sys_user")
 @Data
-public class SysUser {
+public class SysUser implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -86,4 +89,13 @@ public class SysUser {
      */
     @TableField("management_unit")
     private String managementUnit;
+
+    @TableField("managerment_scope")
+    private String managementScope;
+
+    @TableField("account_type")
+    private String accountType;
+
+    @TableField("community_name")
+    private String communityName;
 }

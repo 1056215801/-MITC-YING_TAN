@@ -189,6 +189,11 @@
             <version>1.27-RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <!--spring-boot-devtools 热启动依赖包-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

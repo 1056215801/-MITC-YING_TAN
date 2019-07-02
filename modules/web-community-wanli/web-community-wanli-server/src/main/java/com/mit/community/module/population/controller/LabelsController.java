@@ -1,5 +1,6 @@
 package com.mit.community.module.population.controller;
 
+import com.mit.community.entity.PeopleOut;
 import com.mit.community.population.service.PersonLabelsService;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -45,8 +46,8 @@ public class LabelsController {
     @GetMapping("/getPeopleOue")
     @ApiOperation(value = "获取出去的人", notes = "输入参数：")
     public Result getPeopleOue(){//正式的需要传入楼栋信息，摄像头的地址要和小区关联
-        String time = personLabelsService.getPeopleOue();
-        return Result.success(time);
+        PeopleOut peopleOut = personLabelsService.getPeopleOue();
+        return Result.success(peopleOut);
     }
 
 }

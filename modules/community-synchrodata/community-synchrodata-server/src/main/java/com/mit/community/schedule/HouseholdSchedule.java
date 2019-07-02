@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/19
  * @company mitesofor
  */
-@Component
+//@Component
 public class HouseholdSchedule {
 
     private final HouseHoldService houseHoldService;

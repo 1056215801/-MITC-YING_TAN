@@ -34,6 +34,7 @@ public class RoomSchedule {
     private final BuildingService buildingService;
 
     private final UnitService unitService;
+
     @Autowired
     public RoomSchedule(RoomService roomService, ClusterCommunityService clusterCommunityService,
                         ZoneService zoneService, BuildingService buildingService, UnitService unitService) {
@@ -44,10 +45,11 @@ public class RoomSchedule {
         this.unitService = unitService;
     }
 
-    @CacheClear(pre="room")
-    @Scheduled(cron = "0 25 23 * * ?")
+    @CacheClear(pre = "room")
+    //@Scheduled(cron = "0 25 23 * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void removeAndImport(){
+    public void removeAndImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         List<Zone> zones = zoneService.listByCommunityCodeList(communityCodeList);
@@ -61,7 +63,7 @@ public class RoomSchedule {
                     item.getBuildingId(), item.getUnitId());
             roomList.addAll(rooms);
         });
-        if(!roomList.isEmpty()) {
+        if (!roomList.isEmpty()) {
             roomService.remove();
             roomService.insertBatch(roomList);
         }

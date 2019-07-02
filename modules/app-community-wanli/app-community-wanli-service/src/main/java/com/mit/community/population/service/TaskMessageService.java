@@ -21,9 +21,10 @@ public class TaskMessageService {
         taskMessageMapper.insert(taskMessage);
     }
 
-    public List<TaskMessage> getList(){
+    public List<TaskMessage> getList(Integer id){
         EntityWrapper<TaskMessage> wrapper = new EntityWrapper<>();
-        wrapper.eq("status", 0);
+        wrapper.eq("reportProblemId", id);
+        wrapper.orderBy("gmt_create",false);
         List<TaskMessage> list = taskMessageMapper.selectList(wrapper);
         return list;
     }

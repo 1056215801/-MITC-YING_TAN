@@ -37,7 +37,7 @@ public class HttpClientUtil {
         String charSetName = "utf-8";
         // 创建一个方法实例.
         GetMethod getMethod = new GetMethod(url);
-        getMethod.addRequestHeader( "Connection", "close");
+        getMethod.addRequestHeader("Connection", "close");
         // 提供定制的重试处理程序是必要的
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
         BufferedReader reader = null;
@@ -62,7 +62,7 @@ public class HttpClientUtil {
             result = "error:" + e;
             log.error("HttpClientUtil get to:[" + url + "] error!", e);
         } finally {
-            if(reader != null){
+            if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
@@ -86,7 +86,7 @@ public class HttpClientUtil {
         String charSetName = "utf-8";
         // 创建一个方法实例.
         GetMethod getMethod = new GetMethod(url);
-        getMethod.addRequestHeader( "Connection", "close");
+        getMethod.addRequestHeader("Connection", "close");
         getMethod.setRequestHeader("cookie", cookie);
         // 提供定制的重试处理程序是必要的
         getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
@@ -112,7 +112,7 @@ public class HttpClientUtil {
             result = "error:" + e;
             log.error("HttpClientUtil get to:[" + url + "] error!", e);
         } finally {
-            if(reader != null){
+            if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {

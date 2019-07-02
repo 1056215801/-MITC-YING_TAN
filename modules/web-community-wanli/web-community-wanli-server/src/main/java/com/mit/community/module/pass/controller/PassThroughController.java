@@ -235,14 +235,16 @@ public class PassThroughController {
         Page<HouseHold> page = houseHoldService.listHouseholdByPage(request, zoneId, communityCode, buildingId, unitId, roomId, contactPerson, contactCellphone, householdType, status,
                 search_validEndFlag, select_autyType, pageNum, pageSize);
         List<HouseHold> list = page.getRecords();
-        if(!list.isEmpty()) {
-            for (int i=0; i < list.size(); i++) {
-                if(StringUtils.isNotBlank(list.get(i).getCredentialNum())) {
-                    int rkcf = personLabelsService.getRkcfByIdNum(list.get(i).getCredentialNum());
-                    if (rkcf == 1){
+        if (!list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                if (StringUtils.isNotBlank(list.get(i).getCredentialNum())) {
+                    String rkcf = personLabelsService.getRkcfByIdNum(list.get(i).getCredentialNum());
+                    if ("1".equals(rkcf)) {
                         list.get(i).setRkcf("户籍人口");
-                    } else if (rkcf == 2) {
+                    } else if ("2".equals(rkcf)) {
                         list.get(i).setRkcf("流动人口");
+                    } else {
+                        list.get(i).setRkcf("未录入");
                     }
                 }
             }

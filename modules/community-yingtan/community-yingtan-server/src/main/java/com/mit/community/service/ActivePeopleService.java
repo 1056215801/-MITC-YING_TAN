@@ -6,6 +6,8 @@ import com.mit.community.module.pass.mapper.ActivePeopleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 活跃人数
  *
@@ -25,12 +27,13 @@ public class ActivePeopleService {
 
     /**
      * 保存
+     *
      * @param activePeople 活跃人数
      * @author shuyy
      * @date 2018/11/22 11:33
      * @company mitesofor
-    */
-    public void save(ActivePeople activePeople){
+     */
+    public void save(ActivePeople activePeople) {
         this.activePeopleMapper.insert(activePeople);
     }
 
@@ -39,8 +42,8 @@ public class ActivePeopleService {
      * @author shuyy
      * @date 2018/11/22 11:53
      * @company mitesofor
-    */
-    public void remove(){
+     */
+    public void remove() {
         activePeopleMapper.delete(null);
     }
 
@@ -51,11 +54,15 @@ public class ActivePeopleService {
      * @author shuyy
      * @date 2018/11/22 14:20
      * @company mitesofor
-    */
-    public ActivePeople getByCommunityCode(String communityCode){
+     */
+    public ActivePeople getByCommunityCode(String communityCode) {
         EntityWrapper<ActivePeople> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        return this.activePeopleMapper.selectList(wrapper).get(0);
+        List<ActivePeople> list = this.activePeopleMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
     }
 
 }

@@ -49,11 +49,12 @@ public class UnitSchedule {
      * @author shuyy
      * @date 2018/11/21 9:21
      * @company mitesofor
-    */
-    @CacheClear(pre="unit")
-    @Scheduled(cron = "0 20 23 * * ?")
+     */
+    @CacheClear(pre = "unit")
+    //@Scheduled(cron = "0 20 23 * * ?")
+    @Scheduled(cron = "0 */10 * * * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void removeAndImport(){
+    public void removeAndImport() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
         communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         // 先删除，在插入
@@ -71,7 +72,7 @@ public class UnitSchedule {
                 });
             });
         });
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             unitService.remove();
             unitService.insertBatch(list);
         }

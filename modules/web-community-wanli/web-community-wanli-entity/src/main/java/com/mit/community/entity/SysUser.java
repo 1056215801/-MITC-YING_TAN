@@ -7,9 +7,11 @@ import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 用户
+ *
  * @author shuyy
  * @date 2018/11/14
  * @company mitesofor
@@ -88,13 +90,56 @@ public class SysUser implements Serializable {
      */
     @TableField("management_unit")
     private String managementUnit;
-
-    @TableField("management_scope")
+    /**
+     * 管辖范围
+     */
+    @TableField("managerment_scope")
     private String managementScope;
-
+    /**
+     * 账号类型
+     */
     @TableField("account_type")
     private String accountType;
 
+    /**
+     * 社区名称
+     */
     @TableField("community_name")
     private String communityName;
+
+    @TableField("gmt_modified")
+    private LocalDateTime alterTime;
+
+    @TableField("gmt_create")
+    private LocalDateTime createtime;
+
+    public SysUser() {
+        super();
+    }
+
+    public SysUser(String username, String password, String communityCode, String provinceName, String cityName, String areaName, String streetName,
+                   String address, String adminName, String role, String logo, String phone, String remark, String managementCommunity, String managementUnit,
+                   String managementScope, String accountType, String communityName, LocalDateTime alterTime, LocalDateTime createtime) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.communityCode = communityCode;
+        this.provinceName = provinceName;
+        this.cityName = cityName;
+        this.areaName = areaName;
+        this.streetName = streetName;
+        this.address = address;
+        this.adminName = adminName;
+        this.role = role;
+        this.logo = logo;
+        this.phone = phone;
+        this.remark = remark;
+        this.managementCommunity = managementCommunity;
+        this.managementUnit = managementUnit;
+        this.managementScope = managementScope;
+        this.accountType = accountType;
+        this.communityName = communityName;
+        this.alterTime = alterTime;
+        this.createtime = createtime;
+    }
 }

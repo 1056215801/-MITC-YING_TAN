@@ -3,16 +3,15 @@ package com.mit.community.module.population.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.SendPhoneInfo;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.entity.Message;
 import com.mit.community.entity.entity.MessageCheck;
 import com.mit.community.population.service.MessagePushService;
 import com.mit.community.population.service.MessageService;
 import com.mit.community.service.RedisService;
-import com.mit.community.util.CookieUtils;
-import com.mit.community.util.PushUtil;
-import com.mit.community.util.Result;
-import com.mit.community.util.WebPush;
+import com.mit.community.service.SendPhoneService;
+import com.mit.community.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +36,8 @@ public class MessagePushController {
     private MessageService messageService;
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private SendPhoneService sendPhoneService;
 
     @PostMapping("/pushPerson")
     @ApiOperation(value = "消息推送", notes = "")
@@ -94,8 +95,21 @@ public class MessagePushController {
     public Result cb() {
         String title = "消息通知";
         String MSG = "收到新的问题反馈，请登录网格助手进行处理";
-        WebPush.sendAllsetNotification(MSG,title);
+        WebPush.sendAllsetNotification(MSG, title);
         return Result.success("催办成功");
+    }
+
+    @GetMapping("/cwzy")
+    @ApiOperation(value = "车位占用")
+    public Result cwzy() {
+        List<SendPhoneInfo> phones = sendPhoneService.getPhoneByDj(6);
+        if (!phones.isEmpty()) {
+            for (int i = 0; i < phones.size(); i++) {
+                String place = "东湖区行政服务中心";
+                SmsCommunityAppUtil.sendCWZY(phones.get(i).getPhone(), place);
+            }
+        }
+        return Result.success("发送成功");
     }
 
 

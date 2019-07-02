@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 /**
  * 门禁记录业务层
+ *
  * @author Mr.Deng
  * @date 2018/11/15 11:55
  * <p>Copyright: Copyright (c) 2018</p>
@@ -66,6 +67,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 添加门禁记录
+     *
      * @param accessControl 门禁记录信息
      * @author Mr.Deng
      * @date 11:57 2018/11/15
@@ -76,6 +78,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 从dnake接口，分页查询门禁列表。通过小区编码
+     *
      * @param communityCode 小区编码
      * @param pageSize      分页大小
      * @param pageNum       当前页
@@ -103,6 +106,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 获取最新的门禁记录
+     *
      * @return com.mit.community.entity.AccessControl
      * @author shuyy
      * @date 2018/11/16 17:03
@@ -122,6 +126,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 查询门禁记录信息，通过小区code
+     *
      * @param communityCode 小区code
      * @return 门禁记录列表
      * @author Mr.Deng
@@ -135,6 +140,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 统计通行总数，按小区code
+     *
      * @param communityCode 小区code
      * @return java.lang.Integer
      * @author shuyy
@@ -151,6 +157,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 分页查询门禁记录，通过小区code
+     *
      * @param communityCodeList 小区code列表
      * @param pageNum           当前页
      * @param pageSize          分页总数
@@ -167,6 +174,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 统计门禁总数，通过小区code列表
+     *
      * @param communityCodes 小区code列表
      * @return java.lang.Integer
      * @author shuyy
@@ -183,6 +191,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 统计最近一个月的活跃人数，通过设备名列表
+     *
      * @param deviceNameList 设备名列表
      * @return java.lang.Integer
      * @author shuyy
@@ -199,6 +208,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 查询当前时间到凌晨2点的通行记录数，
+     *
      * @param deviceNameList 设备name列表
      * @return java.lang.Integer
      * @author shuyy
@@ -222,6 +232,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 统计驻留人数，通过小区code
+     *
      * @param communityCode 小区code
      * @return long
      * @author shuyy
@@ -229,14 +240,17 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
      */
     public long countRemainPeopleByCommunityCode(String communityCode) {
         // 查出凌晨2点后进的数量、出的数量，然后：活跃人数 - （出-进）
+        Integer outNum = 0, inNum = 0;
         List<Device> outDevices = deviceService.listInOrOutByCommunityCode(communityCode, "出");
-        List<String> outDeviceNameList = outDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
-        Integer outNum = this.countUntilTwoNumByDeviceNameList(outDeviceNameList);
-
+        if (outDevices != null) {
+            List<String> outDeviceNameList = outDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
+            outNum = this.countUntilTwoNumByDeviceNameList(outDeviceNameList);
+        }
         List<Device> inDevices = deviceService.listInOrOutByCommunityCode(communityCode, "进");
-        List<String> inDeviceNameList = inDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
-        Integer inNum = this.countUntilTwoNumByDeviceNameList(inDeviceNameList);
-
+        if (inDevices != null) {
+            List<String> inDeviceNameList = inDevices.parallelStream().map(Device::getDeviceName).collect(Collectors.toList());
+            inNum = this.countUntilTwoNumByDeviceNameList(inDeviceNameList);
+        }
         ActivePeople activePeople = activePeopleService.getByCommunityCode(communityCode);
         int i = outNum - inNum;
         if (activePeople == null) {
@@ -248,6 +262,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 统计驻留人数，通过小区code列表
+     *
      * @param communityCodes 小区code列表
      * @return long
      * @author Mr.Deng
@@ -279,6 +294,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 统计门禁记录开门方式，通过小区code
+     *
      * @param communityCode 小区code
      * @return 统计记录
      * @author shuyy
@@ -295,6 +311,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 统计最近半年通行记录数，通过住户id
+     *
      * @param householdId 住户id
      * @return java.lang.Integer
      * @author shuyy
@@ -404,6 +421,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 狄耐克web接口-获取门禁记录
+     *
      * @param deviceName    设备名称
      * @param communityCode 小区code
      * @param pageSize      一页显示数量
@@ -426,6 +444,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
 
     /**
      * 访客
+     *
      * @param communityCode 小区code
      * @param pageSize      一页显示数
      * @param deviceNum     设备编号

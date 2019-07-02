@@ -7,9 +7,12 @@ import com.mit.community.entity.SysRole;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.SysUserRole;
 import com.mit.community.mapper.SysUserMapper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,8 +101,27 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
     }
 
     /**
+     * @Author HuShanLin
+     * @Date 16:48 2019/7/1
+     * @Description:~查询已存在的用户
+     */
+    public SysUser existUsername(String username) {
+        EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("username", username);
+        List<SysUser> sysUsers = sysUserMapper.selectList(wrapper);
+        if (sysUsers.isEmpty()) {
+            return sysUsers.get(0);
+        }
+        return null;
+    }
+
+    /**
      * 保存用户
      *
+     * @param username1
+     * @param password1
+     * @param s
+     * @param scope
      * @param name          姓名
      * @param username      用户名
      * @param password      密码
@@ -111,32 +133,36 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
      * @date 2018/12/17 19:56
      * @company mitesofor
      */
- /*   @Transactional(rollbackFor = Exception.class)
-    public void save(String name, String username, String password, String communityCode, String email,
-                     String phone, String remark) {
+    @Transactional(rollbackFor = Exception.class)
+    public void save(Integer id, String username, String password, String role, String managementScope, String accountType, String phone, String provinceName,
+                     String cityName, String areaName, String streetName, String address, String communityCode, String communityName, String adminName, String email, String remark) {
         if (StringUtils.isBlank(email)) {
             email = StringUtils.EMPTY;
         }
         if (StringUtils.isBlank(remark)) {
             remark = StringUtils.EMPTY;
         }
-        SysUser sysUser = new SysUser(name, username,
-                password, StringUtils.EMPTY, (byte) 1,
-                communityCode, email, Constants.NULL_LOCAL_DATE_TIME,
-                phone, remark);
-        sysUser.setGmtCreate(LocalDateTime.now());
-        sysUser.setGmtModified(LocalDateTime.now());
-        sysUserMapper.insert(sysUser);
+        if (id == null) {//新增
+            SysUser sysUser = new SysUser(username, password, communityCode, provinceName, cityName, areaName, streetName, address, adminName, role, null,
+                    phone, remark, null, null, managementScope, accountType, communityName, LocalDateTime.now(), LocalDateTime.now());
+            sysUserMapper.insert(sysUser);
+        } else {//修改
+            SysUser sysUser = new SysUser(username, password, communityCode, provinceName, cityName, areaName, streetName, address, adminName, role, null,
+                    phone, remark, null, null, managementScope, accountType, communityName, LocalDateTime.now(), null);
+            sysUser.setId(id);
+            sysUserMapper.updateById(sysUser);
+        }
     }
-*/
+
     /**
      * 获取用户， 根据用户名
+     *
      * @param username 用户名
      * @return com.mit.community.entity.SysUser
      * @author shuyy
      * @date 2018/12/18 19:25
      * @company mitesofor
-    */
+     */
     public SysUser getByUsername(String username) {
         EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
         wrapper.eq("username", username);
@@ -145,5 +171,26 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
             return null;
         }
         return sysUsers.get(0);
+    }
+
+    /**
+     * @Author HuShanLin
+     * @Date 14:58 2019/7/1
+     * @Description:~根据社区编码查询用户列表
+     */
+    public List<SysUser> list(String communityCode) {
+        EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        List<SysUser> list = sysUserMapper.selectList(wrapper);
+        return list;
+    }
+
+    /**
+     * @Author HuShanLin
+     * @Date 17:03 2019/7/1
+     * @Description:~删除用户信息
+     */
+    public void remove(Integer id) {
+
     }
 }

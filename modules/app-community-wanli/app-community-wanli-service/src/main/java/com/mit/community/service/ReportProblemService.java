@@ -146,4 +146,12 @@ public class ReportProblemService {
     public void saveSendAfter(ReportProblem reportProblem){
         reportProblemMapper.updateById(reportProblem);
     }
+
+    public List<ReportProblem> getNosolveList(){
+        EntityWrapper<ReportProblem> wrapper = new EntityWrapper<>();
+        wrapper.eq("status",0);
+        wrapper.ne("mqlzd",10);//推送流程没有走完的
+        List<ReportProblem> list = reportProblemMapper.selectList(wrapper);
+        return list;
+    }
 }

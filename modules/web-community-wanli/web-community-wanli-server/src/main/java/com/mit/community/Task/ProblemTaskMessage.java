@@ -4,6 +4,7 @@ import com.mit.community.entity.*;
 import com.mit.community.population.service.PersonLabelsService;
 import com.mit.community.population.service.TaskMessageService;
 import com.mit.community.service.ReportProblemService;
+import com.mit.community.service.SendPhoneService;
 import com.mit.community.util.DateUtil;
 import com.mit.community.util.SmsCommunityAppUtil;
 import com.mit.community.util.WebPush;
@@ -28,6 +29,8 @@ public class ProblemTaskMessage {
     private PersonLabelsService personLabelsService;
     @Autowired
     private ReportProblemService reportProblemService;
+    @Autowired
+    private SendPhoneService sendPhoneService;
 
     @Scheduled(cron = "0/1 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
@@ -52,6 +55,7 @@ public class ProblemTaskMessage {
                             List<>*/
                             if (!wgyList.isEmpty()) {
                                 for (int a=0; a<wgyList.size();a++) {
+                                    System.out.println("=====查找到网格员信息");
                                     String title = "事件未处理通知";
                                     if(wgyList.get(a).getPerson_baseinfo_id() != null){//有userid的发app通知
                                         System.out.println("=====app通告发送的网格员id"+wgyList.get(a).getId());
@@ -73,6 +77,11 @@ public class ProblemTaskMessage {
                                     }
                                 }
 
+                            } else {//没有上级，说明全部推送流程完成
+                                ReportProblem reportProblem = nosolveList.get(i);
+                                reportProblem.setMqlzd(10);//终结
+                                reportProblem.setGmtModified(LocalDateTime.now());
+                                reportProblemService.saveSendAfter(reportProblem);
                             }
                         }
                     }
@@ -84,24 +93,24 @@ public class ProblemTaskMessage {
 
     //@Scheduled(cron = "0/1 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void menJin(){
+    public void menJin() {
         List<MenJinInfo> infoList = personLabelsService.getMenJinList("艾武德");
-        if(!infoList.isEmpty()) {
+        if (!infoList.isEmpty()) {
             String create_Time = infoList.get(0).getCreateTime();
-            String  createTime = create_Time.substring(0,create_Time.length()-2);
-            System.out.println("=============发现吸毒事件"+createTime);
+            String createTime = create_Time.substring(0, create_Time.length() - 2);
+            System.out.println("=============发现吸毒事件" + createTime);
             long create = DateUtil.parseStringToLong(createTime);
             long bd = DateUtil.parseStringToLong("2019-06-22 12:00:00");
             if (create > bd) {
                 DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                LocalDateTime time = LocalDateTime.parse(createTime,df);
+                LocalDateTime time = LocalDateTime.parse(createTime, df);
                 String content = personLabelsService.getContentByTime(time);
                 List<String> list = new ArrayList<>();
                 list.add(infoList.get(0).getUrl());
-                if(!StringUtils.isNotBlank(content)){
+                if (!StringUtils.isNotBlank(content)) {
                     System.out.println("=============发现吸毒");
                     SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
-                    reportProblemService.save(91,"吸毒人员聚集","吸毒","东湖区",1, list,time);
+                    reportProblemService.save(70, "吸毒人员聚集", "吸毒", "东湖区", 1, list, time);
                 }
             }
         }
@@ -109,63 +118,73 @@ public class ProblemTaskMessage {
 
     /*@Scheduled(cron = "0/1 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void task(){
+    public void task() {
         List<ReportProblem> list = reportProblemService.getXdAndSf();
         System.out.println("=======任务运行");
-        if(!list.isEmpty()){
-            for(int i=0;i<list.size();i++) {
+        if (!list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
                 int mqlzd = list.get(i).getMqlzd();
                 if (mqlzd == 0) {
                     Date sendTime = Date.from(list.get(i).getGmtCreate().toInstant(ZoneOffset.of("+8")));
                     long longDate = sendTime.getTime();
                     long now = System.currentTimeMillis();
-                    int miao = (int)(now - longDate) / 1000;
-                    System.out.println("=======1相差秒数"+miao);
+                    int miao = (int) (now - longDate) / 1000;
+                    System.out.println("=======1相差秒数" + miao);
                     if (miao > 20) {
                         System.out.println("=======进入1");
-                        SmsCommunityAppUtil.sendHandleMsg("18170879118", "香樟住宅小区","居委");//有事件未及时处置，现升级为居委处置
-                        ReportProblem reportProblem = list.get(i);
-                        System.out.println("=======信息下发1");
-                        reportProblem.setMqlzd(1);
-                        reportProblem.setGmtModified(LocalDateTime.now());
-                        reportProblemService.saveSendAfter(reportProblem);
+                        List<SendPhoneInfo> phones = sendPhoneService.getPhoneByDj(2);
+                        if (!phones.isEmpty()) {
+                            for (int a = 0; a < phones.size(); a++) {
+                                SmsCommunityAppUtil.sendHandleMsg(phones.get(a).getPhone(), "香樟住宅小区", "居委");//有事件未及时处置，现升级为居委处置
+                                ReportProblem reportProblem = list.get(i);
+                                System.out.println("=======信息下发1");
+                                reportProblem.setMqlzd(1);
+                                reportProblem.setGmtModified(LocalDateTime.now());
+                                reportProblemService.saveSendAfter(reportProblem);
+                            }
+                        }
+
                     }
                 } else if (mqlzd == 1) {
                     Date sendTime = Date.from(list.get(i).getGmtModified().toInstant(ZoneOffset.of("+8")));
                     long longDate = sendTime.getTime();
                     long now = System.currentTimeMillis();
-                    int miao = (int)(now - longDate) / 1000;
-                    System.out.println("=======2相差秒数"+miao);
+                    int miao = (int) (now - longDate) / 1000;
+                    System.out.println("=======2相差秒数" + miao);
                     if (miao > 15) {
                         System.out.println("=======进入2");
-                        String[] phones = {"18170879118"};
-                        for(int a=0;a<phones.length;a++){
-                            SmsCommunityAppUtil.sendHandleMsg(phones[a], "长巷村","管理处");//事件未及时处置，现升级为管理处处置
-                            System.out.println("=======信息下发2");
+                        List<SendPhoneInfo> phones = sendPhoneService.getPhoneByDj(3);
+                        if (!phones.isEmpty()) {
+                            for (int a = 0; a < phones.size(); a++) {
+                                SmsCommunityAppUtil.sendHandleMsg(phones.get(a).getPhone(), "长巷村", "管理处");//事件未及时处置，现升级为管理处处置
+                                System.out.println("=======信息下发2");
+                            }
+                            ReportProblem reportProblem = list.get(i);
+                            reportProblem.setMqlzd(2);
+                            reportProblem.setGmtModified(LocalDateTime.now());
+                            reportProblemService.saveSendAfter(reportProblem);
                         }
-                        ReportProblem reportProblem = list.get(i);
-                        reportProblem.setMqlzd(2);
-                        reportProblem.setGmtModified(LocalDateTime.now());
-                        reportProblemService.saveSendAfter(reportProblem);
-                    }
 
+                    }
                 } else if (mqlzd == 2) {
                     Date sendTime = Date.from(list.get(i).getGmtModified().toInstant(ZoneOffset.of("+8")));
                     long longDate = sendTime.getTime();
                     long now = System.currentTimeMillis();
-                    int miao = (int)(now - longDate) / 1000;
-                    System.out.println("=======3相差秒数"+miao);
+                    int miao = (int) (now - longDate) / 1000;
+                    System.out.println("=======3相差秒数" + miao);
                     if (miao > 15) {
                         System.out.println("=======进入3");
-                        String[] phones = {"18170879118"};
-                        for(int a=0;a<phones.length;a++){
-                            SmsCommunityAppUtil.sendHandleMsg(phones[a], "贤士湖管理处","区政法委");//有事件未及时处置，现升级为政法委处置
-                            System.out.println("=======信息下发3");
+                        List<SendPhoneInfo> phones = sendPhoneService.getPhoneByDj(4);
+                        if (!phones.isEmpty()) {
+                            for (int a = 0; a < phones.size(); a++) {
+                                SmsCommunityAppUtil.sendHandleMsg(phones.get(a).getPhone(), "贤士湖管理处", "区政法委");//有事件未及时处置，现升级为政法委处置
+                                System.out.println("=======信息下发3");
+                            }
+                            ReportProblem reportProblem = list.get(i);
+                            reportProblem.setMqlzd(3);
+                            reportProblem.setGmtModified(LocalDateTime.now());
+                            reportProblemService.saveSendAfter(reportProblem);
                         }
-                        ReportProblem reportProblem = list.get(i);
-                        reportProblem.setMqlzd(3);
-                        reportProblem.setGmtModified(LocalDateTime.now());
-                        reportProblemService.saveSendAfter(reportProblem);
                     }
 
                 }

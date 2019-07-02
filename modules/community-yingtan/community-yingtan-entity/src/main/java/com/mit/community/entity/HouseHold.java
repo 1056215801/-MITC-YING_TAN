@@ -157,6 +157,10 @@ public class HouseHold extends BaseEntity {
      */
     private LocalDate birthday;
 
+
+    private String labels;
+
+
     /**
      * 身份类型：1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、6、上方人员、99、其他
      */

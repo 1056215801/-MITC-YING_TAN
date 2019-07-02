@@ -74,7 +74,7 @@ public class InfoSearchController {
         return Result.success(map);
     }
 
-    @PostMapping("/getInfoExcel")
+    /*@PostMapping("/getInfoExcel")
     @ApiOperation(value = "人员信息导出excel", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
     public Result getInfoExcel(HttpServletResponse response, HttpServletRequest request,
                                @RequestParam(required = false, defaultValue = "0") Integer ageStart,
@@ -129,7 +129,7 @@ public class InfoSearchController {
         //ExcelUtils.exportExcel(response, fileName, data);
         page.setRecords(list);
         return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
-    }
+    }*/
 
 
 

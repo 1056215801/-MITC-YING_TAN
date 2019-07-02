@@ -34,13 +34,14 @@ public class FaceComparisonService {
 
     /**
      * 保存QQ物联摄像头上传的比对照片
+     *
      * @param data
      * @param token 登录时下发的token
      * @throws Exception
      * @company mitesofor
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveUploadFaceComparisonData(String basePath, UploadFaceComparisonData data, String token) throws Exception{
+    public void saveUploadFaceComparisonData(String basePath, UploadFaceComparisonData data, String token) throws Exception {
         EntityWrapper<FaceComparisonData> wrapper = new EntityWrapper<>();
         wrapper.eq("msgid", data.getMsgid());
         List<FaceComparisonData> faceComparisonDatas = faceComparisonMapper.selectList(wrapper);
@@ -53,7 +54,7 @@ public class FaceComparisonService {
                 file.mkdir();
             }*/
             FileImageOutputStream fos = new FileImageOutputStream(file);
-            fos.write(b,0,b.length);
+            fos.write(b, 0, b.length);
             fos.close();
             EntityWrapper<DeviceInfo> wrapperDevice = new EntityWrapper<>();
             wrapperDevice.eq("token", token);
@@ -66,14 +67,32 @@ public class FaceComparisonService {
             faceComparisonMapper.insert(faceComparisonData);
             String[] a = path.split("\\\\");
             //String path = address.getHostAddress()+":8010/cloud-service/imgs/"+a[a.length-1];
-            String url = "http://120.79.67.123"+":8010/cloud-service/imgs/"+a[a.length-1];
+            String url = "http://120.79.67.123" + ":8010/cloud-service/imgs/" + a[a.length - 1];
             List<String> urls = new ArrayList<>();
             urls.add(url);
             if ("熊起".equals(data.getData().getName())) {
                 SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
                 String title = "消息通知";
-                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理",title);
-                reportProblemService.save(91,"上访人员外出","上访","东湖区",1, urls);
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理", title);
+                reportProblemService.save(91, "上访人员外出", "上访", "东湖区", 1, urls);
+            }
+            if ("艾武德".equals(data.getData().getName())) {
+                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                String title = "消息通知";
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理", title);
+                reportProblemService.save(70, "上访人员外出", "上访", "东湖区", 1, urls);
+            }
+            if ("柯尊勇".equals(data.getData().getName())) {
+                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                String title = "消息通知";
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理", title);
+                reportProblemService.save(65, "上访人员外出", "上访", "东湖区", 1, urls);
+            }
+            if ("徐韶群".equals(data.getData().getName())) {
+                SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");
+                String title = "消息通知";
+                WebPush.sendAllsetNotification("收到新的问题反馈，请登录网格助手进行处理", title);
+                reportProblemService.save(80, "上访人员外出", "上访", "东湖区", 1, urls);
             }
             if ("艾武德".equals(data.getData().getName())) {
                 SmsCommunityAppUtil.sendMsg("18170879118", "收到新的问题反馈，请登录网格助手进行处理");

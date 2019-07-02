@@ -1,12 +1,12 @@
 package com.mit.community.module.population.controller;
 
-import com.mit.community.entity.ExcelData;
-import com.mit.community.entity.LdzExcelInfo;
-import com.mit.community.entity.OldExcelInfo;
-import com.mit.community.entity.ZyzExcelInfo;
+import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.*;
 import com.mit.community.entity.entity.*;
 import com.mit.community.population.service.ExcelOutService;
 import com.mit.community.population.service.InfoSearchService;
+import com.mit.community.service.RedisService;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.ExcelUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
@@ -35,6 +35,8 @@ public class ExcelOutController {
     private ExcelOutService excelOutService;
     @Autowired
     private InfoSearchService infoSearchService;
+    @Autowired
+    private RedisService redisService;
 
     @PostMapping("/getMilitaryExcel")
     @ApiOperation(value = "兵役excel", notes = "")
@@ -120,7 +122,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -200,7 +202,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -280,7 +282,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -360,7 +362,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -440,7 +442,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -452,7 +454,12 @@ public class ExcelOutController {
                                @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
                                String name, String idNum, String sex, String education, String job,
                                String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
-        List<InfoSearch> list = infoSearchService.list(ageStart, ageEnd, name, idNum, sex, education, job, matrimony, zzmm, label, rycf);
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String accountType = sysUser.getAccountType();
+        String streetName = sysUser.getStreetName();
+        String areaName = sysUser.getAreaName();
+        List<InfoSearch> list = infoSearchService.list(ageStart, ageEnd, name, idNum, sex, education, job, matrimony, zzmm, label, rycf, accountType, streetName, areaName);
         ExcelData data = new ExcelData();
         data.setName("用户基本信息");
         List<String> titles = new ArrayList<>();
@@ -576,7 +583,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -640,7 +647,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -692,7 +699,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -762,7 +769,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -830,7 +837,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -892,7 +899,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -963,7 +970,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1031,7 +1038,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1104,7 +1111,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1173,7 +1180,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1253,7 +1260,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1333,7 +1340,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1387,7 +1394,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1455,7 +1462,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1523,7 +1530,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }
@@ -1532,7 +1539,12 @@ public class ExcelOutController {
     @PostMapping("/getCarExcel")
     @ApiOperation(value = "车辆信息excel", notes = "")
     public Result getCarExcel(HttpServletRequest request) throws Exception {
-        List<CarExcelInfo> list = excelOutService.getCarExcel();
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String accountType = sysUser.getAccountType();
+        String streetName = sysUser.getStreetName();
+        String areaName = sysUser.getAreaName();
+        List<CarExcelInfo> list = excelOutService.getCarExcel(accountType, streetName, areaName);
         if (!list.isEmpty()) {
             ExcelData data = new ExcelData();
             data.setName("车辆信息");
@@ -1591,7 +1603,7 @@ public class ExcelOutController {
                 file.mkdir();
             }
             ExcelUtils.generateExcel(data, basePath + fileName);
-            return Result.success("http://127.0.0.1:9766/excel/" + fileName);
+            return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
         } else {
             return Result.success("无相关信息");
         }

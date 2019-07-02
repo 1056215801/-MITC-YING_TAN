@@ -32,8 +32,9 @@ public class PopulationRushSchedule {
 
     @Scheduled(cron = "0 0 0 */7 * ?")
     @Transactional(rollbackFor = Exception.class)
-    public void  update (){
+    public void update() {
         List<String> communityCodeList = clusterCommunityService.listCommunityCodeListByCityName("鹰潭市");
+        communityCodeList.addAll(clusterCommunityService.listCommunityCodeListByCityName("南昌市"));
         communityCodeList.forEach(item -> {
             PopulationRush populationRush = populationRushService.countByCommunityCode(item);
             populationRushService.updateByCommunityCode(populationRush);

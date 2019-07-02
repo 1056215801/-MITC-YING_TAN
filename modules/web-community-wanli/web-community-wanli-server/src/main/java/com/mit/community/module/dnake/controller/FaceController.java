@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,46 +26,29 @@ import java.io.InputStream;
 public class FaceController {
 
     @RequestMapping("/uploadImg")
-    public void uploadImg(HttpServletRequest request, HttpServletResponse response) {
-        byte[] res = null;
-        InputStream in = null;
-        ByteArrayOutputStream out = null;
-        try {
-            in = request.getInputStream();
-            out = new ByteArrayOutputStream(1000);
-            byte[] b = new byte[1000];
-            int len = 0;
-            while ((len = in.read(b)) != -1) {
-                out.write(b, 0, len);
-            }
-            in.close();
-            out.close();
-            res = out.toByteArray();
-            if (in != null) {
-                System.out.println("==========result:" + res.length);
-            } else {
-                System.out.println("未获取到图片数据!");
-            }
-            //DataInputStream ds = new DataInputStream(in);
-            //byte[] b = new byte[10240];
-            //in.read(b);
-            //System.out.println(Integer.toBinaryString(b[0]));
-        } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException exx) {
-                exx.printStackTrace();
+    public void uploadImg(HttpServletRequest request, HttpServletResponse response, String photo) throws IOException {
+        BASE64Decoder decoder = new BASE64Decoder();
+        //Base64字符串处理
+        byte[] b = decoder.decodeBuffer(photo);
+        for (int i = 0; i < b.length; ++i) {
+            if (b[i] < 0) {//调整异常数据
+                b[i] += 256;
             }
         }
+        System.out.println(photo);
+    }
+
+    private static byte[] readInputStream(InputStream inStream) throws Exception {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024]; //创建一个Buffer字符串
+        //每次读取的字符串长度，如果为-1，代表全部读取完毕
+        int len = 0;
+        //使用一个输入流从buffer里把数据读取出来
+        while ((len = inStream.read(buffer)) != -1) {
+            //用输出流往buffer里写入数据，中间参数代表从哪个位置开始读，len代表读取的长度
+            outStream.write(buffer, 0, len);
+        }
+        inStream.close();   //关闭输入流
+        return outStream.toByteArray();  //把outStream里的数据写入内存
     }
 }

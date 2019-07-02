@@ -13,15 +13,15 @@ public class PersonLabelsService {
     @Autowired
     private PersonLabelsMapper labelsMapper;
 
-    public void saveLabels(String labels,Integer userId){
+    public void saveLabels(String labels, Integer userId) {
         labelsMapper.saveLabels(labels, userId);
     }
 
-    public String getLabelsByHousehold(Integer household){
+    public String getLabelsByHousehold(Integer household) {
         return labelsMapper.getLabelsByHousehold(household);
     }
 
-    public int getRkcfByIdNum(String idNum){
+    public String getRkcfByIdNum(String idNum) {
         return labelsMapper.getRkcfByIdNum(idNum);
     }
 
@@ -29,30 +29,32 @@ public class PersonLabelsService {
         return labelsMapper.getSirPersonBaseInfoId(id);
     }
 
-    public TaskMessageSirInfo getSirUserIdBySirPersonBaseInfoId(Integer person_baseinfo_id){
+    public TaskMessageSirInfo getSirUserIdBySirPersonBaseInfoId(Integer person_baseinfo_id) {
         return labelsMapper.getSirUserIdBySirPersonBaseInfoId(person_baseinfo_id);
     }
 
-    public TaskMessageContent getTaskMessageContent(Integer reportProblemId, Integer wgyId){
+    public TaskMessageContent getTaskMessageContent(Integer reportProblemId, Integer wgyId) {
         return labelsMapper.getTaskMessageContent(reportProblemId, wgyId);
     }
-    public int getPeopleCount(){
+
+    public int getPeopleCount() {
         return labelsMapper.getPeopleCount();
     }
 
-    public int getOutCount(){
+    public int getOutCount() {
         return labelsMapper.getOutCount();
     }
 
-    public String getSirPhoneByPersonBaseInfoId(Integer person_baseinfo_id){
+    public String getSirPhoneByPersonBaseInfoId(Integer person_baseinfo_id) {
         return labelsMapper.getSirPhoneByPersonBaseInfoId(person_baseinfo_id);
     }
 
-    public void updateMqlzd(Integer id){
+    public void updateMqlzd(Integer id) {
         labelsMapper.updateMqlzd(id);
     }
 
-    public PeopleOut getPeopleOue(){
+
+    public PeopleOut getPeopleOue() {
         List<PeopleOut> list = labelsMapper.getPeopleOue();
         if (!list.isEmpty()) {
             return list.get(0);
@@ -60,7 +62,6 @@ public class PersonLabelsService {
             return null;
         }
     }
-
     public String getMenJinTime(String name){
         return labelsMapper.getMenJinTime(name);
     }
