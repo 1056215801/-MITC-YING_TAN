@@ -134,6 +134,7 @@ public class PersonBaseInfo extends BaseEntity {
     /**
      * 年龄
      */
+    @TableField(exist = false)
     private int age;
 
     private int isDelete;

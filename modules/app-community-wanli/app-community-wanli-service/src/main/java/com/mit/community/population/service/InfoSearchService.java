@@ -159,10 +159,10 @@ public class InfoSearchService {
             }
 
             if (ageStart != 0) {
-                wrapper.ge("a.age", ageStart);
+                //wrapper.ge("a.age", ageStart);
             }
             if (ageEnd != 0) {
-                wrapper.le("a.age", ageEnd);
+                //wrapper.le("a.age", ageEnd);
             }
             if (StringUtils.isNotBlank(name)) {
                 wrapper.eq("a.name", name);

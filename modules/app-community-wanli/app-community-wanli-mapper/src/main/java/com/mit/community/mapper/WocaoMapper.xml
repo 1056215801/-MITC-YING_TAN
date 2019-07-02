@@ -65,13 +65,13 @@
 
 
     <select id="selectPersonBaseInfoPage" resultMap="infoSearchMap">
-      select a.*,a.birthday
+      select a.*,a.birthday,(YEAR(NOW())-YEAR(a.birthday)-1) + ( DATE_FORMAT(a.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
       from person_baseinfo a LEFT JOIN cluster_community b on a.community_code=b.community_code
       where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectAzbInfoPage" resultMap="infoSearchMap">
-        select b.*
+        select b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
@@ -83,193 +83,193 @@
 
     <select id="selectBearInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from bear_info a left join person_baseinfo b on a.person_baseinfo_id=b.id  LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectCxInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from cx_Info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectEngPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from engpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code  where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectFlowPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from flow_people_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectMilitaryServiceInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from militaryservice_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectPartyInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from party_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSfInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from sfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSqjzpeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from sqjzpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectStayPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from staypeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXdPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from xd_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXmsfPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from xmsfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZdqsnPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from zdqsn_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZszhPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectPersonBaseInfo" resultMap="infoSearchMap">
-        select a.*,a.birthday
+        select a.*,a.birthday,(YEAR(NOW())-YEAR(a.birthday)-1) + ( DATE_FORMAT(a.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from person_baseinfo a LEFT JOIN cluster_community b on a.community_code=b.community_code
         where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectAzbInfo" resultMap="infoSearchMap">
-        select b.*
+        select b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from azb_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
 
     <select id="selectBearInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from bear_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectCxInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from cx_Info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectEngPeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from engpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectFlowPeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from flow_people_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectMilitaryServiceInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from militaryservice_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectPartyInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from party_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSfInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from sfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectSqjzpeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from sqjzpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectStayPeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from staypeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXdPeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from xd_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectXmsfPeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from xmsfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZdqsnPeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from zdqsn_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZszhPeopleInfo" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectLdzPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from ldz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectWgyPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from wgy_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZyzPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from zyz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectOldPeopleInfoPage" resultMap="infoSearchMap">
         select
-        b.*
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from old_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 

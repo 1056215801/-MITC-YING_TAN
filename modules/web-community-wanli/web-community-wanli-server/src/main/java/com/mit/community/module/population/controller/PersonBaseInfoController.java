@@ -72,22 +72,19 @@ public class PersonBaseInfoController {
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             String communityCode = sysUser.getCommunityCode();
 
-
-        String[] ages = birthday.split("-");
-        int age = 2019 - Integer.parseInt(ages[0]);
         //if (personBaseInfoService.isExist(idCardNum)) {//已经存在就更新
         if (baseId != null) {
             /*personBaseInfoService.updateByIdCardNum(age, idCardNum, name, formerName, gender,
                     DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
                     politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
                     placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);*/
-            personBaseInfoService.updateByIdCardNum(baseId, age, idCardNum, name, formerName, gender,
+            personBaseInfoService.updateByIdCardNum(baseId, idCardNum, name, formerName, gender,
                     DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
                     politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
                     placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null, rksx,communityCode);
             return Result.success("信息更新成功");
         } else {
-            Integer id = personBaseInfoService.save(age, idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
+            Integer id = personBaseInfoService.save(idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
                     nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
                     placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null,communityCode);
             return Result.success(id);
