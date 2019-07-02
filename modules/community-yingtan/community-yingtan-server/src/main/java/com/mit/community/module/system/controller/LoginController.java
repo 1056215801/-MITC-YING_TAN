@@ -119,9 +119,9 @@ public class LoginController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ApiOperation(value = "数据展示前台项目登录", notes = "数据展示前台项目登录 返回参数：adminName 管理员姓名、role 账号角色信息")
     @ApiImplicitParams({@ApiImplicitParam(name = "kaptcha", value = "验证码", dataType = "string", paramType = "query")})
-    public Result login(String username, String password, String kaptcha, HttpServletRequest request) {
+    public Result login(String username, String password, String kaptcha, HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
-        String sessionId = CookieUtils.getSessionId(request);
+        String sessionId = CookieUtils.getSessionId(request, response);
         List<String> list = new ArrayList<>();
         String code = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
         if (StringUtils.isBlank(kaptcha) || !kaptcha.equalsIgnoreCase(code)) {
@@ -237,10 +237,10 @@ public class LoginController {
 
     @RequestMapping("/getUserInfo")
     @ApiOperation(value = "获取用户信息")
-    public Result getUserInfo(HttpServletRequest request) {
+    public Result getUserInfo(HttpServletRequest request, HttpServletResponse response) {
         UserInfo userInfo = new UserInfo();
         List<Community> list = new ArrayList<>();
-        String sessionId = CookieUtils.getSessionId(request);
+        String sessionId = CookieUtils.getSession(request);
         SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         if (sysUser == null || sessionId == null) {
             return Result.error("请登录");

@@ -109,7 +109,7 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
         wrapper.eq("username", username);
         List<SysUser> sysUsers = sysUserMapper.selectList(wrapper);
-        if (sysUsers.isEmpty()) {
+        if (!sysUsers.isEmpty()) {
             return sysUsers.get(0);
         }
         return null;
@@ -191,6 +191,8 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
      * @Description:~删除用户信息
      */
     public void remove(Integer id) {
-
+        EntityWrapper<SysUser> wrapper = new EntityWrapper();
+        wrapper.eq("id", id);
+        sysUserMapper.delete(wrapper);
     }
 }

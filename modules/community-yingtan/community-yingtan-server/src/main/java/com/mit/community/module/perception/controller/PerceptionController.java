@@ -50,6 +50,8 @@ public class PerceptionController {
     private final DeviceService deviceService;
     private final RedisService redisService;
     private SysUser user;
+    @Autowired
+    private WarningConfigService warningConfigService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
@@ -71,7 +73,7 @@ public class PerceptionController {
     }
 
     private void SetSysUser(HttpServletRequest request) {
-        String sessionId = CookieUtils.getSessionId(request);
+        String sessionId = CookieUtils.getSession(request);
         user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
     }
 
@@ -497,9 +499,32 @@ public class PerceptionController {
             return Result.error("错误");
         }
         AccessControl accessControl = accessControlService.getCurrentAccess(deviceName, device.getCommunityCode());
+        WarningInfo warningInfo = null;
+        if (accessControl != null) {
+            if (StringUtils.isNotBlank(accessControl.getHouseholdMobile())) {
+                warningInfo = new WarningInfo();
+                HouseHold houseHold = houseHoldService.getByCellPhone(accessControl.getHouseholdMobile());
+                if (houseHold != null) {
+                    if (StringUtils.isNotBlank(houseHold.getLabels())) {
+                        String[] labels = houseHold.getLabels().split(",");
+                        for (int i=0; i<labels.length ; i++) {
+                            WarningConfig warningConfig = warningConfigService.getByLabel(labels[i]);
+                            if (warningConfig != null) {
+                                warningInfo.setIsWarning(warningConfig.getIsWarning());
+                                warningInfo.setLabels(labels[i]);
+                                warningInfo.setWarningInfo(warningConfig.getWarningInfo());
+                                break;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
         Map<String, Object> map = Maps.newHashMap();
         map.put("device", device);
         map.put("access", accessControl);
+        map.put("warningInfo", warningInfo);
         return Result.success(map);
     }
 

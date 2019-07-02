@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * 住户表
+ *
  * @author Mr.Deng
  * @date 2018/11/14 19:00
  * <p>Copyright: Copyright (c) 2018</p>
@@ -156,6 +157,12 @@ public class HouseHold extends BaseEntity {
      * 出生日期
      */
     private LocalDate birthday;
+
+    private int isWarning;
+
+    private String labels;
+
+    private String warningInfo;
 
     /**
      * 身份类型：1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、6、上方人员、99、其他

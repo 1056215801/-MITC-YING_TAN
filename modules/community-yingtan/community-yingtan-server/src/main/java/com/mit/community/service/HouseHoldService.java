@@ -857,4 +857,15 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         map.put("other", other);
         return map;
     }
+
+    public HouseHold getByCellPhone(String cellPhone) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("mobile", cellPhone);
+        List<HouseHold> list = houseHoldMapper.selectList(wrapper);
+        if(!list.isEmpty()){
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
 }
