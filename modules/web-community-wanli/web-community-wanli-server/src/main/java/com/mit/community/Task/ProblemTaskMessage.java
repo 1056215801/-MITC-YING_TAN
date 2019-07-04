@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Component
+//@Component
 public class ProblemTaskMessage {
     @Autowired
     private TaskMessageService taskMessageService;

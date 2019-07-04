@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping(value = "/stayPeople")
+@RequestMapping(value = "/warningConfig")
 @RestController
 @Slf4j
 @Api(tags = "报警信息配置")
