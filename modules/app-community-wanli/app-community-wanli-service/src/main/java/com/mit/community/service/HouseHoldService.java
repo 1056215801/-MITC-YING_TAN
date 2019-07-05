@@ -10,7 +10,9 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.*;
+import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.util.AuthorizeStatusUtil;
 import com.mit.community.util.ConstellationUtil;
 import com.mit.community.util.DateUtils;
@@ -62,6 +64,8 @@ public class HouseHoldService {
     private AuthorizeHouseholdDeviceGroupMapper authorizeHouseholdDeviceGroupMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PersonBaseInfoService personBaseInfoService;
 
     /**
      * 查询住户，通过住户列表
@@ -389,6 +393,7 @@ public class HouseHoldService {
     public String SaveHouseholdInfoByStepOne(String communityCode, JSONObject jsonObject) {
         String msg = "";
         //参数获取
+
         String data = jsonObject.toJSONString();
         JSONObject json = JSON.parseObject(data);
         String certificateStr = json.getString("certificateStr");//用户身份信息
@@ -403,6 +408,15 @@ public class HouseHoldService {
         String urgentMobile = json.getString("urgentMobile");//代理人手机号
         String idCard = json.getString("idCard");//证件号码
         Integer householdId = Integer.valueOf(json.getString("householdId"));
+        Integer personBaseInfoId = personBaseInfoService.getIdByCardNum(idCard);
+        if (personBaseInfoId == null) {
+            PersonBaseInfo personBaseInfo = new PersonBaseInfo();
+            personBaseInfo.setName(householdName);
+            personBaseInfo.setCellphone(mobile);
+            personBaseInfo.setIdCardNum(idCard);
+            personBaseInfo.setCommunity_code(communityCode);
+            personBaseInfoService.save(personBaseInfo);
+        }
         try {
             List<HouseRoomsVo> list = new ArrayList<>();
             if (StringUtils.isNoneEmpty(houseProperties)) {

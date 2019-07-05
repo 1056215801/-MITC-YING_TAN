@@ -141,6 +141,29 @@ public class PersonBaseInfoService {
         return id;
     }
 
+    public Integer getIdByNameAndPhone(String name, String phone) {
+        Integer id = null;
+        EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("name", name);
+        wrapper.eq("cellphone", phone);
+        List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            id = list.get(0).getId();
+        }
+        return id;
+    }
+
+    public String getLabelsByCredentialNum(String idCardNum) {
+        String label = null;
+        EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id_card_num", idCardNum);
+        List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            label = list.get(0).getLabel();
+        }
+        return label;
+    }
+
     @Transactional
     public void saveList(List<PersonBaseInfo> list) {
         for(PersonBaseInfo azbInfo:list){
