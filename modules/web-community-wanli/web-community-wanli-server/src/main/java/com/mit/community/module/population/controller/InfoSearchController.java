@@ -54,7 +54,7 @@ public class InfoSearchController {
         String streetName = sysUser.getStreetName();
         String areaName = sysUser.getAreaName();
 
-        Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
+        Page<InfoSearch> page = infoSearchService.listPage(sysUser.getCommunityCode(),ageStart, ageEnd, name, idNum,
                 sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf, accountType, streetName, areaName);
         List<InfoSearch> list = page.getRecords();
         if (!list.isEmpty()) {
@@ -145,7 +145,7 @@ public class InfoSearchController {
         String streetName = sysUser.getStreetName();
         String areaName = sysUser.getAreaName();
 
-        Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
+        Page<InfoSearch> page = infoSearchService.listPage(sysUser.getCommunityCode(),ageStart, ageEnd, name, idNum,
                 sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf, accountType, streetName, areaName);
         List<InfoSearch> list = page.getRecords();
         if (!list.isEmpty()) {

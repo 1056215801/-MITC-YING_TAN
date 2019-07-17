@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.DeviceGroup;
 import com.mit.community.module.system.controller.HttpController;
 import com.mit.community.service.*;
 import com.mit.community.util.HttpUtil;

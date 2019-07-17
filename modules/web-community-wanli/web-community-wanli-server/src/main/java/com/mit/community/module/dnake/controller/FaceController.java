@@ -1,7 +1,11 @@
 package com.mit.community.module.dnake.controller;
 
+import com.mit.community.entity.DnakeDeviceInfo;
+import com.mit.community.service.DnakeDeviceInfoService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sun.misc.BASE64Decoder;
@@ -24,6 +28,8 @@ import java.io.InputStream;
 @Slf4j
 @Api(tags = "人脸图片")
 public class FaceController {
+    @Autowired
+    private DnakeDeviceInfoService dnakeDeviceInfoService;
 
     @RequestMapping("/uploadImg")
     public void uploadImg(HttpServletRequest request, HttpServletResponse response, String photo) throws IOException {
@@ -36,6 +42,36 @@ public class FaceController {
             }
         }
         System.out.println(photo);
+    }
+    @RequestMapping("/uploadInfo")
+    public String uploadInfo(HttpServletRequest request, HttpServletResponse response, String mac, String ip) throws IOException {
+        if(StringUtils.isNotBlank(mac) && StringUtils.isNotBlank(ip)){
+            DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getDeviceInfoByMacAndIp(mac);
+            if(dnakeDeviceInfo != null){
+                return "ok";
+            } else {
+                dnakeDeviceInfoService.save(mac, ip);
+                return "ok";
+            }
+        } else {
+            return "noInfo";
+        }
+    }
+
+
+    @RequestMapping("/xinTiao")
+    public void xinTiao(HttpServletRequest request, HttpServletResponse response, String mac, String ip) throws IOException {
+        System.out.println("===============心跳="+mac+"="+ip);
+        if(StringUtils.isNotBlank(mac) && StringUtils.isNotBlank(ip)){
+            DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getDeviceInfoByMacAndIp(mac);
+            if(dnakeDeviceInfo != null){
+                //return "ok";
+                dnakeDeviceInfoService.update(mac, ip);
+            } else {
+                dnakeDeviceInfoService.save(mac, ip);
+               // return "ok";
+            }
+        }
     }
 
     private static byte[] readInputStream(InputStream inStream) throws Exception {

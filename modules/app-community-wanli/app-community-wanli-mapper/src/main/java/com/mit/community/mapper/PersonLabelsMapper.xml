@@ -30,6 +30,23 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.entity.DeviceGroup" id="deviceGroupMap">
+        <id property="id" column="id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="deviceGroupId" column="device_group_Id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="communityCode" column="community_code" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceGroupName" column="device_group_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="groupType" column="group_type" javaType="Short"
+                jdbcType="INTEGER" />
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER" />
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER" />
+    </resultMap>
+
     <select id="getWgyList" resultMap="wgyInfoMap">
         select a.id,a.jb,a.dept,b.cellphone,c.id as person_baseinfo_id from wgy_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN user c on b.id_card_num=c.id_card_num
         where a.dept=(select d.sjDept from wgy_info d where d.id=#{wgyId}) and a.isFzr=1
@@ -106,5 +123,25 @@
     <select id="getWgyDeptById" resultType="String">
         select dept from wgy_info
          where id=#{id}
+    </select>
+
+    <select id="selectInfoPage" resultMap="deviceGroupMap">
+        select a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.device_mac=d.mac
+        where 1= 1 ${ew.sqlSegment} <if test="sql != null and sql != ''">${sql}</if>
+    </select>
+
+    <select id="getTimeCha" resultType="String">
+        select TIME_TO_SEC(TIMEDIFF(NOW(), gmt_create)) FROM dnake_device_info
+        where id=#{id}
+    </select>
+
+    <select id="getGroupName" resultType="String">
+        select c.device_group_name
+        from device a LEFT JOIN device_device_group b on a.device_num=b.device_num LEFT JOIN device_group c ON b.device_group_id=c.id
+        where a.id=#{id}
+    </select>
+
+    <select id="getMaxDeviceId" resultType="String">
+        select max(device_id) from device
     </select>
 </mapper>

@@ -1,13 +1,14 @@
 package com.mit.community.module.device.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mit.community.config.InitProjectParameter;
+import com.mit.community.entity.AccessRecord;
+import com.mit.community.entity.CarIn;
 import com.mit.community.entity.UploadFaceComparisonData;
+import com.mit.community.service.AccessRecordService;
 import com.mit.community.service.DeviceService;
 import com.mit.community.service.FaceComparisonService;
 import com.mit.community.service.RealTimePhotoService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 /**
@@ -39,6 +42,9 @@ public class DeviceController {
 
     @Autowired
     private RealTimePhotoService realTimePhotoService;
+
+    @Autowired
+    private AccessRecordService accessRecordService;
     //本机ip：192.168.1.149
 
     @RequestMapping(value = "login",produces = {"application/json;charset=utf-8"})
@@ -116,4 +122,57 @@ public class DeviceController {
             e.printStackTrace();
         }
     }
+
+    @PostMapping(value = "Interface2",produces = {"application/json;charset=utf-8"})
+    public void Interface2(HttpServletRequest request, HttpServletResponse response) {
+        AccessRecord accessRecord = new AccessRecord();
+        InputStream in = null;
+        try{
+            in = request.getInputStream();
+            String model = Utils.inputStream2String(in, "");
+            System.out.println("============数据=="+model);
+            if (model != null) {
+                //ObjectMapper mapper = new ObjectMapper();
+                JSONObject json = JSONObject.fromObject(model);
+                //CarInInfo data = mapper.readValue(model, CarInInfo.class);
+                //System.out.println("============解析数据=="+data.getParams().getCarparkNO());
+                String cmd = json.getString("cmd");
+                if ("CarIn".equals(cmd)) {
+                    CarIn carIn = (CarIn)JSONObject.toBean(json.getJSONObject("params"), CarIn.class);
+                    accessRecord.setCarnum(carIn.getCPH());
+                    accessRecord.setAccessType("进");
+                    accessRecord.setPasstime(parseStringToLocal(carIn.getInTime()));
+                    accessRecord.setImage(carIn.getInPic());
+                    accessRecord.setInGateName(carIn.getInGateName());
+                    accessRecord.setSfGate(carIn.getSFGate());
+                    accessRecord.setCareParkNo(carIn.getCarparkNO());
+                    accessRecord.setGmtCreate(LocalDateTime.now());
+                    accessRecord.setGmtModified(LocalDateTime.now());
+                    accessRecordService.save(accessRecord);
+
+                } else if ("CarOut".equals(cmd)) {
+                    JSONObject carOut = json.getJSONObject("params");
+                    accessRecord.setCarnum(carOut.getString("CPH"));
+                    accessRecord.setAccessType("出");
+                    accessRecord.setPasstime(parseStringToLocal(carOut.getString("OutTime")));
+                    accessRecord.setImage(carOut.getString("OutPic"));
+                    accessRecord.setInGateName(carOut.getString("InGateName"));
+                    accessRecord.setSfGate(carOut.getString("SFGate"));
+                    accessRecord.setCareParkNo(carOut.getString("CarparkNo"));
+                    accessRecord.setGmtCreate(LocalDateTime.now());
+                    accessRecord.setGmtModified(LocalDateTime.now());
+                    accessRecordService.save(accessRecord);
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public LocalDateTime parseStringToLocal(String strTime){
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime ldt = LocalDateTime.parse("2018-01-12 17:07:05",df);
+        return ldt;
+    }
+
 }

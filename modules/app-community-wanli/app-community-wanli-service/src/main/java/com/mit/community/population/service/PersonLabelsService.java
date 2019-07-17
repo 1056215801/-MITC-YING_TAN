@@ -4,6 +4,7 @@ import com.mit.community.entity.*;
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.mit.community.entity.entity.DeviceGroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -82,4 +83,15 @@ public class PersonLabelsService {
         return labelsMapper.getWgyDeptById(id);
     }
 
+    public String getTimeCha(String id) {
+        return labelsMapper.getTimeCha(id);
+    }
+
+    public String getGroupName(String id){
+        return labelsMapper.getGroupName(id);
+    }
+
+    public String getMaxDeviceId(){
+        return labelsMapper.getMaxDeviceId();
+    }
 }

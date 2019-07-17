@@ -39,10 +39,11 @@ public class ProblemHandleService {
         return handleProblemMapper.getProblemSlove(1,type);
     }
 
-    public Page<HandleProblemInfo> getWebProblem(String problemType, String status, LocalDateTime gmtCreateTimeStart,
+    public Page<HandleProblemInfo> getWebProblem(String communityCode, String problemType, String status, LocalDateTime gmtCreateTimeStart,
                                                  LocalDateTime gmtCreateTimeEnd, Integer pageNum, Integer pageSize){
         Page<HandleProblemInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<HandleProblemInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("g.community_code", communityCode);
         if (StringUtils.isNotBlank(problemType)) {
             wrapper.eq("a.problemType", problemType);
         }
@@ -91,9 +92,10 @@ public class ProblemHandleService {
 
     }
 
-    public Page<WebHandleProblemInfo> getWebHandleProblem(String problemType, String status, Integer pageNum, Integer pageSize){
+    public Page<WebHandleProblemInfo> getWebHandleProblem(String communityCode, String problemType, String status, Integer pageNum, Integer pageSize){
         Page<WebHandleProblemInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<WebHandleProblemInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("g.community_code", communityCode);
         if (StringUtils.isNotBlank(problemType)) {
             wrapper.eq("a.problemType", problemType);
         }

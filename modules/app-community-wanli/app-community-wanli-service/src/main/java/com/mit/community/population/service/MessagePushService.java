@@ -10,6 +10,7 @@ import com.mit.community.entity.entity.MessageUser;
 import com.mit.community.mapper.MessagePushMapper;
 import com.mit.community.mapper.mapper.MessageAcceptMapper;
 import com.mit.community.mapper.mapper.MessageMapper;
+import com.mit.community.service.LabelsService;
 import com.mit.community.service.UserService;
 import com.mit.community.util.WebPush;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,9 @@ public class MessagePushService {
 
     @Autowired
     private MessageAcceptMapper messageAcceptMapper;
+
+    @Autowired
+    private LabelsService labelsService;
 
     public void pushMessage(Integer ageStart, Integer ageEnd, String sex, String edu, String job, String marriage, String politics,
                             String rycf, String rysx, String title, String outline, String content, Integer userId) {
@@ -73,9 +77,17 @@ public class MessagePushService {
                 String[] labels = rysx.split(",");
                 Iterator iter = list.iterator();
                 while (iter.hasNext()) {
+                    String label = "";
                     MessageUser messageUser = (MessageUser) iter.next();
+                    List<String> strings = labelsService.getLabelsByUserId(messageUser.getPerson_baseinfo_id());
+                    if(!strings.isEmpty()){
+                        for(int i=0; i<strings.size(); i++){
+                            label = label + strings.get(i) + ",";
+                        }
+                        label = label.substring(0,label.length()-1);
+                    }
                     for (int i = 0; i < labels.length; i++) {
-                        if (messageUser.getLabel().contains(labels[i])) {
+                        if (label.contains(labels[i])) {
                             target.add(messageUser.getUserId().toString());
                             break;
                         }

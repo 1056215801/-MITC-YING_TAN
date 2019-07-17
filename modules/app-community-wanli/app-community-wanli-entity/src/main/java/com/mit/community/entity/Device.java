@@ -77,4 +77,15 @@ public class Device extends BaseEntity {
     @TableField("device_id")
     private String deviceId;
 
+    @TableField(exist = false)
+    private String deviceGroupName;
+
+    /*@TableField("device_mac")
+    private String deviceMac;
+
+    private String verison;
+
+    @TableField("card_hand")
+    private String cardHand;*/
+
 }

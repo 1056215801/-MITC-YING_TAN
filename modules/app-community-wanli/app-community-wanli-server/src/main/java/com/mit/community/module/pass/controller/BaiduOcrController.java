@@ -29,6 +29,7 @@ public class BaiduOcrController {
     @PostMapping("/analyze")
     @ApiOperation(value = "分析身份证", notes = "file 身份证照片，size 转成base64后3M之内")
     public Result analyze(MultipartFile file) throws IOException {
+        System.out.println("=====================ocr");
         byte[] bytes = file.getBytes();
         String invoke = BaiduOcr.invoke(bytes);
         Map map = JSON.parseObject(invoke, Map.class);

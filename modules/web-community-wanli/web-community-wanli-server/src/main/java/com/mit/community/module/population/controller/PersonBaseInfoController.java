@@ -73,22 +73,30 @@ public class PersonBaseInfoController {
             String communityCode = sysUser.getCommunityCode();
 
         //if (personBaseInfoService.isExist(idCardNum)) {//已经存在就更新
-        if (baseId != null) {
+        if (StringUtils.isNotBlank(idCardNum)) {
+            if (baseId != null) {
             /*personBaseInfoService.updateByIdCardNum(age, idCardNum, name, formerName, gender,
                     DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
                     politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
                     placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);*/
-            personBaseInfoService.updateByIdCardNum(baseId, idCardNum, name, formerName, gender,
-                    DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
-                    politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null, rksx,communityCode);
-            return Result.success("信息更新成功");
+                personBaseInfoService.updateByIdCardNum(baseId, idCardNum, name, formerName, gender,
+                        DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
+                        politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
+                        placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null, rksx,communityCode);
+                return Result.success("信息更新成功");
+            } else {
+                Integer id = personBaseInfoService.save(idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
+                        nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
+                        placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null,communityCode);
+                if (id == 0) {
+                    return Result.error("身份证号码重复");
+                }
+                return Result.success(id);
+            }
         } else {
-            Integer id = personBaseInfoService.save(idCardNum, name, formerName, gender, DateUtils.dateStrToLocalDateTime(birthday),
-                    nation, nativePlace, matrimony, politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null,communityCode);
-            return Result.success(id);
+            return Result.error("身份证号码不能为空");
         }
+
     }
 
 

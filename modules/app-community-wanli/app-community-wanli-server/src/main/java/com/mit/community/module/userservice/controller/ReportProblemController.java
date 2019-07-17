@@ -1,9 +1,7 @@
 package com.mit.community.module.userservice.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.mit.community.entity.HandleProblemInfo;
-import com.mit.community.entity.ReportProblemInfo;
-import com.mit.community.entity.TaskMessage;
+import com.mit.community.entity.*;
 import com.mit.community.population.service.TaskMessageService;
 import com.mit.community.service.ReportProblemService;
 import com.mit.community.service.UserService;
@@ -89,14 +87,14 @@ public class ReportProblemController {
         String title = "消息通知";
         WebPush.sendAllsetNotification(MSG,title);
         //Integer wgyId = wgyService.getWgyIdByJb("居委");
-        //taskMessageService.save(id,title,MSG,wgyId,0,0,null);
+        taskMessageService.save(0,id,title,MSG,1,0,0,null);
         return Result.success("保存成功");
     }
 
     @PostMapping("/listPage")
     @ApiOperation(value = "获取事件列表", notes = "String content 搜索内容,String userId 用户id, String time 时间, String address 地址, String problemType 问题类型, Integer status 状态, Integer pageNum, Integer pageSize")
     public Result listPage(String content, String userId, String timeYear, String timeMonth,
-                           String address, String problemType, @RequestParam(required = false, defaultValue = "0") Integer status,
+                           String address, String problemType, String status,
                            Integer pageNum, Integer pageSize) throws Exception {
         Page<ReportProblemInfo> page = reportProblemService.listPage(content, userId, timeYear, timeMonth,
                 address, problemType, status, pageNum, pageSize);
@@ -106,8 +104,16 @@ public class ReportProblemController {
     @GetMapping("/getSchedule")
     @ApiOperation(value = "获取处理进度", notes = "输入参数：reportProblemId 事件id")
     public Result getSchedule(Integer reportProblemId) {
+        ProblemScheduleAndLzdInfo problemScheduleAndLzdInfo = new ProblemScheduleAndLzdInfo();
         List<HandleProblemInfo> list = reportProblemService.getSchedule(reportProblemId);
-        return Result.success(list);
+        if (!list.isEmpty()) {
+            problemScheduleAndLzdInfo.setList(list);
+        }
+        List<ReportProblemLzInfo> lzInfo = reportProblemService.getLzInfo(reportProblemId ,0);
+        if (!lzInfo.isEmpty()) {
+            problemScheduleAndLzdInfo.setLzInfo(lzInfo);
+        }
+        return Result.success(problemScheduleAndLzdInfo);
     }
 
 

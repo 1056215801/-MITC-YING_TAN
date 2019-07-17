@@ -15,6 +15,8 @@
                 jdbcType="INTEGER" />
         <result property="status" column="status" javaType="int"
                 jdbcType="INTEGER" />
+        <result property="mqlzd" column="mqlzd" javaType="int"
+                jdbcType="INTEGER" />
         <!--<result property="isOpen" column="isopen" javaType="int"
                 jdbcType="INTEGER" />-->
         <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
@@ -97,9 +99,22 @@
         </collection>
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.ReportProblemLzInfo" id="lzInfoMap">
+        <result property="deptName" column="deptName" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+    </resultMap>
+
+
+    <select id="getLzInfo" resultMap="lzInfoMap">
+        SELECT b.dept as deptName,a.gmt_create FROM task_message a LEFT JOIN wgy_info b ON a.wgyId=b.id
+        WHERE a.reportProblemId=#{reportProblemId} GROUP BY a.mqlzd ORDER BY a.gmt_create ASC
+    </select>
 
     <select id="selecInfoPage" resultMap="reportProblemInfoMap">
-        select a.id,a.content,a.problemType,a.address,a.isOpen,a.status,a.gmt_create,a.gmt_modified,
+        select a.id,a.content,a.problemType,a.address,a.isOpen,a.status,a.gmt_create,a.gmt_modified,a.mqlzd,
         b.id as userId,b.icon_url as iconUrl,b.nickname as userName,c.base64
         from report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN report_problem_photo c on a.id=c.reportProblemId
         where 1= 1

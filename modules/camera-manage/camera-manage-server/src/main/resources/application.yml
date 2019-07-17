@@ -102,8 +102,8 @@ mybatis:
 server:
   port: 8010
   servlet:
-    context-path: /cloud-service/
-
+    #context-path: /cloud-service/
+    context-path: /API/
 
 eureka:
   instance:

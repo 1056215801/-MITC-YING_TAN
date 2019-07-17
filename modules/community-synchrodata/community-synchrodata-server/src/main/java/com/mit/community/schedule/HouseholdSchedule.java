@@ -75,7 +75,7 @@ public class HouseholdSchedule {
      */
     @Transactional(rollbackFor = Exception.class)
     //@Scheduled(cron = "0 */10 * * * ?")
-    //@Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 */2 * * * ?")
     @CacheClear(pre = "household")
     public void removeAndiImport() {
         try {
@@ -215,7 +215,7 @@ public class HouseholdSchedule {
      * @date 2018/12/08 15:36
      * @company mitesofor
      */
-    //@Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updateIdCard() {
         long start = System.currentTimeMillis();
         List<HouseHold> list = houseHoldService.list();
@@ -234,7 +234,7 @@ public class HouseholdSchedule {
      * @date 2018/11/24 10:36
      * @company mitesofor
      */
-    //@Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void parseIdentityType() {
         List<Map<String, Object>> maps = householdRoomService.listActiveRoomId();
         maps.forEach(item -> {

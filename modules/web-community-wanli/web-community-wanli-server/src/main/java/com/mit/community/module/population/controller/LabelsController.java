@@ -3,14 +3,12 @@ package com.mit.community.module.population.controller;
 import com.mit.community.entity.*;
 import com.mit.community.entity.entity.*;
 import com.mit.community.population.service.*;
-import com.mit.community.service.LdzService;
-import com.mit.community.service.OldService;
-import com.mit.community.service.WgyService;
-import com.mit.community.service.ZyzService;
+import com.mit.community.service.*;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,14 +58,21 @@ public class LabelsController {
     private WgyService wgyService;
     @Autowired
     private LdzService ldzService;
+    @Autowired
+    private ZdyPersonLabelService zdyPersonLabelService;
 
     @PostMapping("/save")
-    @ApiOperation(value = "保存人员标签", notes = "输入参数：")
-    public Result save(String labels,Integer userId, String credentialNum, String householdName, String mobile){
-        Integer personBaseInfoId = personBaseInfoService.getIdByCardNum(credentialNum);
-        if (personBaseInfoId == null) {
+    @ApiOperation(value = "保存人员标签", notes = "输入参数：labels 设置的标签， credentialNum 身份证号码， householdName 姓名， mobile 电话号码")
+    public Result save(String labels, String credentialNum, String householdName, String mobile){
+        //Integer personBaseInfoId = personBaseInfoService.getIdByCardNum(credentialNum);
+        Integer personBaseInfoId = null;
+        if (StringUtils.isNotBlank(householdName)&&StringUtils.isNotBlank(mobile)) {
             personBaseInfoId = personBaseInfoService.getIdByNameAndPhone(householdName, mobile);
         }
+
+        /*if (personBaseInfoId == null) {
+            personBaseInfoId = personBaseInfoService.getIdByNameAndPhone(householdName, mobile);
+        }*/
         if (personBaseInfoId != null) {
             String[] label = labels.split(",");
             for (int i=0; i<label.length;i++) {
@@ -83,19 +88,19 @@ public class LabelsController {
                     PartyInfo partyInfo = new PartyInfo();
                     partyInfo.setPerson_baseinfo_id(personBaseInfoId);
                     partyInfoService.save(partyInfo);
-                } else if ("计生".equals(label[i])) {
+                } else if ("计生人员".equals(label[i])) {
                     BearInfo bearInfo = new BearInfo();
                     bearInfo.setPerson_baseinfo_id(personBaseInfoId);
                     bearInfoService.save(bearInfo);
-                } else if ("兵役".equals(label[i])) {
+                } else if ("兵役人员".equals(label[i])) {
                     MilitaryServiceInfo militaryServiceInfo = new MilitaryServiceInfo();
                     militaryServiceInfo.setPerson_baseinfo_id(personBaseInfoId);
                     militaryServiceService.save(militaryServiceInfo);
-                } else if ("刑满释放".equals(label[i])) {
+                } else if ("刑满释放人员".equals(label[i])) {
                     XmsfPeopleInfo xmsfPeopleInfo = new XmsfPeopleInfo();
                     xmsfPeopleInfo.setPerson_baseinfo_id(personBaseInfoId);
                     xmsfPeopleService.save(xmsfPeopleInfo);
-                } else if ("疑似传销".equals(label[i])) {
+                } else if ("疑似传销人员".equals(label[i])) {
                     CXInfo cXInfo = new CXInfo();
                     cXInfo.setPerson_baseinfo_id(personBaseInfoId);
                     cXService.save(cXInfo);
@@ -103,11 +108,11 @@ public class LabelsController {
                     SFPeopleInfo sFPeopleInfo = new SFPeopleInfo();
                     sFPeopleInfo.setPerson_baseinfo_id(personBaseInfoId);
                     sFPeopleService.save(sFPeopleInfo);
-                } else if ("社区矫正".equals(label[i])) {
+                } else if ("社区矫正人员".equals(label[i])) {
                     SQJZPeopleinfo sQJZPeopleinfo = new SQJZPeopleinfo();
                     sQJZPeopleinfo.setPerson_baseinfo_id(personBaseInfoId);
                     sQJZPeopleService.save(sQJZPeopleinfo);
-                } else if ("肇事肇祸".equals(label[i])) {
+                } else if ("肇事肇祸等严重精神障碍患者".equals(label[i])) {
                     ZSZHInfo zSZHInfo = new ZSZHInfo();
                     zSZHInfo.setPerson_baseinfo_id(personBaseInfoId);
                     zSZHService.save(zSZHInfo);
@@ -127,7 +132,7 @@ public class LabelsController {
                     ZyzInfo zyzInfo = new ZyzInfo();
                     zyzInfo.setPerson_baseinfo_id(personBaseInfoId);
                     zyzService.save(zyzInfo);
-                } else if ("老人".equals(label[i])) {
+                } else if ("六十岁以上老人".equals(label[i])) {
                     OldInfo oldInfo = new OldInfo();
                     oldInfo.setPerson_baseinfo_id(personBaseInfoId);
                     oldService.save(oldInfo);
@@ -139,6 +144,11 @@ public class LabelsController {
                     LdzInfo ldzInfo = new LdzInfo();
                     ldzInfo.setPerson_baseinfo_id(personBaseInfoId);
                     ldzService.save(ldzInfo);
+                } else {
+                    ZdyPersonLabel zdyPersonLabel = new ZdyPersonLabel();
+                    zdyPersonLabel.setPersonBaseinfoId(personBaseInfoId);
+                    zdyPersonLabel.setLabel(label[i]);
+                    zdyPersonLabelService.save(zdyPersonLabel);
                 }
             }
         } else {

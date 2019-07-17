@@ -1,12 +1,16 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.Device;
+import com.mit.community.entity.DeviceDeviceGroup;
 import com.mit.community.mapper.DeviceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -136,4 +140,30 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 //        List<Device> resultDevice = devices.parallelStream().filter(item -> item.getDeviceType().equals(type)).collect(Collectors.toList());
 //        return resultDevice.parallelStream().map(Device::getDeviceNum).collect(Collectors.toList());
 //    }
+
+    public Page<Device> getDevicePage(Integer pageNum, Integer pageSize, Integer unitId, Integer buildingId, String communityCode){
+        Page<Device> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        if (unitId != null) {
+            wrapper.eq("unit_id", unitId);
+        }
+        if (buildingId != null) {
+            wrapper.eq("building_id", buildingId);
+        }
+        List<Device> list = deviceMapper.selectPage(page, wrapper);
+        page.setRecords(list);
+        return page;
+    }
+
+    @Transactional
+    public void insert(Integer deviceGroupId, Device device) {
+        deviceMapper.insert(device);
+        DeviceDeviceGroup deviceDeviceGroup = new DeviceDeviceGroup();
+        deviceDeviceGroup.setDeviceNum(device.getDeviceNum());
+        deviceDeviceGroup.setDeviceGroupId(deviceGroupId);
+        deviceDeviceGroup.setGmtCreate(LocalDateTime.now());
+        deviceDeviceGroup.setGmtModified(LocalDateTime.now());
+        deviceDeviceGroupService.insert(deviceDeviceGroup);
+    }
 }

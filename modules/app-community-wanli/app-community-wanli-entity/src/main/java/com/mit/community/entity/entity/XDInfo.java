@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @TableName("xd_info")
 public class XDInfo extends BaseEntity {
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime ccfxsj;
+    //@JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private String ccfxsj;
     private String gkqk;
     private String gkrxm;
     private String gkrlxfs;

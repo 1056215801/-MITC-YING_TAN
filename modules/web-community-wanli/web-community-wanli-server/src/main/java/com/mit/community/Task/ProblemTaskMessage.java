@@ -54,6 +54,14 @@ public class ProblemTaskMessage {
                             /*List<String> target = new ArrayList<>();
                             List<>*/
                             if (!wgyList.isEmpty()) {
+                                int mqlzd = 0;
+                                if ("街道办".equals(wgyList.get(0).getJb())) {
+                                    mqlzd = 1;
+                                } else if ("管理处".equals(wgyList.get(0).getJb())) {
+                                    mqlzd = 2;
+                                } else if ("政法委".equals(wgyList.get(0).getJb())) {
+                                    mqlzd = 3;
+                                }
                                 for (int a=0; a<wgyList.size();a++) {
                                     System.out.println("=====查找到网格员信息");
                                     String title = "事件未处理通知";
@@ -66,14 +74,15 @@ public class ProblemTaskMessage {
 
                                         messageAccept.add(wgyList.get(a).getPerson_baseinfo_id().toString());
                                         WebPush.sendAlias(title, content, messageAccept);
-                                        taskMessageService.save(list.get(0).getReportProblemId(),title,content,wgyList.get(a).getId(),0,0,null);
+
+                                        taskMessageService.save(mqlzd, list.get(0).getReportProblemId(),title,content,wgyList.get(a).getId(),0,0,null);
                                     } else {//没有的发短信
                                         System.out.println("=====短信发送的网格员id"+wgyList.get(a).getId());
                                         String lower = personLabelsService.getWgyDeptById(list.get(0).getWgyId());
                                         String higher = wgyList.get(a).getDept();
                                         String content = lower + "有事件未及时处置，现升级为" + higher +"处置";
                                         SmsCommunityAppUtil.sendHandleMsg(wgyList.get(a).getJtzycylxfs(), lower,higher);//事件未及时处置，现升级为管理处处置
-                                        taskMessageService.save(list.get(0).getReportProblemId(),title,content,wgyList.get(a).getId(),0,0,null);
+                                        taskMessageService.save(mqlzd, list.get(0).getReportProblemId(),title,content,wgyList.get(a).getId(),0,0,null);
                                     }
                                 }
 

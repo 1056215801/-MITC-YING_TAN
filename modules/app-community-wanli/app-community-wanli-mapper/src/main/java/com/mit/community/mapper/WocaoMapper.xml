@@ -65,7 +65,7 @@
 
 
     <select id="selectPersonBaseInfoPage" resultMap="infoSearchMap">
-      select a.*,a.birthday,(YEAR(NOW())-YEAR(a.birthday)-1) + ( DATE_FORMAT(a.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
+      select a.*,(YEAR(NOW())-YEAR(a.birthday)-1) + ( DATE_FORMAT(a.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
       from person_baseinfo a LEFT JOIN cluster_community b on a.community_code=b.community_code
       where 1= 1 ${ew.sqlSegment}
     </select>
@@ -145,6 +145,12 @@
         select
         b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
         from xmsfpeople_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectZdyInfoPage" resultMap="infoSearchMap">
+        select
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
+        from zdy_person_label a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
     <select id="selectZdqsnPeopleInfoPage" resultMap="infoSearchMap">
@@ -249,6 +255,12 @@
         from zszh_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
+    <select id="selectZdyInfo" resultMap="infoSearchMap">
+        select
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
+        from zdy_person_label a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
+    </select>
+
     <select id="selectLdzPeopleInfoPage" resultMap="infoSearchMap">
         select
         b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
@@ -273,8 +285,32 @@
         from old_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
     </select>
 
+    <select id="selectLdzPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
+        from ldz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectWgyPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
+        from wgy_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectZyzPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
+        from zyz_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="selectOldPeopleInfo" resultMap="infoSearchMap">
+        select
+        b.*,(YEAR(NOW())-YEAR(b.birthday)-1) + ( DATE_FORMAT(b.birthday, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) AS age
+        from old_info a left join person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN cluster_community c on b.community_code=c.community_code where 1= 1 ${ew.sqlSegment}
+    </select>
+
     <select id="getByPhone" resultType="String">
-        select validity_time
+        select DATE_FORMAT(validity_time, '%Y-%m-%d') AS validity_time
         from household where mobile=#{phone}
     </select>
 

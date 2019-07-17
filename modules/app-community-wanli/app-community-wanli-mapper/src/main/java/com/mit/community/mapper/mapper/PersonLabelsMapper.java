@@ -1,7 +1,10 @@
 package com.mit.community.mapper.mapper;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.DeviceGroup;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,4 +38,8 @@ public interface PersonLabelsMapper {
     public List<MenJinInfo> getMenJinList(@Param("name")String name);
     public List<WgyInfo> getWgyList(@Param("wgyId")Integer wgyId);
     public String getWgyDeptById(@Param("id")Integer id);
+    List<DeviceGroup> selectInfoPage(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceGroup> wrapper, @Param("sql")String sql);
+    public String getTimeCha(@Param("id")String id);
+    String getGroupName(@Param("id")String id);
+    String getMaxDeviceId();
 }

@@ -152,15 +152,15 @@ public class PerceptionController {
             visitorSize = visitorService.countByCommunityCode(communityCode);
             maps = houseHoldService.countIdentityTypeByCommunityCode(communityCode);
             // 车位
-            map.put("ParkingSpace", 460);
+            map.put("ParkingSpace", 0);
             // 社区民警
-            map.put("CommunityPolice", 10);
+            map.put("CommunityPolice", 0);
             //居委干部
-            map.put("neighborhoodCommittee", 2);
+            map.put("neighborhoodCommittee", 0);
             // 楼长
-            map.put("buildingManager", 10);
+            map.put("buildingManager", 0);
             // 物业
-            map.put("property", 20);
+            map.put("property", 0);
         } else {
             if (user == null) {
                 return Result.error("请登录");
@@ -174,15 +174,15 @@ public class PerceptionController {
                 visitorSize = visitorService.countByCommunityCodes(communityCodeList);
                 maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
                 // 车位
-                map.put("ParkingSpace", 460);
+                map.put("ParkingSpace", 0);
                 // 社区民警
-                map.put("CommunityPolice", 10);
+                map.put("CommunityPolice", 0);
                 //居委干部
-                map.put("neighborhoodCommittee", 2);
+                map.put("neighborhoodCommittee", 0);
                 // 楼长
-                map.put("buildingManager", 10);
+                map.put("buildingManager", 0);
                 // 物业
-                map.put("property", 20);
+                map.put("property", 0);
             } else {
                 List<String> communityCodeList = listCommunityCodes("鹰潭市");
                 buildingSize = buildingService.countByCommunityCodes(communityCodeList);
@@ -276,11 +276,13 @@ public class PerceptionController {
             //本地人口
             map.put("localPopulation", fieldLocalPeople.get("local"));
             //外地人口
-            map.put("foreignPopulation", fieldLocalPeople.get("field"));
+            //map.put("foreignPopulation", fieldLocalPeople.get("field"));
+            map.put("foreignPopulation", 0);
             //境外人口
             map.put("overseasPopulation", 0);
             //其他
-            map.put("other", fieldLocalPeople.get("other"));
+            //map.put("other", fieldLocalPeople.get("other"));
+            map.put("other", 0);
         } else {
             Map<String, Integer> fieldLocalPeople = houseHoldService.getFieldLocalPeople(communityCode);
             //本地人口
@@ -445,16 +447,24 @@ public class PerceptionController {
         List<Map<String, Integer>> list = Lists.newArrayListWithCapacity(2);
         Map<String, Integer> number = Maps.newHashMapWithExpectedSize(3);
         Map<String, Integer> size = Maps.newHashMapWithExpectedSize(3);
-        number.put("numThisDistrict", accessControlService.getPassNumber(communityCode));
-        size.put("sizeThisDistrict", accessControlService.getPassPersonTime(communityCode));
-        number.put("numStranger", visitorService.getPassNumber(communityCode));
-        size.put("sizeStranger", visitorService.getPassPersonTime(communityCode));
         if (StringUtils.isNotBlank(communityCode)) {
-            number.put("numFocus", 3);
-            size.put("sizeFocus", 3);
+            number.put("numThisDistrict", accessControlService.getPassNumber(communityCode));
+            size.put("sizeThisDistrict", accessControlService.getPassPersonTime(communityCode));
+            number.put("numStranger", visitorService.getPassNumber(communityCode));
+            size.put("sizeStranger", visitorService.getPassPersonTime(communityCode));
+        }else {
+            number.put("numThisDistrict", 0);
+            size.put("sizeThisDistrict", 0);
+            number.put("numStranger", 0);
+            size.put("sizeStranger", 0);
+        }
+
+        if (StringUtils.isNotBlank(communityCode)) {
+            number.put("numFocus", 0);
+            size.put("sizeFocus", 0);
         } else {
-            number.put("numFocus", 30);
-            size.put("sizeFocus", 30);
+            number.put("numFocus", 0);
+            size.put("sizeFocus", 0);
         }
         list.add(number);
         list.add(size);
@@ -516,7 +526,6 @@ public class PerceptionController {
                                 break;
                             }
                         }
-
                     }
                 }
             }

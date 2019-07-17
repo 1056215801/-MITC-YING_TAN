@@ -199,8 +199,9 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
-      #      url: jdbc:mysql://120.79.67.123:3306/community-wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+            #url: jdbc:mysql://120.79.67.123:3306/community-wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       #      username: kjtdb
       #      password: kjtdb123456
       username: root
@@ -208,7 +209,8 @@ db:
 
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
 

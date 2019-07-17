@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.User;
 import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.mapper.PersonBaseInfoMapper;
+import com.mit.community.service.LabelsService;
 import com.mit.community.service.UserService;
 import com.mit.community.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,8 @@ public class PersonBaseInfoService {
     private PersonBaseInfoMapper personBaseInfoMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private LabelsService labelsService;
 
     @Transactional
     public Integer save( String idCardNum, String name, String formerName, String gender, LocalDateTime birthday,
@@ -52,7 +55,7 @@ public class PersonBaseInfoService {
             personBaseInfoMapper.insert(personBaseInfo);
             return personBaseInfo.getId();
         } else {
-            return null;
+            return 0;
         }
     }
 
@@ -123,11 +126,12 @@ public class PersonBaseInfoService {
 
     @Transactional
     public void delete(Integer id) {
-        PersonBaseInfo personBaseInfo = new PersonBaseInfo();
+        /*PersonBaseInfo personBaseInfo = new PersonBaseInfo();
         personBaseInfo.setIsDelete(1);
         EntityWrapper<PersonBaseInfo> dalete = new EntityWrapper<>();
         dalete.eq("id", id);
-        personBaseInfoMapper.update(personBaseInfo, dalete);
+        personBaseInfoMapper.update(personBaseInfo, dalete);*/
+        personBaseInfoMapper.deleteById(id);
     }
 
     public Integer getIdByCardNum(String idCardNum) {
@@ -149,18 +153,28 @@ public class PersonBaseInfoService {
         List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
         if (!list.isEmpty()) {
             id = list.get(0).getId();
+
         }
         return id;
     }
 
     public String getLabelsByCredentialNum(String idCardNum) {
-        String label = null;
+        String label = "";
+        Integer id = null;
         EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("id_card_num", idCardNum);
         List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
         if (!list.isEmpty()) {
-            label = list.get(0).getLabel();
+            id = list.get(0).getId();
+            List<String> strings = labelsService.getLabelsByUserId(id);
+            if(!strings.isEmpty()){
+                for(int i=0; i<strings.size(); i++){
+                    label = label + strings.get(i) + ",";
+                }
+                label = label.substring(0,label.length()-1);
+            }
         }
+
         return label;
     }
 

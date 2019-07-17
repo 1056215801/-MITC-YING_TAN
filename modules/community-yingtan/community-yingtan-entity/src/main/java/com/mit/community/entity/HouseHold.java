@@ -158,6 +158,7 @@ public class HouseHold extends BaseEntity {
      */
     private LocalDate birthday;
 
+    @TableField(exist = false)
     private int isWarning;
 
     private String labels;
