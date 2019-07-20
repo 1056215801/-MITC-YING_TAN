@@ -203,14 +203,14 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
-      #url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
       username: root
       password: 123456
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
-      #url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
 
@@ -227,3 +227,10 @@ mybatis-plus:
     lazyLoadingEnabled: true #延时加载的开关
     multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+hik-manager:
+  ip: 192.168.1.230
+  port: 443
+  appkey: 25892539
+  appsecret: fYFeO1sqj2Z4Ul4Sd8dT
+
