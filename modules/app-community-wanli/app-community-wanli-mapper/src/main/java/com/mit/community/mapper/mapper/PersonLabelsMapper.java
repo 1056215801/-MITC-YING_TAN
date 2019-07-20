@@ -15,6 +15,7 @@ public interface PersonLabelsMapper {
     public String getLabelsByHousehold(@Param("household") Integer household);
 
     public String getRkcfByIdNum(@Param("idNum") String idNum);
+    String getRkcfByMobile(@Param("mobile") String mobile);
 
     public Integer getSirPersonBaseInfoId(@Param("id") Integer id);
 
@@ -42,4 +43,5 @@ public interface PersonLabelsMapper {
     public String getTimeCha(@Param("id")String id);
     String getGroupName(@Param("id")String id);
     String getMaxDeviceId();
+    List<OwnerShipInfo> getOwnerInfo(@Param("cph")String cph);
 }

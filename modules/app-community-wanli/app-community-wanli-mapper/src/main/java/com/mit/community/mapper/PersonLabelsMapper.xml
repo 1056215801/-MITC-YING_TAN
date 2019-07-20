@@ -31,21 +31,42 @@
     </resultMap>
 
     <resultMap type="com.mit.community.entity.entity.DeviceGroup" id="deviceGroupMap">
-        <id property="id" column="id" javaType="Integer"
-                jdbcType="INTEGER" />
-        <result property="deviceGroupId" column="device_group_Id" javaType="Integer"
-                jdbcType="INTEGER" />
-        <result property="communityCode" column="community_code" javaType="String"
-                jdbcType="VARCHAR" />
-        <result property="deviceGroupName" column="device_group_name" javaType="String"
-                jdbcType="VARCHAR" />
-        <result property="groupType" column="group_type" javaType="Short"
-                jdbcType="INTEGER" />
-        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
-                jdbcType="OTHER" />
-        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
-                jdbcType="OTHER" />
+    <id property="id" column="id" javaType="Integer"
+        jdbcType="INTEGER" />
+    <result property="deviceGroupId" column="device_group_Id" javaType="Integer"
+            jdbcType="INTEGER" />
+    <result property="communityCode" column="community_code" javaType="String"
+            jdbcType="VARCHAR" />
+    <result property="deviceGroupName" column="device_group_name" javaType="String"
+            jdbcType="VARCHAR" />
+    <result property="groupType" column="group_type" javaType="Short"
+            jdbcType="INTEGER" />
+    <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+            jdbcType="OTHER" />
+    <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+            jdbcType="OTHER" />
     </resultMap>
+
+    <resultMap type="com.mit.community.entity.OwnerShipInfo" id="ownerShipInfo">
+        <result property="carOwner" column="carOwner" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ownerPhone" column="ownerPhone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zoneName" column="zoneName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="buildingName" column="buildingName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unitName" column="unitName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="roomNum" column="roomNum" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getOwnerInfo" resultMap="ownerShipInfo">
+        select a.owner_phone as ownerPhone,b.household_name as carOwner,c.zone_name as zoneName,c.building_name as buildingName,c.unit_name as unitName,c.room_num as roomNum
+        from vehicle_info a LEFT JOIN household b on a.owner_phone=b.mobile LEFT JOIN household_room c on b.household_id=c.household_id
+        where a.car_num=#{cph}
+    </select>
 
     <select id="getWgyList" resultMap="wgyInfoMap">
         select a.id,a.jb,a.dept,b.cellphone,c.id as person_baseinfo_id from wgy_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN user c on b.id_card_num=c.id_card_num
@@ -69,6 +90,11 @@
     <select id="getRkcfByIdNum" resultType="String">
         select rksx
         from person_baseinfo where id_card_num=#{idNum}
+    </select>
+
+    <select id="getRkcfByMobile" resultType="String">
+        select rksx
+        from person_baseinfo where cellphone=#{mobile}
     </select>
 
     <select id="getSirPersonBaseInfoId" resultType="INTEGER">

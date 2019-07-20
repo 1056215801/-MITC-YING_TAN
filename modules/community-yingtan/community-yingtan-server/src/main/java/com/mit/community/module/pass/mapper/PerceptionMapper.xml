@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.module.pass.mapper.PerceptionMapper">
+    <resultMap type="com.mit.community.entity.Current" id="currentInfo">
+        <result property="time" column="time" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="count" column="COUNT" javaType="int"
+                jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="getSjByDay" resultMap="currentInfo">
+        SELECT HOUR(a.passtime) AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+         WHERE a.passtime LIKE #{dateNowStr} and a.access_type=#{type} and b.community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+         GROUP BY HOUR(a.passtime) ORDER BY HOUR(a.passtime)
+    </select>
+
+    <select id="getXqByDay" resultMap="currentInfo">
+        SELECT HOUR(a.passtime) AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+        WHERE a.passtime LIKE #{dateNowStr} and b.community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+        GROUP BY HOUR(a.passtime) ORDER BY HOUR(a.passtime)
+    </select>
+
+    <select id="getSjByMonth" resultMap="currentInfo">
+        SELECT DATE_FORMAT(a.passtime,'%d') AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+        WHERE a.passtime LIKE #{dateNowStr} and a.access_type=#{type} and b.community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+        GROUP BY time ORDER BY time
+    </select>
+
+    <select id="getXqByMonth" resultMap="currentInfo">
+        SELECT DATE_FORMAT(a.passtime,'%d') AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+        WHERE a.passtime LIKE #{dateNowStr} and b.community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+        GROUP BY time ORDER BY time
+    </select>
+
+    <select id="getXfBySomeDay" resultMap="currentInfo">
+        SELECT DATE_FORMAT(gmt_warn,'%y-%m-%d') AS TIME,COUNT(1) AS COUNT FROM fire_hydrant WHERE gmt_warn BETWEEN #{dayBefore} AND #{dateNowStr} and community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+        GROUP BY TIME ORDER BY gmt_warn ASC
+    </select>
+
+    <select id="getMwgBySomeDay" resultMap="currentInfo">
+        SELECT DATE_FORMAT(a.gmt_create,'%y-%m-%d') AS TIME,COUNT(1) AS COUNT FROM report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN household c on b.household_id=c.household_id WHERE a.problemType='门未关' and a.gmt_create BETWEEN #{dayBefore} AND #{dateNowStr} and c.community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+        GROUP BY TIME ORDER BY a.gmt_create ASC
+    </select>
+
+    <select id="getYgStatusByStatus" resultType="int">
+        SELECT COUNT(1) FROM smoke_detector_status WHERE device_status=#{status} and community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+    <select id="getYgWarnByStatus" resultType="int">
+        SELECT COUNT(1) FROM smoke_detector WHERE warn_status=1 and community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+    <select id="getJgStatusByStatus" resultType="int">
+        SELECT COUNT(1) FROM well_lid_status WHERE device_status=#{status} and community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+    <select id="getJgWarnByStatus" resultType="int">
+        SELECT COUNT(1) FROM well_lid WHERE warn_status=1 and community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+    <select id="getMjCount" resultType="int">
+        SELECT COUNT(1) FROM device WHERE community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+    <select id="getJgCount" resultType="int">
+        SELECT COUNT(1) FROM well_lid WHERE community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+    <select id="getYgCount" resultType="int">
+        SELECT COUNT(1) FROM smoke_detector WHERE community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+    <select id="getPerceptionService" resultType="int">
+        SELECT COUNT(1) FROM person_baseinfo WHERE community_code IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+    </select>
+
+
+</mapper>

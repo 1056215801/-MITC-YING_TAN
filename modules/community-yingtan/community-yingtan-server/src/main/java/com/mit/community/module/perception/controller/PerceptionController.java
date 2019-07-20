@@ -13,13 +13,16 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,6 +55,8 @@ public class PerceptionController {
     private SysUser user;
     @Autowired
     private WarningConfigService warningConfigService;
+    @Autowired
+    private PerceptionService perceptionService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
@@ -537,5 +542,194 @@ public class PerceptionController {
         return Result.success(map);
     }
 
+    @PostMapping("/carPerception")
+    @ApiOperation(value = "车辆感知", notes = "int type (1：当日，2：本月)")
+    public Result carPerception(HttpServletRequest request, String communityCode, int type) {
+        SetSysUser(request);
+        List<String> communityCodes;
+        if (user == null) {
+            return Result.error("请登录");
+        }
+        CarPerception carPerception = new CarPerception();
+        if (StringUtils.isNotBlank(communityCode)) {
+            communityCodes = new ArrayList<>();
+            communityCodes.add(communityCode);
+            carPerception = perceptionService.getCarPerception(type, communityCodes);
+        } else {
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                communityCodes = clusterCommunityService.listCommunityCodeListByAreaName("湾里区");
+                carPerception = perceptionService.getCarPerception(type, communityCodes);
+            }
+
+        }
+        return Result.success(carPerception);
+    }
+
+    @PostMapping("/warnPerception")
+    @ApiOperation(value = "报警感知", notes = "int type (1：7天，2：30天)")
+    public Result warnPerception(HttpServletRequest request, String communityCode, int type) {
+        SetSysUser(request);
+        List<String> communityCodes;
+        if (user == null) {
+            return Result.error("请登录");
+        }
+        WarnPerception warnPerception = new WarnPerception();
+        if (StringUtils.isNotBlank(communityCode)) {
+            communityCodes = new ArrayList<>();
+            communityCodes.add(communityCode);
+            warnPerception = perceptionService.getWarnPerception(type, communityCodes);
+        } else {
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                communityCodes = clusterCommunityService.listCommunityCodeListByAreaName("湾里区");
+                warnPerception = perceptionService.getWarnPerception(type, communityCodes);
+            }
+
+        }
+        return Result.success(warnPerception);
+    }
+
+    @PostMapping("/devicePerception")
+    @ApiOperation(value = "设备感知", notes = "")
+    public Result devicePerception(HttpServletRequest request, String communityCode) {
+        SetSysUser(request);
+        List<String> communityCodes;
+        if (user == null) {
+            return Result.error("请登录");
+        }
+        DevicePerception devicePerception = new DevicePerception();
+        if (StringUtils.isNotBlank(communityCode)) {
+            communityCodes = new ArrayList<>();
+            communityCodes.add(communityCode);
+            devicePerception = perceptionService.getDevicePerception(communityCodes);
+        } else {
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                communityCodes = clusterCommunityService.listCommunityCodeListByAreaName("湾里区");
+                devicePerception = perceptionService.getDevicePerception(communityCodes);
+            }
+
+        }
+        return Result.success(devicePerception);
+    }
+
+
+    @GetMapping("/countCommunityStatisticsChange")
+    @ApiOperation(value = "顶栏各项数据统计",
+            notes = "房屋信息统计：buildingSize 楼栋总数、roomSize 房屋总数、houseHoldSize 住户总数" +
+                    "ParkingSpace 车位总数、buildingManager 栋长人数、\n" +
+                    "人员信息统计：realTimeVisitor 已到访实时访客、attention 关爱/关注进出" +
+                    "neighborhoodCommittee 居委干部、property 物业人员、CommunityPolice 社区民警")
+    public Result countCommunityStatisticsChange(HttpServletRequest request, String communityCode) {
+        SetSysUser(request);
+        Map<String, Object> map = Maps.newHashMapWithExpectedSize(10);
+        Integer buildingSize = 0;
+        Integer roomSize = 0;
+        Integer houseHoldSize = 0;
+        Integer visitorSize = 0;
+        List<Map<String, Object>> maps = null;
+        int attention = 0;
+        List<String> communityCodeList = new ArrayList<>();
+        if (StringUtils.isNoneBlank(communityCode)) {
+            communityCodeList.add(communityCode);
+            buildingSize = buildingService.countByCommunityCode(communityCode);
+            roomSize = roomService.countByCommunityCode(communityCode);
+            houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
+            visitorSize = visitorService.countByCommunityCode(communityCode);
+            maps = houseHoldService.countIdentityTypeByCommunityCode(communityCode);
+            // 车位
+            map.put("ParkingSpace", 0);
+            // 社区民警
+            map.put("CommunityPolice", 0);
+            //居委干部
+            map.put("neighborhoodCommittee", 0);
+            // 楼长
+            map.put("buildingManager", 0);
+            // 物业
+            map.put("property", 0);
+        } else {
+            if (user == null) {
+                return Result.error("请登录");
+            }
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                communityCodeList = listCommunityCodesByArea("湾里区");
+                buildingSize = buildingService.countByCommunityCodes(communityCodeList);
+                roomSize = roomService.countByCommunityCodes(communityCodeList);
+                houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
+                visitorSize = visitorService.countByCommunityCodes(communityCodeList);
+                maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
+                // 车位
+                map.put("ParkingSpace", 0);
+                // 社区民警
+                map.put("CommunityPolice", 0);
+                //居委干部
+                map.put("neighborhoodCommittee", 0);
+                // 楼长
+                map.put("buildingManager", 0);
+                // 物业
+                map.put("property", 0);
+            } else {
+                communityCodeList = listCommunityCodes("鹰潭市");
+                buildingSize = buildingService.countByCommunityCodes(communityCodeList);
+                roomSize = roomService.countByCommunityCodes(communityCodeList);
+                houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
+                visitorSize = visitorService.countByCommunityCodes(communityCodeList);
+                maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
+                // 车位
+                map.put("ParkingSpace", 0);
+                // 社区民警
+                map.put("CommunityPolice", 0);
+                //居委干部
+                map.put("neighborhoodCommittee", 0);
+                // 楼长
+                map.put("buildingManager", 0);
+                // 物业
+                map.put("property", 0);
+            }
+        }
+        if (!maps.isEmpty()) {
+            for (Map<String, Object> map1 : maps) {
+                String identityType = map1.get("identity_type").toString();
+                if ("3".equals(identityType) || "4".equals(identityType) || "5".equals(identityType)) {
+                    int num = Integer.parseInt(map1.get("num").toString());
+                    attention += num;
+                }
+            }
+        }
+        //楼栋总数
+        map.put("buildingSize", buildingSize);
+        //房屋
+        map.put("roomSize", roomSize);
+        // 住户
+        map.put("houseHoldSize", houseHoldSize);
+        // 实时访客
+        //map.put("realTimeVisitor", visitorSize);
+        // 关爱/关注进出
+        map.put("attention", attention);
+        int sxj = 0;
+        //int sxj = perceptionService.getSxjCount(communityCodeList);//摄像机
+        map.put("sxj",0);
+        int mj = perceptionService.getMjCount(communityCodeList);//门禁
+        map.put("mj",mj);
+        int jg = perceptionService.getJgCount(communityCodeList);//井盖
+        map.put("jg",jg);
+        int jjan = 0;//紧急按钮
+        map.put("jjan",jjan);
+        int yg = perceptionService.getYgCount(communityCodeList);//烟感smoke_detector
+        map.put("yg",yg);
+        int dc = 0;//地磁
+        map.put("dc",dc);
+        int dz = 0;//道闸
+        map.put("dz",dz);
+        int deviceCount = sxj + mj + jg+ jjan + yg + dc + dz;
+        map.put("deviceCount",deviceCount);
+        int population = perceptionService.getPerceptionService(communityCodeList);//人口总数
+        map.put("population",population);
+        map.put("earlyWarning",0);//预警
+
+        return Result.success(map);
+    }
 
 }

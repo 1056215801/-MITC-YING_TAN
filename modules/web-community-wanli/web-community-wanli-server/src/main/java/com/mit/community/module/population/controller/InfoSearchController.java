@@ -2,6 +2,7 @@ package com.mit.community.module.population.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
+import com.mit.community.entity.CarPerception;
 import com.mit.community.entity.ExcelData;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.entity.InfoSearch;
@@ -14,6 +15,7 @@ import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -176,6 +178,83 @@ public class InfoSearchController {
         String day = infoSearchService.getById(1372220);
         return Result.success(day);
     }*/
+
+    @PostMapping("/carPerception")
+    @ApiOperation(value = "车辆感知", notes = "")
+    public Result carPerception(HttpServletRequest request, String communityCode) {
+       /* SetSysUser(request);
+        List<String> communityCodes;
+        if (user == null) {
+            return Result.error("请登录");
+        }*/
+        CarPerception carPerception = new CarPerception();
+        Map<String,String> sr = new HashedMap();
+        sr.put("0","3");
+        sr.put("1","4");
+        sr.put("2","4");
+        sr.put("3","4");
+        sr.put("4","4");
+        sr.put("5","4");
+        sr.put("6","4");
+        sr.put("7","4");
+        sr.put("8","4");
+        sr.put("9","4");
+        sr.put("10","4");
+        sr.put("11","4");
+        sr.put("12","4");
+        sr.put("13","4");
+        sr.put("14","4");
+        sr.put("15","4");
+        sr.put("16","4");
+        sr.put("17","4");
+        sr.put("18","4");
+        sr.put("19","4");
+        sr.put("20","4");
+        sr.put("21","4");
+        sr.put("22","4");
+        sr.put("23","4");
+
+        Map<String,String> sc = new HashedMap();
+        sc.put("0","3");
+        sc.put("1","4");
+        sc.put("2","4");
+        sc.put("3","4");
+        sc.put("4","4");
+        sc.put("5","4");
+        sc.put("6","4");
+        sc.put("7","4");
+        sc.put("8","4");
+        sc.put("9","4");
+        sc.put("10","4");
+        sc.put("11","4");
+        sc.put("12","4");
+        sc.put("13","4");
+        sc.put("14","4");
+        sc.put("15","4");
+        sc.put("16","4");
+        sc.put("17","4");
+        sc.put("18","4");
+        sc.put("19","4");
+        sc.put("20","4");
+        sc.put("21","4");
+        sc.put("22","4");
+        sc.put("23","4");
+
+        carPerception.setSr(sr);
+        carPerception.setSc(sc);
+
+        /*if (StringUtils.isNotBlank(communityCode)) {
+
+        } else {
+            String areaName = user.getAreaName();
+            if ("湾里区".equals(areaName)) {
+                communityCodes = clusterCommunityService.listCommunityCodeListByAreaName("湾里区");
+            }
+
+        }*/
+
+        return Result.success(carPerception);
+    }
 
 
 

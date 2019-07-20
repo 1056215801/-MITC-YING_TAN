@@ -456,7 +456,7 @@ public class HouseHoldService {
                         Integer.valueOf(list.get(0).getHouseholdType()),null,null);
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
-                houseHoldMapper.insert(houseHold);
+                //houseHoldMapper.insert(houseHold);
                 // 本地关联房屋
                 ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(communityCode);
                 for (HouseRoomsVo room : list) {

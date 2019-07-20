@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @date 2018/11/19
  * @company mitesofor
  */
-//@Component
+@Component
 public class HouseholdSchedule {
 
     private final HouseHoldService houseHoldService;
@@ -62,6 +62,8 @@ public class HouseholdSchedule {
         this.userService = userService;
         this.authorizeHouseholdDeviceGroupMapper = authorizeHouseholdDeviceGroupMapper;
     }
+    @Autowired
+    private PersonBaseInfoService personBaseInfoService;
 
     /***
      * 删除然后导入
@@ -111,6 +113,8 @@ public class HouseholdSchedule {
             // 删除
             if (!removeHousehold.isEmpty()) {
                 List<Integer> deleteId = removeHousehold.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
+                List<String> phone = removeHousehold.parallelStream().map(HouseHold::getMobile).collect(Collectors.toList());
+                personBaseInfoService.removeByPhoneList(phone);
                 houseHoldService.removeByhouseholdIdList(deleteId);
             }
             // 更新
@@ -123,6 +127,8 @@ public class HouseholdSchedule {
             }
             if (!addHousehold.isEmpty()) {
                 // 增加
+                personBaseInfoService.insert(addHousehold);
+                //personBaseInfoService.insertBatch();
                 houseHoldService.insertBatch(addHousehold);
             }
         } catch (Exception e) {

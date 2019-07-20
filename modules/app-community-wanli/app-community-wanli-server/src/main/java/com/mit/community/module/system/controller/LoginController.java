@@ -163,6 +163,7 @@ public class LoginController {
             } else {//判断业主权限是否过期
                 user.setHousehouldStatus(1);
                 Date validityTime = houseHold.getValidityTime();
+                //System.out.println("==========="+validityTime);
                 Long dayInter = com.mit.community.util.DateUtils.getDateInter(new Date(), validityTime);
                 if (dayInter < 0) {//权限已过期
                     user.setHousehouldStatus(3);

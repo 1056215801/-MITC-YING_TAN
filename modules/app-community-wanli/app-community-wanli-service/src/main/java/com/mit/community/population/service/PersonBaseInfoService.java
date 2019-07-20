@@ -178,6 +178,26 @@ public class PersonBaseInfoService {
         return label;
     }
 
+    public String getLabelsByMobile(String cellphone) {
+        String label = "";
+        Integer id = null;
+        EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("cellphone", cellphone);
+        List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
+        if (!list.isEmpty()) {
+            id = list.get(0).getId();
+            List<String> strings = labelsService.getLabelsByUserId(id);
+            if(!strings.isEmpty()){
+                for(int i=0; i<strings.size(); i++){
+                    label = label + strings.get(i) + ",";
+                }
+                label = label.substring(0,label.length()-1);
+            }
+        }
+
+        return label;
+    }
+
     @Transactional
     public void saveList(List<PersonBaseInfo> list) {
         for(PersonBaseInfo azbInfo:list){

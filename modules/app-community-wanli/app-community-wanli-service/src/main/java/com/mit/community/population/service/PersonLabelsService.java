@@ -26,6 +26,10 @@ public class PersonLabelsService {
         return labelsMapper.getRkcfByIdNum(idNum);
     }
 
+    public String getRkcfByMobile(String mobile) {
+        return labelsMapper.getRkcfByMobile(mobile);
+    }
+
     public Integer getSirPersonBaseInfoId(Integer id) {
         return labelsMapper.getSirPersonBaseInfoId(id);
     }
@@ -93,5 +97,9 @@ public class PersonLabelsService {
 
     public String getMaxDeviceId(){
         return labelsMapper.getMaxDeviceId();
+    }
+
+    public List<OwnerShipInfo> getOwnerInfo(String cph){
+        return labelsMapper.getOwnerInfo(cph);
     }
 }
