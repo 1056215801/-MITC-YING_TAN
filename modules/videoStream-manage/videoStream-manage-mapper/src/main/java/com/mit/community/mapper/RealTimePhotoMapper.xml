@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mit.community.mapper.RealTimePhotoMapper">
+	<resultMap type="com.mit.community.entity.SnapFaceData" id="snapFaceDataMap">
+		<result property="id" column="id" javaType="Long" jdbcType="INTEGER"/>
+		<result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+		<result property="sex" column="sex" javaType="String" jdbcType="VARCHAR"/>
+		<result property="race" column="race" javaType="String" jdbcType="VARCHAR"/>
+		<result property="expression" column="expression" javaType="String" jdbcType="VARCHAR"/>
+		<result property="glasses" column="glasses" javaType="String" jdbcType="VARCHAR"/>
+		<result property="mood" column="mood" javaType="String" jdbcType="VARCHAR"/>
+		<result property="levelOfAppearance" column="levelOfAppearance" javaType="double" jdbcType="INTEGER"/>
+		<result property="shootTime" column="shoot_time" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+			jdbcType="OTHER" />
+		<result property="gmt_create" column="gmt_create" javaType="java.util.Date"
+				jdbcType="TIMESTAMP" />
+		<result property="imageUrl" column="imageUrl" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deviceId" column="device_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="isStranger" column="is_stranger" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="isDetect" column="is_detect" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="faceToken" column="face_token" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<!--<select id="getRealTimePhoto" resultMap="snapFaceDataMap">
+		select image_url as imageUrl,gmt_create as shoot_time from snap_face_data
+		where device_id=#{deviceId} and to_days(gmt_create) = to_days(now())
+		order by gmt_create desc
+	</select>-->
+
+	<select id="getRealTimePhoto" resultMap="snapFaceDataMap">
+		select image_url as imageUrl,gmt_create as shoot_time from snap_face_data
+		where device_id=#{deviceId}
+		order by gmt_create desc
+	</select>
+	
+	<select id="getImageUrlByUserInfo" resultType="String">
+		select image_url from snap_face_data
+		where user_info=#{user_info}
+	</select>
+</mapper>

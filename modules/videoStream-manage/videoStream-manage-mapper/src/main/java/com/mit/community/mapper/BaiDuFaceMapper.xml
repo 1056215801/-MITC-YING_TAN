@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mit.community.mapper.BaiDuFaceMapper">
+	<resultMap type="com.mit.community.entity.SnapFaceData" id="snapFaceDataMap">
+		<result property="id" column="id" javaType="INTEGER" jdbcType="INTEGER"/>
+		<result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+		<result property="sex" column="sex" javaType="String" jdbcType="VARCHAR"/>
+		<result property="race" column="race" javaType="String" jdbcType="VARCHAR"/>
+		<result property="expression" column="expression" javaType="String" jdbcType="VARCHAR"/>
+		<result property="glasses" column="glasses" javaType="String" jdbcType="VARCHAR"/>
+		<result property="mood" column="mood" javaType="String" jdbcType="VARCHAR"/>
+		<result property="levelOfAppearance" column="levelOfAppearance" javaType="double" jdbcType="INTEGER"/>
+		<result property="shootTime" column="shoot_time" javaType="java.util.Date"
+			jdbcType="TIMESTAMP" />
+		<result property="imageUrl" column="image_url" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deviceId" column="device_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="isStranger" column="is_stranger" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="isDetect" column="is_detect" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="faceToken" column="face_token" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="userInfo" column="user_info" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.mit.community.entity.FaceComparisonData" id="faceComparisonDataMap">
+		<result property="id" column="id" javaType="INTEGER" jdbcType="INTEGER"/>
+		<result property="command" column="command" javaType="String" jdbcType="VARCHAR"/>
+		<result property="datatype" column="data_type" javaType="String" jdbcType="VARCHAR"/>
+		<result property="msgid" column="msgid" javaType="String" jdbcType="VARCHAR"/>
+		<result property="name" column="name" javaType="String" jdbcType="VARCHAR"/>
+		<result property="identityNum" column="identity_num" javaType="String" jdbcType="VARCHAR"/>
+		<result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+		<result property="sex" column="sex" javaType="String" jdbcType="VARCHAR"/>
+		<result property="race" column="race" javaType="String" jdbcType="VARCHAR"/>
+		<result property="expression" column="expression" javaType="String" jdbcType="VARCHAR"/>
+		<result property="glasses" column="glasses" javaType="String" jdbcType="VARCHAR"/>
+		<result property="mood" column="mood" javaType="String" jdbcType="VARCHAR"/>
+		<result property="levelOfAppearance" column="levelOfAppearance" javaType="double" jdbcType="INTEGER"/>
+		<result property="shootTime" column="shoot_time" javaType="java.util.Date"
+			jdbcType="TIMESTAMP" />
+		<result property="imageUrl" column="image_url" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deviceId" column="device_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="isDetect" column="is_detect" javaType="int"
+			jdbcType="INTEGER" />
+			<result property="isMatch" column="is_match" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="faceToken" column="face_token" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="userInfo" column="user_info" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!--<resultMap type="com.mit.community.entity.PersonInfo" id="personInfoMap">
+		<result property="id" column="id" javaType="Long" jdbcType="INTEGER"/>
+		<result property="imageUrl" column="image_url" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="isDetect" column="is_detect" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="faceToken" column="face_token" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="userInfo" column="user_info" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>-->
+	
+	<resultMap type="com.mit.community.entity.FaceSimilarity" id="faceSimilarityMap">
+		<result property="id" column="id" javaType="INTEGER" jdbcType="INTEGER"/>
+		<result property="faceTokenOne" column="faceTokenOne" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="faceTokenTwo" column="faceTokenTwo" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.mit.community.entity.PersonInfo" id="personInfoMap">
+		<result property="id" column="id" javaType="INTEGER" jdbcType="INTEGER"/>
+		<result property="serialnumber" column="serialnumber" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="name" column="name" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="idCardNum" column="idCardNum" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="photoBase64" column="photoBase64" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="photoUrl" column="photo_url" javaType="String"
+				jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<select id="getNoAddSnapFacePhoto" resultMap="snapFaceDataMap">
+		select * from (select id,image_url,user_info from snap_face_data 
+		where face_token is null
+		order by gmt_create desc) lin limit 0,10
+	</select>
+	
+	<update id="saveFaceToken">
+		update snap_face_data set face_token=#{faceToken}
+		where id=#{id}
+	</update>
+	
+	<select id="getNoAddComparisonFacePhoto" resultMap="faceComparisonDataMap">
+		select * from (select id,image_url,user_info from face_comparison_data
+		where face_token is null
+		order by gmt_create desc) lin limit 0,10
+	</select>
+	
+	<update id="saveComparisonFaceToken">
+		update face_comparison_data set face_token=#{faceToken}
+		where id=#{id}
+	</update>
+	
+	<select id="getNoAddUserFacePhoto" resultMap="personInfoMap">
+		select * from (select id,photo_url from user
+		where face_token is null and face_token != 'noface'
+		order by gmt_create desc) lin limit 0,10
+	</select>
+	
+	<update id="saveUserFaceToken">
+		update user set face_token=#{faceToken}
+		where id=#{id}
+	</update>
+	
+	<select id="getFaceSimilarityRecords" resultMap="faceSimilarityMap">
+		select * from (select a.id,a.face_token as faceTokenOne,b.face_token as faceTokenTwo
+		from face_comparison_data a left join user b on a.identity_num=b.id_card_num
+		where a.is_match=0 and a.face_token != 'noface' and b.face_token != 'noface'
+		order by a.gmt_create desc) lin limit 0,10
+	</select>
+	
+	<update id="saveFaceSimilarity">
+		update face_comparison_data set similarity=#{similarity},is_match=1
+		where id=#{id}
+	</update>
+	
+	<select id="getNoDetectSnapPhoto" resultMap="snapFaceDataMap">
+		select * from (select id,face_token from snap_face_data
+		where is_detect=0 and face_token != 'noface'
+		order by gmt_create desc) lin limit 0,10
+	</select>
+	
+	<update id="saveSnapFaceDetect">
+		update snap_face_data set 
+		is_detect=1,age=#{age},sex=#{sex},race=#{race},expression=#{expression},glasses=#{glasses},mood=#{mood},level_of_appearance=#{beauty}
+		where id=#{id}
+	</update>
+	
+	<select id="getNoDetectComparisionPhoto" resultMap="faceComparisonDataMap">
+		select * from (select id,face_token from face_comparison_data
+		where is_detect=0 and face_token != 'noface'
+		order by gmt_create desc) lin limit 0,10
+	</select>
+	
+	<update id="saveComparisonFaceDetect">
+		update face_comparison_data set 
+		is_detect=1,age=#{age},sex=#{sex},race=#{race},expression=#{expression},glasses=#{glasses},mood=#{mood},level_of_appearance=#{beauty}
+		where id=#{id}
+	</update>
+	
+	<select id="getPersonInfo" resultMap="personInfoMap">
+		select * from (select id,name,serialnumber,photo_base64 as photoBase64,id_card_num as idCardNum  from user
+		where is_synchro=0
+		order by gmt_create desc) where lin limit 0,10
+	</select>
+
+	<select id="getUncheckIsStrange" resultMap="faceSimilarityMap">
+		select * from (select id,face_token as faceTokenOne
+		from snap_face_data
+		where is_stranger=0 and face_token != 'noface' and face_token is not null
+		order by gmt_create desc) lin limit 0,10
+	</select>
+
+	<update id="upIsStrange">
+		update snap_face_data set
+		is_stranger=#{isStrange}
+		where id=#{id}
+	</update>
+
+	<update id="upIsSynchro">
+		update user set
+		is_synchro=#{isSynchro}
+		where id=#{id}
+	</update>
+</mapper>
