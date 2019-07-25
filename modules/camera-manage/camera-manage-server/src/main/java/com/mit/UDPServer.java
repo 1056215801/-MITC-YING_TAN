@@ -59,6 +59,7 @@ public class UDPServer implements ServletContextListener{
             // TODO Auto-generated constructor stub
             byte[] buffer = packet.getData();// 接收到的UDP信息，然后解码
             String srt2 = new String(buffer, "UTF-8").trim();
+            System.out.println("==================接收到的数据"+srt2);
         }
 
         @Override

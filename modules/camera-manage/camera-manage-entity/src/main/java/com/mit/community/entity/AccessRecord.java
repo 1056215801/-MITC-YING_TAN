@@ -48,4 +48,6 @@ public class AccessRecord extends BaseEntity {
 
     @TableField("care_parkno")
     private String careParkNo;//车场编号
+
+    private String community_code;
 }

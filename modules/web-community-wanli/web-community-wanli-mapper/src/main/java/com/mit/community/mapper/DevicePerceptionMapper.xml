@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mit.community.mapper.DevicePerceptionMapper">
+    <resultMap type="com.mit.community.entity.WellShift" id="wellShiftMap">
+            <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+            <result property="deviceNum" column="deviceNum" javaType="String"
+                    jdbcType="VARCHAR"/>
+            <result property="deviceName" column="deviceName" javaType="String"
+                    jdbcType="VARCHAR"/>
+            <result property="devicePlace" column="devicePlace" javaType="String"
+                    jdbcType="VARCHAR"/>
+            <result property="deviceType" column="deviceType" javaType="String"
+                    jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" javaType="String"
+                    jdbcType="VARCHAR"/>
+
+            <result property="addTime" column="addTime"
+                    typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                    jdbcType="OTHER"/>
+            <result property="swStatus" column="swStatus" javaType="int"
+                jdbcType="INTEGER"/>
+            <result property="deviceStatus" column="deviceStatus" javaType="int"
+                jdbcType="INTEGER"/>
+            <result property="dataReportTime" column="dataReportTime"
+                typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+    </resultMap>
+
+    <resultMap type="com.mit.community.model.WarnInfo" id="warnInfoMap">
+        <result property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+        <result property="place" column="place" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="problem" column="problem" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="warnInfo" column="warnInfo" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="cyrPhone" column="cyrPhone" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="jhrPhone" column="jhrPhone" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="communityCode" column="communityCode" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="problemId" column="problemId" javaType="int"
+                jdbcType="INTEGER"/>
+        <result property="otherTime" column="otherTime"
+                typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" javaType="int"
+                jdbcType="INTEGER"/>
+        <result property="clr" column="clr" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="clrq" column="clrq"
+                typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="clsm" column="clsm" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="status" column="status" javaType="int"
+                jdbcType="INTEGER" />
+        <collection property="photos" ofType="com.mit.community.model.ReportProblemPhotos">
+            <result property="base64" column="base64"
+                    javaType="String" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+
+
+    <select id="selectPage" resultMap="warnInfoMap">
+        select a.id,a.place,a.phone,a.problem,a.warnInfo,a.name,a.cyrPhone,a.jhrPhone,a.gmt_create as otherTime,b.status,c.content as clsm,c.gmt_create as clrq,d.nickname as clr,e.base64 as base64
+        from linshi_a a LEFT JOIN report_problem b on a.problemId=b.id LEFT JOIN problem_schedule c on c.reportProblemId=b.id LEFT JOIN user d on c.userId=d.id LEFT JOIN  problem_schedule_photo e on c.id=e.problemScheduleId
+        where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="getWellShiftPage" resultMap="wellShiftMap">
+      select a.device_num as deviceName,a.device_place as devicePlace,a.device_type as deviceType,a.status as swStatus,a.gmt_create as addTime,a.device_status as deviceStatus,a.gmt_upload as dataReportTime,
+      b.cellphone as phone,
+      from well_lid_status a LEFT JOIN person_baseinfo b on a.负责人id=b.id
+      where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="smokeListPage" resultMap="wellShiftMap">
+        select a.device_num as deviceName,a.device_place as devicePlace,a.device_type as deviceType,a.status as swStatus,a.gmt_create as addTime,a.device_status as deviceStatus,a.gmt_upload as dataReportTime,
+        b.cellphone as phone,
+        from smoke_detector_status a LEFT JOIN person_baseinfo b on a.负责人id=b.id
+        where 1= 1 ${ew.sqlSegment}
+    </select>
+
+    <select id="dcListPage" resultMap="wellShiftMap">
+        select a.device_num as deviceName,a.device_place as devicePlace,a.device_type as deviceType,a.status as swStatus,a.gmt_create as addTime,a.device_status as deviceStatus,a.gmt_upload as dataReportTime,
+        b.cellphone as phone,
+        from smoke_detector_status a LEFT JOIN person_baseinfo b on a.负责人id=b.id
+        where 1= 1 ${ew.sqlSegment}
+    </select>
+
+
+</mapper>
+
+
+

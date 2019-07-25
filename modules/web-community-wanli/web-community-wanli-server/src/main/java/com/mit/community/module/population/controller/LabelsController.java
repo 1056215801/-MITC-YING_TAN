@@ -1,19 +1,25 @@
 package com.mit.community.module.population.controller;
 
+import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.entity.entity.*;
 import com.mit.community.population.service.*;
 import com.mit.community.service.*;
+import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = "/labels")
@@ -60,20 +66,36 @@ public class LabelsController {
     private LdzService ldzService;
     @Autowired
     private ZdyPersonLabelService zdyPersonLabelService;
+    @Autowired
+    private RedisService redisService;
 
     @PostMapping("/save")
     @ApiOperation(value = "保存人员标签", notes = "输入参数：labels 设置的标签， credentialNum 身份证号码， householdName 姓名， mobile 电话号码")
-    public Result save(String labels, String credentialNum, String householdName, String mobile){
+    @Transactional
+    public Result save(HttpServletRequest request, String labels, String credentialNum, String householdName, String mobile){
         //Integer personBaseInfoId = personBaseInfoService.getIdByCardNum(credentialNum);
+        String communityCode = null;
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
         Integer personBaseInfoId = null;
         if (StringUtils.isNotBlank(householdName)&&StringUtils.isNotBlank(mobile)) {
             personBaseInfoId = personBaseInfoService.getIdByNameAndPhone(householdName, mobile);
         }
 
-        /*if (personBaseInfoId == null) {
-            personBaseInfoId = personBaseInfoService.getIdByNameAndPhone(householdName, mobile);
-        }*/
+        if (personBaseInfoId == null) {
+            PersonBaseInfo personBaseInfo = new PersonBaseInfo();
+            personBaseInfo.setName(householdName);
+            personBaseInfo.setCommunity_code(communityCode);
+            personBaseInfo.setCellphone(mobile);
+            personBaseInfo.setGmtCreate(LocalDateTime.now());
+            personBaseInfo.setGmtModified(LocalDateTime.now());
+            personBaseInfoId = personBaseInfoService.saveReturnId(personBaseInfo);
+        }
         if (personBaseInfoId != null) {
+            personBaseInfoService.updateById(personBaseInfoId,communityCode);
             String[] label = labels.split(",");
             for (int i=0; i<label.length;i++) {
                 if ("境外人员".equals(label[i])) {

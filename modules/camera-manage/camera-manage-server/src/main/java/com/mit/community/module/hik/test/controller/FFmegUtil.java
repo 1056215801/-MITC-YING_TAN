@@ -2,7 +2,7 @@ package com.mit.community.module.hik.test.controller;
 
 
 
-import cc.eguid.FFmpegCommandManager.FFmpegManagerImpl;
+//import cc.eguid.FFmpegCommandManager.FFmpegManagerImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Map;
 public class FFmegUtil {
 
 
-public static String  startTransCoding(String appName,String name,String password,String ip,int channelNumber){
+/*public static String  startTransCoding(String appName,String name,String password,String ip,int channelNumber){
 
     String channelNumberStr="ch" +channelNumber;
     FFmpegManagerImpl s=new FFmpegManagerImpl(10);
@@ -32,6 +32,6 @@ public static String  startTransCoding(String appName,String name,String passwor
        String s= startTransCoding("video","admin","admin123","192.168.1.163",34);
        System.out.print(s);
 
-    }
+    }*/
 
 }

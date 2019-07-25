@@ -1,9 +1,8 @@
 package com.mit.community.service;
 
-import com.mit.community.entity.CarPerception;
-import com.mit.community.entity.Current;
-import com.mit.community.entity.DevicePerception;
-import com.mit.community.entity.WarnPerception;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.entity.*;
+import com.mit.community.module.pass.mapper.BaoJinMapper;
 import com.mit.community.module.pass.mapper.PerceptionMapper;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +18,21 @@ import java.util.*;
 public class PerceptionService {
     @Autowired
     private PerceptionMapper perceptionMapper;
+    @Autowired
+    private BaoJinMapper baoJinMapper;
 
+    public WarnInfo getWarnInfoByType(List<String> communityCode){
+        EntityWrapper<WarnInfo> wrapper = new EntityWrapper<>();
+        wrapper.in("communityCode", communityCode);
+        wrapper.orderBy("gmt_create", false);
+        wrapper.last("LIMIT 1");
+        List<WarnInfo> list = baoJinMapper.selectList(wrapper);
+        if (!list.isEmpty()){
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
     public CarPerception getCarPerception(int type, List<String> communityCodes){
         CarPerception carPerception = new CarPerception();
         if(communityCodes.isEmpty()){

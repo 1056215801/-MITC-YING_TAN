@@ -2,6 +2,7 @@ package com.mit.community.module.userservice.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.WarnInfo;
 import com.mit.community.population.service.TaskMessageService;
 import com.mit.community.service.ReportProblemService;
 import com.mit.community.service.UserService;
@@ -11,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,10 +28,6 @@ import java.util.Properties;
 public class ReportProblemController {
     @Autowired
     private ReportProblemService reportProblemService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private WgyService wgyService;
     @Autowired
     private TaskMessageService taskMessageService;
 
@@ -86,6 +84,7 @@ public class ReportProblemController {
         //消息推送
         String title = "消息通知";
         WebPush.sendAllsetNotification(MSG,title);
+        //SmsCommunityAppUtil.sendMsg(phones[i], MSG);
         //Integer wgyId = wgyService.getWgyIdByJb("居委");
         taskMessageService.save(0,id,title,MSG,1,0,0,null);
         return Result.success("保存成功");
@@ -114,6 +113,109 @@ public class ReportProblemController {
             problemScheduleAndLzdInfo.setLzInfo(lzInfo);
         }
         return Result.success(problemScheduleAndLzdInfo);
+    }
+
+
+    @PostMapping("/baojin")
+    @ApiOperation(value = "报警", notes = "传参：place(利雅轩小区、南标小区)，type(烟感、地磁、井盖位移、紧急按钮)") //没有表
+    @Transactional
+    public Result baoJin(String place,String type){//电话号码要修改
+        String communityCode = null;
+        if ("南标小区".equals(place)) {
+            communityCode = "a5f53a2248794c678766edad485392ff";
+        } else if ("利雅轩小区".equals(place)){
+            communityCode = "b181746d9bd1444c80522f9923c59b80";
+        }
+        if ("烟感".equals(type)){
+            WarnInfo warnInfo = new WarnInfo();
+            warnInfo.setPhone("152****7130");
+            if ("南标小区".equals(place)) {
+                warnInfo.setPlace( "南标小区-电动车雨棚");
+            } else if ("利雅轩小区".equals(place)){
+                warnInfo.setPlace("利雅轩小区-4栋1单元");
+            }
+            //warnInfo.setPlace(place + "");//这里需要补齐
+            warnInfo.setProblem("疑似火情");
+            warnInfo.setWarnInfo("出现大量烟雾，请及时处理");
+            warnInfo.setCommunityCode(communityCode);
+
+            String title = "消息通知";
+            String MSG = "收到新的问题反馈，请登录网格助手进行处理";
+            Integer id = reportProblemService.save(70, warnInfo.getPlace()+warnInfo.getWarnInfo(), warnInfo.getProblem(), warnInfo.getPlace(), 1, new ArrayList<>());
+            taskMessageService.save(0,id,title,MSG,1,0,0,null);
+            warnInfo.setProblemId(id);
+            reportProblemService.saveBaoJin(warnInfo);
+            WebPush.sendAllsetNotification(MSG,title);
+            SmsCommunityAppUtil.sendMsg("18170879118", MSG);
+        } else if ("地磁".equals(type)) {
+            WarnInfo warnInfo = new WarnInfo();
+            warnInfo.setPhone("152****7130");
+            if ("南标小区".equals(place)) {
+                warnInfo.setPlace( "南标小区-岗亭前消防栓旁");
+            } else if ("利雅轩小区".equals(place)){
+                warnInfo.setPlace("利雅轩小区-主干道");
+            }
+            //warnInfo.setPlace(place + "");//这里需要补齐
+            warnInfo.setProblem("消防占道");
+            warnInfo.setWarnInfo("消防通道被占用，请及时处理");
+            warnInfo.setCommunityCode(communityCode);
+            //reportProblemService.saveBaoJin(warnInfo);
+            String title = "消息通知";
+            String MSG = "收到新的问题反馈，请登录网格助手进行处理";
+            Integer id = reportProblemService.save(70, warnInfo.getPlace()+warnInfo.getWarnInfo(), warnInfo.getProblem(), warnInfo.getPlace(), 1, new ArrayList<>());
+            taskMessageService.save(0,id,title,MSG,1,0,0,null);
+            warnInfo.setProblemId(id);
+            reportProblemService.saveBaoJin(warnInfo);
+            WebPush.sendAllsetNotification(MSG,title);
+            SmsCommunityAppUtil.sendMsg("18170879118", MSG);
+        } else if ("井盖位移".equals(type)) {
+            WarnInfo warnInfo = new WarnInfo();
+            warnInfo.setPhone("152****7130");
+            if ("南标小区".equals(place)) {
+                warnInfo.setPlace( "南标小区-岗亭后雨水井");
+            } else if ("利雅轩小区".equals(place)){
+                warnInfo.setPlace("利雅轩小区-1栋3单元前雨水井");
+            }
+            warnInfo.setProblem("井盖非法移位");
+            warnInfo.setWarnInfo("井盖被非法移位，请及时处理");
+            warnInfo.setCommunityCode(communityCode);
+            //reportProblemService.saveBaoJin(warnInfo);
+            String title = "消息通知";
+            String MSG = "收到新的问题反馈，请登录网格助手进行处理";
+            Integer id = reportProblemService.save(70, warnInfo.getPlace()+warnInfo.getWarnInfo(), warnInfo.getProblem(), warnInfo.getPlace(), 1, new ArrayList<>());
+            taskMessageService.save(0,id,title,MSG,1,0,0,null);
+            warnInfo.setProblemId(id);
+            reportProblemService.saveBaoJin(warnInfo);
+            WebPush.sendAllsetNotification(MSG,title);
+            SmsCommunityAppUtil.sendMsg("18170879118", MSG);
+        } else if ("紧急按钮".equals(type)) {
+            WarnInfo warnInfo = new WarnInfo();
+            warnInfo.setPlace(place + "");//这里需要补齐
+            warnInfo.setProblem("紧急按钮报警");
+            warnInfo.setName("李*新");
+            if ("南标小区".equals(place)) {
+                warnInfo.setPhone("187****4039");
+                warnInfo.setCyrPhone("187****4039");
+                warnInfo.setJhrPhone("159****46572");
+                warnInfo.setWarnInfo("张凯（187****4039）紧急按钮发生报警，请及时处理");
+            } else if ("利雅轩小区".equals(place)){
+                warnInfo.setPhone("152****7130");
+                warnInfo.setCyrPhone("152****7130");
+                warnInfo.setJhrPhone("181****6078");
+                warnInfo.setWarnInfo("李重新（152****7130）紧急按钮发生报警，请及时处理");
+            }
+            warnInfo.setCommunityCode(communityCode);
+            //reportProblemService.saveBaoJin(warnInfo);
+            String title = "消息通知";
+            String MSG = "收到新的问题反馈，请登录网格助手进行处理";
+            Integer id = reportProblemService.save(70, warnInfo.getPlace()+warnInfo.getWarnInfo(), warnInfo.getProblem(), warnInfo.getPlace(), 1, new ArrayList<>());
+            taskMessageService.save(0,id,title,MSG,1,0,0,null);
+            warnInfo.setProblemId(id);
+            reportProblemService.saveBaoJin(warnInfo);
+            WebPush.sendAllsetNotification(MSG,title);
+            SmsCommunityAppUtil.sendMsg("18170879118", MSG);
+        }
+        return Result.success("保存成功");
     }
 
 

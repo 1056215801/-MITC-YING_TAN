@@ -190,6 +190,7 @@ public class InfoSearchService {
     public Page<InfoSearch> listPage(String communtiyCode, Integer ageStart, Integer ageEnd, String name, String idNum, String sex,
                                      String education, String job, String matrimony, String zzmm, String label,
                                      Integer pageNum, Integer pageSize, String rycf, String accountType, String streetName, String areaName) {
+        System.out.println("==================pageSize="+pageNum+"==="+pageSize);
         Page<InfoSearch> page = new Page<>(pageNum, pageSize);
         EntityWrapper<InfoSearch> wrapper = new EntityWrapper<>();
         if (label == null || "".equals(label)) {

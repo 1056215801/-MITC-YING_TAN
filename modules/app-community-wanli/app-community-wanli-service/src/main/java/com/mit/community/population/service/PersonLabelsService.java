@@ -1,7 +1,10 @@
 package com.mit.community.population.service;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mit.community.entity.entity.DeviceGroup;
@@ -13,6 +16,8 @@ import java.util.List;
 public class PersonLabelsService {
     @Autowired
     private PersonLabelsMapper labelsMapper;
+    @Autowired
+    private PersonBaseInfoService personBaseInfoService;
 
     public void saveLabels(String labels, Integer userId) {
         labelsMapper.saveLabels(labels, userId);
@@ -26,8 +31,23 @@ public class PersonLabelsService {
         return labelsMapper.getRkcfByIdNum(idNum);
     }
 
-    public String getRkcfByMobile(String mobile) {
-        return labelsMapper.getRkcfByMobile(mobile);
+    public String getRkcfByMobile(String mobile, String communityCode) {
+        /*String ret = labelsMapper.getRkcfByMobile(mobile);
+        if(){
+            return ret;
+        } else{
+            return null;
+        }*/
+        PersonBaseInfo personBaseInfo = personBaseInfoService.getPersonByMobile(mobile, communityCode);
+        if (personBaseInfo != null) {
+            if (personBaseInfo.getRksx() == 0) {
+                return "";
+            } else {
+                return String.valueOf(personBaseInfo.getRksx());
+            }
+        }
+        return null;
+        //return labelsMapper.getRkcfByMobile(mobile);
     }
 
     public Integer getSirPersonBaseInfoId(Integer id) {

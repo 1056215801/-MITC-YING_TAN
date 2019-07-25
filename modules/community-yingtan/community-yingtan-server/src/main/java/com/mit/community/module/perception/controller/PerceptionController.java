@@ -57,6 +57,8 @@ public class PerceptionController {
     private WarningConfigService warningConfigService;
     @Autowired
     private PerceptionService perceptionService;
+    @Autowired
+    private PersonBaseInfoService personBaseInfoService;
 
     @Autowired
     public PerceptionController(BuildingService buildingService, RoomService roomService,
@@ -509,6 +511,7 @@ public class PerceptionController {
     @GetMapping("/getCurrentAccess")
     @ApiOperation(value = "获取当前门禁", notes = "identityType:1、群众、2、境外人员、3、孤寡老人、4、信教人员、5、留守儿童、6、上访人员、99、其他")
     public Result getCurrentAccess(String deviceName) {
+        System.out.println("===="+deviceName);
         Device device = deviceService.getByDevice(deviceName);
         if (device == null) {
             return Result.error("错误");
@@ -518,12 +521,15 @@ public class PerceptionController {
         if(accessControl != null){
             if(StringUtils.isNotBlank(accessControl.getHouseholdMobile())){
                 warningInfo = new WarningInfo();
+                System.out.println("===="+accessControl.getHouseholdMobile());
                 HouseHold houseHold = houseHoldService.getByCellPhone(accessControl.getHouseholdMobile());
                 if (houseHold != null) {
-                    if (StringUtils.isNotBlank(houseHold.getLabels())) {
-                        String[] labels = houseHold.getLabels().split(",");
+                    if (true) {
+                        String[] labels = personBaseInfoService.getLabelsByMobile(houseHold.getMobile(), houseHold.getCommunityCode()).split(",");
+                        System.out.println("=============="+labels[0]);
+                        System.out.println("=============="+houseHold.getHouseholdName());
                         for (int i=0; i<labels.length ; i++) {
-                            WarningConfig warningConfig = warningConfigService.getByLabel(labels[i]);
+                            WarningConfig warningConfig = warningConfigService.getByLabelAndCommunity(labels[i],houseHold.getCommunityCode());
                             if (warningConfig != null) {
                                 warningInfo.setIsWarning(warningConfig.getIsWarning());
                                 warningInfo.setLabels(labels[i]);
@@ -599,7 +605,7 @@ public class PerceptionController {
             return Result.error("请登录");
         }
         DevicePerception devicePerception = new DevicePerception();
-        if (StringUtils.isNotBlank(communityCode)) {
+        /*if (StringUtils.isNotBlank(communityCode)) {
             communityCodes = new ArrayList<>();
             communityCodes.add(communityCode);
             devicePerception = perceptionService.getDevicePerception(communityCodes);
@@ -610,7 +616,86 @@ public class PerceptionController {
                 devicePerception = perceptionService.getDevicePerception(communityCodes);
             }
 
+        }*/
+        Map<String,String> yg = new HashedMap();
+        Map<String,String> dc = new HashedMap();
+        Map<String,String> jg = new HashedMap();
+        Map<String,String> sxj = new HashedMap();
+        if ("a5f53a2248794c678766edad485392ff".equals(communityCode)){//南标
+            yg.put("lx","0");
+            yg.put("zc","2");
+            yg.put("yc","0");
+            yg.put("gj","0");
+            devicePerception.setYg(yg);
+
+            dc.put("lx","0");
+            dc.put("zc","1");
+            dc.put("yc","0");
+            dc.put("gj","0");
+            devicePerception.setDc(dc);
+
+            jg.put("lx","0");
+            jg.put("zc","1");
+            jg.put("yc","0");
+            jg.put("gj","0");
+            devicePerception.setJg(jg);
+
+            sxj.put("lx","0");
+            sxj.put("zc","7");
+            sxj.put("yc","0");
+            sxj.put("gj","0");
+            devicePerception.setSxj(sxj);
+        } else if ("b181746d9bd1444c80522f9923c59b80".equals(communityCode)) {//利雅轩
+            yg.put("lx","0");
+            yg.put("zc","2");
+            yg.put("yc","0");
+            yg.put("gj","0");
+            devicePerception.setYg(yg);
+
+            dc.put("lx","0");
+            dc.put("zc","1");
+            dc.put("yc","0");
+            dc.put("gj","0");
+            devicePerception.setDc(dc);
+
+            jg.put("lx","0");
+            jg.put("zc","1");
+            jg.put("yc","0");
+            jg.put("gj","0");
+            devicePerception.setJg(jg);
+
+            sxj.put("lx","0");
+            sxj.put("zc","17");
+            sxj.put("yc","0");
+            sxj.put("gj","0");
+            devicePerception.setSxj(sxj);
+        } else {
+            yg.put("lx","0");
+            yg.put("zc","4");
+            yg.put("yc","0");
+            yg.put("gj","0");
+            devicePerception.setYg(yg);
+
+            dc.put("lx","0");
+            dc.put("zc","2");
+            dc.put("yc","0");
+            dc.put("gj","0");
+            devicePerception.setDc(dc);
+
+            jg.put("lx","0");
+            jg.put("zc","2");
+            jg.put("yc","0");
+            jg.put("gj","0");
+            devicePerception.setJg(jg);
+
+            sxj.put("lx","0");
+            sxj.put("zc","24");
+            sxj.put("yc","0");
+            sxj.put("gj","0");
+            devicePerception.setSxj(sxj);
         }
+
+
         return Result.success(devicePerception);
     }
 
@@ -635,11 +720,11 @@ public class PerceptionController {
             communityCodeList.add(communityCode);
             buildingSize = buildingService.countByCommunityCode(communityCode);
             roomSize = roomService.countByCommunityCode(communityCode);
-            houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
+            houseHoldSize = houseHoldService.listByCommunityCode(communityCodeList).size()-1;
             visitorSize = visitorService.countByCommunityCode(communityCode);
             maps = houseHoldService.countIdentityTypeByCommunityCode(communityCode);
             // 车位
-            map.put("ParkingSpace", 0);
+            /*map.put("ParkingSpace", 0);
             // 社区民警
             map.put("CommunityPolice", 0);
             //居委干部
@@ -647,21 +732,23 @@ public class PerceptionController {
             // 楼长
             map.put("buildingManager", 0);
             // 物业
-            map.put("property", 0);
+            map.put("property", 0);*/
         } else {
             if (user == null) {
                 return Result.error("请登录");
             }
             String areaName = user.getAreaName();
             if ("湾里区".equals(areaName)) {
-                communityCodeList = listCommunityCodesByArea("湾里区");
+                //communityCodeList = listCommunityCodesByArea("湾里区");
+                communityCodeList.add("a5f53a2248794c678766edad485392ff");
+                communityCodeList.add("b181746d9bd1444c80522f9923c59b80");
                 buildingSize = buildingService.countByCommunityCodes(communityCodeList);
                 roomSize = roomService.countByCommunityCodes(communityCodeList);
-                houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
+                houseHoldSize = houseHoldService.listByCommunityCode(communityCodeList).size() - 2;
                 visitorSize = visitorService.countByCommunityCodes(communityCodeList);
                 maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
                 // 车位
-                map.put("ParkingSpace", 0);
+                /*map.put("ParkingSpace", 0);
                 // 社区民警
                 map.put("CommunityPolice", 0);
                 //居委干部
@@ -669,12 +756,12 @@ public class PerceptionController {
                 // 楼长
                 map.put("buildingManager", 0);
                 // 物业
-                map.put("property", 0);
+                map.put("property", 0);*/
             } else {
                 communityCodeList = listCommunityCodes("鹰潭市");
                 buildingSize = buildingService.countByCommunityCodes(communityCodeList);
                 roomSize = roomService.countByCommunityCodes(communityCodeList);
-                houseHoldSize = houseHoldService.listByCommunityCode(communityCode).size();
+                houseHoldSize = houseHoldService.listByCommunityCode(communityCodeList).size();
                 visitorSize = visitorService.countByCommunityCodes(communityCodeList);
                 maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
                 // 车位
@@ -703,12 +790,73 @@ public class PerceptionController {
         //房屋
         map.put("roomSize", roomSize);
         // 住户
-        map.put("houseHoldSize", houseHoldSize);
+        //map.put("houseHoldSize", houseHoldSize);
         // 实时访客
         //map.put("realTimeVisitor", visitorSize);
         // 关爱/关注进出
         map.put("attention", attention);
-        int sxj = 0;
+        if ("a5f53a2248794c678766edad485392ff".equals(communityCode)){//南标
+            map.put("houseHoldSize", 77);
+            //车位
+            map.put("ParkingSpace", 24);
+            // 社区民警
+            map.put("CommunityPolice", 1);
+            //居委干部
+            map.put("neighborhoodCommittee", 1);
+            // 楼长
+            map.put("buildingManager", 2);
+            // 物业
+            map.put("property", 0);
+            map.put("sxj",7);
+            map.put("mj",2);
+            map.put("jg",1);
+            map.put("jjan",1);
+            map.put("yg",2);
+            map.put("dc",1);
+            map.put("dz",0);
+            map.put("deviceCount",14);
+        } else if ("b181746d9bd1444c80522f9923c59b80".equals(communityCode)) {//利雅轩
+            map.put("houseHoldSize", 52);
+            map.put("ParkingSpace", 33);
+            // 社区民警
+            map.put("CommunityPolice", 1);
+            //居委干部
+            map.put("neighborhoodCommittee", 1);
+            // 楼长
+            map.put("buildingManager", 6);
+            // 物业
+            map.put("property", 5);
+            map.put("sxj",17);
+            map.put("mj",2);
+            map.put("jg",1);
+            map.put("jjan",2);
+            map.put("yg",2);
+            map.put("dc",1);
+            map.put("dz",0);
+            map.put("deviceCount",25);
+        } else {
+            map.put("houseHoldSize", 129);
+            //车位
+            map.put("ParkingSpace", 57);
+            // 社区民警
+            map.put("CommunityPolice", 2);
+            //居委干部
+            map.put("neighborhoodCommittee", 2);
+            // 楼长
+            map.put("buildingManager", 8);
+            // 物业
+            map.put("property", 5);
+            map.put("sxj",24);
+            map.put("mj",4);
+            map.put("jg",2);
+            map.put("jjan",3);
+            map.put("yg",4);
+            map.put("dc",2);
+            map.put("dz",0);
+            map.put("deviceCount",49);
+        }
+
+        /*int sxj = 0;
         //int sxj = perceptionService.getSxjCount(communityCodeList);//摄像机
         map.put("sxj",0);
         int mj = perceptionService.getMjCount(communityCodeList);//门禁
@@ -724,12 +872,37 @@ public class PerceptionController {
         int dz = 0;//道闸
         map.put("dz",dz);
         int deviceCount = sxj + mj + jg+ jjan + yg + dc + dz;
-        map.put("deviceCount",deviceCount);
+        map.put("deviceCount",deviceCount);*/
         int population = perceptionService.getPerceptionService(communityCodeList);//人口总数
         map.put("population",population);
         map.put("earlyWarning",0);//预警
 
         return Result.success(map);
     }
+
+
+    @PostMapping("/warnInfo")
+    @ApiOperation(value = "报警信息", notes = "")
+    public Result warnInfo(HttpServletRequest request, String communityCode){
+        SetSysUser(request);
+        List<String> communityCodeList = new ArrayList<>();
+        if(StringUtils.isNotBlank(communityCode)&&!"".equals(communityCode)){
+            communityCodeList.add(communityCode);
+        } else {
+            communityCodeList.add("a5f53a2248794c678766edad485392ff");
+            communityCodeList.add("b181746d9bd1444c80522f9923c59b80");
+        }
+
+        WarnInfo info = perceptionService.getWarnInfoByType(communityCodeList);
+        if (info != null) {
+            if ("紧急按钮报警".equals(info.getProblem())) {
+                info.setWarnInfo(info.getPlace()+"-"+info.getName()+"("+info.getCyrPhone()+")");
+                info.setPlace("监护人:"+info.getJhrPhone());
+            }
+        }
+
+        return Result.success(info);
+    }
+
 
 }

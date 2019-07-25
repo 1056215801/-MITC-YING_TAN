@@ -81,6 +81,30 @@ public class PersonBaseInfoService {
         }
     }
 
+    @Transactional
+    public Integer saveReturnId(PersonBaseInfo personBaseInfo) {
+        User user = userService.getByIDNumber(personBaseInfo.getIdCardNum());
+        if (user != null) {
+            if(StringUtils.isNotBlank(user.getName())){
+                personBaseInfo.setName(user.getName());
+            }
+            if(StringUtils.isNotBlank(user.getCellphone())){
+                personBaseInfo.setCellphone(user.getCellphone());
+            }
+        }
+        personBaseInfo.setGmtCreate(LocalDateTime.now());
+        personBaseInfo.setGmtModified(LocalDateTime.now());
+        Integer id = this.getIdByCardNum(personBaseInfo.getIdCardNum());
+        if( id == null){
+            personBaseInfoMapper.insert(personBaseInfo);
+            id = personBaseInfo.getId();
+        } else {
+            personBaseInfo.setId(id);
+            personBaseInfoMapper.updateById(personBaseInfo);
+        }
+        return id;
+    }
+
     public boolean isExist(String idCardNum) {
         boolean flag = true;
         EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
@@ -124,6 +148,19 @@ public class PersonBaseInfoService {
         return null;
     }
 
+    public PersonBaseInfo getPersonByMobile(String cellphone, String communityCode) {
+        EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("cellphone", cellphone);
+        if(StringUtils.isNotBlank(communityCode)){
+            wrapper.eq("community_code", communityCode);
+        }
+        List<PersonBaseInfo> infos = personBaseInfoMapper.selectList(wrapper);
+        if (!infos.isEmpty()) {
+            return infos.get(0);
+        }
+        return null;
+    }
+
     @Transactional
     public void delete(Integer id) {
         /*PersonBaseInfo personBaseInfo = new PersonBaseInfo();
@@ -148,7 +185,7 @@ public class PersonBaseInfoService {
     public Integer getIdByNameAndPhone(String name, String phone) {
         Integer id = null;
         EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
-        wrapper.eq("name", name);
+        //wrapper.eq("name", name);
         wrapper.eq("cellphone", phone);
         List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
         if (!list.isEmpty()) {
@@ -178,11 +215,14 @@ public class PersonBaseInfoService {
         return label;
     }
 
-    public String getLabelsByMobile(String cellphone) {
+    public String getLabelsByMobile(String cellphone, String communityCode) {
         String label = "";
         Integer id = null;
         EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
+        if (StringUtils.isNotBlank(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
         List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
         if (!list.isEmpty()) {
             id = list.get(0).getId();
@@ -203,6 +243,13 @@ public class PersonBaseInfoService {
         for(PersonBaseInfo azbInfo:list){
             this.save(azbInfo);
         }
+    }
+
+    public void updateById(Integer id, String communityCode){
+        PersonBaseInfo personBaseInfo = new PersonBaseInfo();
+        personBaseInfo.setId(id);
+        personBaseInfo.setCommunity_code(communityCode);
+        personBaseInfoMapper.updateById(personBaseInfo);
     }
 
 }

@@ -242,16 +242,19 @@ public class PassThroughController {
             for (int i = 0; i < list.size(); i++) {
                 if (StringUtils.isNotBlank(list.get(i).getMobile())) {
                     //String rkcf = personLabelsService.getRkcfByIdNum(list.get(i).getCredentialNum());
-                    String rkcf = personLabelsService.getRkcfByMobile(list.get(i).getMobile());
-                    if ("1".equals(rkcf)) {
-                        list.get(i).setRkcf("户籍人口");
-                    } else if ("2".equals(rkcf)) {
-                        list.get(i).setRkcf("流动人口");
-                    } else {
+                    String rkcf = personLabelsService.getRkcfByMobile(list.get(i).getMobile(),communityCode);
+                    if (org.apache.commons.lang.StringUtils.isNotBlank(rkcf)) {
+                        if ("1".equals(rkcf)) {
+                            list.get(i).setRkcf("户籍人口");
+                        } else if ("2".equals(rkcf)) {
+                            list.get(i).setRkcf("流动人口");
+                        }
+                    }
+                   else {
                         list.get(i).setRkcf("未录入");
                     }
                     //String label = personBaseInfoService.getLabelsByCredentialNum(list.get(i).getCredentialNum());
-                    String label = personBaseInfoService.getLabelsByMobile(list.get(i).getMobile());
+                    String label = personBaseInfoService.getLabelsByMobile(list.get(i).getMobile(), communityCode);
                     if(StringUtils.isNotBlank(label)) {
                         list.get(i).setLabels(label);
                     }

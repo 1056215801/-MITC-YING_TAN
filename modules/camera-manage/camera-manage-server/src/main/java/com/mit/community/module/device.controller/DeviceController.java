@@ -138,14 +138,20 @@ public class DeviceController {
                 //System.out.println("============解析数据=="+data.getParams().getCarparkNO());
                 String cmd = json.getString("cmd");
                 if ("CarIn".equals(cmd)) {
-                    CarIn carIn = (CarIn)JSONObject.toBean(json.getJSONObject("params"), CarIn.class);
-                    accessRecord.setCarnum(carIn.getCPH());
+                    JSONObject carIn = json.getJSONObject("params");
+                    //CarIn carIn = (CarIn)JSONObject.toBean(json.getJSONObject("params"), CarIn.class);
+                    accessRecord.setCarnum(carIn.getString("CPH"));
                     accessRecord.setAccessType("进");
-                    accessRecord.setPasstime(parseStringToLocal(carIn.getInTime()));
-                    accessRecord.setImage(carIn.getInPic());
-                    accessRecord.setInGateName(carIn.getInGateName());
-                    accessRecord.setSfGate(carIn.getSFGate());
-                    accessRecord.setCareParkNo(carIn.getCarparkNO());
+                    accessRecord.setPasstime(parseStringToLocal(carIn.getString("InTime")));
+                    accessRecord.setImage(carIn.getString("InPic"));
+                    accessRecord.setInGateName(carIn.getString("InGateName"));
+                    accessRecord.setSfGate(carIn.getString("SFGate"));
+                    accessRecord.setCareParkNo(carIn.getString("CarparkNO"));
+                    if ("DNX114".equals(accessRecord.getCareParkNo())) {
+                        accessRecord.setCommunity_code("a5f53a2248794c678766edad485392ff");
+                    } else if ("DNX113".equals(accessRecord.getCareParkNo())){
+                        accessRecord.setCommunity_code("b181746d9bd1444c80522f9923c59b80");
+                    }
                     accessRecord.setGmtCreate(LocalDateTime.now());
                     accessRecord.setGmtModified(LocalDateTime.now());
                     accessRecordService.save(accessRecord);
@@ -158,7 +164,12 @@ public class DeviceController {
                     accessRecord.setImage(carOut.getString("OutPic"));
                     accessRecord.setInGateName(carOut.getString("InGateName"));
                     accessRecord.setSfGate(carOut.getString("SFGate"));
-                    accessRecord.setCareParkNo(carOut.getString("CarparkNo"));
+                    accessRecord.setCareParkNo(carOut.getString("CarparkNO"));
+                    if ("DNX114".equals(accessRecord.getCareParkNo())) {
+                        accessRecord.setCommunity_code("a5f53a2248794c678766edad485392ff");
+                    } else if ("DNX113".equals(accessRecord.getCareParkNo())){
+                        accessRecord.setCommunity_code("b181746d9bd1444c80522f9923c59b80");
+                    }
                     accessRecord.setGmtCreate(LocalDateTime.now());
                     accessRecord.setGmtModified(LocalDateTime.now());
                     accessRecordService.save(accessRecord);

@@ -43,11 +43,17 @@
     </select>
 
     <select id="getXfBySomeDay" resultMap="currentInfo">
+        SELECT DATE_FORMAT(gmt_create,'%y-%m-%d') AS TIME,COUNT(1) AS COUNT FROM linshi_a WHERE problem='疑似火情' and gmt_create BETWEEN #{dayBefore} AND #{dateNowStr} and communityCode IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+        GROUP BY TIME ORDER BY gmt_create ASC
+    </select>
+    <!--<select id="getXfBySomeDay" resultMap="currentInfo">
         SELECT DATE_FORMAT(gmt_warn,'%y-%m-%d') AS TIME,COUNT(1) AS COUNT FROM fire_hydrant WHERE gmt_warn BETWEEN #{dayBefore} AND #{dateNowStr} and community_code IN
         <foreach item="list" index="index" collection="list"
                  open="(" separator="," close=")"> #{list}</foreach>
         GROUP BY TIME ORDER BY gmt_warn ASC
-    </select>
+    </select>-->
 
     <select id="getMwgBySomeDay" resultMap="currentInfo">
         SELECT DATE_FORMAT(a.gmt_create,'%y-%m-%d') AS TIME,COUNT(1) AS COUNT FROM report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN household c on b.household_id=c.household_id WHERE a.problemType='门未关' and a.gmt_create BETWEEN #{dayBefore} AND #{dateNowStr} and c.community_code IN

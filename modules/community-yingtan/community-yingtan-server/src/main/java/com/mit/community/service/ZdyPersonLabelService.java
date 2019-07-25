@@ -2,7 +2,7 @@ package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.ZdyPersonLabel;
-import com.mit.community.mapper.ZdyPersonLabelMapper;
+import com.mit.community.module.pass.mapper.ZdyPersonLabelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

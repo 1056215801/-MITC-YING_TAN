@@ -30,9 +30,10 @@ public class PersonBaseInfoService extends ServiceImpl<PersonBaseInfoMapper, Per
 
 
     @Transactional
-    public void removeByPhoneList(List<String> phone) {
+    public void removeByPhoneList(List<String> phone,List<String> communityCode) {
         EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
         wrapper.in("cellphone", phone);
+        wrapper.in("community_code", communityCode);
         personBaseInfoMapper.delete(wrapper);
     }
 
@@ -56,7 +57,8 @@ public class PersonBaseInfoService extends ServiceImpl<PersonBaseInfoMapper, Per
             personBaseInfo.setGmtCreate(LocalDateTime.now());
             personBaseInfo.setGmtModified(LocalDateTime.now());
             personList.add(personBaseInfo);
-            if (!StringUtils.isNotBlank(list.get(i).getMobile())) {
+            Integer id = getIdByMobile(list.get(i).getMobile(),list.get(i).getCommunityCode());
+            if (id == null) {
                 insert(personBaseInfo);
             }
         }
@@ -64,9 +66,10 @@ public class PersonBaseInfoService extends ServiceImpl<PersonBaseInfoMapper, Per
        // System.out.println("===插入成功");
     }
 
-    public Integer getIdByMobile(String phone){
+    public Integer getIdByMobile(String phone, String communityCode){
         EntityWrapper<PersonBaseInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", phone);
+        wrapper.eq("community_code", communityCode);
         List<PersonBaseInfo> list = personBaseInfoMapper.selectList(wrapper);
         if (!list.isEmpty()){
             return list.get(0).getId();

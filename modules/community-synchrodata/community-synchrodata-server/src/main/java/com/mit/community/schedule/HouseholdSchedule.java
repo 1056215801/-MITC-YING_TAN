@@ -114,7 +114,8 @@ public class HouseholdSchedule {
             if (!removeHousehold.isEmpty()) {
                 List<Integer> deleteId = removeHousehold.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
                 List<String> phone = removeHousehold.parallelStream().map(HouseHold::getMobile).collect(Collectors.toList());
-                personBaseInfoService.removeByPhoneList(phone);
+                List<String> communityCodde = removeHousehold.parallelStream().map(HouseHold::getCommunityCode).collect(Collectors.toList());
+                personBaseInfoService.removeByPhoneList(phone,communityCodde);
                 houseHoldService.removeByhouseholdIdList(deleteId);
             }
             // 更新
