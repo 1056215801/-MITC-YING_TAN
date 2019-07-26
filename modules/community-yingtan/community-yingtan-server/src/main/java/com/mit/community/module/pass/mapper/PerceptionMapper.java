@@ -14,6 +14,7 @@ public interface PerceptionMapper {
 
 
     List<Current> getXfBySomeDay(@Param("dayBefore")String dayBefore,@Param("dateNowStr")String dateNowStr,@Param("list")List<String> list);
+    List<Current> getDcBySomeDay(@Param("dayBefore")String dayBefore,@Param("dateNowStr")String dateNowStr,@Param("list")List<String> list);
     List<Current> getMwgBySomeDay(@Param("dayBefore")String dayBefore,@Param("dateNowStr")String dateNowStr,@Param("list")List<String> list);
     int getYgStatusByStatus(@Param("status")int status,@Param("list")List<String> list);
     int getYgWarnByStatus(@Param("list")List<String> list);

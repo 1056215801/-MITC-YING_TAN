@@ -67,6 +67,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     @Autowired
     private HttpLogin httpLogin;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public HouseHoldService(HouseHoldMapper houseHoldMapper, ClusterCommunityService clusterCommunityService,
@@ -587,6 +589,16 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.in("household_id", householdIdList);
         houseHoldMapper.delete(wrapper);
+        User user = null;
+        for (int i=0; i<householdIdList.size(); i++) {
+            user = userService.getByHouseholdId(String.valueOf(householdIdList.get(i)));
+            if (user != null) {
+                user.setHouseholdId(0);
+                userService.update(user);
+            }
+        }
+
+
 
     }
 

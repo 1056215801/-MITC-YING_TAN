@@ -153,23 +153,33 @@ public class LoginController {
              */
             Integer householdId = user.getHouseholdId();
             HouseHold houseHold = houseHoldService.getByHouseholdId(householdId);
-            Integer householdStatus = houseHold.getHouseholdStatus();
-            if (householdStatus == 0) {
-                user.setHousehouldStatus(0);
-                return Result.success(user, "用户已被注销");
-            } else if (householdStatus == 2) {
-                user.setHousehouldStatus(2);
-                return Result.success(user, "用户已被停用");
-            } else {//判断业主权限是否过期
-                user.setHousehouldStatus(1);
-                Date validityTime = houseHold.getValidityTime();
-                //System.out.println("==========="+validityTime);
-                Long dayInter = com.mit.community.util.DateUtils.getDateInter(new Date(), validityTime);
-                if (dayInter < 0) {//权限已过期
-                    user.setHousehouldStatus(3);
-                    return Result.success(user, "用户权限已过期");
+            if (houseHold != null) {
+                Integer householdStatus = houseHold.getHouseholdStatus();
+                if (householdStatus == 0) {
+                    user.setHousehouldStatus(0);
+                    return Result.success(user, "用户已被注销");
+                } else if (householdStatus == 2) {
+                    user.setHousehouldStatus(2);
+                    return Result.success(user, "用户已被停用");
+                } else {//判断业主权限是否过期
+                    user.setHousehouldStatus(1);
+                    Date validityTime = houseHold.getValidityTime();
+                    //System.out.println("==========="+validityTime);
+                    if (validityTime != null) {
+                        Long dayInter = com.mit.community.util.DateUtils.getDateInter(new Date(), validityTime);
+                        if (dayInter < 0) {//权限已过期
+                            user.setHousehouldStatus(3);
+                            return Result.success(user, "用户权限已过期");
+                        }
+                    } else {
+                        return Result.success(user, "未设置权限有限期");
+                    }
+
                 }
+            } else {
+                return Result.error("用户手机号码已经被其他住户关联，请联系管理员");
             }
+
         }
         // redis中保存用户
         if (mac != null) {

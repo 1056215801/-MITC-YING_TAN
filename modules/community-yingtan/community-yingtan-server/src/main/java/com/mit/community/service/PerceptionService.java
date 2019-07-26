@@ -94,8 +94,8 @@ public class PerceptionService {
             Date d = new Date();
             String dateNowStr = sdf.format(d);//当天日期
             String dayBefore = getPastDate(7);//七天之前的日期
-            //List<Current> dcList = perceptionMapper.getSjByDay("进",dateNowStr,communityCodes);
-            List<Current> dcList = new ArrayList<>();
+            List<Current> dcList = perceptionMapper.getDcBySomeDay(dayBefore,dateNowStr,communityCodes);
+            //List<Current> dcList = new ArrayList<>();
             Map<String,String> dc = paddingWarn(dcList, type);
             dcList = map2ListWarn(dc);
             List<Current> xfList = perceptionMapper.getXfBySomeDay(dayBefore,dateNowStr,communityCodes);
@@ -345,7 +345,7 @@ public class PerceptionService {
             int month = a.get(Calendar.MONTH) + 1;//月份
             if (!list.isEmpty()) {
                 for(int i=0; i < list.size(); i++){
-                    sc.put(month + "-" + list.get(i).getTime(),String.valueOf(list.get(i-1).getCount()));
+                    sc.put(month + "-" + list.get(i).getTime(),String.valueOf(list.get(i).getCount()));
                 }
             }
             for(int i=1; i <= maxDate; i++){

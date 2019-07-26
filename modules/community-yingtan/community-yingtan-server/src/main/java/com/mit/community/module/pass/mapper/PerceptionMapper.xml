@@ -11,32 +11,32 @@
     </resultMap>
 
     <select id="getSjByDay" resultMap="currentInfo">
-        SELECT HOUR(a.passtime) AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
-         WHERE a.passtime LIKE #{dateNowStr} and a.access_type=#{type} and b.community_code IN
+        SELECT HOUR(a.gmt_create) AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+         WHERE a.gmt_create LIKE #{dateNowStr} and a.access_type=#{type} and a.community_code IN
         <foreach item="list" index="index" collection="list"
                  open="(" separator="," close=")"> #{list}</foreach>
-         GROUP BY HOUR(a.passtime) ORDER BY HOUR(a.passtime)
+         GROUP BY HOUR(a.gmt_create) ORDER BY HOUR(a.gmt_create)
     </select>
 
     <select id="getXqByDay" resultMap="currentInfo">
-        SELECT HOUR(a.passtime) AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
-        WHERE a.passtime LIKE #{dateNowStr} and b.community_code IN
+        SELECT HOUR(a.gmt_create) AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+        WHERE a.gmt_create LIKE #{dateNowStr} and a.community_code IN
         <foreach item="list" index="index" collection="list"
                  open="(" separator="," close=")"> #{list}</foreach>
-        GROUP BY HOUR(a.passtime) ORDER BY HOUR(a.passtime)
+        GROUP BY HOUR(a.gmt_create) ORDER BY HOUR(a.gmt_create)
     </select>
 
     <select id="getSjByMonth" resultMap="currentInfo">
-        SELECT DATE_FORMAT(a.passtime,'%d') AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
-        WHERE a.passtime LIKE #{dateNowStr} and a.access_type=#{type} and b.community_code IN
+        SELECT DATE_FORMAT(a.gmt_create,'%d') AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+        WHERE a.gmt_create LIKE #{dateNowStr} and a.access_type=#{type} and a.community_code IN
         <foreach item="list" index="index" collection="list"
                  open="(" separator="," close=")"> #{list}</foreach>
         GROUP BY time ORDER BY time
     </select>
 
     <select id="getXqByMonth" resultMap="currentInfo">
-        SELECT DATE_FORMAT(a.passtime,'%d') AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
-        WHERE a.passtime LIKE #{dateNowStr} and b.community_code IN
+        SELECT DATE_FORMAT(a.gmt_create,'%d') AS time,COUNT(1) AS COUNT FROM access_record a LEFT JOIN vehicle_info b on a.car_num=b.car_num
+        WHERE a.gmt_create LIKE #{dateNowStr} and a.community_code IN
         <foreach item="list" index="index" collection="list"
                  open="(" separator="," close=")"> #{list}</foreach>
         GROUP BY time ORDER BY time
@@ -44,6 +44,13 @@
 
     <select id="getXfBySomeDay" resultMap="currentInfo">
         SELECT DATE_FORMAT(gmt_create,'%y-%m-%d') AS TIME,COUNT(1) AS COUNT FROM linshi_a WHERE problem='疑似火情' and gmt_create BETWEEN #{dayBefore} AND #{dateNowStr} and communityCode IN
+        <foreach item="list" index="index" collection="list"
+                 open="(" separator="," close=")"> #{list}</foreach>
+        GROUP BY TIME ORDER BY gmt_create ASC
+    </select>
+
+    <select id="getDcBySomeDay" resultMap="currentInfo">
+        SELECT DATE_FORMAT(gmt_create,'%y-%m-%d') AS TIME,COUNT(1) AS COUNT FROM linshi_a WHERE problem='井盖非法移位' and gmt_create BETWEEN #{dayBefore} AND #{dateNowStr} and communityCode IN
         <foreach item="list" index="index" collection="list"
                  open="(" separator="," close=")"> #{list}</foreach>
         GROUP BY TIME ORDER BY gmt_create ASC

@@ -191,6 +191,11 @@ public class DeviceController {
     }
 
 
+    /**
+     * 事件正式版
+     */
+
+
 
     /*@PostMapping("/baojin")
     @ApiOperation(value = "报警", notes = "传参：place(利雅轩小区、南标小区)，type(烟感、地磁、井盖位移、紧急按钮)") //没有表
