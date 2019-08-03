@@ -8,14 +8,18 @@ import com.mit.community.service.AccessRecordService;
 import com.mit.community.service.DeviceService;
 import com.mit.community.service.FaceComparisonService;
 import com.mit.community.service.RealTimePhotoService;
+import com.mit.community.util.HttpUtil;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sun.misc.BASE64Decoder;
 import util.Utils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +28,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -123,27 +129,19 @@ public class DeviceController {
         }
     }
 
-    @PostMapping(value = "Interface2",produces = {"application/json;charset=utf-8"})
-    public void Interface2(HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("/Interface2")
+    public void Interface2(HttpServletRequest request,String photoBase64, String model) {
         AccessRecord accessRecord = new AccessRecord();
-        InputStream in = null;
         try{
-            in = request.getInputStream();
-            String model = Utils.inputStream2String(in, "");
             System.out.println("============数据=="+model);
             if (model != null) {
-                //ObjectMapper mapper = new ObjectMapper();
                 JSONObject json = JSONObject.fromObject(model);
-                //CarInInfo data = mapper.readValue(model, CarInInfo.class);
-                //System.out.println("============解析数据=="+data.getParams().getCarparkNO());
                 String cmd = json.getString("cmd");
                 if ("CarIn".equals(cmd)) {
                     JSONObject carIn = json.getJSONObject("params");
-                    //CarIn carIn = (CarIn)JSONObject.toBean(json.getJSONObject("params"), CarIn.class);
                     accessRecord.setCarnum(carIn.getString("CPH"));
                     accessRecord.setAccessType("进");
                     accessRecord.setPasstime(parseStringToLocal(carIn.getString("InTime")));
-                    accessRecord.setImage(carIn.getString("InPic"));
                     accessRecord.setInGateName(carIn.getString("InGateName"));
                     accessRecord.setSfGate(carIn.getString("SFGate"));
                     accessRecord.setCareParkNo(carIn.getString("CarparkNO"));
@@ -152,16 +150,11 @@ public class DeviceController {
                     } else if ("DNX113".equals(accessRecord.getCareParkNo())){
                         accessRecord.setCommunity_code("b181746d9bd1444c80522f9923c59b80");
                     }
-                    accessRecord.setGmtCreate(LocalDateTime.now());
-                    accessRecord.setGmtModified(LocalDateTime.now());
-                    accessRecordService.save(accessRecord);
-
                 } else if ("CarOut".equals(cmd)) {
                     JSONObject carOut = json.getJSONObject("params");
                     accessRecord.setCarnum(carOut.getString("CPH"));
                     accessRecord.setAccessType("出");
                     accessRecord.setPasstime(parseStringToLocal(carOut.getString("OutTime")));
-                    accessRecord.setImage(carOut.getString("OutPic"));
                     accessRecord.setInGateName(carOut.getString("InGateName"));
                     accessRecord.setSfGate(carOut.getString("SFGate"));
                     accessRecord.setCareParkNo(carOut.getString("CarparkNO"));
@@ -170,14 +163,37 @@ public class DeviceController {
                     } else if ("DNX113".equals(accessRecord.getCareParkNo())){
                         accessRecord.setCommunity_code("b181746d9bd1444c80522f9923c59b80");
                     }
-                    accessRecord.setGmtCreate(LocalDateTime.now());
-                    accessRecord.setGmtModified(LocalDateTime.now());
-                    accessRecordService.save(accessRecord);
                 }
+                if ("图片不存在".equals(photoBase64)) {
+                    accessRecord.setImage("图片不存在");
+                } else {
+                    BASE64Decoder decoder = new BASE64Decoder();
+                    photoBase64 = photoBase64.replaceAll(" ","+" );
+                    byte[] b = decoder.decodeBuffer(photoBase64);
+                    String imageUrl = UploadUtil.uploadWithByte(b);
+                    accessRecord.setImage(imageUrl);
+                }
+                accessRecord.setGmtCreate(LocalDateTime.now());
+                accessRecord.setGmtModified(LocalDateTime.now());
+                accessRecordService.save(accessRecord);
             }
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public String getIpAddr(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
     public LocalDateTime parseStringToLocal(String strTime){

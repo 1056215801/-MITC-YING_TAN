@@ -19,6 +19,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 获取上报的事件
+ *
+ * @author xiong
+ * @date 2019/5/25
+ * <p>Copyright: Copyright (c) 2019</p>
+ * <p>Company: mitesofor </p>
+ */
+
 @RestController
 @RequestMapping(value = "/problem")
 @Slf4j
@@ -30,7 +39,7 @@ public class ProblemController {
     private RedisService redisService;
 
     @PostMapping("/getHandleProblem")
-    @ApiOperation(value = "获取上报事件", notes = "输入参数：")
+    @ApiOperation(value = "获取上报事件", notes = "输入参数：problemType 问题类型， status 问题状态， gmtCreateTimeStart 开始时间， gmtCreateTimeEnd 结束时间")
     public Result getHandleProblem(HttpServletRequest request, String problemType, String status, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateTimeStart,
                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime gmtCreateTimeEnd, Integer pageNum, Integer pageSize){
         String sessionId = CookieUtils.getSessionId(request);

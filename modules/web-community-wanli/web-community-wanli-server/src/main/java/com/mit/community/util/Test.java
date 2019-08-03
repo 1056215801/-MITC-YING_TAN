@@ -46,8 +46,8 @@ public class Test {
             System.out.println(line);
         }*/
 
-            String cmdCommand = "cmd /c f: && cd F:\\face\\ && face.exe && face -i 1.jpg -o out.jpg -f out.fea -v model";
-            //String cmdCommand = "cmd /c f: && cd f:\\face && face -i 1.jpg -o out.jpg -f out.fea -v model";
+            //String cmdCommand = "cmd /c f: && cd F:\\face\\ && face.exe && face -i 1.jpg -o out.jpg -f out.fea -v model";
+            String cmdCommand = "cmd /c f: && cd f:\\face && face -i 1.jpg -o out.jpg -f out.fea -v model";
         //String path = "f:\\face\\start.bat";
         StringBuilder stringBuilder = new StringBuilder();
             Process process = null;

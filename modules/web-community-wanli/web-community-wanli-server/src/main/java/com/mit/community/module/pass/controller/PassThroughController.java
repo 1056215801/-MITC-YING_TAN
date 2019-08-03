@@ -116,7 +116,7 @@ public class PassThroughController {
      * @company mitesofor
      */
     @PostMapping("/approveKey")
-    @ApiOperation(value = "审批钥匙", notes = "传参：applyKeyId 申请钥匙id，residenceTime 申请钥匙记录id," +
+    @ApiOperation(value = "审批钥匙", notes = "传参：applyKeyId 申请钥匙id，residenceTime 居住有效期限," +
             " deviceGroupIdList 设备组id列表")
     public Result approveKey(HttpServletRequest request, Integer applyKeyId,
                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate residenceTime,

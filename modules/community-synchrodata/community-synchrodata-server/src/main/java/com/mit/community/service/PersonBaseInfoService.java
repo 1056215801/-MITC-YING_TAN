@@ -62,8 +62,6 @@ public class PersonBaseInfoService extends ServiceImpl<PersonBaseInfoMapper, Per
                 insert(personBaseInfo);
             }
         }
-        //insertBatch(personList);
-       // System.out.println("===插入成功");
     }
 
     public Integer getIdByMobile(String phone, String communityCode){

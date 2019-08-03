@@ -54,4 +54,21 @@ public class AccessRecordService {
     public void save(AccessRecord accessRecord) {
         accessRecordMapper.insert(accessRecord);
     }
+
+    public AccessRecord getNoPhotoRecord(String communityCode){
+        EntityWrapper<AccessRecord> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code",communityCode);
+        wrapper.like("car_num_patch","%||E-N-D");
+        wrapper.orderBy("gmt_create",false);
+        wrapper.last("limit 1");
+        List<AccessRecord> list = accessRecordMapper.selectList(wrapper);
+        if (!list.isEmpty()){
+            return list.get(0);
+        }
+        return null;
+    }
+
+    public void updateObjectById(AccessRecord accessRecord){
+        accessRecordMapper.updateById(accessRecord);
+    }
 }

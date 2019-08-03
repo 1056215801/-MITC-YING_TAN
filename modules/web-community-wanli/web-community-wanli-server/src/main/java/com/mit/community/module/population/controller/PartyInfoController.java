@@ -97,7 +97,6 @@ public class PartyInfoController {
             // 获取请求的流信息
             in = request.getInputStream();
             String params = inputStream2String(in, "");
-            System.out.println("=========================11111"+params);
             JSONObject jsonObject = JSONObject.fromObject(params);
             //境外人员
             if (jsonObject.has("境外人员")) {

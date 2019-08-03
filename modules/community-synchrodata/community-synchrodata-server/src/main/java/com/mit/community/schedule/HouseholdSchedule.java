@@ -116,20 +116,23 @@ public class HouseholdSchedule {
                 List<String> phone = removeHousehold.parallelStream().map(HouseHold::getMobile).collect(Collectors.toList());
                 List<String> communityCodde = removeHousehold.parallelStream().map(HouseHold::getCommunityCode).collect(Collectors.toList());
                 personBaseInfoService.removeByPhoneList(phone,communityCodde);
+                userService.delete(phone);
                 houseHoldService.removeByhouseholdIdList(deleteId);
             }
             // 更新
             if (!updateHousehold.isEmpty()) {
+                userService.update(updateHousehold);
                 houseHoldService.updateBatchById(updateHousehold, 1);
                 updateHousehold.forEach(houseHold -> {
                     String mobile = houseHold.getMobile();
                     userService.updateCellphoneByHouseholdId(mobile, houseHold.getHouseholdId());
                 });
+
             }
             if (!addHousehold.isEmpty()) {
                 // 增加
                 personBaseInfoService.insert(addHousehold);
-                //personBaseInfoService.insertBatch();
+                userService.insert(addHousehold);
                 houseHoldService.insertBatch(addHousehold);
             }
         } catch (Exception e) {
@@ -148,7 +151,7 @@ public class HouseholdSchedule {
      * @company mitesofor
      */
     @CacheClear(pre = "householdRoom")
-    private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds) {
+    private void updateAuthAndHouseholdRoom(List<HouseHold> houseHolds) { ;
         //authorizeHouseholdDeviceGroupService.remove();
         authorizeAppHouseholdDeviceGroupService.remove();
         householdRoomService.remove();
@@ -186,22 +189,22 @@ public class HouseholdSchedule {
                     /**
                      * 新增数据同步代码（胡山林）
                      */
-//                    List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
-//                    for (AuthorizeAppHouseholdDeviceGroup authHouse : authorizeAppHouseholdDevices) {
-//                        List<AuthorizeHouseholdDeviceGroup> existList = authorizeHouseholdDeviceGroupMapper.getObjectByIds(item.getHouseholdId(), authHouse.getDeviceGroupId());
-//                        if (existList.size() == 0) {
-//                            AuthorizeHouseholdDeviceGroup authorizeHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup();
-//                            authorizeHouseholdDeviceGroup.setId(authHouse.getId());
-//                            authorizeHouseholdDeviceGroup.setHouseholdId(authHouse.getHouseholdId());
-//                            authorizeHouseholdDeviceGroup.setDeviceGroupId(authHouse.getDeviceGroupId());
-//                            authorizeHouseholdDeviceGroup.setGmtCreate(authHouse.getGmtCreate());
-//                            authHouse.setGmtModified(authHouse.getGmtModified());
-//                            authorizeHouseholdDeviceGroups.add(authorizeHouseholdDeviceGroup);
-//                        }
-//                    }
-//                    if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {
-//                        authorizeHouseholdDeviceGroupService.insertBatch(authorizeHouseholdDeviceGroups);
-//                    }
+                    /*List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
+                    for (AuthorizeAppHouseholdDeviceGroup authHouse : authorizeAppHouseholdDevices) {
+                        List<AuthorizeHouseholdDeviceGroup> existList = authorizeHouseholdDeviceGroupMapper.getObjectByIds(item.getHouseholdId(), authHouse.getDeviceGroupId());
+                        if (existList.size() == 0) {
+                            AuthorizeHouseholdDeviceGroup authorizeHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup();
+                            authorizeHouseholdDeviceGroup.setId(authHouse.getId());
+                            authorizeHouseholdDeviceGroup.setHouseholdId(authHouse.getHouseholdId());
+                            authorizeHouseholdDeviceGroup.setDeviceGroupId(authHouse.getDeviceGroupId());
+                            authorizeHouseholdDeviceGroup.setGmtCreate(authHouse.getGmtCreate());
+                            authHouse.setGmtModified(authHouse.getGmtModified());
+                            authorizeHouseholdDeviceGroups.add(authorizeHouseholdDeviceGroup);
+                        }
+                    }
+                    if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {
+                        authorizeHouseholdDeviceGroupService.insertBatch(authorizeHouseholdDeviceGroups);
+                    }*/
                 }
                 List<AuthorizeHouseholdDeviceGroup> authorizeHouseholdDeviceGroups = item.getAuthorizeHouseholdDeviceGroups();
                 if (authorizeHouseholdDeviceGroups != null && !authorizeHouseholdDeviceGroups.isEmpty()) {

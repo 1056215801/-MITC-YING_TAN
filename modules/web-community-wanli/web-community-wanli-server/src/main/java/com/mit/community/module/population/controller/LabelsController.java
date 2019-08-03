@@ -187,6 +187,10 @@ public class LabelsController {
         return Result.success(labels);
     }
 
+    /**
+     * 演示接口
+     * @return
+     */
     @PostMapping("/getPeopleCount")
     @ApiOperation(value = "获取驻留人数", notes = "输入参数：")
     public Result getPeopleCount(){//正式的需要传入楼栋信息，摄像头的地址要和小区关联
@@ -196,6 +200,10 @@ public class LabelsController {
         return Result.success(peopleCount);
     }
 
+    /**
+     * 演示接口
+     * @return
+     */
     @GetMapping("/getPeopleOue")
     @ApiOperation(value = "获取出去的人", notes = "输入参数：")
     public Result getPeopleOue(){//正式的需要传入楼栋信息，摄像头的地址要和小区关联

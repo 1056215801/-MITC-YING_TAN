@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Arrays;
+import java.util.List;
 
 /*
 在java中网络通讯业称作为Socket(插座)通讯，要求通讯 的两台器都必须要安装Socket。
@@ -56,9 +58,12 @@ public class Test1 {
         datagramSocket.send(packet);
         //关闭资源 ---实际上就是释放占用的端口号
         datagramSocket.close();*/
-       String a = "吸毒人员";
-       String[] s = a.split(",");
-       System.out.println(s[0]);
+       //String a = "吸毒人员";
+       //String[] s = a.split(",");
+        String a = "http://192.168.1.251:1987/S-T-A-R-T||DOWNFILE||20190723155733006.jpg||E-N-D";
+
+        String deviceGroupIds = a.substring(a.length()-28,a.length()-7);
+       System.out.println(deviceGroupIds);
 
     }
 

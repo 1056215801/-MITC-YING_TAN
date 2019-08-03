@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 计生信息管理
+ * @author xq
+ * @date 2019/6/8
+ * @company mitesofor
  */
 @RequestMapping(value = "/bearInfo")
 @RestController

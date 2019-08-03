@@ -26,7 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 这里的device和dnake_device_info通过mac码关联
+ * 改写狄耐克权限组模块
+ *
+ * @author xq
+ * @date 2019/7/15
+ * @company mitesofor
  */
 
 @RestController
@@ -55,6 +59,16 @@ public class PermissionGroupControoler {
     @Autowired
     private AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceGroupService;
 
+    /**
+     *
+     * @param request
+     * @param pageNum
+     * @param pageSize
+     * @param deviceNum 设备编号
+     * @param deviceType  设备类型
+     * @param deviceStatus  设备状态
+     * @return
+     */
     @PostMapping("/listPage")
     @ApiOperation(value = "分页获取权限组信息", notes = "")
     public Result getListPage(HttpServletRequest request, Integer pageNum, Integer pageSize, String deviceNum, Integer deviceType, Integer deviceStatus){
@@ -95,6 +109,14 @@ public class PermissionGroupControoler {
         return Result.success(page);
     }
 
+    /**
+     *
+     * @param id  记录id
+     * @param deviceGroupName 权限组名称
+     * @param groupType 组类别
+     * @param deviceNum 设备编号
+     * @return
+     */
     @PostMapping("/updateAuthGroup")
     @ApiOperation(value = "更新权限组信息", notes = "")
     public Result updateAuthGroup(Integer id, String deviceGroupName, int groupType, String deviceNum) {
@@ -102,6 +124,14 @@ public class PermissionGroupControoler {
         return Result.success("更新成功");
     }
 
+    /**
+     *
+     * @param request
+     * @param deviceGroupName 组名称
+     * @param groupType 组类别
+     * @param deviceNum 设备编号
+     * @return
+     */
     @PostMapping("/saveAuthGroup")
     @ApiOperation(value = "新增权限组信息", notes = "")
     public Result updateAuthGroup(HttpServletRequest request, String deviceGroupName, int groupType, String deviceNum) {
@@ -155,6 +185,15 @@ public class PermissionGroupControoler {
         return Result.success(list);
     }
 
+    /**
+     * 根据单元楼栋获取设备列表
+     * @param request
+     * @param pageNum
+     * @param pageSize
+     * @param unitId  单元id
+     * @param buildingId  楼栋id
+     * @return
+     */
     @PostMapping("/getDevicePage")
     @ApiOperation(value = "获取设备列表", notes = "")
     public Result getDevicePage(HttpServletRequest request,Integer pageNum, Integer pageSize, Integer unitId, Integer buildingId){
@@ -188,11 +227,10 @@ public class PermissionGroupControoler {
     }
 
     /**
-     * 将人员添加到权限组
+     * 根据所在社区获取权限组
      * @param request
      * @return
      */
-
     @PostMapping("/getAuthGroup")
     @ApiOperation(value = "获取权限组", notes = "")
     public Result getAuthGroup(HttpServletRequest request){
@@ -260,7 +298,12 @@ public class PermissionGroupControoler {
         return Result.success("添加成功");
     }
 
-
+    /**
+     * 根据mac码删除设备
+     * @param request
+     * @param deviceMac
+     * @return
+     */
     @PostMapping("/deleteBunding")
     @ApiOperation(value = "删除设备（接触绑定）", notes = "")
     public Result deleteBunding(HttpServletRequest request,String deviceMac){

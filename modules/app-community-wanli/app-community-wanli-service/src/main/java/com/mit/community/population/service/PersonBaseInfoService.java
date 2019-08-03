@@ -2,7 +2,9 @@ package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.User;
+import com.mit.community.entity.entity.PeopleDataUpload;
 import com.mit.community.entity.entity.PersonBaseInfo;
+import com.mit.community.mapper.mapper.PeopleDataUploadMapper;
 import com.mit.community.mapper.mapper.PersonBaseInfoMapper;
 import com.mit.community.service.LabelsService;
 import com.mit.community.service.UserService;
@@ -11,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +34,8 @@ public class PersonBaseInfoService {
     private UserService userService;
     @Autowired
     private LabelsService labelsService;
+    @Autowired
+    private PeopleDataUploadMapper peopleDataUploadMapper;
 
     @Transactional
     public Integer save( String idCardNum, String name, String formerName, String gender, LocalDateTime birthday,
@@ -250,6 +255,27 @@ public class PersonBaseInfoService {
         personBaseInfo.setId(id);
         personBaseInfo.setCommunity_code(communityCode);
         personBaseInfoMapper.updateById(personBaseInfo);
+    }
+
+    public void dataUpload(String community, String building, String unit, String room, String relation, String name, String sex, String idCard, String phone, String nation, String jg, String hyzk, String zzmm, String job,
+                           String edu, String image, String carNum){
+        EntityWrapper<PeopleDataUpload> wrapper = new EntityWrapper<>();
+        wrapper.eq("phone", phone);
+        //wrapper.eq("idCard", idCard);
+        List<PeopleDataUpload> list = peopleDataUploadMapper.selectList(wrapper);
+        if(list.isEmpty()){
+            PeopleDataUpload peopleDataUpload = new PeopleDataUpload(community, building, unit, room, relation, name, sex, idCard, phone, nation, jg, hyzk, zzmm, job,
+                    edu, image, carNum);
+            peopleDataUpload.setGmtCreate(LocalDateTime.now());
+            peopleDataUpload.setGmtModified(LocalDateTime.now());
+            peopleDataUploadMapper.insert(peopleDataUpload);
+        } else {
+            PeopleDataUpload peopleDataUpload = new PeopleDataUpload(community, building, unit, room, relation, name, sex, idCard, phone, nation, jg, hyzk, zzmm, job,
+                    edu, image, carNum);
+            peopleDataUpload.setId(list.get(0).getId());
+            peopleDataUpload.setGmtModified(LocalDateTime.now());
+            peopleDataUploadMapper.updateById(peopleDataUpload);
+        }
     }
 
 }

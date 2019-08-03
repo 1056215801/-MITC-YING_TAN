@@ -723,16 +723,6 @@ public class PerceptionController {
             houseHoldSize = houseHoldService.listByCommunityCode(communityCodeList).size()-1;
             visitorSize = visitorService.countByCommunityCode(communityCode);
             maps = houseHoldService.countIdentityTypeByCommunityCode(communityCode);
-            // 车位
-            /*map.put("ParkingSpace", 0);
-            // 社区民警
-            map.put("CommunityPolice", 0);
-            //居委干部
-            map.put("neighborhoodCommittee", 0);
-            // 楼长
-            map.put("buildingManager", 0);
-            // 物业
-            map.put("property", 0);*/
         } else {
             if (user == null) {
                 return Result.error("请登录");
@@ -747,16 +737,6 @@ public class PerceptionController {
                 houseHoldSize = houseHoldService.listByCommunityCode(communityCodeList).size() - 2;
                 visitorSize = visitorService.countByCommunityCodes(communityCodeList);
                 maps = houseHoldService.countIdentityTypeByCommunityCodeList(communityCodeList);
-                // 车位
-                /*map.put("ParkingSpace", 0);
-                // 社区民警
-                map.put("CommunityPolice", 0);
-                //居委干部
-                map.put("neighborhoodCommittee", 0);
-                // 楼长
-                map.put("buildingManager", 0);
-                // 物业
-                map.put("property", 0);*/
             } else {
                 communityCodeList = listCommunityCodes("鹰潭市");
                 buildingSize = buildingService.countByCommunityCodes(communityCodeList);
@@ -789,10 +769,7 @@ public class PerceptionController {
         map.put("buildingSize", buildingSize);
         //房屋
         map.put("roomSize", roomSize);
-        // 住户
-        //map.put("houseHoldSize", houseHoldSize);
-        // 实时访客
-        //map.put("realTimeVisitor", visitorSize);
+
         // 关爱/关注进出
         map.put("attention", attention);
         if ("a5f53a2248794c678766edad485392ff".equals(communityCode)){//南标

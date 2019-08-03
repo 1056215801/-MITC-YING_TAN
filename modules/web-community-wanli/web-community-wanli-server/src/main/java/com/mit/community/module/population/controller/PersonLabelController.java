@@ -24,6 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * 标签管理
+ *
+ * @author xiong
+ * @date 2019/7/15
+ * <p>Copyright: Copyright (c) 2019</p>
+ * <p>Company: mitesofor </p>
+ */
 @RequestMapping(value = "/personLabel")
 @RestController
 @Slf4j
@@ -61,7 +69,7 @@ public class PersonLabelController {
     }
 
     @PostMapping("/listAll")
-    @ApiOperation(value = "获取人员标签信息", notes = "")
+    @ApiOperation(value = "获取全部标签信息", notes = "")
     public Result getListPage(HttpServletRequest request){
         String communityCode = null;
         String sessionId = CookieUtils.getSessionId(request);
@@ -75,7 +83,7 @@ public class PersonLabelController {
 
 
     @PostMapping("/update")
-    @ApiOperation(value = "更新人员标签信息", notes = "")
+    @ApiOperation(value = "更新人员标签信息", notes = "参数：id 记录id， labelName 标签名称， remarks 备注")
     public Result update(HttpServletRequest request, Integer id,String labelName,String remarks){
         String communityCode = null;
         String sessionId = CookieUtils.getSessionId(request);
@@ -108,12 +116,6 @@ public class PersonLabelController {
     @PostMapping("/delete")
     @ApiOperation(value = "保存人员标签信息", notes = "")
     public Result delete(HttpServletRequest request, Integer id){
-        String communityCode = null;
-        String sessionId = CookieUtils.getSessionId(request);
-        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        if (StringUtils.isBlank(communityCode)) {
-            communityCode = user.getCommunityCode();
-        }
         warningConfigService.delete(id);
         return Result.success("删除成功");
     }

@@ -24,6 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+/** 查看用户提交的事件
+ *@author xq
+ * @date 2019/6/25
+ * @company mitesofor
+ */
 @RestController
 @RequestMapping(value = "/problemHandle")
 @Slf4j
@@ -35,7 +40,7 @@ public class WebProblemHandleController {
     private RedisService redisService;
 
     @RequestMapping("/getWebHandleProblem")
-    @ApiOperation(value = "获取上报的问题", notes = "输入参数：")
+    @ApiOperation(value = "获取上报的问题", notes = "输入参数：problemType 问题类型， status 处理状态")
     public Result getWebHandleProblem(HttpServletRequest request, String problemType, String status, Integer pageNum, Integer pageSize) {
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);

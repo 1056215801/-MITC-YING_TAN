@@ -32,6 +32,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 人员信息搜索
+ * @author xq
+ * @date 2019/6/10
+ * @company mitesofor
+ */
 @RequestMapping(value = "/infoSearch")
 @RestController
 @Slf4j
@@ -76,64 +82,6 @@ public class InfoSearchController {
         return Result.success(map);
     }
 
-    /*@PostMapping("/getInfoExcel")
-    @ApiOperation(value = "人员信息导出excel", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
-    public Result getInfoExcel(HttpServletResponse response, HttpServletRequest request,
-                               @RequestParam(required = false, defaultValue = "0") Integer ageStart,
-                               @RequestParam(required = false, defaultValue = "0") Integer ageEnd,
-                               String name, String idNum, String sex, String education, String job,
-                               String matrimony, String zzmm, String rycf, String label, Integer pageNum, Integer pageSize) throws Exception {
-        String sessionId = CookieUtils.getSessionId(request);
-        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        String accountType = sysUser.getAccountType();
-        String streetName = sysUser.getStreetName();
-        String areaName = sysUser.getAreaName();
-
-        Page<InfoSearch> page = infoSearchService.listPage(ageStart, ageEnd, name, idNum,
-                sex, education, job, matrimony, zzmm, label, pageNum, pageSize, rycf, accountType, streetName, areaName);
-        List<InfoSearch> list = page.getRecords();
-        if (!list.isEmpty()) {
-            for (int i = 0; i < list.size(); i++) {
-                List<String> labels = labelsService.getLabelsByUserId(list.get(i).getPersonBaseInfo().getId());
-                list.get(i).getPersonBaseInfo().setLabels(labels);
-            }
-        }
-        ExcelData data = new ExcelData();
-        data.setName("用户信息数据");
-        List<String> titles = new ArrayList<>();
-        titles.add("姓名");
-        titles.add("性别");
-        titles.add("年龄");
-        titles.add("身份证号码");
-        titles.add("人口属性");
-        data.setTitles(titles);
-        List<List<Object>> rows = new ArrayList<>();
-        List<Object> row = null;
-        for (int i = 0; i < page.getRecords().size(); i++) {
-            row = new ArrayList<>();
-            row.add(page.getRecords().get(i).getPersonBaseInfo().getName());
-            row.add(page.getRecords().get(i).getPersonBaseInfo().getGender());
-            row.add(page.getRecords().get(i).getPersonBaseInfo().getAge());
-            row.add(page.getRecords().get(i).getPersonBaseInfo().getIdCardNum());
-            row.add(page.getRecords().get(i).getPersonBaseInfo().getRksx() == 1 ? "户籍人口" : "流动人口");
-            rows.add(row);
-        }
-        data.setRows(rows);
-        SimpleDateFormat fdate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        String fileName = fdate.format(new Date()) + ".xlsx";
-        String basePath = request.getServletContext().getRealPath("excel/");
-        //String basePath = request.getServletContext().getRealPath("imgs/");
-        File file = new File(basePath);
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        ExcelUtils.generateExcel(data, basePath + fileName);
-        //ExcelUtils.exportExcel(response, fileName, data);
-        page.setRecords(list);
-        return Result.success("http://120.79.67.123:9766/api/web/communitywanli/excel/" + fileName);
-    }*/
-
-
 
     @PostMapping("/flowListPage")
     @ApiOperation(value = "流动人口信息查询", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
@@ -172,21 +120,10 @@ public class InfoSearchController {
         return Result.success(page);
     }
 
-    /*@PostMapping("/test")
-    @ApiOperation(value = "人员信息分页查询", notes = "传参：Integer age 年龄, String name 姓名, String idNum 身份证号码, String sex 性别, String education 学历, String job 职业, String matrimony 婚姻状况, String zzmm 政治面貌, String label 标签, Integer pageNum, Integer pageSize,String rycf 人员成分")
-    public Result test() {
-        String day = infoSearchService.getById(1372220);
-        return Result.success(day);
-    }*/
 
-    @PostMapping("/carPerception")
+    /*@PostMapping("/carPerception")
     @ApiOperation(value = "车辆感知", notes = "")
     public Result carPerception(HttpServletRequest request, String communityCode) {
-       /* SetSysUser(request);
-        List<String> communityCodes;
-        if (user == null) {
-            return Result.error("请登录");
-        }*/
         CarPerception carPerception = new CarPerception();
         Map<String,String> sr = new HashedMap();
         sr.put("0","3");
@@ -242,19 +179,8 @@ public class InfoSearchController {
 
         carPerception.setSr(sr);
         carPerception.setSc(sc);
-
-        /*if (StringUtils.isNotBlank(communityCode)) {
-
-        } else {
-            String areaName = user.getAreaName();
-            if ("湾里区".equals(areaName)) {
-                communityCodes = clusterCommunityService.listCommunityCodeListByAreaName("湾里区");
-            }
-
-        }*/
-
         return Result.success(carPerception);
-    }
+    }*/
 
 
 

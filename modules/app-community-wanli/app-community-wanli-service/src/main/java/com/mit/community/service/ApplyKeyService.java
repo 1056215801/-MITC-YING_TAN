@@ -325,10 +325,10 @@ public class ApplyKeyService {
                                     /**
                                      * 同步本地授权列表
                                      */
-                                    List<AuthorizeHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
+                                    List<AuthorizeAppHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
                                     deviceGroupIdList.forEach(item -> {
-                                        AuthorizeHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup(householdId, Integer.parseInt(item));
-                                        List<AuthorizeHouseholdDeviceGroup> groups = authorizeHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
+                                        AuthorizeAppHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeAppHouseholdDeviceGroup(householdId, Integer.parseInt(item));
+                                        List<AuthorizeAppHouseholdDeviceGroup> groups = authorizeAppHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
                                         if (groups.size() == 0) {
                                             authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
                                             authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
@@ -336,7 +336,7 @@ public class ApplyKeyService {
                                         }
                                     });
                                     if (groupsList.size() != 0) {
-                                        authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
+                                        authorizeAppHouseholdDeviceGroupService.insertBatch(groupsList);
                                     }
                                     //更新用户住户id
                                     userService.updateCellphoneByHouseholdId(cellphone, householdId);
@@ -363,12 +363,12 @@ public class ApplyKeyService {
                             /**
                              * 查询已存在的设备组
                              */
-                            List<AuthorizeHouseholdDeviceGroup> authHouseholdDeviceGroups = authorizeHouseholdDeviceGroupService.listByHouseholdId(householdId);
+                            List<AuthorizeAppHouseholdDeviceGroup> authAppHouseholdDeviceGroups = authorizeAppHouseholdDeviceGroupService.listByHouseholdId(householdId);
                             //List<AuthorizeAppHouseholdDeviceGroup> authGroups = authorizeAppHouseholdDeviceGroupService.listByHouseholdId(householdId);
                             List<String> groupList = new ArrayList<>();
                             //去掉重复数据
-                            if (authHouseholdDeviceGroups.size() != 0) {
-                                for (AuthorizeHouseholdDeviceGroup group : authHouseholdDeviceGroups) {
+                            if (authAppHouseholdDeviceGroups.size() != 0) {
+                                for (AuthorizeAppHouseholdDeviceGroup group : authAppHouseholdDeviceGroups) {
                                     if (!groupList.contains(String.valueOf(group.getDeviceGroupId()))) {
                                         groupList.add(String.valueOf(group.getDeviceGroupId()));
                                     }
@@ -464,10 +464,10 @@ public class ApplyKeyService {
                             /**
                              * 同步本地授权列表
                              */
-                            List<AuthorizeHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
+                            List<AuthorizeAppHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
                             deviceGroupIdList.forEach(item -> {
-                                AuthorizeHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup(householdId, Integer.parseInt(item));
-                                List<AuthorizeHouseholdDeviceGroup> groups = authorizeHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
+                                AuthorizeAppHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeAppHouseholdDeviceGroup(householdId, Integer.parseInt(item));
+                                List<AuthorizeAppHouseholdDeviceGroup> groups = authorizeAppHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
                                 if (groups.size() == 0) {
                                     authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
                                     authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
@@ -475,7 +475,7 @@ public class ApplyKeyService {
                                 }
                             });
                             if (groupsList.size() != 0) {
-                                authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
+                                authorizeAppHouseholdDeviceGroupService.insertBatch(groupsList);
                             }
                             //更新用户住户id
                             userService.updateCellphoneByHouseholdId(cellphone, householdId);
@@ -561,10 +561,10 @@ public class ApplyKeyService {
             /**
              * 同步本地授权列表
              */
-            List<AuthorizeHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
+            List<AuthorizeAppHouseholdDeviceGroup> groupsList = Lists.newArrayListWithCapacity(deviceGroupIdList.size());
             deviceGroupIdList.forEach(item -> {
-                AuthorizeHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeHouseholdDeviceGroup(householdId, Integer.parseInt(item));
-                List<AuthorizeHouseholdDeviceGroup> groups = authorizeHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
+                AuthorizeAppHouseholdDeviceGroup authorizeAppHouseholdDeviceGroup = new AuthorizeAppHouseholdDeviceGroup(householdId, Integer.parseInt(item));
+                List<AuthorizeAppHouseholdDeviceGroup> groups = authorizeAppHouseholdDeviceGroupMapper.getObjectByIds(householdId, Integer.parseInt(item));
                 if (groups.size() == 0) {
                     authorizeAppHouseholdDeviceGroup.setGmtCreate(LocalDateTime.now());
                     authorizeAppHouseholdDeviceGroup.setGmtModified(LocalDateTime.now());
@@ -572,7 +572,7 @@ public class ApplyKeyService {
                 }
             });
             if (groupsList.size() != 0) {
-                authorizeHouseholdDeviceGroupService.insertBatch(groupsList);
+                authorizeAppHouseholdDeviceGroupService.insertBatch(groupsList);
             }
             //更新本地用户住户信息id
             if (user != null) {

@@ -143,6 +143,24 @@ public class LoginController {
             }
             return Result.success(user, "没有关联住户");
         } else {
+            dnakeAppApiService.register(cellphone, psd);
+            if (mac != null) {
+                redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
+                redisService.set(RedisConstant.USER + user.getCellphone(), user);
+            }
+            // 查询用户对应的住户和房屋
+            List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
+            List<HouseholdRoom> householdRooms = Lists.newArrayListWithCapacity(10);
+            householdIdList.forEach(item -> {
+                householdRooms.addAll(householdRoomService.listByHouseholdId(item));
+            });
+//        List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdIdlList(householdIdList);
+            householdRooms.forEach(item -> {
+                String communityCode = item.getCommunityCode();
+                ClusterCommunity community = clusterCommunityService.getByCommunityCode(communityCode);
+                item.setClusterCommunity(community);
+            });
+            user.setHouseholdRoomList(householdRooms);
             // 设置默认操作小区对应的用户
             if (user.getHouseholdId() == 0) {
                 user.setHouseholdId(houseHoldList.get(0).getHouseholdId());
@@ -164,7 +182,6 @@ public class LoginController {
                 } else {//判断业主权限是否过期
                     user.setHousehouldStatus(1);
                     Date validityTime = houseHold.getValidityTime();
-                    //System.out.println("==========="+validityTime);
                     if (validityTime != null) {
                         Long dayInter = com.mit.community.util.DateUtils.getDateInter(new Date(), validityTime);
                         if (dayInter < 0) {//权限已过期
@@ -174,19 +191,18 @@ public class LoginController {
                     } else {
                         return Result.success(user, "未设置权限有限期");
                     }
-
                 }
             } else {
-                return Result.error("用户手机号码已经被其他住户关联，请联系管理员");
+                return Result.success(user, "没有关联住户");
             }
 
         }
         // redis中保存用户
-        if (mac != null) {
+        /*if (mac != null) {
             redisService.set(RedisConstant.MAC + user.getCellphone(), mac);
             redisService.set(RedisConstant.USER + user.getCellphone(), user);
-        }
-        // 查询用户对应的住户和房屋
+        }*/
+        /*// 查询用户对应的住户和房屋
         List<Integer> householdIdList = houseHoldList.parallelStream().map(HouseHold::getHouseholdId).collect(Collectors.toList());
         List<HouseholdRoom> householdRooms = Lists.newArrayListWithCapacity(10);
         householdIdList.forEach(item -> {
@@ -198,7 +214,7 @@ public class LoginController {
             ClusterCommunity community = clusterCommunityService.getByCommunityCode(communityCode);
             item.setClusterCommunity(community);
         });
-        user.setHouseholdRoomList(householdRooms);
+        user.setHouseholdRoomList(householdRooms);*/
         Integer authorizeStatus = houseHoldList.get(0).getAuthorizeStatus();
         String s = Integer.toBinaryString(authorizeStatus);
         StringBuilder stringBuilder = new StringBuilder(s);

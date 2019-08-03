@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 设备感知
+ * 设备感知数据
  *
  * @author xq
  * @date 2019/7/23
@@ -178,6 +178,11 @@ public class DeviceController {
         return Result.success(page);
     }
 
+    /**
+     * 生成指定位数的随机数
+     * @param count
+     * @return
+     */
     public String game(int count){
         StringBuffer sb = new StringBuffer();
         String str = "0123456789";
@@ -189,34 +194,5 @@ public class DeviceController {
         }
         return sb.toString();
     }
-
-
-    /**
-     * 事件正式版
-     */
-
-
-
-    /*@PostMapping("/baojin")
-    @ApiOperation(value = "报警", notes = "传参：place(利雅轩小区、南标小区)，type(烟感、地磁、井盖位移、紧急按钮)") //没有表
-    @Transactional
-    public Result baoJin(String place,String type){
-        if ("烟感".equals(type)){
-            WarnInfo warnInfo = new WarnInfo();
-            warnInfo.setPhone("152****7130");
-            warnInfo.setPlace(place + "");//这里需要补齐
-            warnInfo.setProblem("疑似火情");
-            warnInfo.setWarnInfo("出现大量烟雾，请及时处理");
-            devicePerceptionService.saveBaoJin(warnInfo);
-            String title = "消息通知";
-            String MSG = "收到新的问题反馈，请登录网格助手进行处理";
-            Integer id = reportProblemService.save(70, warnInfo.getPlace()+warnInfo.getWarnInfo(), warnInfo.getProblem(), warnInfo.getPlace(), 1, new ArrayList<>());
-            taskMessageService.save(0,id,title,MSG,1,0,0,null);
-            WebPush.sendAllsetNotification(MSG,title);
-            SmsCommunityAppUtil.sendMsg("18170879118", MSG);
-        } else if ("地磁".equals(type)) {
-
-        }
-    }*/
 
 }

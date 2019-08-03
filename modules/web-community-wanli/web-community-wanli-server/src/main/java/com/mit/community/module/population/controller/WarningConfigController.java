@@ -35,7 +35,7 @@ public class WarningConfigController {
     private ClusterCommunityService clusterCommunityService;
 
     @PostMapping("/list")
-    @ApiOperation(value = "分页获取报警配置信息", notes = "Integer pageNum, Integer pageSize, String label:标签")
+    @ApiOperation(value = "分页获取报警配置信息", notes = "Integer pageNum, Integer pageSize, String label:标签， isWarning 是否报警")
     public Result getListPage(HttpServletRequest request, Integer pageNum, Integer pageSize, String label, Integer isWarning){
         String communityCode = null;
         String sessionId = CookieUtils.getSessionId(request);
@@ -56,30 +56,10 @@ public class WarningConfigController {
     }
 
     @PostMapping("/update")
-    @ApiOperation(value = "更新是否报警信息", notes = "")
+    @ApiOperation(value = "更新是否报警信息", notes = "参数：id 记录id， isWarning 是否报警， warningInfo 报警信息")
     public Result update(HttpServletRequest request, Integer id,int isWarning, String warningInfo){
-        String communityCode = null;
-        String sessionId = CookieUtils.getSessionId(request);
-        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        if (StringUtils.isBlank(communityCode)) {
-            communityCode = user.getCommunityCode();
-        }
         warningConfigService.update(id, isWarning, warningInfo);
         return Result.success("更新成功");
     }
-
-    /*@PostMapping("/updateWarningInfo")
-    @ApiOperation(value = "更新报警信息", notes = "")
-    public Result update(HttpServletRequest request, Integer id,String warningInfo){
-        String communityCode = null;
-        String sessionId = CookieUtils.getSessionId(request);
-        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-        if (StringUtils.isBlank(communityCode)) {
-            communityCode = user.getCommunityCode();
-        }
-        warningConfigService.updateWarningInfo(id, warningInfo);
-        return Result.success("更新成功");
-    }*/
-
 
 }

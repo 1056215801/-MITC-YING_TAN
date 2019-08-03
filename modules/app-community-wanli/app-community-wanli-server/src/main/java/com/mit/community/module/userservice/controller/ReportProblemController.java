@@ -21,6 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ *用户事件上报
+ * @author xq
+ * @date 2019/6/28
+ * @company mitesofor
+ */
 @RestController
 @RequestMapping(value = "/reportProblem")
 @Slf4j
@@ -33,21 +39,10 @@ public class ReportProblemController {
 
     public static final String MSG = "收到新的问题反馈，请登录网格助手进行处理";
 
-    /*@PostMapping("/save")
-    @ApiOperation(value = "上报事件", notes = "输入参数：userId 用户id，content 内容；problemType 事件类型、address 地址、" +
-            "isOpen 公开；base64PhotoJsonArray 照片base64数组json")
-    public Result save(Integer userId, String content, String problemType, String address, int isOpen, String base64PhotoJsonArray){
-        reportProblemService.save( userId, content,  problemType,  address,  isOpen,  base64PhotoJsonArray);
-        *//*List<String> tagsList = new ArrayList<>();
-        tagsList.add("grid");*//*
-        PushUtil.sendAllsetNotification("有新的问题待处理");
-        return Result.success("保存成功");
-    }*/
-
     @PostMapping("/save")
     @ApiOperation(value = "上报事件", notes = "输入参数：userId 用户id，content 内容；problemType 事件类型、address 地址、" +
             "isOpen 公开；images 图片")
-    public Result save1(Integer userId, String content, String problemType, String address, Integer isOpen, MultipartFile[] images) throws Exception {
+    public Result save(Integer userId, String content, String problemType, String address, Integer isOpen, MultipartFile[] images) throws Exception {
         System.out.println("===============userId=" + userId + "content=" + content + "problemType" + problemType + "isOpen" + isOpen);
         List<String> imageUrls = new ArrayList<>();
         if (images != null) {
@@ -84,8 +79,6 @@ public class ReportProblemController {
         //消息推送
         String title = "消息通知";
         WebPush.sendAllsetNotification(MSG,title);
-        //SmsCommunityAppUtil.sendMsg(phones[i], MSG);
-        //Integer wgyId = wgyService.getWgyIdByJb("居委");
         taskMessageService.save(0,id,title,MSG,1,0,0,null);
         return Result.success("保存成功");
     }
@@ -116,6 +109,12 @@ public class ReportProblemController {
     }
 
 
+    /**
+     * 设备报警演示接口
+     * @param place
+     * @param type
+     * @return
+     */
     @PostMapping("/baojin")
     @ApiOperation(value = "报警", notes = "传参：place(利雅轩小区、南标小区)，type(烟感、地磁、井盖位移、紧急按钮)") //没有表
     @Transactional

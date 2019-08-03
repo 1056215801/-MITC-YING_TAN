@@ -14,6 +14,7 @@ import com.mit.community.service.UserService;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.DateUtils;
 import com.mit.community.util.Result;
+import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.text.ParseException;
+import java.util.UUID;
 
 /**
  * 人员基本信息
@@ -71,14 +76,8 @@ public class PersonBaseInfoController {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             String communityCode = sysUser.getCommunityCode();
-
-        //if (personBaseInfoService.isExist(idCardNum)) {//已经存在就更新
         if (StringUtils.isNotBlank(idCardNum)) {
             if (baseId != null) {
-            /*personBaseInfoService.updateByIdCardNum(age, idCardNum, name, formerName, gender,
-                    DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
-                    politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
-                    placeOfDomicileDetail, placeOfReside, placeOfResideDetail, placeOfServer, null);*/
                 personBaseInfoService.updateByIdCardNum(baseId, idCardNum, name, formerName, gender,
                         DateUtils.dateStrToLocalDateTime(birthday), nation, nativePlace, matrimony,
                         politicCountenance, education, religion, jobType, profession, cellphone, placeOfDomicile,
@@ -142,4 +141,35 @@ public class PersonBaseInfoController {
         personBaseInfoService.delete(id);
         return Result.success("删除成功");
     }
+
+    @PostMapping("/dataUpload")
+    @ApiOperation(value = "上传人员数据信息", notes = "传参：community 分区，building 楼栋，unit 单元，room 房屋，relation 与户主关系，name 名字，sex 性别，idcard 身份证号码，phone 联系电话，nation 民族， jg 籍贯，" +
+            "hyzk 婚姻状况, zzmm 政治面貌, job 职业，edu 学历， image 人脸图片， carNum 车牌号码")
+    public Result dataUpload(String community, String building, String unit, String room, String relation, String name, String sex, String idcard, String phone, String nation, String jg, String hyzk, String zzmm, String job,
+                             String edu, MultipartFile image, String carNum) throws Exception{
+        System.out.println("================电话号码="+phone+",idCard="+idcard);
+        String imageUrl = "";
+        if (image != null) {
+            String namephoto = image.getOriginalFilename();
+            String ext = namephoto.substring(namephoto.lastIndexOf("."));
+            String fileHz = name + UUID.randomUUID().toString() + ext;
+            String basePath = "D:\\upload";
+            File file = new File(basePath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+            byte[] b = image.getBytes();
+            imageUrl = basePath + "\\" +fileHz;
+            File aa = new File(imageUrl);
+            FileImageOutputStream fos = new FileImageOutputStream(aa);
+            fos.write(b, 0, b.length);
+            fos.close();
+        }
+
+        personBaseInfoService.dataUpload( community, building, unit, room, relation, name, sex, idcard, phone, nation, jg, hyzk, zzmm, job,
+                 edu, imageUrl, carNum);
+        return Result.success("保存成功");
+    }
+
+
 }
