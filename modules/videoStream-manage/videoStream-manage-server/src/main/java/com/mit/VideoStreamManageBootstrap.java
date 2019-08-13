@@ -2,7 +2,6 @@ package com.mit;
 
 import com.ace.cache.EnableAceCache;
 import com.alibaba.fastjson.JSONObject;
-import com.mit.auth.client.EnableAceAuthClient;
 import com.mit.community.util.ArtemisConfig;
 import com.mit.community.util.ArtemisHttpUtil;
 import com.spring4all.swagger.EnableSwagger2Doc;
@@ -31,8 +30,8 @@ import java.util.Map;
 @SpringBootApplication
 @EnableFeignClients
 @EnableScheduling
-@EnableAceAuthClient
-@EnableAceCache
+//@EnableAceAuthClient
+//@EnableAceCache
 @EnableTransactionManagement
 @EnableSwagger2Doc
 @ServletComponentScan

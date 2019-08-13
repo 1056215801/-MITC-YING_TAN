@@ -1,8 +1,9 @@
 package com.mit.community.module.hik.device.controller;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mit.community.entity.UploadFaceComparisonData;
 import com.mit.community.entity.com.mit.community.entity.hik.FaceInfo;
+import com.mit.community.module.commandManager.CommandManager;
+import com.mit.community.module.commandManager.CommandManagerImpl;
 import com.mit.community.service.DeviceService;
 import com.mit.community.service.FaceComparisonService;
 import com.mit.community.service.RealTimePhotoService;
@@ -16,9 +17,11 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Description;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,15 +51,22 @@ public class HKDeviceController {
     @ApiOperation(value = "返回前台设备名和地址", notes = "")
     public Result addFaceToHK(MonitorCameraInfo cameraInfo) {
 
-        Resource resource = new ClassPathResource("");
-       String path=null;
+      //Resource resource = new ClassPathResource("");
+       File path=null;
+       String pathstr=null;
         try {
-            path=resource.getFile().getAbsolutePath();
+            path = new File(ResourceUtils.getURL("classpath:").getPath());
+
+            System.out.println("path:"+path.getAbsolutePath());
+            pathstr=path.getAbsolutePath();
+            System.out.print(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        HCNetSDK sdk=(HCNetSDK) Native.loadLibrary(   path+"\\lib\\"+"HCNetSDK",
+       /* HCNetSDK sdk=(HCNetSDK) Native.loadLibrary(    "E:\\jar\\lib\\HCNetSDK.dll",
+                HCNetSDK.class);*/
+       HCNetSDK sdk=(HCNetSDK) Native.loadLibrary(   pathstr+"\\lib\\"+"HCNetSDK",
                 HCNetSDK.class);
         cameraInfo=new MonitorCameraInfo();
         cameraInfo.setIp("192.168.1.163");
@@ -108,7 +118,9 @@ public class HKDeviceController {
         }
 
         List<Map> list=new ArrayList<>();  //获取设备的名称
-
+        int dwID=0;
+        String ipStr="";
+        String portStr="";
 
         //设备支持IP通道
         for (int iChannum = 0; iChannum < devinfo.byChanNum; iChannum++)
@@ -120,13 +132,33 @@ public class HKDeviceController {
         }
         for(int iChannum =0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++) {
             if (ipcfg.struIPChanInfo[iChannum].byEnable == 1) {
+
+                if (ipcfg.struIPChanInfo[iChannum].byIPID != 0)
+                {
+                    dwID = ipcfg.struIPChanInfo[iChannum].byIPID;
+                    ipStr= toIPString(new String(ipcfg.struIPDevInfo[dwID - 1].struIP.sIpV4));
+                    portStr= ipcfg.struIPDevInfo[dwID - 1].wDVRPort + "";
+                }
+
                 Map map = new HashMap();
-                map.put("name", "IPCamera" + iChannum);
+                map.put("name", "IPCamera" + (iChannum+devinfo.byStartChan));
+                map.put("ipStr",ipStr);
+                map.put("portStr",portStr);
                // map.put("url", "rtsp://admin:admin123@192.168.1.163:554/h264/ch" + (32 + iChannum) + "/main/av_stream");
-                map.put("url","rtmp://192.168.1.141:1935/live/video"+(iChannum+devinfo.byStartChan));
+                map.put("url","rtmp://192.168.1.129:1935/live/video"+(iChannum+devinfo.byStartChan));
+
+
                 list.add(map);
             }
         }
+
+
+        CommandManager manager =  new CommandManagerImpl();
+        manager.start("video2", "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@" +
+                "192.168.1.163:554/MPEG-4/ch34/main/av_stream -tune zerolatency -vcodec libx264 -" +
+                "preset ultrafast -b:v 400k -s 720x576 -r 25 -acodec aac -ss -3  -fflags nobuffer" +
+                "  -ar 44100  -b:a 64k -f flv rtmp://192.168.1.129:1935/live/video2",false);
+
 
         //注销用户
         sdk.NET_DVR_Logout(cameraInfo.getId());//释放SDK资源
@@ -151,10 +183,12 @@ public class HKDeviceController {
         HCNetSDK sdk=(HCNetSDK) Native.loadLibrary(   path+"\\lib\\"+"HCNetSDK",
                 HCNetSDK.class);
         cameraInfo=new MonitorCameraInfo();
+       // cameraInfo.setIp("192.168.1.100");
         cameraInfo.setIp("192.168.1.163");
         cameraInfo.setPort(8000);
         cameraInfo.setUserName("admin");
         cameraInfo.setPassword("admin123");
+        //cameraInfo.setPassword("a1234567");
         //判断摄像头是否开启
         if (!sdk.NET_DVR_Init()) {
             System.out.println("SDK初始化失败");
@@ -200,7 +234,9 @@ public class HKDeviceController {
         }
 
         List<Map> list=new ArrayList<>();  //获取设备的名称
-
+         int dwID=0;
+         String ipStr="";
+         String portStr="";
 
         //设备支持IP通道
         for (int iChannum = 0; iChannum < devinfo.byChanNum; iChannum++)
@@ -212,10 +248,20 @@ public class HKDeviceController {
         }
         for(int iChannum =0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++) {
             if (ipcfg.struIPChanInfo[iChannum].byEnable == 1) {
+
+                if (ipcfg.struIPChanInfo[iChannum].byIPID != 0)
+                {
+                    dwID = ipcfg.struIPChanInfo[iChannum].byIPID;
+                    ipStr= toIPString(new String(ipcfg.struIPDevInfo[dwID - 1].struIP.sIpV4));
+                    portStr= ipcfg.struIPDevInfo[dwID - 1].wDVRPort + "";
+                }
+
                 Map map = new HashMap();
-                map.put("name", "IPCamera" + iChannum);
+                map.put("name", "IPCamera" +(iChannum+devinfo.byStartChan));
+                map.put("ipStr",ipStr);
+                map.put("portStr",portStr);
                 // map.put("url", "rtsp://admin:admin123@192.168.1.163:554/h264/ch" + (32 + iChannum) + "/main/av_stream");
-                map.put("url","rtmp://192.168.1.141:1935/live/video"+(iChannum+devinfo.byStartChan));
+                map.put("url","rtmp://localhost:1935/live/video"+(iChannum+devinfo.byStartChan));
                 list.add(map);
             }
         }
@@ -227,7 +273,12 @@ public class HKDeviceController {
         return  Result.success(list);
     }
 
-
+    String toIPString(String s)
+    {
+        String[] sIP = new String[2];//结构体里的设备IP
+        sIP = s.split("\0", 2);
+        return sIP[0];
+    }
 
 
 }

@@ -3,12 +3,12 @@ logging:
     tk.mybatis: DEBUG
     com.mit: error
 spring:
-  redis:
-    database: 2
-    host: ${REDIS_HOST:127.0.0.1}
-    port: ${REDIS_PORT:6379}
-    pool:
-    max-active: 20
+  #redis:
+    #database: 2
+    #host: ${REDIS_HOST:127.0.0.1}
+    #port: ${REDIS_PORT:6379}
+    #pool:
+    #max-active: 20
   application:
     name: cloud-service
   jackson:
@@ -75,11 +75,11 @@ spring:
   #        port:  5672
   #        username: guest
   #        password: guest
-  sleuth:
-    enabled: true
-    http:
-      legacy:
-        enabled: true
+  #sleuth:
+    #enabled: true
+    #http:
+      #legacy:
+        #enabled: true
   servlet:
     #文件上传大小配置
     multipart:
@@ -163,33 +163,33 @@ swagger:
     name: community
 #服务调用的配置。
 #
-auth:
+#auth:
   # 会请求这个服务去验证哪些服务可以调用这个服务
-  serviceId: auth
+  #serviceId: auth
   # token的key
-  user:
-    token-header: Authorization
-  client:
+  #user:
+    #token-header: Authorization
+  #client:
     # 服务的标识符，必须和数据库一致
-    id: web-community-wanli
+    #id: web-community-wanli
     # 服务的秘钥， 必须和数据库一致
-    secret: 123456
-    token-header: x-client-token
+    #secret: 123456
+    #时token-header: x-client-token
 
 #redis-cache 相关
-redis:
-  pool:
-    maxActive: 300
-    maxIdle: 100
-    maxWait: 1000
-  host: ${REDIS_HOST:127.0.0.1}
-  port:  ${REDIS_PORT:6379}
-  password:
-  timeout: 2000
+#redis:
+ # pool:
+    #maxActive: 300
+    #maxIdle: 100
+    #maxWait: 1000
+  #host: ${REDIS_HOST:127.0.0.1}
+  #port:  ${REDIS_PORT:6379}
+  #password:
+  #timeout: 2000
   # 服务或应用名
-  sysName: community
-  enable: true
-  database: 0
+  #sysName: community
+  #enable: true
+  #database: 0
 
 management:
   endpoints:
