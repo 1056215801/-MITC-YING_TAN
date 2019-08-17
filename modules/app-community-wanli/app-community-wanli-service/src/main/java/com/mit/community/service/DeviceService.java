@@ -158,12 +158,69 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
 
     @Transactional
     public void insert(Integer deviceGroupId, Device device) {
-        deviceMapper.insert(device);
+        Device deviceExits = getByDnakeDeviceInfoId(Integer.parseInt(device.getDnakeDeviceInfoId()));
+        if (deviceExits == null) {
+            deviceMapper.insert(device);
+        } else {
+            EntityWrapper<Device> wrapper = new EntityWrapper<>();
+            wrapper.eq("dnake_device_info_id", device.getDnakeDeviceInfoId());
+            deviceMapper.update(device, wrapper);
+        }
         DeviceDeviceGroup deviceDeviceGroup = new DeviceDeviceGroup();
         deviceDeviceGroup.setDeviceNum(device.getDeviceNum());
         deviceDeviceGroup.setDeviceGroupId(deviceGroupId);
         deviceDeviceGroup.setGmtCreate(LocalDateTime.now());
         deviceDeviceGroup.setGmtModified(LocalDateTime.now());
         deviceDeviceGroupService.insert(deviceDeviceGroup);
+    }
+
+    public Device getByDeviceId(Integer deviceId) {
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_id", deviceId);
+        List<Device> devices = deviceMapper.selectList(wrapper);
+        if (devices.isEmpty()) {
+            return null;
+        }
+        return devices.get(0);
+    }
+
+    public Device getByDnakeDeviceInfoId(Integer dnakeDeviceInfoId) {
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("dnake_device_info_id", dnakeDeviceInfoId);
+        List<Device> devices = deviceMapper.selectList(wrapper);
+        if (devices.isEmpty()) {
+            return null;
+        }
+        return devices.get(0);
+    }
+
+    public Device getByDeviceNum(String deviceNum) {
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_num", deviceNum);
+        List<Device> devices = deviceMapper.selectList(wrapper);
+        if (devices.isEmpty()) {
+            return null;
+        }
+        return devices.get(0);
+    }
+
+    public void updateDeviceNameByDeviceNum(String deviceNum, String deviceName) {
+        Device device = new Device();
+        device.setDeviceName(deviceName);
+        device.setGmtModified(LocalDateTime.now());
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_num", deviceNum);
+        deviceMapper.update(device, wrapper);
+    }
+
+    @Transactional
+    public void deleteByDeviceNum(String deviceNum) {
+        EntityWrapper<Device> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_num", deviceNum);
+        deviceMapper.delete(wrapper);
+
+        EntityWrapper<DeviceDeviceGroup> wrapperGroup = new EntityWrapper<>();
+        wrapperGroup.eq("device_num",deviceNum);
+        deviceDeviceGroupService.delete(wrapperGroup);
     }
 }

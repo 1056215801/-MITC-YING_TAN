@@ -1,12 +1,16 @@
 package com.mit.community.util;
 
+import net.sf.json.JSONObject;
+import org.apache.commons.collections.map.HashedMap;
+import sun.misc.BASE64Encoder;
+
+import java.io.File;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 
 /*
 在java中网络通讯业称作为Socket(插座)通讯，要求通讯 的两台器都必须要安装Socket。
@@ -60,11 +64,36 @@ public class Test1 {
         datagramSocket.close();*/
        //String a = "吸毒人员";
        //String[] s = a.split(",");
-        String a = "http://192.168.1.251:1987/S-T-A-R-T||DOWNFILE||20190723155733006.jpg||E-N-D";
+        /*String a = "http://192.168.1.251:1987/S-T-A-R-T||DOWNFILE||20190723155733006.jpg||E-N-D";
 
         String deviceGroupIds = a.substring(a.length()-28,a.length()-7);
-       System.out.println(deviceGroupIds);
-
+       System.out.println(deviceGroupIds);*/
+        /*BASE64Encoder encoder = new BASE64Encoder();
+        File file = new File("f://face//out.fea");
+        String feaBase64 = encoder.encode(Files.readAllBytes(file.toPath()));
+        Map<String,String> params = new HashedMap();
+        params.put("cmd","faceRegister");
+        params.put("feaName","out.fea");
+        params.put("fea",feaBase64);
+        params.put("houseHoldId","12345");
+        String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
+        System.out.println(result);*/
+        Map<String,String> params = new HashedMap();
+        params.put("cmd","cardAdd");
+        params.put("id","123");
+        params.put("cardNum","4170481");
+        String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
+        System.out.println(result);
+        /*JSONObject json = JSONObject.fromObject(result);
+        String base64 = json.getString("base64");
+        System.out.println(base64);*/
+        /*Date d = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        String dateNowStr = sdf.format(d);
+        System.out.println(base64);*/
+        /*String a = UUID.randomUUID().toString().replaceAll("-","");
+        System.out.println(a);
+        System.out.println(a.substring(a.length()-15,a.length()));*/
     }
 
 }

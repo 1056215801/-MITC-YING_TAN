@@ -1,7 +1,6 @@
 package com.mit.community.weather;
 
 import com.mit.community.util.HttpUtil;
-import org.junit.Test;
 
 /**
  * @author Mr.Deng

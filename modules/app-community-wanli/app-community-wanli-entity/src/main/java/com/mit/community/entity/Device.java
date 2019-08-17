@@ -77,15 +77,43 @@ public class Device extends BaseEntity {
     @TableField("device_id")
     private String deviceId;
 
+    private String coordinate;
+
     @TableField(exist = false)
     private String deviceGroupName;
 
-    /*@TableField("device_mac")
-    private String deviceMac;
 
     private String verison;
 
     @TableField("card_hand")
-    private String cardHand;*/
+    private String cardHand;
+
+    @TableField(exist = false)
+    private String deviceMac;
+
+    @TableField("zone_id")
+    private String zoneId;
+
+    @TableField("zone_code")
+    private String zoneCode;
+
+    @TableField("dnake_device_info_id")
+    private String dnakeDeviceInfoId;
+
+    @TableField("card_hand_second")
+    private String cardHandSecond;
+
+    @TableField(exist = false)
+    private String zoneName;
+
+    @TableField(exist = false)
+    private String buildingName;
+
+    @TableField(exist = false)
+    private String unitName;
+
+    @TableField(exist = false)
+    private String deviceGroupId;
+
 
 }

@@ -55,4 +55,14 @@ public class UnitService {
         return units.get(0);
     }
 
+    public Unit getByUnitId(Integer unitId) {
+        EntityWrapper<Unit> wrapper = new EntityWrapper<>();
+        wrapper.eq("unit_id", unitId);
+        wrapper.eq("unit_status", 1);
+        List<Unit> list = unitMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 }

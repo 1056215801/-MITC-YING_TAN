@@ -36,7 +36,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/permissionGroupControoler")
 @Slf4j
-@Api(tags = "权限组")
+@Api(tags = "狄耐克替代接口")
 public class PermissionGroupControoler {
     @Autowired
     private RedisService redisService;
@@ -58,6 +58,9 @@ public class PermissionGroupControoler {
     private DeviceGroupService deviceGroupService;
     @Autowired
     private AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceGroupService;
+    @Autowired
+    private ClusterCommunityService clusterCommunityService;
+
 
     /**
      *
@@ -92,11 +95,13 @@ public class PermissionGroupControoler {
                             String timeCha = personLabelsService.getTimeCha(device.getDeviceId());
                             if (StringUtils.isNotBlank(timeCha)) {
                                 if (Integer.parseInt(timeCha) > 10) {
-                                    device.setDeviceStatus(0);
+                                    device.setDeviceStatus(2);//离线
                                 }
                                 if (Integer.parseInt(timeCha) < 10) {
-                                    device.setDeviceStatus(1);
+                                    device.setDeviceStatus(1);//在线
                                 }
+                            } else {
+                                device.setDeviceStatus(2);//离线
                             }
                             devices.add(device);
                         }
@@ -259,28 +264,35 @@ public class PermissionGroupControoler {
      */
     @PostMapping("/saveDeviceInfo")
     @ApiOperation(value = "保存设备应用信息", notes = "")
-    public Result saveDeviceInfo(HttpServletRequest request, String unitId, String unitCode, String buildingId, String buildingCode, String deviceName, String deviceNum, String deviceType,
+    public Result saveDeviceInfo(HttpServletRequest request, String deviceId, String communityCode,String unitId, String unitCode, String buildingId, String buildingCode, String deviceName, String deviceNum, String deviceType,
                                  String deviceCode, String deviceSip, String coordinate, Integer deviceGroupId,String deviceMac, String verison, String cardHand){
-        String communityCode = null;
+        /*String communityCode = null;
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         if (StringUtils.isBlank(communityCode)) {
             communityCode = user.getCommunityCode();
-        }
-        String deviceId = null;
+        }*/
+        /*String deviceId = null;//这个参数要前端传过来，用dnake_device_info表记录的id
         String maxDeviceId = personLabelsService.getMaxDeviceId();
         if(StringUtils.isNotBlank(maxDeviceId)){
             int a = Integer.parseInt(maxDeviceId) + 1 ;
             deviceId = a + "";
         } else {
             deviceId = "1";
-        }
+        }*/
+        /*ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(communityCode);
+        String communityName = clusterCommunity.getCommunityName();//社区名称
+        Building building = buildingService.getBybuildingCode(buildingCode, communityCode);
+        String buildingName = building.getBuildingName();
+        Unit unit = unitService.getByUnitCode(unitCode, communityCode);
+        String unitName = unit.getUnitName();*/
         Device device = new Device();
+        device.setCoordinate(coordinate);
         device.setCommunityCode(communityCode);
         device.setBuildingId(buildingId);
         device.setUnitId(unitId);
         device.setDeviceName(deviceName);
-        //device.setDeviceNum(deviceNum);//生成规则待定
+        device.setDeviceNum(deviceNum);//生成规则待定
         device.setDeviceType(deviceType);
         device.setDeviceStatus(0);
         device.setDeviceCode(deviceCode);
@@ -290,9 +302,8 @@ public class PermissionGroupControoler {
         device.setDeviceId(deviceId);
         device.setGmtCreate(LocalDateTime.now());
         device.setGmtModified(LocalDateTime.now());
-        /*device.setDeviceMac(deviceMac);
         device.setVerison(verison);
-        device.setCardHand(cardHand);*/
+        device.setCardHand(cardHand);
         deviceService.insert(deviceGroupId,device);
 
         return Result.success("添加成功");
@@ -318,6 +329,8 @@ public class PermissionGroupControoler {
         deviceDeviceGroupService.delete(wrapper);
         return Result.success("删除成功");
     }
+
+
 
 
 }

@@ -44,4 +44,6 @@ public interface PersonLabelsMapper {
     String getGroupName(@Param("id")String id);
     String getMaxDeviceId();
     List<OwnerShipInfo> getOwnerInfo(@Param("cph")String cph);
+    List<DeviceInfo> selectMenJinPage(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceInfo> wrapper, @Param("sql")String sql);
+    List<DnakeDeviceDetailsInfo> getUnBindDevice(@Param("ip")String ip);
 }

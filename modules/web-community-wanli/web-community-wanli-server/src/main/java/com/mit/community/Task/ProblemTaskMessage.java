@@ -43,13 +43,11 @@ public class ProblemTaskMessage {
                 long now = System.currentTimeMillis();
                 int miao = (int)(now - longDate) / 1000;
                 if (miao > 100) {//过多长时间事件还没有处理
-                    System.out.println("=====超过100秒");
                     List<TaskMessage> list = taskMessageService.getList(nosolveList.get(i).getId());//将所有该事件已经推送的信息查出
                     if (!list.isEmpty()) {
                         Date sendTime1 = Date.from(list.get(0).getGmtCreate().toInstant(ZoneOffset.of("+8")));
                         long longDate1 = sendTime.getTime();
                         if ((int)(System.currentTimeMillis() - longDate1) / 1000 > 15) {//超时往上级推送
-                            System.out.println("=====超时15秒往上级推送");
                             List<WgyInfo> wgyList = personLabelsService.getWgyList(list.get(0).getWgyId());//上级网格员的信息(取最后发出的这一条)
                             /*List<String> target = new ArrayList<>();
                             List<>*/
@@ -63,10 +61,8 @@ public class ProblemTaskMessage {
                                     mqlzd = 3;
                                 }
                                 for (int a=0; a<wgyList.size();a++) {
-                                    System.out.println("=====查找到网格员信息");
                                     String title = "事件未处理通知";
                                     if(wgyList.get(a).getPerson_baseinfo_id() != null){//有userid的发app通知
-                                        System.out.println("=====app通告发送的网格员id"+wgyList.get(a).getId());
                                         List<String> messageAccept = new ArrayList<>();
                                         TaskMessageContent taskMessageContent = personLabelsService.getTaskMessageContent(list.get(0).getReportProblemId(), list.get(0).getWgyId());
                                         String content = "您辖区内网格员"+taskMessageContent.getWgyName()+"(联系电话："+taskMessageContent.getCellPhone()+")，尚未处理用户"
@@ -77,7 +73,6 @@ public class ProblemTaskMessage {
 
                                         taskMessageService.save(mqlzd, list.get(0).getReportProblemId(),title,content,wgyList.get(a).getId(),0,0,null);
                                     } else {//没有的发短信
-                                        System.out.println("=====短信发送的网格员id"+wgyList.get(a).getId());
                                         String lower = personLabelsService.getWgyDeptById(list.get(0).getWgyId());
                                         String higher = wgyList.get(a).getDept();
                                         String content = lower + "有事件未及时处置，现升级为" + higher +"处置";

@@ -122,4 +122,8 @@ public class PersonLabelsService {
     public List<OwnerShipInfo> getOwnerInfo(String cph){
         return labelsMapper.getOwnerInfo(cph);
     }
+
+    public List<DnakeDeviceDetailsInfo> getUnBindDevice(String ip){
+        return labelsMapper.getUnBindDevice(ip);
+    }
 }

@@ -592,9 +592,14 @@ public class HouseHoldService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr) {
+    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String photoUrl) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        HouseHold houseHold = new HouseHold();
+        houseHold.setLabels(photoUrl);
+        EntityWrapper<HouseHold> houseHoldWrapper = new EntityWrapper<>();
+        houseHoldWrapper.eq("household_id",householdId);
+        houseHoldMapper.update(houseHold, houseHoldWrapper);
         try {
             //更新本地住户授权类型字段+本地更新住户有效期权限时间
             Integer authStatus = 0;

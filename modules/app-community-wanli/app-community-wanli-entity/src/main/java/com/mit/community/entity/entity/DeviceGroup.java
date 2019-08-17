@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.mit.community.entity.BaseEntity;
 import com.mit.community.entity.Device;
 import com.mit.community.entity.DeviceDeviceGroup;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
  * @date 2018/12/10 10:52
  * @company mitesofor
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @TableName("device_group")
 public class DeviceGroup extends BaseEntity {

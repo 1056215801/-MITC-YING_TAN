@@ -102,10 +102,10 @@ public class UserService {
            User isExits = getByCellphone(list.get(i).getMobile());
             if (isExits == null) {
                 short gender = 0;
-                if (list.get(i).getGender() == 0){//女
-                    gender = 0;
-                } else {
+                if (list.get(i).getGender() == 0){//0是男
                     gender = 1;
+                } else {
+                    gender = 2;
                 }
                 user = new User();
                 user.setCellphone(list.get(i).getMobile());
@@ -113,6 +113,7 @@ public class UserService {
                 user.setHouseholdId(list.get(i).getHouseholdId());
                 user.setNickname(list.get(i).getHouseholdName());
                 user.setGender(gender);
+                System.out.println("houseHoudId="+ list.get(i).getHouseholdId() +",狄耐克的性别="+list.get(i).getGender() + ",系统的性别="+user.getGender());
                 user.setRole("普通业主");
                 user.setIcon_url("http://www.miesofor.tech/1ec47936-e19a-43d2-86c1-481ddfe07a8c.png");
                 user.setBirthday(LocalDate.of(1900, 1,
@@ -136,10 +137,10 @@ public class UserService {
             User isExits = getByCellphone(list.get(i).getMobile());
             if (isExits == null) {
                 short gender = 0;
-                if (list.get(i).getGender() == 0){//女
-                    gender = 0;
-                } else {
+                if (list.get(i).getGender() == 0){//0是男
                     gender = 1;
+                } else {
+                    gender = 2;
                 }
                 user = new User();
                 user.setCellphone(list.get(i).getMobile());
@@ -149,12 +150,20 @@ public class UserService {
                 user.setGender(gender);
                 user.setRole("普通业主");
                 user.setIcon_url("http://www.miesofor.tech/1ec47936-e19a-43d2-86c1-481ddfe07a8c.png");
-                System.out.println("狄耐克的性别="+list.get(i).getGender()+",user的性别="+user.getGender());
+                //System.out.println("狄耐克的性别="+list.get(i).getGender()+",user的性别="+user.getGender());
                 user.setBirthday(LocalDate.of(1900, 1,
                         1));
                 user.setGmtCreate(LocalDateTime.now());
                 user.setGmtModified(LocalDateTime.now());
                 userMapper.insert(user);
+                System.out.println("==============新增，householdId="+list.get(i).getHouseholdId()+",性别="+list.get(i).getGender());
+            } else {
+                System.out.println("==============更新，householdId="+list.get(i).getHouseholdId()+",性别="+list.get(i).getGender());
+                EntityWrapper<User> wrapper = new EntityWrapper<>();
+                wrapper.eq("household_id", list.get(i).getMobile());
+                User userUpdate = new User();
+                userUpdate.setCellphone(list.get(i).getMobile());
+                userMapper.update(userUpdate, wrapper);
             }
         }
     }

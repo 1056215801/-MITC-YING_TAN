@@ -27,7 +27,7 @@ public class PermissionGroupService {
             wrapper.eq("c.device_type",deviceType);
         }
         if (deviceStatus != null) {
-            if (deviceStatus == 0){
+            if (deviceStatus == 1){//离线
                 sql = "and (select TIME_TO_SEC(TIMEDIFF(NOW(), d.gmt_create)) FROM dnake_device_info d) > 10 ORDER BY a.gmt_create DESC ";
             } else {
                 sql = "and (select TIME_TO_SEC(TIMEDIFF(NOW(), d.gmt_create)) FROM dnake_device_info d) < 10 ORDER BY a.gmt_create DESC ";

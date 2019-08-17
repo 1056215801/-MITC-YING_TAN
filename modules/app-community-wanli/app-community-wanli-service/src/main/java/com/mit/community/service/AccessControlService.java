@@ -102,6 +102,29 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     }
 
     /**
+     * 查询门禁记录 通过电话号码
+     * @param household_mobile
+     * @param deviceNum
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @author xq
+     * @date 10:35 2019/8/12
+     */
+    public Page<AccessControl> listByCellphoneAndDeviceNum(String household_mobile, List<String> deviceNum,
+                                                             Integer pageNum, Integer pageSize) {
+        List<Map<String, Object>> maps = null;
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        Page<AccessControl> page = new Page(pageNum, pageSize);
+        wrapper.eq("household_mobile", household_mobile);
+        wrapper.in("device_num", deviceNum);
+        wrapper.orderBy("access_time", false);
+        List<AccessControl> accessControls = accessControlMapper.selectPage(page, wrapper);
+        page.setRecords(accessControls);
+        return page;
+    }
+
+    /**
      * 查询门禁记录，通过社区code和手机号码
      * @param communityCode 小区code
      * @param cellphone     手机号码
@@ -124,7 +147,8 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
             HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
             if (houseHold != null) {
                 //先是查询相应设备的设备编号-》查询住户id-》通过设备编号和住户id，查询门禁记录信息，进行分页查询
-                page = listByHouseHoldIdAndDeviceNum(houseHold.getHouseholdId(), deviceNums, pageNum, pageSize);
+                //page = listByHouseHoldIdAndDeviceNum(houseHold.getHouseholdId(), deviceNums, pageNum, pageSize);
+                page = listByCellphoneAndDeviceNum(cellphone, deviceNums, pageNum, pageSize);
             }
         }
         return page;

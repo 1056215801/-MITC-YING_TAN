@@ -123,10 +123,16 @@ public class HouseholdSchedule {
             if (!updateHousehold.isEmpty()) {
                 userService.update(updateHousehold);
                 houseHoldService.updateBatchById(updateHousehold, 1);
-                updateHousehold.forEach(houseHold -> {
+                /*updateHousehold.forEach(houseHold -> {
                     String mobile = houseHold.getMobile();
+                    System.out.println("==============更新，householdId="+houseHold.getHouseholdId()+",性别="+houseHold.getGender());
                     userService.updateCellphoneByHouseholdId(mobile, houseHold.getHouseholdId());
-                });
+                });*/
+                /*for (int i=0; i<updateHousehold.size();i++) {
+                    String mobile = updateHousehold.get(i).getMobile();
+                    System.out.println("==============更新，householdId="+updateHousehold.get(i).getHouseholdId()+",性别="+updateHousehold.get(i).getGender());
+                    userService.updateCellphoneByHouseholdId(mobile, updateHousehold.get(i).getHouseholdId());
+                }*/
 
             }
             if (!addHousehold.isEmpty()) {

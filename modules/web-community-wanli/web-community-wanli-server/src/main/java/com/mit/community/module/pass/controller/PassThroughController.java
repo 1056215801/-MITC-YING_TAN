@@ -3,10 +3,7 @@ package com.mit.community.module.pass.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.ApplyKey;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.SysUser;
-import com.mit.community.entity.User;
+import com.mit.community.entity.*;
 import com.mit.community.feigin.PassThroughFeign;
 import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.population.service.PersonLabelsService;
@@ -21,14 +18,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 住户-通行
@@ -62,6 +63,12 @@ public class PassThroughController {
     private PersonLabelsService personLabelsService;
     @Autowired
     private PersonBaseInfoService personBaseInfoService;
+    @Autowired
+    private DeviceDeviceGroupService deviceDeviceGroupService;
+    @Autowired
+    private DeviceService deviceService;
+    @Autowired
+    private AccessCardService accessCardService;
 
 
     @Autowired
@@ -323,12 +330,70 @@ public class PassThroughController {
                                                 Boolean csReturn,
                                                 String cardListArr) {
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null);
         if (!msg.contains("success")) {
             return -1;
         }
         return 1;
     }
+
+    /**
+     * 增加图片的保存（替代狄耐克接口）
+     * @param editFlag
+     * @param householdId
+     * @param appAuthFlag
+     * @param directCall
+     * @param tellNum
+     * @param fileNames
+     * @param faceAuthFlag
+     * @param deviceGIds
+     * @param validityEndDate
+     * @param initValidityEndDate
+     * @param csReturn
+     * @param cardListArr
+     * @param image
+     * @return
+     */
+    /*@RequestMapping(value = "/saveHouseholdInfoByStepThree", method = RequestMethod.POST)
+    @ApiOperation(value = "保存住户授权信息")
+    public Integer SaveHouseholdInfoByStepThree(Integer editFlag,
+                                                Integer householdId,
+                                                Integer appAuthFlag,
+                                                Integer directCall,
+                                                String tellNum,
+                                                String fileNames,
+                                                Integer faceAuthFlag,
+                                                String deviceGIds,
+                                                String validityEndDate,
+                                                String initValidityEndDate,
+                                                Boolean csReturn,
+                                                String cardListArr, MultipartFile image) throws Exception{
+        String imageUrl = null;
+        if (image != null) {
+            String fileHz = UUID.randomUUID().toString() + ".jpg";
+            String basePath = "f:\\face";
+            File file = new File(basePath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+            byte[] b = image.getBytes();
+            imageUrl = basePath + "\\" +fileHz;
+            File aa = new File(imageUrl);
+            FileImageOutputStream fos = new FileImageOutputStream(aa);
+            fos.write(b, 0, b.length);
+            fos.close();
+        }
+        String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrl);
+        if (msg.contains("success")) {
+            //这里略去生成人脸特征值过程
+
+        }
+        if (!msg.contains("success")) {
+            return -1;
+        }
+        return 1;
+    }*/
 
     /**
      * 注销住户
@@ -462,6 +527,31 @@ public class PassThroughController {
             return -1;
         }
         return 1;
+    }
+
+    @ApiOperation(value = "保存门禁卡信息")
+    @PostMapping("/saveCard")
+    public Result saveCard(String cardNum, String deviceGIds, Integer householdId) {
+        if (StringUtils.isNotBlank(deviceGIds) && StringUtils.isNotBlank(cardNum) && householdId != null) {
+            String[] deviceGroupIds = deviceGIds.split(",");
+            List<String> listId = Arrays.asList(deviceGroupIds);
+            List<DeviceDeviceGroup> list = deviceDeviceGroupService.getByDeviceGroupIds(listId);
+            AccessCard accessCard = null;
+            for (int i=0; i<list.size(); i++) {
+                accessCard = new AccessCard();
+                accessCard.setCardNum(cardNum);
+                accessCard.setHouseHoldId(householdId);
+                accessCard.setDeviceNum(list.get(i).getDeviceNum());
+                Device device = deviceService.getByDeviceNum(list.get(i).getDeviceNum());
+                accessCard.setDnakeDeviceInfoId(device.getDnakeDeviceInfoId());
+                accessCard.setGmtCreate(LocalDateTime.now());
+                accessCard.setGmtModified(LocalDateTime.now());
+                accessCardService.save(accessCard);
+            }
+            return Result.success("保存成功");
+        } else {
+            return Result.error("缺少参数");
+        }
     }
 
 }

@@ -11,8 +11,10 @@ import com.mit.community.service.RealTimePhotoService;
 import com.mit.community.util.HttpUtil;
 import com.mit.community.util.UploadUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,19 +82,17 @@ public class DeviceController {
         return returnMessage;
     }
 
-    //@ApiOperation(value = "QQ物联摄像头上传人脸比对数据", notes = "输入参数：token 设备登录时下发的token")
+    @ApiOperation(value = "QQ物联摄像头上传人脸比对数据", notes = "输入参数：token 设备登录时下发的token")
     @RequestMapping(value = "download",produces = {"application/json;charset=utf-8"})
     public void upload(HttpServletRequest request, HttpServletResponse response,String lingPai) throws Exception{
         InputStream in = null;
         try{
-            //System.out.println("===========进入download上传比对数据=" + lingPai);
             in = request.getInputStream();
             String model = Utils.inputStream2String(in, "");
             if (model != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 UploadFaceComparisonData data = mapper.readValue(model, UploadFaceComparisonData.class);
                 String basePath = request.getServletContext().getRealPath("imgs/");
-                //System.out.println("=====================文件夹路径="+ basePath );
                 File file = new File(basePath);
                 if (!file.exists()) {
                     file.mkdir();
@@ -164,14 +164,21 @@ public class DeviceController {
                         accessRecord.setCommunity_code("b181746d9bd1444c80522f9923c59b80");
                     }
                 }
-                if ("图片不存在".equals(photoBase64)) {
-                    accessRecord.setImage("图片不存在");
+
+                if (StringUtils.isNotBlank(photoBase64)) {
+                    if ("图片不存在".equals(photoBase64)) {
+                        accessRecord.setImage("图片不存在");
+                    } else {
+                        BASE64Decoder decoder = new BASE64Decoder();
+                        photoBase64 = photoBase64.replaceAll(" ","+" );
+                        System.out.println("=====图片=" + photoBase64);
+                        log.info("图片base64="+photoBase64);
+                        byte[] b = decoder.decodeBuffer(photoBase64);
+                        String imageUrl = UploadUtil.uploadWithByte(b);
+                        accessRecord.setImage(imageUrl);
+                    }
                 } else {
-                    BASE64Decoder decoder = new BASE64Decoder();
-                    photoBase64 = photoBase64.replaceAll(" ","+" );
-                    byte[] b = decoder.decodeBuffer(photoBase64);
-                    String imageUrl = UploadUtil.uploadWithByte(b);
-                    accessRecord.setImage(imageUrl);
+                    accessRecord.setImage("图片不存在");
                 }
                 accessRecord.setGmtCreate(LocalDateTime.now());
                 accessRecord.setGmtModified(LocalDateTime.now());

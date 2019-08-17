@@ -140,4 +140,17 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
         householdRoom.setGmtModified(LocalDateTime.now());
         householdRoomMapper.insert(householdRoom);
     }
+
+    public HouseholdRoom getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(Integer householdId,String communityCode, String buildingId, String unitId){
+        EntityWrapper<HouseholdRoom> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", householdId);
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq("building_id", buildingId);
+        wrapper.eq("unit_id", unitId);
+        List<HouseholdRoom> list = householdRoomMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 }

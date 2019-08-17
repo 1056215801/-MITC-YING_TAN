@@ -46,13 +46,12 @@ public class Test {
             System.out.println(line);
         }*/
 
-            //String cmdCommand = "cmd /c f: && cd F:\\face\\ && face.exe && face -i 1.jpg -o out.jpg -f out.fea -v model";
+
             String cmdCommand = "cmd /c f: && cd f:\\face && face -i 1.jpg -o out.jpg -f out.fea -v model";
-        //String path = "f:\\face\\start.bat";
-        StringBuilder stringBuilder = new StringBuilder();
+        //String cmdCommand = "cmd /c f: && cd f:\\face && face -i 2.jpg -o out.jpg -f outldq.fea -v model";
+            StringBuilder stringBuilder = new StringBuilder();
             Process process = null;
             try {
-                //process = Runtime.getRuntime().exec("cmd.exe /k start " + path);
                 process = Runtime.getRuntime().exec(cmdCommand);
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(process.getInputStream(), "GBK"));
@@ -62,11 +61,8 @@ public class Test {
                     stringBuilder.append(line+"\n");
                     System.out.println(line);
                 }
-                //return stringBuilder.toString();
             } catch (Exception e) {
                 e.printStackTrace();
-                //return null;
             }
-
     }
 }

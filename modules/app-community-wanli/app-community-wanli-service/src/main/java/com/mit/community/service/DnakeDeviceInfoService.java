@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.DnakeDeviceInfo;
 import com.mit.community.mapper.DnakeDeviceInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ public class DnakeDeviceInfoService {
     @Autowired
     private DnakeDeviceInfoMapper dnakeDeviceInfoMapper;
 
-    public DnakeDeviceInfo getDeviceInfoByMacAndIp(String mac){
+    public DnakeDeviceInfo getDeviceInfoByMac(String mac){
         EntityWrapper<DnakeDeviceInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("mac", mac);
         List<DnakeDeviceInfo> list = dnakeDeviceInfoMapper.selectList(wrapper);
@@ -39,5 +40,22 @@ public class DnakeDeviceInfoService {
         dnakeDeviceInfo.setGmtModified(LocalDateTime.now());
         dnakeDeviceInfo.setIp(ip);
         dnakeDeviceInfoMapper.update(dnakeDeviceInfo, wrapper);
+    }
+
+    public List<DnakeDeviceInfo> getAllRecord() {
+        EntityWrapper<DnakeDeviceInfo> wrapper = new EntityWrapper<>();
+        List<DnakeDeviceInfo> list = dnakeDeviceInfoMapper.selectList(wrapper);
+        return list;
+    }
+
+    public DnakeDeviceInfo getById(String deviceId){
+        EntityWrapper<DnakeDeviceInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("id", deviceId);
+        List<DnakeDeviceInfo> list = dnakeDeviceInfoMapper.selectList(wrapper);
+        if(!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return null;
+        }
     }
 }
