@@ -16,10 +16,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class TaskDaoImpl implements TaskDao {
 	// 存放任务信息
-	private ConcurrentMap<String, CommandTasker> map = null;
+	private static ConcurrentMap<String, CommandTasker> map =new  ConcurrentHashMap<>(100) ;
 
 	public TaskDaoImpl(int size) {
-		map = new ConcurrentHashMap<>(size);
+		//map = new ConcurrentHashMap<>(size);
 	}
 
 	@Override

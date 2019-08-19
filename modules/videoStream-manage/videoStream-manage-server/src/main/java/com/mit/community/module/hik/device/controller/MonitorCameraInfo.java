@@ -11,6 +11,7 @@ public class MonitorCameraInfo {
     private int port;
     private String userName;
     private String password;
+    private String channelNo;
 
     public MonitorCameraInfo(){}
     public MonitorCameraInfo(String ip, int port) {
@@ -56,5 +57,13 @@ public class MonitorCameraInfo {
 
     public void setId(NativeLong id) {
         this.id = id;
+    }
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
     }
 }

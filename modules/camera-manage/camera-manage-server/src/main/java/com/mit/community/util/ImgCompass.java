@@ -148,4 +148,54 @@ public class ImgCompass {
         return imageSize;
     }
 
+
+    public static byte[]  showUrlBtyes(String imageUrl) throws IOException {
+
+        String base64Image;
+        DataInputStream dataInputStream = null;
+        ByteArrayOutputStream outputStream = null;
+        ByteArrayInputStream inputStream = null;
+        byte[] data;
+        byte[] context;
+        try {
+            //从远程读取图片
+            URL url = new URL(imageUrl);
+            dataInputStream = new DataInputStream(url.openStream());
+            outputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[2048];
+            int length;
+            while ((length = dataInputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            context = outputStream.toByteArray();
+
+
+        } catch (Exception e) {
+            //抛出异常
+            throw e;
+        } finally {
+            if (dataInputStream != null) {
+                try {
+                    dataInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return context;
+    }
 }

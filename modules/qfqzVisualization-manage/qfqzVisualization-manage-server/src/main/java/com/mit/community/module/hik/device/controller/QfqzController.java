@@ -1,5 +1,7 @@
 package com.mit.community.module.hik.device.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.api.vo.user.UserInfo;
 import com.mit.community.entity.DepartmentInfo;
@@ -14,26 +16,18 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -314,7 +308,7 @@ public class QfqzController {
     @ApiOperation(value = "开启终端视频", notes = "开启终端视频")
     public Result startVideo(String userId ,String seq) {
 
-        userId="21451";
+      //  userId="21451";
         seq=UUID.randomUUID().toString();
         String serviceKey="27bf1c196a1f4b99bab5eff3d7e9bc45";
         // seq="12345678";
@@ -363,8 +357,12 @@ public class QfqzController {
             result = stringBuffer.toString();
             JSONObject jsonObject=JSONObject.fromObject(result);
             if("0".equals(jsonObject.get("code").toString())){
-                sleep(2000);
-                qfqzUrl=qfqzUrlService.selectById(1);
+                sleep(4000);
+
+                EntityWrapper<QfqzUrl> wrapper=new EntityWrapper<>();
+                wrapper.eq("userId",userId);
+
+                qfqzUrl=qfqzUrlService.selectOne(wrapper);
             }
         } catch (Exception e) {
             log.error("发送post请求错误", e);
@@ -379,7 +377,7 @@ public class QfqzController {
     @ApiOperation(value = "关闭终端视频", notes = "关闭终端视频")
     public Result stopVideo(String userId) {
         String  seq=UUID.randomUUID().toString();
-        userId="21451";
+      //  userId="21451";
         String url="http://120.76.189.28:1241/stopVideo";
         String serviceKey="27bf1c196a1f4b99bab5eff3d7e9bc45";
        // String seq="123456";
@@ -481,7 +479,7 @@ public class QfqzController {
     @ApiOperation(value = "调整视频清晰度", notes = "调整视频清晰度")
     public Result changeDefinition(String userId,String defintion  ) {
         String  seq=UUID.randomUUID().toString();
-        userId="21451";
+       // userId="21451";
         String url="http://120.76.189.28:1241/changeDefinition";
         String serviceKey="27bf1c196a1f4b99bab5eff3d7e9bc45";
         // String seq="123456";
@@ -556,13 +554,25 @@ public class QfqzController {
 
     @RequestMapping(value = "/videoCallBack", method = RequestMethod.GET)
     @ApiOperation(value = "开启终端视频", notes = "开启终端视频")
-    public Result videoCallBack(@RequestParam(value="url") String url) {
+    public Result videoCallBack(@RequestParam(value="url") String url,@RequestParam(value="userId") String userId) {
 
         QfqzUrl qfqzUrl=new QfqzUrl();
-        qfqzUrl.setId(1);
         qfqzUrl.setUrl(url);
-        qfqzUrlService.updateById(qfqzUrl);
-        System.out.print("++++++++++++++++++++"+url);
+        qfqzUrl.setUserId(userId);
+
+        EntityWrapper<QfqzUrl> wrapper=new EntityWrapper<>();
+        wrapper.eq("userId",userId);
+
+        QfqzUrl qfqzUrl1Two=qfqzUrlService.selectOne(wrapper);
+       if(qfqzUrl1Two==null){
+
+           qfqzUrlService.insert(qfqzUrl);
+       }else{
+           qfqzUrlService.update(qfqzUrl,wrapper);
+           //qfqzUrlService.updateById(qfqzUrl);
+       }
+
+        System.out.print("++++++++++++++++++++"+url+"++++++++++++++"+userId);
         return Result.success(url);
 
     }

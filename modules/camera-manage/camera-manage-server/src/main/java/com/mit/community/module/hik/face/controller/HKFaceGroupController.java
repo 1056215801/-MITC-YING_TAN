@@ -6,9 +6,7 @@ import com.mit.community.service.ConfigInfoService;
 import com.mit.community.util.ArtemisConfig;
 import com.mit.community.util.ArtemisHttpUtil;
 import com.mit.community.util.Result;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -137,6 +135,10 @@ public class HKFaceGroupController {
     @RequestMapping(value = "/updateSingleFaceGroup", method = RequestMethod.POST)
     @ApiOperation(value = "单个修改人脸分组", notes = "")
     @ResponseBody
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexCode", value = "indexCode", paramType = "query", required = true, dataType = "String")
+    })
+
     public Result updateSingleFaceGroup(@ApiParam FaceGroup  faceGroup) {
         config();
         String getRootApi = ARTEMIS_PATH + "/api/frs/v1/face/group/single/update";
