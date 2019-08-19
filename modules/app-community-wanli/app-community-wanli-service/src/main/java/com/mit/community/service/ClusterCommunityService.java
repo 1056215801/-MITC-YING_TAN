@@ -4,10 +4,7 @@ import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.RedisConstant;
-import com.mit.community.entity.ClusterCommunity;
-import com.mit.community.entity.HouseHold;
-import com.mit.community.entity.HouseholdRoom;
-import com.mit.community.entity.User;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.ClusterCommunityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -141,6 +138,25 @@ public class ClusterCommunityService {
         wrapper.eq("province_name", province);
         wrapper.setSqlSelect("city_name");
         return clusterCommunityMapper.selectMaps(wrapper);
+    }
+
+    public List<ClusterCommunity> getByCellPhone(String cellPhone) {
+        EntityWrapper<ClusterCommunity> wrapperStreet = new EntityWrapper<>();;
+        List<String> communityCode = new ArrayList<>();
+        User user = userService.getByCellphone(cellPhone);
+        ClusterCommunity clusterCommunity = getByCommunityCode(user.getSerialnumber());
+        if ("小区账号".equals(user.getFaceToken())) {
+            communityCode.add(user.getSerialnumber());
+        } else if ("镇/街道账号".equals(user.getFaceToken())) {
+            wrapperStreet.eq("street_name", clusterCommunity.getStreetName());
+        } else if ("区级账号".equals(user.getFaceToken())) {
+            wrapperStreet.eq("area_name", clusterCommunity.getStreetName());
+        }
+        List<ClusterCommunity> list = clusterCommunityMapper.selectList(wrapperStreet);
+        communityCode = list.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCode);
+        return clusterCommunityMapper.selectList(wrapper);
     }
 
 }

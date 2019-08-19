@@ -29,6 +29,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,6 +66,8 @@ public class PersonBaseInfoController {
     private UnitService unitService;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private VehicleInfoService vehicleInfoService;
 
     @PostMapping("/savePersonBaseInfo")
     @ApiOperation(value = "保存人员基本信息", notes = "传参：String idCardNum 公民身份号码, String name 姓名, String formerName 曾用名, String gender 性别, LocalDate birthday 出生日期, String nation 民族, String nativePlace 籍贯, String matrimony 婚姻状况, String politicCountenance 政治面貌,\n" +
@@ -218,6 +221,14 @@ public class PersonBaseInfoController {
         }*/
         List<Room> list = roomService.listByUnitId(unitId);
         return Result.success(list);
+    }
+
+    @PostMapping("/saveCarInfo")
+    @ApiOperation(value = "保存车辆信息", notes = "时间格式 2019-08-17")
+    public Result saveCarInfo(String name, String phone, String carNum, String carBrand, String carModel, String carColour, String produceDate, String buyDate, String Output, String driverLicense, String vehicleLicense) throws Exception{
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        vehicleInfoService.saveCarInfo( name,  phone,  carNum,  carBrand,  carModel,  carColour,  produceDate,  buyDate,  Output,  driverLicense,  vehicleLicense);
+        return Result.success("保存成功");
     }
 
 

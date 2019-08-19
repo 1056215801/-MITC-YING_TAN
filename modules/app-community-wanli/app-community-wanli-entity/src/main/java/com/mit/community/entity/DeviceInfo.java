@@ -19,4 +19,6 @@ public class DeviceInfo {
     private String unitCode;
     private String timeDiffi;
     private String verison;
+    private String buildingName;
+    private String unitName;
 }

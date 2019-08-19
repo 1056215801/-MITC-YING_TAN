@@ -60,6 +60,8 @@ public class PermissionGroupControoler {
     private AuthorizeHouseholdDeviceGroupService authorizeHouseholdDeviceGroupService;
     @Autowired
     private ClusterCommunityService clusterCommunityService;
+    @Autowired
+    private UserService userService;
 
 
     /**
@@ -328,6 +330,26 @@ public class PermissionGroupControoler {
         wrapper.eq("device_mac",deviceMac);
         deviceDeviceGroupService.delete(wrapper);
         return Result.success("删除成功");
+    }
+
+
+
+    @PostMapping("/addDeviceDugPeople")
+    @ApiOperation(value = "增加设备调试人员", notes = "")
+    public Result addDeviceDugPeople(HttpServletRequest request,String cellPhone, String sex ){
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = user.getCommunityCode();
+        String accountType = user.getAccountType();
+        userService.addDeviceDugAccount(cellPhone, sex, communityCode, accountType);
+        return Result.success("添加成功");
+    }
+
+    @PostMapping("/deviceDugPeopleChange")
+    @ApiOperation(value = "停用/启用 设备调试人员", notes = "changeType 1启用，2停用")
+    public Result deviceDugPeopleChange(HttpServletRequest request,String cellPhone, Integer changeType ){
+        userService.deviceDugPeopleChange(cellPhone, changeType);
+        return Result.success("ok");
     }
 
 

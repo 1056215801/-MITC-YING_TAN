@@ -10,6 +10,7 @@ import com.mit.community.mapper.AccessControlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -151,6 +152,11 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                 page = listByCellphoneAndDeviceNum(cellphone, deviceNums, pageNum, pageSize);
             }
         }
+        return page;
+    }
+
+    public Page<AccessControl> getAccessControlPage (String cardNum, String name, Integer zoneId, Integer buildingId, Integer unitId, Integer interactiveType, String deicveNum, LocalDateTime timeStart, LocalDateTime timeEnd, int pageNum, int pageSize) {
+        Page<AccessControl> page = new Page<>(pageNum, pageSize);
         return page;
     }
 

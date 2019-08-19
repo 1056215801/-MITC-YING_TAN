@@ -170,7 +170,7 @@ public class DeviceBindController {
     @PostMapping("/saveDeviceInfo")
     @ApiOperation(value = "保存设备应用信息", notes = "")
     public Result saveDeviceInfo(HttpServletRequest request, String deviceId, String communityCode,String unitId, String zoneId, String zoneCode, String unitCode, String buildingId, String buildingCode, String deviceName, String deviceNum,
-                                 String deviceCode, String coordinate, Integer deviceGroupId, String cardHandSecond, String cardHand, String version){
+                                 String deviceCode, String coordinate, Integer deviceGroupId, String cardHandSecond, String cardHand, String version, String deviceType){
 
         String a = String.valueOf(System.currentTimeMillis());
         String deviceSip = "61723" + a.substring(a.length()-9,a.length());
@@ -181,7 +181,7 @@ public class DeviceBindController {
         device.setUnitId(unitId);
         device.setDeviceName(deviceName);
         device.setDeviceNum(deviceNum);
-        device.setDeviceType("M");
+        device.setDeviceType(deviceType);
         device.setDeviceStatus(0);
         device.setDeviceCode(deviceCode);
         device.setDeviceSip(deviceSip);
@@ -197,8 +197,14 @@ public class DeviceBindController {
         device.setZoneId(zoneId);
         device.setZoneCode(zoneCode);
         deviceService.insert(deviceGroupId,device);
-
         return Result.success("添加成功");
+    }
+
+    @PostMapping("/getCommunityList")
+    @ApiOperation(value = "获取小区列表", notes = "communityCode 社区code")
+    public Result getCommunityList(String cellPhone){
+        List<ClusterCommunity> list = clusterCommunityService.getByCellPhone(cellPhone);
+        return Result.success(list);
     }
 
 }

@@ -69,6 +69,8 @@ public class PassThroughController {
     private DeviceService deviceService;
     @Autowired
     private AccessCardService accessCardService;
+    @Autowired
+    private AccessControlService accessControlService;
 
 
     @Autowired
@@ -553,5 +555,15 @@ public class PassThroughController {
             return Result.error("缺少参数");
         }
     }
+
+    @ApiOperation(value = "分页获取通行记录")
+    @PostMapping("/accessControlPage")
+    public Result accessControlPage(HttpServletRequest request, String cardNum, String name, Integer zoneId, Integer buildingId, Integer unitId, Integer interactiveType, String deicveNum,
+                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeStart,
+                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeEnd, Integer pageNum, Integer pageSize) {
+        Page<AccessControl> page = accessControlService.getAccessControlPage(cardNum, name, zoneId, buildingId, unitId, interactiveType, deicveNum, timeStart, timeEnd, pageNum, pageSize);
+        return Result.success(page);
+    }
+
 
 }
