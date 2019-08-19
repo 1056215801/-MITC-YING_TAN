@@ -71,4 +71,11 @@ public class TestController {
         }
         return result;
     }
+
+    public static void main(String[] args) {
+        String ip="/live/192168174";
+        String [] arrs=ip.split("/");
+        System.out.print(arrs);
+
+    }
 }

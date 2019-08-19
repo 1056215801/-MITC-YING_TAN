@@ -20,7 +20,7 @@ import java.util.Map;
  * @since jdk1.7
  * @version 2017年10月13日
  */
-public class CommandManagerImpl implements CommandManager {
+public  class CommandManagerImpl implements CommandManager {
 	/**
 	 * 任务持久化器
 	 */

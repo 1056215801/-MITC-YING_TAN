@@ -9,6 +9,8 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -32,6 +34,7 @@ import java.util.*;
 public class HKDeviceController {
 
     private NativeLong lUserID;
+    private static  CommandManager manager =  new CommandManagerImpl();
 
     @RequestMapping("/showDevices")
     @ApiOperation(value = "返回前台设备名和地址", notes = "")
@@ -157,8 +160,13 @@ public class HKDeviceController {
     @RequestMapping("/startVideo")
     @ApiOperation(value = "开启视频流", notes = "")
     public Result test1(MonitorCameraInfo cameraInfo) {
-        CommandManager manager =  new CommandManagerImpl();
+       // CommandManager manager =  new CommandManagerImpl();
+
         String ip=cameraInfo.getIp();
+        String channelNo=cameraInfo.getChannelNo();
+        if(ip==null || "".equals(ip.trim())){
+
+        }
         String ipStr= ip.replaceAll("\\.","");
         TaskDaoImpl taskDao=new TaskDaoImpl(100);
         CommandTasker tasker = taskDao.get(ipStr);
@@ -167,10 +175,10 @@ public class HKDeviceController {
             if(process.isAlive()){
 
             }else{
-                manager.start(ipStr, "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@192.168.1.163:554/MPEG-4/"+ cameraInfo.getChannelNo() +"/main/av_stream -f flv -vcodec libx264 -vprofile baseline -acodec aac -ar 44100  -preset ultrafast -t 1800 -strict -2 -ac 1 -f flv -s 1280x720 -q 2 rtmp://192.168.1.129:1935/live/"+ipStr);
+                manager.start(ipStr, "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@192.168.1.163:554/MPEG-4/"+ cameraInfo.getChannelNo() +"/main/av_stream -f flv  -threads 2  -vcodec libx264 -vprofile baseline -acodec aac -ar 44100  -preset ultrafast -t 1800 -strict -2 -ac 1 -f flv -s 1280x720 -q 2 rtmp://192.168.1.129:1935/live/"+ipStr);
             }
         }else{
-            manager.start(ipStr, "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@192.168.1.163:554/MPEG-4/"+ cameraInfo.getChannelNo() +"/main/av_stream -f flv -vcodec libx264 -vprofile baseline -acodec aac -ar 44100  -preset ultrafast -t 1800 -strict -2 -ac 1 -f flv -s 1280x720 -q 2 rtmp://192.168.1.129:1935/live/"+ipStr);
+            manager.start(ipStr, "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@192.168.1.163:554/MPEG-4/"+ cameraInfo.getChannelNo() +"/main/av_stream -f flv  -threads 2   -vcodec libx264 -vprofile baseline -acodec aac -ar 44100  -preset ultrafast -t 1800 -strict -2 -ac 1 -f flv -s 1280x720 -q 2 rtmp://192.168.1.129:1935/live/"+ipStr);
         }
 
         return  Result.success("rtmp://192.168.1.129:1935/live/"+ipStr,"success" );
@@ -179,7 +187,7 @@ public class HKDeviceController {
     @RequestMapping("/stopVideo")
     @ApiOperation(value = "关闭视频流", notes = "")
     public Result test2(MonitorCameraInfo cameraInfo) {
-        CommandManager manager =  new CommandManagerImpl();
+      //  CommandManager manager =  new CommandManagerImpl();
         String ip=cameraInfo.getIp();
         String ipStr= ip.replaceAll("\\.","");
         manager.stop(ipStr);
@@ -188,6 +196,27 @@ public class HKDeviceController {
         Process process=tasker.getProcess();
         Boolean b=process.isAlive();*/
        // manager.start("ip", "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@192.168.1.163:554/MPEG-4/ch34/main/av_stream -f flv -vcodec libx264 -vprofile baseline -acodec aac -ar 44100  -preset ultrafast  -strict -2 -ac 1 -f flv -s 640x360 -q 2 rtmp://192.168.1.129:1935/live/");
+        return  Result.success("success");
+    }
+
+
+    @RequestMapping("/stopVideo2")
+    @ApiOperation(value = "关闭视频流2", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ip", value = " ip 视频流地址", paramType = "query", required = false, dataType = "String")
+    })
+    public Result test2(String  ip ) {
+        //  CommandManager manager =  new CommandManagerImpl();
+
+        String [] arrs=ip.split("\\/");
+        String ipStr= ip.replaceAll("\\.","");
+
+        manager.stop(ipStr);
+       /* TaskDaoImpl taskDao=new TaskDaoImpl(100);
+        CommandTasker tasker = taskDao.get(cameraInfo.getIp());
+        Process process=tasker.getProcess();
+        Boolean b=process.isAlive();*/
+        // manager.start("ip", "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@192.168.1.163:554/MPEG-4/ch34/main/av_stream -f flv -vcodec libx264 -vprofile baseline -acodec aac -ar 44100  -preset ultrafast  -strict -2 -ac 1 -f flv -s 640x360 -q 2 rtmp://192.168.1.129:1935/live/");
         return  Result.success("success");
     }
 

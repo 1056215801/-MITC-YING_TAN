@@ -19,7 +19,7 @@ import static com.mit.community.module.commandManager.util.PropertiesUtil.load;
  * @since jdk1.7
  * @version 2016年10月29日
  */
-public interface CommandManager {
+public  interface CommandManager {
 	
 	public static final ProgramConfig config=load("loadFFmpeg.properties", ProgramConfig.class);
 	/**
