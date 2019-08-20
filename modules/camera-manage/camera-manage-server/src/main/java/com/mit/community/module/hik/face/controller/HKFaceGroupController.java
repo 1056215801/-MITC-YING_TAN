@@ -1,26 +1,15 @@
 package com.mit.community.module.hik.face.controller;
-
-
 import com.alibaba.fastjson.JSONObject;
-import com.mit.community.entity.CameraLb;
 import com.mit.community.entity.ConfigInfo;
 import com.mit.community.entity.com.mit.community.entity.hik.FaceGroup;
 import com.mit.community.service.ConfigInfoService;
 import com.mit.community.util.ArtemisConfig;
 import com.mit.community.util.ArtemisHttpUtil;
 import com.mit.community.util.Result;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONArray;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +33,9 @@ public class HKFaceGroupController {
         ArtemisConfig.appSecret = configInfo.getAppSecret();
     }
 
-    @RequestMapping("/addSingleFaceGroup")
+    @RequestMapping(value = "/addSingleFaceGroup", method = RequestMethod.POST)
     @ApiOperation(value = "单个添加人脸分组", notes = "")
+    @ResponseBody
     public Result addSingleFaceGroup(FaceGroup faceGroup) {
         String getRootApi = ARTEMIS_PATH + "/api/frs/v1/face/group/single/addition";
         Map<String, String> path = new HashMap<String, String>(2) {
@@ -69,8 +59,9 @@ public class HKFaceGroupController {
     }
 
 
-    @RequestMapping("/deleteFaceGroup")
+    @RequestMapping(value = "/deleteFaceGroup", method = RequestMethod.POST)
     @ApiOperation(value = "按条件删除人脸分组", notes = "")
+    @ResponseBody
     public Result deleteFaceGroup(String[] indexCodes) {
         config();
         String getRootApi = ARTEMIS_PATH + "/api/frs/v1/face/group/batch/deletion";
@@ -103,8 +94,9 @@ public class HKFaceGroupController {
     }
 
 
-    @RequestMapping("/queryFaceGroup")
+    @RequestMapping(value = "/queryFaceGroup", method = RequestMethod.POST)
     @ApiOperation(value = "按条件查询人脸分组", notes = "")
+    @ResponseBody
     public Result queryFaceGroup(String[] indexCodes, String name ) {
         config();
         String getRootApi = ARTEMIS_PATH + "/api/frs/v1/face/group";
@@ -127,7 +119,9 @@ public class HKFaceGroupController {
         jsonBody.put("name", name);
         String body = jsonBody.toJSONString();
         String result = ArtemisHttpUtil.doPostStringArtemis(path, body, null, null, contentType);
-        net.sf.json.JSONObject jsonToken = net.sf.json.JSONObject.fromObject(result);
+        JSONObject jsonObject=new JSONObject();
+        JSONObject jsonToken= (JSONObject) JSONObject.parse(result);
+        //net.sf.json.JSONObject jsonToken = net.sf.json.JSONObject.fromObject(result);
         List<Map> list = new ArrayList<>();
         if ("0".equals(jsonToken.getString("code"))) {
             list = (List) jsonToken.get("data");
@@ -138,9 +132,14 @@ public class HKFaceGroupController {
 
     }
 
-    @RequestMapping("/updateSingleFaceGroup")
+    @RequestMapping(value = "/updateSingleFaceGroup", method = RequestMethod.POST)
     @ApiOperation(value = "单个修改人脸分组", notes = "")
-    public Result updateSingleFaceGroup(FaceGroup faceGroup) {
+    @ResponseBody
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "indexCode", value = "indexCode", paramType = "query", required = true, dataType = "String")
+    })
+
+    public Result updateSingleFaceGroup(@ApiParam FaceGroup  faceGroup) {
         config();
         String getRootApi = ARTEMIS_PATH + "/api/frs/v1/face/group/single/update";
         Map<String, String> path = new HashMap<String, String>(2) {

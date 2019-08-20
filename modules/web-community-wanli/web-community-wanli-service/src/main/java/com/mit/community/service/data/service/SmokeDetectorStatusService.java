@@ -6,9 +6,13 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.mit.community.mapper.data.dao.SmokeDetectorStatusMapper;
 import com.mit.community.model.SmokeDetectorStatus;
+import com.mit.community.service.util.HttpSendCenter;
 import com.mit.community.util.RandomUtil;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +20,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 烟感感知
@@ -342,4 +344,46 @@ public class SmokeDetectorStatusService extends ServiceImpl<SmokeDetectorStatusM
         }
     }
 
+    public List<SmokeDetectorStatus> selectDeviceByThirdOnLine(String keyWords) {
+        String appkey="MFN9MM=4xnbFJZjN5nAeNhr4LuI=";
+        String url="http://api.heclouds.com/devices?key_words=烟感";
+
+        JSONObject result= HttpSendCenter.get(appkey,url);
+        List<SmokeDetectorStatus> list=new ArrayList<>();
+        try {
+            if(result!=null && "0".equals(result.get("errno").toString())){
+              Map data= (Map) result.get("data");
+              List<Map> list1= (List<Map>) data.get("devices");
+              for(Map map :list1){
+                  SmokeDetectorStatus temp=new SmokeDetectorStatus();
+                  temp.setDeviceName(map.get("title").toString());
+                  temp.setDeviceNum(map.get("id").toString());
+                  Boolean b= (Boolean) map.get("online");
+                  if(b=true){
+                      temp.setDeviceStatus((short)1);
+                  }else{
+                      temp.setDeviceStatus((short)3);
+                  }
+
+                  String  gmtUpload= (String) map.get("create_time");
+                  DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                  LocalDateTime ldt = LocalDateTime.parse(gmtUpload,df);
+                  temp.setGmtUpload(ldt);
+                  LocalDateTime localDateTime=LocalDateTime.now();
+                  temp.setGmtCreate(localDateTime);
+                  temp.setGmtModified(localDateTime);
+                  list.add(temp);
+
+
+              }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return list;
+
+    }
 }

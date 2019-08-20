@@ -13,10 +13,10 @@ import java.lang.reflect.Method;
  * @date 2018/11/29
  * @company mitesofor
  */
-@Configuration
+
 public class RedisConfiguration {
 
-    @Bean
+
     public KeyGenerator keyGenerator() {
         return (target, method, params) -> {
             StringBuilder sb = new StringBuilder();
