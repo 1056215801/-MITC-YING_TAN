@@ -21,13 +21,8 @@
 		<module>web-community-wanli</module>
         <module>dnake-api</module>
         <module>camera-manage</module>
-<<<<<<< HEAD
-        <!--<module>videoStream-manage</module>-->
-=======
         <module>videoStream-manage</module>
         <module>deviceCallBack-manage</module>
         <module>qfqzVisualization-manage</module>
-
->>>>>>> remotes/origin/20190705lili
     </modules>
 </project>
