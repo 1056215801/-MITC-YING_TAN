@@ -34,5 +34,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class CameraManageBootstrap {
     public static void main(String[] args) {
         new SpringApplicationBuilder(CameraManageBootstrap.class).web(WebApplicationType.SERVLET).run(args);
+        System.out.print("ddd");
     }
 }
