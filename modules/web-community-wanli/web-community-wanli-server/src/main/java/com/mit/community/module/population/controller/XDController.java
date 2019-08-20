@@ -29,7 +29,7 @@ public class XDController {
     @PostMapping("/save")
     @ApiOperation(value = "保存吸毒人员信息", notes = "传参：LocalDateTime ccfxsj 初次发现日期, String gkqk 管控情况, String gkrxm 管控人姓名, String gkrlxfs 管控人联系方式, String bfqk 帮扶情况, String bfrxm 帮扶人姓名, String bfrlxfs 帮扶人联系方式,\n" +
             "String ywfzs 有无犯罪史, String xdqk 吸毒情况, String xdyy 吸毒原因, String xdhg 吸毒后果")
-    public Result save(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime ccfxsj,
+    public Result save(String ccfxsj,
                        String gkqk, String gkrxm, String gkrlxfs, String bfqk, String bfrxm, String bfrlxfs,
                        String ywfzs, String xdqk, String xdyy, String xdhg, Integer person_baseinfo_id) {
         xDService.save(ccfxsj, gkqk, gkrxm, gkrlxfs, bfqk, bfrxm, bfrlxfs, ywfzs, xdqk, xdyy, xdhg, person_baseinfo_id);
@@ -39,7 +39,7 @@ public class XDController {
     @PostMapping("/update")
     @ApiOperation(value = "更新吸毒人员信息", notes = "传参：LocalDateTime ccfxsj 初次发现日期, String gkqk 管控情况, String gkrxm 管控人姓名, String gkrlxfs 管控人联系方式, String bfqk 帮扶情况, String bfrxm 帮扶人姓名, String bfrlxfs 帮扶人联系方式,\n" +
             "String ywfzs 有无犯罪史, String xdqk 吸毒情况, String xdyy 吸毒原因, String xdhg 吸毒后果")
-    public Result update(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime ccfxsj, String gkqk, String gkrxm, String gkrlxfs, String bfqk, String bfrxm, String bfrlxfs,
+    public Result update(String ccfxsj, String gkqk, String gkrxm, String gkrlxfs, String bfqk, String bfrxm, String bfrlxfs,
                          String ywfzs, String xdqk, String xdyy, String xdhg, Integer person_baseinfo_id, int isDelete) {
         XDInfo xDInfo = new XDInfo(ccfxsj, gkqk, gkrxm, gkrlxfs, bfqk, bfrxm, bfrlxfs, ywfzs,
                 xdqk, xdyy, xdhg, person_baseinfo_id, isDelete);

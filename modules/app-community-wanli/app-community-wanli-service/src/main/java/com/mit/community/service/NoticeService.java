@@ -73,11 +73,16 @@ public class NoticeService {
      */
     public List<Notice> listValidNoticeAndTime(String communityCode, LocalDate startDay, LocalDate endDay) {
         EntityWrapper<Notice> wrapper = new EntityWrapper<>();
+        //
+        //System.out.println("===============communityCode="+communityCode);
+        //System.out.println("===============startDay="+startDay);
+        //System.out.println("===============endDay="+endDay);
+        //
         wrapper.eq("community_code", communityCode);
         wrapper.eq("status", 1);
         wrapper.eq("isdel", 0);
         //wrapper.le("release_time", endDay);
-        wrapper.ge("release_time", startDay);
+        //wrapper.ge("release_time", startDay);
         wrapper.ge("validate_time", LocalDateTime.now());
         wrapper.orderBy("release_time", false);
         return noticeMapper.selectList(wrapper);

@@ -356,4 +356,34 @@ public class UserService {
             return users.get(0);
         }
     }
+
+    public void addDeviceDugAccount(String cellPhone, String sex, String communityCode, String accountType) {
+        User user = new User();
+        user.setCellphone(cellPhone);
+        user.setPassword("123456");
+        user.setNickname("设备调试员");
+        user.setGender((short)("男".equals(sex)? 1:2));
+        user.setRole("设备调试员");
+        user.setIcon_url("http://www.miesofor.tech/1ec47936-e19a-43d2-86c1-481ddfe07a8c.png");
+        user.setBirthday(LocalDate.of(1900, 1,
+                1));
+        user.setGmtCreate(LocalDateTime.now());
+        user.setGmtModified(LocalDateTime.now());
+        user.setIdentity(1);
+        user.setSerialnumber(String.valueOf(communityCode));
+        user.setFaceToken(accountType);
+        userMapper.insert(user);
+    }
+
+    public void deviceDugPeopleChange(String cellPhone, Integer changeType) {
+        User user = new User();
+        if (changeType == 1) {
+            user.setIdentity(1);
+        } else {
+            user.setIdentity(0);
+        }
+        EntityWrapper<User> wrapper = new EntityWrapper<>();
+        wrapper.eq("cellphone", cellPhone);
+        userMapper.update(user, wrapper);
+    }
 }

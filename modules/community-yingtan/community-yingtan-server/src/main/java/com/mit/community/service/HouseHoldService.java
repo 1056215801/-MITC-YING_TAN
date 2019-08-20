@@ -104,6 +104,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
      * @author Mr.Deng
      * @date 15:11 2018/11/21
      */
+    public List<HouseHold> listByCommunityCode(List<String> communityCode) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCode);
+        return houseHoldMapper.selectList(wrapper);
+    }
+
     public List<HouseHold> listByCommunityCode(String communityCode) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);

@@ -55,4 +55,14 @@ public class BuildingService {
         }
         return buildings.get(0);
     }
+
+    public Building getByBuidingId(Integer buildingId) {
+        EntityWrapper<Building> wrapper = new EntityWrapper<>();
+        wrapper.eq("building_id", buildingId);
+        List<Building> list = buildingMapper.selectList(wrapper);
+        if (list.isEmpty()){
+            return null;
+        }
+        return list.get(0);
+    }
 }

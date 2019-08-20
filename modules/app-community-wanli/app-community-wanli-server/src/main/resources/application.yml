@@ -88,8 +88,8 @@ spring:
     multipart:
       enabled: true
       file-size-threshold: 0
-      max-file-size: 10Mb
-      max-request-size: 10Mb
+      max-file-size: 60Mb
+      max-request-size: 60Mb
 
 # 服务跟踪
 sample:

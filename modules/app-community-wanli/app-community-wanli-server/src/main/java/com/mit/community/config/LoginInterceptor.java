@@ -39,7 +39,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 || servletPath.contains("/login/register") || servletPath.contains("/login/haveLogin")
                 || servletPath.contains("/login/updateGender") || servletPath.contains("/login/updateRegion")
                 || servletPath.contains("/login/updateBirthdayAndNick") || servletPath.contains("/label/listLabelSystem")
-                || servletPath.contains("/label/associationLabelCustomer")) {
+                || servletPath.contains("/label/associationLabelCustomer") || servletPath.contains("/login/resetPwd")) {
             return true;
         }
         String mac = request.getParameter("mac");

@@ -1,7 +1,7 @@
 package com.mit.community.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.mit.community.entity.DeviceGroup;
+import com.mit.community.entity.entity.DeviceGroup;
 
 /**
  * 设备组

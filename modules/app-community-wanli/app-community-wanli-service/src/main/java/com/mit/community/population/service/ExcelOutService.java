@@ -105,7 +105,7 @@ public class ExcelOutService {
         return list;
     }
 
-    public List<CarExcelInfo> getCarExcel(){
+    public List<CarExcelInfo> getCarExcel(String accountType, String streetName, String areaName){
         List<CarExcelInfo> list = excelOutMapper.getCarExcel();
         return list;
     }

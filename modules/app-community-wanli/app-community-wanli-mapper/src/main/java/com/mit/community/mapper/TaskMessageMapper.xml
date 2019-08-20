@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.TaskMessageMapper">
+    <resultMap type="com.mit.community.entity.TaskMessage" id="taskMessageMap">
+        <id property="id" column="id" javaType="Integer" jdbcType="INTEGER" />
+        <result property="reportProblemId" column="reportProblemId" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="title" column="title" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="content" column="content" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="wgyId" column="wgyId" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="status" column="status" javaType="int"
+                jdbcType="INTEGER" />
+        <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER"/>
+        <result property="isRepeat" column="isRepeat" javaType="int"
+                jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="getTargetList" resultMap="taskMessageMap">
+        select a.* from task_message a LEFT JOIN report_problem b on a.reportProblemId=b.id where b.status=0
+    </select>
+
+</mapper>

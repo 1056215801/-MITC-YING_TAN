@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.module.pass.mapper.LabelsMapper">
+    <!--<resultMap type="com.mit.community.entity.LabelsInfo" id="labelsInfoMap">
+        <result property="lsryId" column="lsryId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="jwryId" column="jwryId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="dyId" column="dyId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="jsId" column="jsId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="byId" column="byId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="xmsfId" column="xmsfId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="yscxId" column="yscxId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="sfId" column="sfId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="sqjz" column="sqjz" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="zszhId" column="zszhId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="xdId" column="xdId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="azbId" column="azbId" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="zdqsnId" column="zdqsnId" javaType="String"
+                jdbcType="VARCHAR"/>
+    </resultMap>-->
+
+    <select id="getZdqsnId" resultType="String">
+        select id from zdqsn_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getAzbId" resultType="String">
+        select id from azb_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getXdId" resultType="String">
+        select id from xd_info where person_baseinfo_id=#{userid}
+    </select>
+    <select id="getZszhId" resultType="String">
+        select id from zszh_info where person_baseinfo_id=#{userid}
+    </select>
+    <select id="getSqjz" resultType="String">
+        select id from sqjzpeople_info where person_baseinfo_id=#{userid}
+    </select>
+    <select id="getSfId" resultType="String">
+        select id from sfpeople_info where person_baseinfo_id=#{userid}
+    </select>
+    <select id="getLsryId" resultType="String">
+        select id from staypeople_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getJwryId" resultType="String">
+        select id from engpeople_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getDyId" resultType="String">
+        select id from party_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getJsId" resultType="String">
+        select id from bear_info where person_baseinfo_id=#{userid}
+    </select>
+    <select id="getById" resultType="String">
+        select id from militaryservice_info where person_baseinfo_id=#{userid}
+    </select>
+    <select id="getXmsfId" resultType="String">
+        select id from xmsfpeople_info where person_baseinfo_id=#{userid}
+    </select>
+    <select id="getYscxId" resultType="String">
+        select id from cx_Info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getZyzId" resultType="String">
+        select id from zyz_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getWgyId" resultType="String">
+        select id from wgy_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getLdzId" resultType="String">
+        select id from ldz_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <select id="getOldId" resultType="String">
+        select id from old_info where person_baseinfo_id=#{userid}
+    </select>
+
+    <!--<select id="getLabelsInfoByUserId" resultMap="labelsInfoMap">
+        select c.id as lsryId
+        from person_baseinfo b LEFT JOIN staypeople_info c ON b.id=c.person_baseinfo_id LEFT JOIN engpeople_info d on b.id=d.person_baseinfo_id LEFT JOIN party_info e on b.id=e.person_baseinfo_id LEFT JOIN bear_info f on b.id=f.person_baseinfo_id
+        LEFT JOIN militaryservice_info g on b.id=g.person_baseinfo_id LEFT JOIN xmsfpeople_info h on b.id=h.person_baseinfo_id LEFT JOIN cx_Info i on b.id=i.person_baseinfo_id
+        LEFT JOIN sfpeople_info j on b.id=j.person_baseinfo_id LEFT JOIN sqjzpeople_info k on b.id=k.person_baseinfo_id LEFT JOIN zszh_info l on b.id=l.person_baseinfo_id
+        LEFT JOIN xd_info m on b.id=m.person_baseinfo_id LEFT JOIN azb_info n on b.id=n.person_baseinfo_id LEFT JOIN zdqsn_info o on b.id=o.person_baseinfo_id where b.id=#{userid}
+    </select>-->
+</mapper>

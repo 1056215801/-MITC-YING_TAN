@@ -18,10 +18,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+/**上报事件的受理
+ * @author xq
+ * @date 2019/7/06
+ * @company mitesofor
+ */
 @RestController
 @RequestMapping(value = "/problemHandle")
 @Slf4j
-@Api(tags = "小区停车问题处理")
+@Api(tags = "小区事件处理")
 public class ProblemHandleController {
     @Autowired
     private ProblemHandleService problemHandleService;
@@ -40,15 +45,22 @@ public class ProblemHandleController {
         return Result.success(list);
     }
 
+    /**
+     *
+     * @param userId
+     * @param reportProblemId
+     * @param dept
+     * @param content
+     * @param images
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/handleProblem")
     @ApiOperation(value = "小区事件受理", notes = "输入参数：userId 受理人id，reportProblemId 事件id，dept 部门，content 内容,images 照片")
     public Result handleProblem(Integer userId ,Integer reportProblemId,String dept,String content,MultipartFile[] images) throws Exception{
-        System.out.println("=========保存成功");
         List<String> imageUrls = new ArrayList<>();
         if (images != null) {
-            System.out.println("=====================2222");
             for (MultipartFile image : images) {
-                System.out.println("====================6666");
                 String imageUrl = UploadUtil.upload(image);
                 imageUrls.add(imageUrl);
             }

@@ -10,10 +10,7 @@ import com.dnake.common.DnakeWebApiUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mit.common.util.DateUtils;
-import com.mit.community.entity.AccessControl;
-import com.mit.community.entity.ActivePeople;
-import com.mit.community.entity.Device;
-import com.mit.community.entity.HouseholdRoom;
+import com.mit.community.entity.*;
 import com.mit.community.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
@@ -162,7 +159,19 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
                         if (accessControl.getCardNum() == null) {
                             accessControl.setCardNum(StringUtils.EMPTY);
                         }
-                        Integer zoneId = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item).getZoneId();
+                        //System.out.println("====================item"+item);
+                        Integer zoneId = null;
+                        if (StringUtils.isNotBlank(accessControl.getZoneName())&&StringUtils.isNotBlank(item)) {
+                            Zone zone = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item);
+                            if (zone != null) {
+                                zoneId = zone.getZoneId();
+                            } else {
+                                zoneId = 0;
+                            }
+                            //zoneId = zoneService.getByNameAndCommunityCode(accessControl.getZoneName(), item).getZoneId();
+                        } else {
+                            zoneId = 0;
+                        }
                         accessControl.setZoneId(zoneId);
                         // 查询房号
                         List<HouseholdRoom> householdRooms = householdRoomService.listByHouseholdId(accessControl.getHouseholdId());

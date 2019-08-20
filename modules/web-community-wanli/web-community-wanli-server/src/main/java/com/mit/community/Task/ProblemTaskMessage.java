@@ -32,76 +32,70 @@ public class ProblemTaskMessage {
     @Autowired
     private SendPhoneService sendPhoneService;
 
-    /*@Scheduled(cron = "0/1 * * * * ?")
+    @Scheduled(cron = "0/1 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void task(){
-        System.out.println("================");
-        List<TaskMessage> list = taskMessageService.getList();//所有未查看的
-        if (!list.isEmpty()) {
-            for (int i=0;i<list.size();i++) {
-                Date sendTime = Date.from(list.get(i).getGmtCreate().toInstant(ZoneOffset.of("+8")));
+        List<ReportProblem> nosolveList = reportProblemService.getNosolveList();//所有没有处理的上报事件
+        if (!nosolveList.isEmpty()) {
+            for(int i=0;i < nosolveList.size();i++){
+                Date sendTime = Date.from(nosolveList.get(i).getGmtCreate().toInstant(ZoneOffset.of("+8")));
                 long longDate = sendTime.getTime();
                 long now = System.currentTimeMillis();
                 int miao = (int)(now - longDate) / 1000;
-                if (miao > 15 && list.get(i).getIsRepeat()==0) {//超过十秒并且没有向上级转发
-                    //向上级转发
-                    //查找该网格员上级的personbaseinfo_id
-                    Integer sirPersonBaseInfoId = personLabelsService.getSirPersonBaseInfoId(list.get(i).getId());
-                    //查找该网格员上级网格员的userid和网格员信息ID
-                    if (sirPersonBaseInfoId != null) {
-                        TaskMessageSirInfo taskMessageSirInfo = personLabelsService.getSirUserIdBySirPersonBaseInfoId(sirPersonBaseInfoId);
-                        if (taskMessageSirInfo != null) {
-                            List<String> messageAccept = new ArrayList<>();
-                            String title = "事件未处理通知";
-                            TaskMessageContent taskMessageContent = personLabelsService.getTaskMessageContent(list.get(i).getReportProblemId(), list.get(i).getWgyId());
-                            String content = "您辖区内网格员"+taskMessageContent.getWgyName()+"(联系电话："+taskMessageContent.getCellPhone()+")，尚未处理用户"
-                                    + taskMessageContent.getUserName() + "于" + taskMessageContent.getGmtCreate() + "上报的" + taskMessageContent.getProblemType() + "问题";
-                            personLabelsService.updateMqlzd(list.get(i).getReportProblemId());
-                            if (taskMessageSirInfo.getUserId() != null) {//通过app发送通知
-                                messageAccept.add(taskMessageSirInfo.getUserId().toString());
-                                WebPush.sendAlias(title, content, messageAccept);
-                                taskMessageService.save(list.get(i).getReportProblemId(),title,content,taskMessageSirInfo.getWgyId(),0,0,null);
-                            } else {//下发短信
-                                //还要加下发短信
-                                *//*String sirCellPhone = personLabelsService.getSirPhoneByPersonBaseInfoId(sirPersonBaseInfoId);
-                                if (StringUtils.isNotBlank(sirCellPhone)) {
-                                    SmsCommunityAppUtil.sendMsg(sirCellPhone, content);
-                                    taskMessageService.save(list.get(i).getReportProblemId(),title,content,taskMessageSirInfo.getWgyId(),0,0, null);
-                                }*//*
-                                if("贤士湖长巷村".equals(taskMessageSirInfo.getJb())){
-                                    SmsCommunityAppUtil.sendMsg("18170879118", "香樟住宅小区有事件未及时处置，现升级为居委处置");
-                                    taskMessageService.save(list.get(i).getReportProblemId(),title,"香樟住宅小区有事件未及时处置，现升级为居委处置",taskMessageSirInfo.getWgyId(),0,0, null);
+                if (miao > 100) {//过多长时间事件还没有处理
+                    List<TaskMessage> list = taskMessageService.getList(nosolveList.get(i).getId());//将所有该事件已经推送的信息查出
+                    if (!list.isEmpty()) {
+                        Date sendTime1 = Date.from(list.get(0).getGmtCreate().toInstant(ZoneOffset.of("+8")));
+                        long longDate1 = sendTime.getTime();
+                        if ((int)(System.currentTimeMillis() - longDate1) / 1000 > 15) {//超时往上级推送
+                            List<WgyInfo> wgyList = personLabelsService.getWgyList(list.get(0).getWgyId());//上级网格员的信息(取最后发出的这一条)
+                            /*List<String> target = new ArrayList<>();
+                            List<>*/
+                            if (!wgyList.isEmpty()) {
+                                int mqlzd = 0;
+                                if ("街道办".equals(wgyList.get(0).getJb())) {
+                                    mqlzd = 1;
+                                } else if ("管理处".equals(wgyList.get(0).getJb())) {
+                                    mqlzd = 2;
+                                } else if ("政法委".equals(wgyList.get(0).getJb())) {
+                                    mqlzd = 3;
                                 }
-                                if("贤士湖管理处".equals(taskMessageSirInfo.getJb())){
-                                    String[] phones = {"18170879118"};
-                                    for(int a=0;a<phones.length;a++){
-                                        SmsCommunityAppUtil.sendMsg(phones[a], "长巷村有事件未及时处置，现升级为管理处处置");
+                                for (int a=0; a<wgyList.size();a++) {
+                                    String title = "事件未处理通知";
+                                    if(wgyList.get(a).getPerson_baseinfo_id() != null){//有userid的发app通知
+                                        List<String> messageAccept = new ArrayList<>();
+                                        TaskMessageContent taskMessageContent = personLabelsService.getTaskMessageContent(list.get(0).getReportProblemId(), list.get(0).getWgyId());
+                                        String content = "您辖区内网格员"+taskMessageContent.getWgyName()+"(联系电话："+taskMessageContent.getCellPhone()+")，尚未处理用户"
+                                                + taskMessageContent.getUserName() + "于" + taskMessageContent.getGmtCreate() + "上报的" + taskMessageContent.getProblemType() + "问题";
+
+                                        messageAccept.add(wgyList.get(a).getPerson_baseinfo_id().toString());
+                                        WebPush.sendAlias(title, content, messageAccept);
+
+                                        taskMessageService.save(mqlzd, list.get(0).getReportProblemId(),title,content,wgyList.get(a).getId(),0,0,null);
+                                    } else {//没有的发短信
+                                        String lower = personLabelsService.getWgyDeptById(list.get(0).getWgyId());
+                                        String higher = wgyList.get(a).getDept();
+                                        String content = lower + "有事件未及时处置，现升级为" + higher +"处置";
+                                        SmsCommunityAppUtil.sendHandleMsg(wgyList.get(a).getJtzycylxfs(), lower,higher);//事件未及时处置，现升级为管理处处置
+                                        taskMessageService.save(mqlzd, list.get(0).getReportProblemId(),title,content,wgyList.get(a).getId(),0,0,null);
                                     }
-                                    taskMessageService.save(list.get(i).getReportProblemId(),title,"长巷村有事件未及时处置，现升级为管理处处置",taskMessageSirInfo.getWgyId(),0,0, null);
                                 }
-                                *//*if("贤士湖管理处".equals(taskMessageSirInfo.getJb())){
-                                    String[] phones = {"18170879118","13970919271","18179107779"};
-                                    for(int a=0;a<phones.length;a++){
-                                        SmsCommunityAppUtil.sendMsg(phones[a], "长巷村有事件未及时处置，现升级为居委处置");
-                                    }
-                                    taskMessageService.save(list.get(i).getReportProblemId(),title,"长巷村有事件未及时处置，现升级为居委处置",taskMessageSirInfo.getWgyId(),0,0, null);
-                                }*//*
-                                if("东湖区政法委".equals(taskMessageSirInfo.getJb())){
-                                    String[] phones = {"18170879118"};
-                                    for(int a=0;a<phones.length;a++){
-                                        SmsCommunityAppUtil.sendMsg(phones[a], "贤士湖管理处有事件未及时处置，现升级为政法委处置");
-                                    }
-                                    taskMessageService.save(list.get(i).getReportProblemId(),title,"贤士湖管理处有事件未及时处置，现升级为政法委处置",taskMessageSirInfo.getWgyId(),0,0, null);
-                                }
+
+                            } else {//没有上级，说明全部推送流程完成
+                                ReportProblem reportProblem = nosolveList.get(i);
+                                reportProblem.setMqlzd(10);//终结
+                                reportProblem.setGmtModified(LocalDateTime.now());
+                                reportProblemService.saveSendAfter(reportProblem);
                             }
                         }
                     }
                 }
             }
         }
-    }*/
 
-    @Scheduled(cron = "0/1 * * * * ?")
+    }
+
+    //@Scheduled(cron = "0/1 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void menJin() {
         List<MenJinInfo> infoList = personLabelsService.getMenJinList("艾武德");
@@ -126,7 +120,7 @@ public class ProblemTaskMessage {
         }
     }
 
-    @Scheduled(cron = "0/1 * * * * ?")
+    /*@Scheduled(cron = "0/1 * * * * ?")
     @Transactional(rollbackFor = Exception.class)
     public void task() {
         List<ReportProblem> list = reportProblemService.getXdAndSf();
@@ -200,6 +194,6 @@ public class ProblemTaskMessage {
                 }
             }
         }
-    }
+    }*/
 
 }

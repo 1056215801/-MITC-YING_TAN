@@ -39,4 +39,13 @@ public class AccessRecord extends BaseEntity {
 
     @TableField("car_num_patch")
     private String image;
+
+    @TableField("in_gate_name")
+    private String inGateName;//入场名称
+
+    @TableField("sf_gate")
+    private String sfGate;//收费口号
+
+    @TableField("care_parkno")
+    private String careParkNo;//车场编号
 }

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -91,5 +92,28 @@ public class VehicleInfoService {
             vehicleInfo.setGmtModified(LocalDateTime.now());
             vehicleInfoMapper.updateById(vehicleInfo);
         }
+    }
+
+    public void saveCarInfo(String name, String phone, String carNum, String carBrand, String carModel, String carColour, String produceDate, String buyDate, String output, String driverLicense, String vehicleLicense) throws Exception{
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        VehicleInfo vehicleInfo = new VehicleInfo();
+        if (StringUtils.isNotBlank(produceDate)) {
+            vehicleInfo.setPurchaseDate(format.parse(produceDate));
+        }
+        if (StringUtils.isNotBlank(buyDate)) {
+            vehicleInfo.setProDate(format.parse(buyDate));
+        }
+        vehicleInfo.setCommunityCode(name);
+        vehicleInfo.setOwnerPhone(phone);
+        vehicleInfo.setCarnum(carNum);
+        vehicleInfo.setBrand(carBrand);
+        vehicleInfo.setCarmodel(carModel);
+        vehicleInfo.setCarcolor(carColour);
+        vehicleInfo.setDisplacement(Double.valueOf(output));
+        vehicleInfo.setDriverLicense(driverLicense);
+        vehicleInfo.setVehicleLicense(vehicleLicense);
+        vehicleInfo.setGmtCreate(LocalDateTime.now());
+        vehicleInfo.setGmtModified(LocalDateTime.now());
+        vehicleInfoMapper.insert(vehicleInfo);
     }
 }

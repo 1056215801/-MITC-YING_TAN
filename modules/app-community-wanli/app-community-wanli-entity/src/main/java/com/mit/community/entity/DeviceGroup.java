@@ -39,4 +39,8 @@ public class DeviceGroup extends BaseEntity {
 
     @TableField(exist = false)
     private List<DeviceDeviceGroup> deviceDeviceGroups;
+
+    @TableField(exist = false)
+    private List<Device> device;
+
 }

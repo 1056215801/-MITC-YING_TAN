@@ -46,9 +46,9 @@ spring:
         login-username: admin
         login-password: admin
         #测试环境
-        allow: 192.168.1.222
+        #allow: 192.168.1.222
         #本地测试和正式环境
-        #allow: 127.0.0.1
+        allow: 127.0.0.1
       filter:
         stat:
           db-type: mysql

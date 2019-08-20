@@ -104,7 +104,7 @@
         f.icon_url as sloveUrl,f.nickname as sloveName
         from report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN report_problem_photo c on a.id=c.reportProblemId
         LEFT JOIN problem_schedule d on a.id=d.reportProblemId LEFT JOIN problem_schedule_photo e on d.id=e.problemScheduleId
-        LEFT JOIN user f on d.userId=f.id
+        LEFT JOIN user f on d.userId=f.id LEFT JOIN household g on b.household_id =g.household_id
         where 1=1 ${ew.sqlSegment}
     </select>
 
@@ -114,7 +114,7 @@
         f.icon_url as sloveUrl,f.nickname as sloveName
         from report_problem a LEFT JOIN user b on a.userId=b.id LEFT JOIN report_problem_photo c on a.id=c.reportProblemId
         LEFT JOIN problem_schedule d on a.id=d.reportProblemId LEFT JOIN problem_schedule_photo e on d.id=e.problemScheduleId
-        LEFT JOIN user f on d.userId=f.id
+        LEFT JOIN user f on d.userId=f.id LEFT JOIN household g on b.household_id =g.household_id
         where 1=1 ${ew.sqlSegment}
     </select>
 </mapper>

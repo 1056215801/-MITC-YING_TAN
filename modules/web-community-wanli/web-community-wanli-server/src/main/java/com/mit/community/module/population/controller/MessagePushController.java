@@ -25,6 +25,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/** 消息推送
+ *@author xq
+ * @date 2019/6/15
+ * @company mitesofor
+ */
 @RequestMapping(value = "/messagePush")
 @RestController
 @Slf4j
@@ -40,7 +45,7 @@ public class MessagePushController {
     private SendPhoneService sendPhoneService;
 
     @PostMapping("/pushPerson")
-    @ApiOperation(value = "消息推送", notes = "")
+    @ApiOperation(value = "消息推送", notes = "参数：ageStart 起始年龄，ageEnd 结束年龄， sex 性别，edu 教育水平， job 职业， marriage 婚姻状况")
     public Result pushPerson(@RequestParam(required = false, defaultValue = "0") Integer ageStart,
                              @RequestParam(required = false, defaultValue = "0") Integer ageEnd, String sex,
                              String edu, String job, String marriage, String politics,
@@ -57,7 +62,7 @@ public class MessagePushController {
     }
 
     @PostMapping("/pushUser")
-    @ApiOperation(value = "指定人员消息推送", notes = "")
+    @ApiOperation(value = "指定人员消息推送", notes = "参数： title 标题，outline 概要， content 内容详情， idNum 接收人身份证号码")
     public Result pushUser(HttpServletRequest request, String title, String outline, String content, String idNum) {
         Integer userId = null;
         if (userId == null) {
@@ -81,7 +86,7 @@ public class MessagePushController {
     }
 
     @GetMapping("/messageAcceptListPage")
-    @ApiOperation(value = "消息详情")
+    @ApiOperation(value = "消息详情", notes = "参数： pushTime 推送时间， name 人员姓名， status 查看状态")
     public Result messageAcceptListPage(Integer messageId,
                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime pushTime,
                                         String name, @RequestParam(required = false, defaultValue = "0") Integer status,
@@ -90,6 +95,10 @@ public class MessagePushController {
         return Result.success(page);
     }
 
+    /**
+     * 演示接口
+     * @return
+     */
     @GetMapping("/cb")
     @ApiOperation(value = "催办")
     public Result cb() {
@@ -99,6 +108,10 @@ public class MessagePushController {
         return Result.success("催办成功");
     }
 
+    /**
+     * 演示接口
+     * @return
+     */
     @GetMapping("/cwzy")
     @ApiOperation(value = "车位占用")
     public Result cwzy() {

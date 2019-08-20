@@ -12,6 +12,7 @@ public class ReportProblemInfo {
     private String address;
     private int isOpen;
     private int status;
+    private int mqlzd;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     protected LocalDateTime gmtCreate;
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -20,6 +21,23 @@ public class ReportProblemInfo {
     private Integer userId;
     private String iconUrl;
     private String userName;
+    private List<ReportProblemLzInfo>  lzdList;
+
+    public List<ReportProblemLzInfo> getLzdList() {
+        return lzdList;
+    }
+
+    public void setLzdList(List<ReportProblemLzInfo> lzdList) {
+        this.lzdList = lzdList;
+    }
+
+    public int getMqlzd() {
+        return mqlzd;
+    }
+
+    public void setMqlzd(int mqlzd) {
+        this.mqlzd = mqlzd;
+    }
 
     public String getUserName() {
         return userName;

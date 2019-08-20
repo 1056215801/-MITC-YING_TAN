@@ -24,4 +24,17 @@ public class WarningConfigService {
             return null;
         }
     }
+
+    public WarningConfig getByLabelAndCommunity(String label, String communityCode){
+        EntityWrapper<WarningConfig> wrapper = new EntityWrapper<>();
+        wrapper.eq("label", label);
+        wrapper.eq("communityCode", communityCode);
+        wrapper.eq("isWarning",1);
+        List<WarningConfig> list = warningConfigMapper.selectList(wrapper);
+        if(!list.isEmpty()){
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
 }

@@ -21,8 +21,8 @@
         su.community_code as communityCode
         FROM FeedBack a
         left join User b on a.user_id = b.id
-        left join sys_user su on su.id = a.handler
-        ${ew.sqlSegment}
+        left join sys_user su on su.id = a.handler left join household c on b.household_id=c.household_id
+        where 1=1 ${ew.sqlSegment}
     </select>
 
     <!--反馈处理-->

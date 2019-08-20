@@ -20,6 +20,8 @@ public class WgyInfo extends BaseEntity{
     private String jtzyrysfzh;
     private String officeTime;
     private String workCondition;
-   /* private String jb;
-    private Integer sirid;*/
+    private String jb;//是街道还是管理处
+    private int isFzr;//是否为负责人，0否，1是
+    private String dept;//所在单位
+    private String sjDept;//上级单位
 }

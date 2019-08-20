@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mit.community.mapper.ListMapper">
+    <select id="getDeviceAddressInfo" resultType="com.mit.community.entity.DeviceAddressInfo">
+        select id,address_name as addressName,parent_address_id as parentAddressId
+        from device_address_info
+    </select>
+
+    <select id="getDeviceInfo" resultType="com.mit.community.entity.DeviceInfo">
+        select id,device_address_info_id as deviceAddressInfoId,device_id as deviceId,is_collect as isCollect,device_num as deviceNum
+        from device_info
+    </select>
+
+    <update id="updateCollect">
+        update device_info set is_collect=#{isCollect}
+        where id=#{id}
+    </update>
+</mapper>

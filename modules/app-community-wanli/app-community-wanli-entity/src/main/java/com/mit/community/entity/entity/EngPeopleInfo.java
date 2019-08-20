@@ -1,5 +1,6 @@
 package com.mit.community.entity.entity;
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mit.community.entity.BaseEntity;
@@ -28,6 +29,7 @@ public class EngPeopleInfo extends BaseEntity {
     private String yjlkrq;
     private int sfzdry;
     private Integer person_baseinfo_id;
+    @TableField(exist = false)
     private int isDelete;
 
 }

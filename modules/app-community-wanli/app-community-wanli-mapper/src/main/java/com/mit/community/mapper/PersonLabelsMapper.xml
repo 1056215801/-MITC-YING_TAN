@@ -10,6 +10,115 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.PeopleOut" id="peopleOutMap">
+        <result property="gmtModified" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.WgyInfo" id="wgyInfoMap">
+        <result property="id" column="id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="jb" column="jb" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="dept" column="dept" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="jtzycylxfs" column="cellphone" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.entity.DeviceGroup" id="deviceGroupMap">
+    <id property="id" column="id" javaType="Integer"
+        jdbcType="INTEGER" />
+    <result property="deviceGroupId" column="device_group_Id" javaType="Integer"
+            jdbcType="INTEGER" />
+    <result property="communityCode" column="community_code" javaType="String"
+            jdbcType="VARCHAR" />
+    <result property="deviceGroupName" column="device_group_name" javaType="String"
+            jdbcType="VARCHAR" />
+    <result property="groupType" column="group_type" javaType="Short"
+            jdbcType="INTEGER" />
+    <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+            jdbcType="OTHER" />
+    <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+            jdbcType="OTHER" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.OwnerShipInfo" id="ownerShipInfo">
+        <result property="carOwner" column="carOwner" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="ownerPhone" column="ownerPhone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zoneName" column="zoneName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="buildingName" column="buildingName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unitName" column="unitName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="roomNum" column="roomNum" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.DeviceInfo" id="menJinMap">
+        <result property="deviceName" column="deviceName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceNum" column="deviceNum" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceMac" column="deviceMac" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceCode" column="deviceCode" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceType" column="deviceType" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceSip" column="deviceSip" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="buildingCode" column="buildingCode" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unitCode" column="unitCode" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="timeDiffi" column="timeDiffi" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="verison" column="verison" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="buildingName" column="buildingName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unitName" column="unitName" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.DnakeDeviceDetailsInfo" id="dnakeDeviceDetailsInfoMap">
+        <result property="communityCode" column="communityCode" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zoneId" column="zoneId" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="buildingId" column="buildingId" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="unitId" column="unitId" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="deviceIp" column="deviceIp" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceMac" column="deviceMac" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceNum" column="deviceNum" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceId" column="deviceId" javaType="Integer"
+                jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="getOwnerInfo" resultMap="ownerShipInfo">
+        select a.owner_phone as ownerPhone,b.household_name as carOwner,c.zone_name as zoneName,c.building_name as buildingName,c.unit_name as unitName,c.room_num as roomNum
+        from vehicle_info a LEFT JOIN household b on a.owner_phone=b.mobile LEFT JOIN household_room c on b.household_id=c.household_id
+        where a.car_num=#{cph}
+    </select>
+
+    <select id="getWgyList" resultMap="wgyInfoMap">
+        select a.id,a.jb,a.dept,b.cellphone,c.id as person_baseinfo_id from wgy_info a LEFT JOIN person_baseinfo b on a.person_baseinfo_id=b.id LEFT JOIN user c on b.id_card_num=c.id_card_num
+        where a.dept=(select d.sjDept from wgy_info d where d.id=#{wgyId}) and a.isFzr=1
+    </select>
+
     <select id="getMenJinList" resultMap="menJinInfoMap">
         select gmt_create as createTime,access_img_url as url from access_control where household_name=#{name} order by gmt_create desc limit 1
     </select>
@@ -27,6 +136,11 @@
     <select id="getRkcfByIdNum" resultType="String">
         select rksx
         from person_baseinfo where id_card_num=#{idNum}
+    </select>
+
+    <select id="getRkcfByMobile" resultType="String">
+        select rksx
+        from person_baseinfo where cellphone=#{mobile}
     </select>
 
     <select id="getSirPersonBaseInfoId" resultType="INTEGER">
@@ -66,8 +180,8 @@
         where id=#{id}
     </update>
 
-    <select id="getPeopleOue" resultType="String">
-        select gmt_create from face_comparison_data where name='熊起' order by gmt_create desc limit 1
+    <select id="getPeopleOue" resultMap="peopleOutMap">
+        select name,gmt_create from face_comparison_data where name IN ('熊起','艾武德','柯尊勇','徐韶群') order by gmt_create desc limit 1
     </select>
 
     <select id="getMenJinTime" resultType="String">
@@ -77,4 +191,42 @@
     <select id="getContentByTime" resultType="String">
         select content from report_problem where gmt_create=#{time}
     </select>
+
+    <select id="getWgyDeptById" resultType="String">
+        select dept from wgy_info
+         where id=#{id}
+    </select>
+
+    <select id="selectInfoPage" resultMap="deviceGroupMap">
+        select a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
+        where 1= 1 ${ew.sqlSegment} <if test="sql != null and sql != ''">${sql}</if>
+    </select>
+
+    <select id="getTimeCha" resultType="String">
+        select TIME_TO_SEC(TIMEDIFF(NOW(), gmt_modified)) FROM dnake_device_info
+        where id=#{id}
+    </select>
+
+    <select id="getGroupName" resultType="String">
+        select c.device_group_name
+        from device a LEFT JOIN device_device_group b on a.device_num=b.device_num LEFT JOIN device_group c ON b.device_group_id=c.id
+        where a.id=#{id}
+    </select>
+
+    <select id="getMaxDeviceId" resultType="String">
+        select max(device_id) from device
+    </select>
+
+    <select id="selectMenJinPage" resultMap="menJinMap">
+        select a.device_name as deviceName,a.device_num as deviceNum,a.device_code as deviceCode,a.device_type as deviceType,a.device_sip as deviceSip,a.verison,b.mac as deviceMac,
+        a.building_code as buildingCode,a.unit_code as unitCode,TIME_TO_SEC(TIMEDIFF(NOW(), b.gmt_modified)) as timeDiffi,c.building_name as buildingName,d.unit_name as unitName from device a LEFT JOIN dnake_device_info b on a.dnake_device_info_id=b.id
+        LEFT JOIN building c on a.building_id=c.building_id LEFT JOIN unit d on a.unit_id=d.unit_id
+        where 1= 1 ${ew.sqlSegment} <if test="sql != null and sql != ''">${sql}</if>
+    </select>
+
+    <select id="getUnBindDevice" resultMap="dnakeDeviceDetailsInfoMap">
+        select a.mac as deviceMac,a.ip as deviceIp,a.id as deviceId,b.device_num as deviceNum,b.community_code as communityCode,b.building_id as buildingId,b.zone_id as zoneId,b.unit_id as unitId from dnake_device_info a LEFT JOIN device b on a.id=b.dnake_device_info_id
+        where 1=1 <if test="ip != null and ip != ''">and a.ip=#{ip}</if>
+    </select>
+
 </mapper>

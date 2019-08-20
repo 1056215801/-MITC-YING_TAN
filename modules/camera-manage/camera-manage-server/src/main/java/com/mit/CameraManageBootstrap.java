@@ -40,7 +40,10 @@ import java.util.Map;
 public class CameraManageBootstrap {
     public static void main(String[] args) {
         new SpringApplicationBuilder(CameraManageBootstrap.class).web(WebApplicationType.SERVLET).run(args);
+<<<<<<< HEAD
 
+=======
+>>>>>>> remotes/origin/XQ
         ArtemisConfig.host = "192.168.1.230:443";
         // 秘钥Appkey
         ArtemisConfig.appKey = "25892539";
@@ -79,6 +82,9 @@ public class CameraManageBootstrap {
         System.out.println("请求路径："+ getRootApi + ",请求参数："+ body + ",返回结果：" + result);
         String result1 = ArtemisHttpUtil.doPostStringArtemis(path, body1, null, null, contentType);
         System.out.println("请求路径1："+ getRootApi + ",请求参数1："+ body1 + ",返回结果1：" + result1);
+<<<<<<< HEAD
 
+=======
+>>>>>>> remotes/origin/XQ
     }
 }

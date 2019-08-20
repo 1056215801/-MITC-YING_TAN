@@ -10,5 +10,4 @@ package com.mit.community.entity;
  */
 public class DeviceGroup {
 
-
 }
