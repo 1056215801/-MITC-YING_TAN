@@ -46,6 +46,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         String cellphone = request.getParameter("cellphone");
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(mac)) {
             String macRedis = (String) redisService.get(RedisConstant.MAC + cellphone);
+            //System.out.println("=====================macRedis="+macRedis);
+            //System.out.println("=====================mac="+mac);
             if (!mac.equals(macRedis)) {
                 PrintWriter writer = null;
                 response.setCharacterEncoding("UTF-8");

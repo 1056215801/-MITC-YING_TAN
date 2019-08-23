@@ -89,7 +89,7 @@ public class FeedBackService {
                                       Integer pageNum, Integer pageSize) {
         EntityWrapper<WebFeedBack> wrapper = new EntityWrapper<>();
         if (StringUtils.isNotBlank(communityCode)) {
-            wrapper.eq("su.community_code", communityCode);
+            wrapper.eq("c.community_code", communityCode);
         }
         if (StringUtils.isNotBlank(status)) {
             wrapper.eq("a.status", status);

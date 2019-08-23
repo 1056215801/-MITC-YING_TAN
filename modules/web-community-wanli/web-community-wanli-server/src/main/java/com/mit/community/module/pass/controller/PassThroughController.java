@@ -8,6 +8,7 @@ import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.User;
 import com.mit.community.feigin.PassThroughFeign;
+import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.population.service.PersonLabelsService;
 import com.mit.community.service.*;
 import com.mit.community.util.CookieUtils;
@@ -59,6 +60,8 @@ public class PassThroughController {
 
     @Autowired
     private PersonLabelsService personLabelsService;
+    @Autowired
+    private PersonBaseInfoService personBaseInfoService;
 
 
     @Autowired
@@ -113,7 +116,7 @@ public class PassThroughController {
      * @company mitesofor
      */
     @PostMapping("/approveKey")
-    @ApiOperation(value = "审批钥匙", notes = "传参：applyKeyId 申请钥匙id，residenceTime 申请钥匙记录id," +
+    @ApiOperation(value = "审批钥匙", notes = "传参：applyKeyId 申请钥匙id，residenceTime 居住有效期限," +
             " deviceGroupIdList 设备组id列表")
     public Result approveKey(HttpServletRequest request, Integer applyKeyId,
                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate residenceTime,
@@ -237,14 +240,23 @@ public class PassThroughController {
         List<HouseHold> list = page.getRecords();
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
-                if (StringUtils.isNotBlank(list.get(i).getCredentialNum())) {
-                    String rkcf = personLabelsService.getRkcfByIdNum(list.get(i).getCredentialNum());
-                    if ("1".equals(rkcf)) {
-                        list.get(i).setRkcf("户籍人口");
-                    } else if ("2".equals(rkcf)) {
-                        list.get(i).setRkcf("流动人口");
-                    } else {
+                if (StringUtils.isNotBlank(list.get(i).getMobile())) {
+                    //String rkcf = personLabelsService.getRkcfByIdNum(list.get(i).getCredentialNum());
+                    String rkcf = personLabelsService.getRkcfByMobile(list.get(i).getMobile(),communityCode);
+                    if (org.apache.commons.lang.StringUtils.isNotBlank(rkcf)) {
+                        if ("1".equals(rkcf)) {
+                            list.get(i).setRkcf("户籍人口");
+                        } else if ("2".equals(rkcf)) {
+                            list.get(i).setRkcf("流动人口");
+                        }
+                    }
+                   else {
                         list.get(i).setRkcf("未录入");
+                    }
+                    //String label = personBaseInfoService.getLabelsByCredentialNum(list.get(i).getCredentialNum());
+                    String label = personBaseInfoService.getLabelsByMobile(list.get(i).getMobile(), communityCode);
+                    if(StringUtils.isNotBlank(label)) {
+                        list.get(i).setLabels(label);
                     }
                 }
             }

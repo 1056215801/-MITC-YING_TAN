@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.WarnInfo;
 import com.mit.community.mapper.ProblemScheduleMapper;
 import com.mit.community.mapper.ReportProblemInfoMapper;
 import com.mit.community.mapper.ReportProblemMapper;
 import com.mit.community.mapper.ReportProblemPhotoMapper;
+import com.mit.community.mapper.mapper.BaoJinMapper;
 import com.mit.community.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class ReportProblemService {
     private ReportProblemInfoMapper reportProblemInfoMapper;
     @Autowired
     private ProblemScheduleMapper problemScheduleMapper;
+    @Autowired
+    private BaoJinMapper baoJinMapper;
 
     @Transactional
     public void save(Integer userId, String content, String problemType, String address, int isOpen, String base64PhotoJsonArray){
@@ -95,7 +99,7 @@ public class ReportProblemService {
         return id;
     }
 
-    public Page<ReportProblemInfo> listPage (String content, String userId, String timeYear, String timeMonth,String address, String problemType, Integer status, Integer pageNum, Integer pageSize) throws Exception{
+    public Page<ReportProblemInfo> listPage (String content, String userId, String timeYear, String timeMonth,String address, String problemType, String status, Integer pageNum, Integer pageSize) throws Exception{
         Page<ReportProblemInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<ReportProblemInfo> wrapper = new EntityWrapper<>();
         String timeYearSql = null;
@@ -109,7 +113,7 @@ public class ReportProblemService {
         if (StringUtils.isNotBlank(problemType)) {
             wrapper.eq("a.problemType", problemType);
         }
-        if (status != null) {
+        if (StringUtils.isNotBlank(status)) {
             wrapper.eq("a.status", status);
         }
         if (StringUtils.isBlank(userId)) {//所有人的
@@ -146,4 +150,23 @@ public class ReportProblemService {
     public void saveSendAfter(ReportProblem reportProblem){
         reportProblemMapper.updateById(reportProblem);
     }
+
+    public List<ReportProblem> getNosolveList(){
+        EntityWrapper<ReportProblem> wrapper = new EntityWrapper<>();
+        wrapper.eq("status",0);
+        wrapper.ne("mqlzd",10);//推送流程没有走完的
+        List<ReportProblem> list = reportProblemMapper.selectList(wrapper);
+        return list;
+    }
+
+    public List<ReportProblemLzInfo> getLzInfo(Integer reportProblemId, int mqlzd) {
+        return reportProblemInfoMapper.getLzInfo(reportProblemId, mqlzd);
+    }
+
+    public void saveBaoJin(WarnInfo warnInfo) {
+        warnInfo.setGmtCreate(LocalDateTime.now());
+        warnInfo.setGmtModified(LocalDateTime.now());
+        baoJinMapper.insert(warnInfo);
+    }
+
 }

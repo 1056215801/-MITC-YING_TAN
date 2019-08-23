@@ -21,5 +21,6 @@
 		<module>web-community-wanli</module>
         <module>dnake-api</module>
         <module>camera-manage</module>
+        <!--<module>videoStream-manage</module>-->
     </modules>
 </project>

@@ -47,4 +47,12 @@ public class DeviceDeviceGroupService extends ServiceImpl<DeviceDeviceGroupMappe
         wrapper.in("device_group_id", deviceGroupIds);
         return deviceDeviceGroupMapper.selectList(wrapper);
     }
+
+    public List<DeviceDeviceGroup> getGroupsByDeviceGroupId(Integer deviceGroupId) {
+        EntityWrapper<DeviceDeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_group_id", deviceGroupId);
+        return deviceDeviceGroupMapper.selectList(wrapper);
+    }
+
+
 }

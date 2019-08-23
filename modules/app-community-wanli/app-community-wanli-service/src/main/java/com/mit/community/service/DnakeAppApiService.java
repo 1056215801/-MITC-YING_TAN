@@ -98,6 +98,7 @@ public class DnakeAppApiService {
         map.put("platform", dnakeAppUser.getPlatform());
         map.put("clusterAccountId", DnakeConstants.CLUSTER_ACCOUNT_ID);
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        //System.out.println("====登录返回的结果invoke="+invoke);
         log.info(invoke);
         JSONObject jsonObject = JSON.parseObject(invoke);
         if (jsonObject.get("errorCode") != null) {
@@ -339,6 +340,7 @@ public class DnakeAppApiService {
     public String invokeProxy(String url, Map<String, Object> map, DnakeAppUser dnakeAppUser, String cellphone,
                               String deviceNum, String communityCode) {
         String invoke = DnakeAppApiUtil.invoke(url, map, dnakeAppUser);
+        //System.out.println("=====================invoke="+invoke);
         if (invoke.equals("请登录")) {
             User user = userService.getByCellphone(cellphone);
             DnakeLoginResponse dnakeLoginResponse = this.login(cellphone, user.getPassword());
@@ -430,14 +432,15 @@ public class DnakeAppApiService {
         /**
          * 查询本地住户信息
          */
+        //String[] communityCodeList = communityCode.split(",");
         HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone, communityCode);
         /**
          * 查询本地设备授权信息
          */
-        List<AuthorizeHouseholdDeviceGroup> groups = authorizeHouseholdDeviceGroupService.listByHouseholdId(houseHold.getHouseholdId());
+        List<AuthorizeAppHouseholdDeviceGroup> groups = authorizeAppHouseholdDeviceGroupService.listByHouseholdId(houseHold.getHouseholdId());
         List<Integer> groupList = new ArrayList<>();
         if (groups.size() != 0) {
-            for (AuthorizeHouseholdDeviceGroup group : groups) {
+            for (AuthorizeAppHouseholdDeviceGroup group : groups) {
                 if (!groupList.contains(group.getDeviceGroupId())) {
                     groupList.add(group.getDeviceGroupId());
                 }

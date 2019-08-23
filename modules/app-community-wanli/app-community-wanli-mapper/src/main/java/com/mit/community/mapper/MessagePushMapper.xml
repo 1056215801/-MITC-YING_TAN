@@ -6,6 +6,8 @@
     <resultMap type="com.mit.community.entity.entity.MessageUser" id="messageUserMap">
         <result property="userId" column="userId" javaType="int"
                 jdbcType="INTEGER"/>
+        <result property="person_baseinfo_id" column="person_baseinfo_id" javaType="int"
+                jdbcType="INTEGER"/>
         <result property="label" column="label" javaType="String"
                 jdbcType="VARCHAR"/>
     </resultMap>
@@ -28,7 +30,7 @@
     </select>
 
     <select id="getMessageUser" resultMap="messageUserMap">
-        select a.id as userId,b.label as label
+        select a.id as userId,b.label as label,b.id as person_baseinfo_id
         from user a left join person_baseinfo b on a.id_card_num=b.id_card_num where 1= 1 ${ew.sqlSegment}
     </select>
 

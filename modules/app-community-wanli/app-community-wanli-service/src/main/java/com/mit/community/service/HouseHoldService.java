@@ -11,7 +11,9 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.*;
+import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.util.AuthorizeStatusUtil;
 import com.mit.community.util.ConstellationUtil;
 import com.mit.community.util.DateUtils;
@@ -63,6 +65,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     private AuthorizeHouseholdDeviceGroupMapper authorizeHouseholdDeviceGroupMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PersonBaseInfoService personBaseInfoService;
 
     /**
      * 查询住户，通过住户列表
@@ -137,6 +141,27 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("mobile", cellphone);
         wrapper.eq("community_code", communityCode);
+        wrapper.eq("household_status", 1);//只查询状态“正常”的数据
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        if (houseHolds.isEmpty()) {
+            return null;
+        }
+        return houseHolds.get(0);
+    }
+
+    /**
+     * 查询住户信息，通过手机号和小区code
+     *
+     * @param cellphone     手机号
+     * @param communityCode 小区code
+     * @return 住户信息
+     * @author Mr.Deng
+     * @date 14:15 2018/12/12
+     */
+    public HouseHold getByCellphoneAndCommunityCodes(String cellphone, String[] communityCodes) {
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("mobile", cellphone);
+        wrapper.in("community_code", communityCodes);
         wrapper.eq("household_status", 1);//只查询状态“正常”的数据
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
         if (houseHolds.isEmpty()) {
@@ -390,6 +415,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     public String SaveHouseholdInfoByStepOne(String communityCode, JSONObject jsonObject) {
         String msg = "";
         //参数获取
+
         String data = jsonObject.toJSONString();
         JSONObject json = JSON.parseObject(data);
         String certificateStr = json.getString("certificateStr");//用户身份信息
@@ -404,6 +430,19 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         String urgentMobile = json.getString("urgentMobile");//代理人手机号
         String idCard = json.getString("idCard");//证件号码
         Integer householdId = Integer.valueOf(json.getString("householdId"));
+        PersonBaseInfo personBaseInfo = personBaseInfoService.getPersonByMobile(mobile, communityCode);
+        if (personBaseInfo == null) {
+            personBaseInfo = new PersonBaseInfo();
+            personBaseInfo.setName(householdName);
+            personBaseInfo.setCellphone(mobile);
+            if(StringUtils.isNotBlank(idCard)){
+                personBaseInfo.setIdCardNum(idCard);
+            }
+            personBaseInfo.setCommunity_code(communityCode);
+            personBaseInfo.setGmtCreate(LocalDateTime.now());
+            personBaseInfo.setGmtModified(LocalDateTime.now());
+            personBaseInfoService.save(personBaseInfo);
+        }
         try {
             List<HouseRoomsVo> list = new ArrayList<>();
             if (StringUtils.isNoneEmpty(houseProperties)) {
@@ -427,20 +466,32 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
              */
             HouseHold existHouseHold = this.getByHouseholdId(householdId);
             if (existHouseHold == null) {//新增
+                HouseHold houseHold = null;
                 // 本地数据库保存住户信息
                 JSONObject householdStrJson = JSON.parseObject(householdStr);
                 Integer gender = Integer.valueOf(householdStrJson.getString("gender"));
                 String residenceTimeStr = householdStrJson.getString("stayEndTime");
-                IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
-                String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
-                HouseHold houseHold = new HouseHold(communityCode, constellation, householdId, householdName,
-                        1, 0,
-                        gender, com.mit.common.util.DateUtils.parseStringToLocalDate(residenceTimeStr, "yyyy-MM-dd"),
-                        mobile, StringUtils.EMPTY,
-                        StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
-                        idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
-                        (short) 99, null, null, null, null, null, null, null,
-                        Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                if (StringUtils.isNotBlank(idCard)) {
+                    IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
+                    String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
+                    houseHold = new HouseHold(communityCode, constellation, householdId, householdName,
+                            1, 0,
+                            gender, com.mit.common.util.DateUtils.parseStringToLocalDate(residenceTimeStr, "yyyy-MM-dd"),
+                            mobile, StringUtils.EMPTY,
+                            StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
+                            idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
+                            (short) 99, null, null, null, null, null, null, null,
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                } else {
+                    houseHold = new HouseHold(communityCode, StringUtils.EMPTY, householdId, householdName,
+                            1, 0,
+                            gender, com.mit.common.util.DateUtils.parseStringToLocalDate(residenceTimeStr, "yyyy-MM-dd"),
+                            mobile, StringUtils.EMPTY,
+                            StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+                            StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
+                            (short) 99, null, null, null, null, null, null, null,
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                }
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
                 houseHoldMapper.insert(houseHold);
@@ -470,18 +521,31 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 msg = "success";
             } else {//修改
                 //根据住户id修改住户信息
+                HouseHold edidHousehold = null;
                 JSONObject householdStrJson = JSON.parseObject(householdStr);
                 Integer gender = Integer.valueOf(householdStrJson.getString("gender"));
                 String residenceTimeStr = householdStrJson.getString("stayEndTime");
-                IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
-                String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
-                HouseHold edidHousehold = new HouseHold(null, constellation, householdId, householdName, existHouseHold.getHouseholdStatus(),
-                        existHouseHold.getAuthorizeStatus(), gender, com.mit.common.util.DateUtils.parseStringToLocalDate(residenceTimeStr, "yyyy-MM-dd"),
-                        mobile, StringUtils.EMPTY,
-                        StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
-                        idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
-                        (short) 99, null, null, null, null, null, null, null,
-                        Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                if (StringUtils.isNotBlank(idCard)) {
+                    IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
+                    String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
+                    edidHousehold = new HouseHold(communityCode, constellation, householdId, householdName,
+                            1, 0,
+                            gender, com.mit.common.util.DateUtils.parseStringToLocalDate(residenceTimeStr, "yyyy-MM-dd"),
+                            mobile, StringUtils.EMPTY,
+                            StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
+                            idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
+                            (short) 99, null, null, null, null, null, null, null,
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                } else {
+                    edidHousehold = new HouseHold(communityCode, StringUtils.EMPTY, householdId, householdName,
+                            1, 0,
+                            gender, com.mit.common.util.DateUtils.parseStringToLocalDate(residenceTimeStr, "yyyy-MM-dd"),
+                            mobile, StringUtils.EMPTY,
+                            StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+                            StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
+                            (short) 99, null, null, null, null, null, null, null,
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                }
                 edidHousehold.setGmtModified(LocalDateTime.now());
                 houseHoldMapper.updateHouseholdByHouseholdId(edidHousehold);
                 //删除房屋信息
@@ -640,6 +704,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             }
             msg = "success";
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e.getMessage().toString());
         }
         return msg;

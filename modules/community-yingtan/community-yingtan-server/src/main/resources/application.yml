@@ -44,8 +44,8 @@ spring:
         reset-enable: true
         login-username: admin
         login-password: admin
-        allow: 192.168.1.222
-        #allow: 127.0.0.1
+        #allow: 192.168.1.222
+        allow: 127.0.0.1
       filter:
         stat:
           db-type: mysql
@@ -199,8 +199,9 @@ db:
   datasource:
     datasouce1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
-      #      url: jdbc:mysql://120.79.67.123:3306/community-wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+            #url: jdbc:mysql://120.79.67.123:3306/community-wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       #      username: kjtdb
       #      password: kjtdb123456
       username: root
@@ -208,7 +209,8 @@ db:
 
     datasouce2:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      #url: jdbc:mysql://192.168.1.222:3306/community_wanli?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/community_wanli?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
       username: root
       password: 123456
 
@@ -224,4 +226,4 @@ mybatis-plus:
     cache-enabled: true #配置的缓存的全局开关
     lazyLoadingEnabled: true #延时加载的开关
     multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用

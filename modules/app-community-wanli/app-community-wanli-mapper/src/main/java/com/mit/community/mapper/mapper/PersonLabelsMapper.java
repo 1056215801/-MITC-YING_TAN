@@ -1,9 +1,10 @@
 package com.mit.community.mapper.mapper;
 
-import com.mit.community.entity.MenJinInfo;
-import com.mit.community.entity.TaskMessageContent;
-import com.mit.community.entity.TaskMessageSirInfo;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.entity.*;
+import com.mit.community.entity.entity.DeviceGroup;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ public interface PersonLabelsMapper {
     public String getLabelsByHousehold(@Param("household") Integer household);
 
     public String getRkcfByIdNum(@Param("idNum") String idNum);
+    String getRkcfByMobile(@Param("mobile") String mobile);
 
     public Integer getSirPersonBaseInfoId(@Param("id") Integer id);
 
@@ -25,12 +27,21 @@ public interface PersonLabelsMapper {
 
     public int getOutCount();
 
+
     public String getSirPhoneByPersonBaseInfoId(@Param("person_baseinfo_id") Integer person_baseinfo_id);
 
     public void updateMqlzd(@Param("id") Integer id);
 
-    public String getPeopleOue();
+    public List<PeopleOut> getPeopleOue();
+
     public String getMenJinTime(@Param("name")String name);
     public String getContentByTime(@Param("time")LocalDateTime time);
     public List<MenJinInfo> getMenJinList(@Param("name")String name);
+    public List<WgyInfo> getWgyList(@Param("wgyId")Integer wgyId);
+    public String getWgyDeptById(@Param("id")Integer id);
+    List<DeviceGroup> selectInfoPage(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceGroup> wrapper, @Param("sql")String sql);
+    public String getTimeCha(@Param("id")String id);
+    String getGroupName(@Param("id")String id);
+    String getMaxDeviceId();
+    List<OwnerShipInfo> getOwnerInfo(@Param("cph")String cph);
 }

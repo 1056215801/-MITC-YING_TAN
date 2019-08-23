@@ -46,6 +46,8 @@ public interface InfoSearchMapper {
 
     List<InfoSearch> selectOldPeopleInfoPage(RowBounds rowBounds, @Param("ew") Wrapper<InfoSearch> wrapper);
 
+    List<InfoSearch> selectZdyInfoPage(RowBounds rowBounds, @Param("ew") Wrapper<InfoSearch> wrapper);
+
     List<InfoSearch> selectPersonBaseInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectAzbInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectBearInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
@@ -61,7 +63,14 @@ public interface InfoSearchMapper {
     List<InfoSearch> selectXmsfPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectZdqsnPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
     List<InfoSearch> selectZszhPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
+    List<InfoSearch> selectZdyInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
+    List<InfoSearch> selectLdzPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
 
+    List<InfoSearch> selectWgyPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
+
+    List<InfoSearch> selectZyzPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
+
+    List<InfoSearch> selectOldPeopleInfo(@Param("ew") Wrapper<InfoSearch> wrapper);
 
     public String getByPhone(@Param("phone")String phone);
 }

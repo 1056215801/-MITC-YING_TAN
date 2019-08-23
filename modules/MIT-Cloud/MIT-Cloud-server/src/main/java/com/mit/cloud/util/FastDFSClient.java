@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mit.cloud.config.FastDFSConf;
 
+import java.io.File;
+
 /**
  * 文件上传工具类
  *
@@ -114,4 +116,6 @@ public class FastDFSClient {
         String url = uploadFile(file.getBytes(), extName);
         return FastDFSConf.nginxUrl + "/" + url;
     }
+
+
 }

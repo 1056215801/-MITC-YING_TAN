@@ -2,11 +2,16 @@ package com.mit.community.service;
 
 import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.common.util.DateUtils;
+import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.User;
 import com.mit.community.mapper.UserMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -85,5 +90,72 @@ public class UserService {
         User user = new User();
         user.setCellphone(cellphone);
         userMapper.update(user, wrapper);
+    }
+
+    /**
+     * 将新增的住户中没有注册app账号的注册原始账号
+     * @param list
+     */
+    public void insert(List<HouseHold> list) {
+        User user = null;
+        for (int i=0; i<list.size(); i++) {
+           User isExits = getByCellphone(list.get(i).getMobile());
+            if (isExits == null) {
+                short gender = 0;
+                if (list.get(i).getGender() == 0){//女
+                    gender = 0;
+                } else {
+                    gender = 1;
+                }
+                user = new User();
+                user.setCellphone(list.get(i).getMobile());
+                user.setPassword("123456");
+                user.setHouseholdId(list.get(i).getHouseholdId());
+                user.setNickname(list.get(i).getHouseholdName());
+                user.setGender(gender);
+                user.setRole("普通业主");
+                user.setIcon_url("http://www.miesofor.tech/1ec47936-e19a-43d2-86c1-481ddfe07a8c.png");
+                user.setBirthday(LocalDate.of(1900, 1,
+                        1));
+                user.setGmtCreate(LocalDateTime.now());
+                user.setGmtModified(LocalDateTime.now());
+                userMapper.insert(user);
+            }
+        }
+    }
+
+    public void delete(List<String> list) {
+        EntityWrapper<User> wrapper = new EntityWrapper<>();
+        wrapper.in("cellphone", list);
+        userMapper.delete(wrapper);
+    }
+
+    public void update(List<HouseHold> list) {
+        User user = null;
+        for (int i=0; i<list.size(); i++) {
+            User isExits = getByCellphone(list.get(i).getMobile());
+            if (isExits == null) {
+                short gender = 0;
+                if (list.get(i).getGender() == 0){//女
+                    gender = 0;
+                } else {
+                    gender = 1;
+                }
+                user = new User();
+                user.setCellphone(list.get(i).getMobile());
+                user.setPassword("123456");
+                user.setHouseholdId(list.get(i).getHouseholdId());
+                user.setNickname(list.get(i).getHouseholdName());
+                user.setGender(gender);
+                user.setRole("普通业主");
+                user.setIcon_url("http://www.miesofor.tech/1ec47936-e19a-43d2-86c1-481ddfe07a8c.png");
+                System.out.println("狄耐克的性别="+list.get(i).getGender()+",user的性别="+user.getGender());
+                user.setBirthday(LocalDate.of(1900, 1,
+                        1));
+                user.setGmtCreate(LocalDateTime.now());
+                user.setGmtModified(LocalDateTime.now());
+                userMapper.insert(user);
+            }
+        }
     }
 }

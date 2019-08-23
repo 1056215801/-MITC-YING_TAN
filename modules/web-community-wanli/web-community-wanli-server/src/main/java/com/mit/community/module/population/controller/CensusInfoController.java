@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 人员户籍信息
+ * @author xq
+ * @date 2019/7/23
+ * @company mitesofor
+ */
 @RequestMapping(value = "/censusInfo")
 @RestController
 @Slf4j

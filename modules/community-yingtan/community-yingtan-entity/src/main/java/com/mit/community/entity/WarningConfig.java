@@ -13,4 +13,5 @@ public class WarningConfig extends BaseEntity{
     private String label;
     private int isWarning;
     private String warningInfo;
+    private String communityCode;
 }

@@ -28,7 +28,7 @@ public class XmsfPeopleService {
         xmsfPeopleInfo.setGmtModified(LocalDateTime.now());
         xmsfPeopleMapper.insert(xmsfPeopleInfo);*/
     }
-
+    @Transactional
     public void save(XmsfPeopleInfo xmsfPeopleInfo) {
         EntityWrapper<XmsfPeopleInfo> wrapper = new EntityWrapper<>();
         wrapper.eq("person_baseinfo_id", xmsfPeopleInfo.getPerson_baseinfo_id());

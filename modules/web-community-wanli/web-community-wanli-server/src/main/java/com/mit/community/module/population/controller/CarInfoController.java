@@ -22,6 +22,9 @@ import java.util.List;
 
 /**
  * 车辆信息
+ * @author xq
+ * @date 2019/6/8
+ * @company mitesofor
  */
 
 @RequestMapping(value = "/carInfo")

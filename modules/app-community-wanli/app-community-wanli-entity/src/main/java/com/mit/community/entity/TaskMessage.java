@@ -16,4 +16,5 @@ public class TaskMessage extends BaseEntity{
     private Integer wgyId;//网格员id
     private int status;//0未查看；1查看
     private int isRepeat;//是否转发上级 0否 1是
+    private int mqlzd;
 }

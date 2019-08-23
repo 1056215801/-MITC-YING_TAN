@@ -1,11 +1,13 @@
 package com.mit.community.population.service;
 
-import com.mit.community.entity.MenJinInfo;
-import com.mit.community.entity.TaskMessageContent;
-import com.mit.community.entity.TaskMessageSirInfo;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.mit.community.entity.*;
+import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.mit.community.entity.entity.DeviceGroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
 public class PersonLabelsService {
     @Autowired
     private PersonLabelsMapper labelsMapper;
+    @Autowired
+    private PersonBaseInfoService personBaseInfoService;
 
     public void saveLabels(String labels, Integer userId) {
         labelsMapper.saveLabels(labels, userId);
@@ -25,6 +29,25 @@ public class PersonLabelsService {
 
     public String getRkcfByIdNum(String idNum) {
         return labelsMapper.getRkcfByIdNum(idNum);
+    }
+
+    public String getRkcfByMobile(String mobile, String communityCode) {
+        /*String ret = labelsMapper.getRkcfByMobile(mobile);
+        if(){
+            return ret;
+        } else{
+            return null;
+        }*/
+        PersonBaseInfo personBaseInfo = personBaseInfoService.getPersonByMobile(mobile, communityCode);
+        if (personBaseInfo != null) {
+            if (personBaseInfo.getRksx() == 0) {
+                return "";
+            } else {
+                return String.valueOf(personBaseInfo.getRksx());
+            }
+        }
+        return null;
+        //return labelsMapper.getRkcfByMobile(mobile);
     }
 
     public Integer getSirPersonBaseInfoId(Integer id) {
@@ -55,10 +78,15 @@ public class PersonLabelsService {
         labelsMapper.updateMqlzd(id);
     }
 
-    public String getPeopleOue() {
-        return labelsMapper.getPeopleOue();
-    }
 
+    public PeopleOut getPeopleOue() {
+        List<PeopleOut> list = labelsMapper.getPeopleOue();
+        if (!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
     public String getMenJinTime(String name){
         return labelsMapper.getMenJinTime(name);
     }
@@ -71,4 +99,27 @@ public class PersonLabelsService {
         return labelsMapper.getMenJinList(name);
     }
 
+    public List<WgyInfo> getWgyList(Integer wgyId) {
+        return labelsMapper.getWgyList(wgyId);
+    }
+
+    public String getWgyDeptById(Integer id){
+        return labelsMapper.getWgyDeptById(id);
+    }
+
+    public String getTimeCha(String id) {
+        return labelsMapper.getTimeCha(id);
+    }
+
+    public String getGroupName(String id){
+        return labelsMapper.getGroupName(id);
+    }
+
+    public String getMaxDeviceId(){
+        return labelsMapper.getMaxDeviceId();
+    }
+
+    public List<OwnerShipInfo> getOwnerInfo(String cph){
+        return labelsMapper.getOwnerInfo(cph);
+    }
 }

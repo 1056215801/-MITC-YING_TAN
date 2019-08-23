@@ -12,7 +12,7 @@ public class Test {
         /**
          * STEP1：设置平台参数，根据实际情况,设置host appkey appsecret 三个参数.
          */
-        ArtemisConfig.host = "192.168.1.2:443";
+        ArtemisConfig.host = "192.168.1.230:443";
         // 秘钥Appkey
         ArtemisConfig.appKey = "20534145";
         // 秘钥AppSecret

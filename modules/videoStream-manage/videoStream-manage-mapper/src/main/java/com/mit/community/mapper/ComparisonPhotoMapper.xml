@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mit.community.mapper.ComparisonPhotoMapper">
+	<resultMap type="com.mit.community.entity.ComparisonInterfaceData" id="comparisonInterfaceDataMap">
+		<result property="id" column="id" javaType="Long" jdbcType="INTEGER"/>
+		<result property="age" column="age" javaType="int" jdbcType="INTEGER"/>
+		<result property="sex" column="sex" javaType="String" jdbcType="VARCHAR"/>
+		<result property="race" column="race" javaType="String" jdbcType="VARCHAR"/>
+		<result property="expression" column="expression" javaType="String" jdbcType="VARCHAR"/>
+		<result property="glasses" column="glasses" javaType="String" jdbcType="VARCHAR"/>
+		<result property="mood" column="mood" javaType="String" jdbcType="VARCHAR"/>
+		<result property="levelOfAppearance" column="levelOfAppearance" javaType="double" jdbcType="INTEGER"/>
+		<result property="shootTime" column="shoot_time" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
+			jdbcType="OTHER" />
+		<result property="imageUrl" column="imageUrl" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="similarity" column="similarity" javaType="Double"
+			jdbcType="INTEGER" />
+		<result property="name" column="name" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="sexuality" column="sexuality" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="userAge" column="userAge" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="imageUrlUser" column="imageUrlUser" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<select id="getComparisonPhoto" resultMap="comparisonInterfaceDataMap">
+		select a.age,a.sex,a.race,a.expression,a.glasses,a.mood,a.similarity,a.image_url as imageUrl, a.gmt_create as shoot_time,b.name,b.gender as sexuality,b.photo_url as imageUrlUser
+		from face_comparison_data a left join user b on a.identity_num=b.id_card_num
+		where a.device_id=#{deviceId} and to_days(a.gmt_create) = to_days(now())
+	</select>
+	<select id="selectComparisonPage" resultType="com.mit.community.entity.ComparisonInterfaceData">
+		select a.age,a.sex,a.race,a.expression,a.glasses,a.mood,a.similarity,a.image_url as imageUrl, b.name,b.gender as sexuality,b.photo_url as imageUrlUser
+		from face_comparison_data a left join user b on a.identity_num=b.id_card_num where 1= 1 ${ew.sqlSegment}
+	</select>
+</mapper>

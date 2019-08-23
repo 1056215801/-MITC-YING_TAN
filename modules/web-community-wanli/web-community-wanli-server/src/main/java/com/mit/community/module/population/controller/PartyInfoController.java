@@ -1,19 +1,14 @@
 package com.mit.community.module.population.controller;
 
-import com.mit.community.entity.LdzInfo;
-import com.mit.community.entity.OldInfo;
-import com.mit.community.entity.WgyInfo;
-import com.mit.community.entity.ZyzInfo;
+import com.mit.community.entity.*;
 import com.mit.community.entity.entity.*;
 import com.mit.community.population.service.*;
-import com.mit.community.service.LdzService;
-import com.mit.community.service.OldService;
-import com.mit.community.service.WgyService;
-import com.mit.community.service.ZyzService;
+import com.mit.community.service.*;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequestMapping(value = "/partyInfo")
 @RestController
@@ -68,6 +65,8 @@ public class PartyInfoController {
     private WgyService wgyService;
     @Autowired
     private LdzService ldzService;
+    @Autowired
+    private ZdyPersonLabelService zdyPersonLabelService;
 
 
     @PostMapping("/saveParty")
@@ -98,166 +97,262 @@ public class PartyInfoController {
             // 获取请求的流信息
             in = request.getInputStream();
             String params = inputStream2String(in, "");
-            System.out.println(params);
             JSONObject jsonObject = JSONObject.fromObject(params);
             //境外人员
-            String jwry = jsonObject.getString("jwry");
-            if (!"0".equals(jwry)) {
-                JSONObject obj = jsonObject.getJSONObject("jwry");
-                EngPeopleInfo engPeopleInfo = (EngPeopleInfo) JSONObject.toBean(obj, EngPeopleInfo.class);
-                if (engPeopleInfo.getPerson_baseinfo_id() != null) {
-                    engPeopleService.save(engPeopleInfo);
+            if (jsonObject.has("境外人员")) {
+                String jwry = jsonObject.getString("境外人员");
+                if (!"0".equals(jwry)) {
+                    JSONObject obj = jsonObject.getJSONObject("境外人员");
+                    EngPeopleInfo engPeopleInfo = (EngPeopleInfo) JSONObject.toBean(obj, EngPeopleInfo.class);
+                    if (engPeopleInfo.getPerson_baseinfo_id() != null) {
+                        engPeopleService.save(engPeopleInfo);
+                    }
                 }
             }
+
             //留守人员
-            String lsry = jsonObject.getString("lsry");
-            if (!"0".equals(lsry)) {
-                JSONObject obj = jsonObject.getJSONObject("lsry");
-                StayPeopleInfo stayPeopleInfo = (StayPeopleInfo) JSONObject.toBean(obj, StayPeopleInfo.class);
-                if (stayPeopleInfo.getPerson_baseinfo_id() != null) {
-                    stayPeopleService.save(stayPeopleInfo);
+            if (jsonObject.has("留守人员")) {
+                String lsry = jsonObject.getString("留守人员");
+                if (!"0".equals(lsry)) {
+                    JSONObject obj = jsonObject.getJSONObject("留守人员");
+                    StayPeopleInfo stayPeopleInfo = (StayPeopleInfo) JSONObject.toBean(obj, StayPeopleInfo.class);
+                    if (stayPeopleInfo.getPerson_baseinfo_id() != null) {
+                        stayPeopleService.save(stayPeopleInfo);
+                    }
                 }
             }
+
             //党员
-            String dy = jsonObject.getString("dy");
-            if (!"0".equals(dy)) {
-                JSONObject obj = jsonObject.getJSONObject("dy");
-                PartyInfo partyInfo = (PartyInfo) JSONObject.toBean(obj, PartyInfo.class);
-                if (partyInfo.getPerson_baseinfo_id() != null) {
-                    partyInfoService.save(partyInfo);
+            if (jsonObject.has("党员")) {
+                String dy = jsonObject.getString("党员");
+                if (!"0".equals(dy)) {
+                    JSONObject obj = jsonObject.getJSONObject("党员");
+                    PartyInfo partyInfo = (PartyInfo) JSONObject.toBean(obj, PartyInfo.class);
+                    if (partyInfo.getPerson_baseinfo_id() != null) {
+                        partyInfoService.save(partyInfo);
+                    }
                 }
             }
+
             //计生人员
-            String js = jsonObject.getString("js");
-            if (!"0".equals(js)) {
-                JSONObject obj = jsonObject.getJSONObject("js");
-                BearInfo bearInfo = (BearInfo) JSONObject.toBean(obj, BearInfo.class);
-                if (bearInfo.getPerson_baseinfo_id() != null) {
-                    bearInfoService.save(bearInfo);
+            if (jsonObject.has("计生人员")) {
+                String js = jsonObject.getString("计生人员");
+                if (!"0".equals(js)) {
+                    JSONObject obj = jsonObject.getJSONObject("计生人员");
+                    BearInfo bearInfo = (BearInfo) JSONObject.toBean(obj, BearInfo.class);
+                    if (bearInfo.getPerson_baseinfo_id() != null) {
+                        bearInfoService.save(bearInfo);
+                    }
                 }
             }
+
             //兵役
-            String by = jsonObject.getString("by");
-            if (!"0".equals(by)) {
-                JSONObject obj = jsonObject.getJSONObject("by");
-                MilitaryServiceInfo militaryServiceInfo = (MilitaryServiceInfo) JSONObject.toBean(obj, MilitaryServiceInfo.class);
-                if (militaryServiceInfo.getPerson_baseinfo_id() != null) {
-                    militaryServiceService.save(militaryServiceInfo);
+            if (jsonObject.has("兵役人员")) {
+                String by = jsonObject.getString("兵役人员");
+                if (!"0".equals(by)) {
+                    JSONObject obj = jsonObject.getJSONObject("兵役人员");
+                    MilitaryServiceInfo militaryServiceInfo = (MilitaryServiceInfo) JSONObject.toBean(obj, MilitaryServiceInfo.class);
+                    if (militaryServiceInfo.getPerson_baseinfo_id() != null) {
+                        militaryServiceService.save(militaryServiceInfo);
+                    }
                 }
             }
+
             //刑满释放
-            String xmsf = jsonObject.getString("xmsf");
-            if (!"0".equals(xmsf)) {
-                JSONObject obj = jsonObject.getJSONObject("xmsf");
-                XmsfPeopleInfo xmsfPeopleInfo = (XmsfPeopleInfo) JSONObject.toBean(obj, XmsfPeopleInfo.class);
-                if (xmsfPeopleInfo.getPerson_baseinfo_id() != null) {
-                    xmsfPeopleService.save(xmsfPeopleInfo);
+            if (jsonObject.has("刑满释放人员")) {
+                String xmsf = jsonObject.getString("刑满释放人员");
+                if (!"0".equals(xmsf)) {
+                    JSONObject obj = jsonObject.getJSONObject("刑满释放人员");
+                    XmsfPeopleInfo xmsfPeopleInfo = (XmsfPeopleInfo) JSONObject.toBean(obj, XmsfPeopleInfo.class);
+                    if (xmsfPeopleInfo.getPerson_baseinfo_id() != null) {
+                        xmsfPeopleService.save(xmsfPeopleInfo);
+                    }
                 }
             }
+
             //疑似传销
-            String yscx = jsonObject.getString("yscx");
-            if (!"0".equals(yscx)) {
-                JSONObject obj = jsonObject.getJSONObject("yscx");
-                CXInfo cXInfo = (CXInfo) JSONObject.toBean(obj, CXInfo.class);
-                if (cXInfo.getPerson_baseinfo_id() != null) {
-                    cXService.save(cXInfo);
+            if (jsonObject.has("疑似传销人员")) {
+                String yscx = jsonObject.getString("疑似传销人员");
+                if (!"0".equals(yscx)) {
+                    JSONObject obj = jsonObject.getJSONObject("疑似传销人员");
+                    CXInfo cXInfo = (CXInfo) JSONObject.toBean(obj, CXInfo.class);
+                    if (cXInfo.getPerson_baseinfo_id() != null) {
+                        cXService.save(cXInfo);
+                    }
                 }
             }
+
             //上访人员
-            String sfyy = jsonObject.getString("sfyy");
-            if (!"0".equals(sfyy)) {
-                JSONObject obj = jsonObject.getJSONObject("sfyy");
-                SFPeopleInfo sFPeopleInfo = (SFPeopleInfo) JSONObject.toBean(obj, SFPeopleInfo.class);
-                if (sFPeopleInfo.getPerson_baseinfo_id() != null) {
-                    sFPeopleService.save(sFPeopleInfo);
+            if (jsonObject.has("上访人员")) {
+                String sfyy = jsonObject.getString("上访人员");
+                if (!"0".equals(sfyy)) {
+                    JSONObject obj = jsonObject.getJSONObject("上访人员");
+                    SFPeopleInfo sFPeopleInfo = (SFPeopleInfo) JSONObject.toBean(obj, SFPeopleInfo.class);
+                    if (sFPeopleInfo.getPerson_baseinfo_id() != null) {
+                        sFPeopleService.save(sFPeopleInfo);
+                    }
                 }
             }
+
             //社区矫正
-            String sqjz = jsonObject.getString("sqjz");
-            if (!"0".equals(sqjz)) {
-                JSONObject obj = jsonObject.getJSONObject("sqjz");
-                SQJZPeopleinfo sQJZPeopleinfo = (SQJZPeopleinfo) JSONObject.toBean(obj, SQJZPeopleinfo.class);
-                if (sQJZPeopleinfo.getPerson_baseinfo_id() != null) {
-                    sQJZPeopleService.save(sQJZPeopleinfo);
+            if (jsonObject.has("社区矫正人员")) {
+                String sqjz = jsonObject.getString("社区矫正人员");
+                if (!"0".equals(sqjz)) {
+                    JSONObject obj = jsonObject.getJSONObject("社区矫正人员");
+                    SQJZPeopleinfo sQJZPeopleinfo = (SQJZPeopleinfo) JSONObject.toBean(obj, SQJZPeopleinfo.class);
+                    if (sQJZPeopleinfo.getPerson_baseinfo_id() != null) {
+                        sQJZPeopleService.save(sQJZPeopleinfo);
+                    }
                 }
             }
+
             //肇事肇祸
-            String zszh = jsonObject.getString("zszh");
-            if (!"0".equals(zszh)) {
-                JSONObject obj = jsonObject.getJSONObject("zszh");
-                ZSZHInfo zSZHInfo = (ZSZHInfo) JSONObject.toBean(obj, ZSZHInfo.class);
-                if (zSZHInfo.getPerson_baseinfo_id() != null) {
-                    zSZHService.save(zSZHInfo);
+            if (jsonObject.has("肇事肇祸等严重精神障碍患者")) {
+                String zszh = jsonObject.getString("肇事肇祸等严重精神障碍患者");
+                if (!"0".equals(zszh)) {
+                    JSONObject obj = jsonObject.getJSONObject("肇事肇祸等严重精神障碍患者");
+                    ZSZHInfo zSZHInfo = (ZSZHInfo) JSONObject.toBean(obj, ZSZHInfo.class);
+                    if (zSZHInfo.getPerson_baseinfo_id() != null) {
+                        zSZHService.save(zSZHInfo);
+                    }
                 }
             }
+
             //吸毒人员
-            String xdry = jsonObject.getString("xdry");
-            if (!"0".equals(xdry)) {
-                JSONObject obj = jsonObject.getJSONObject("xdry");
-                XDInfo xDInfo = (XDInfo) JSONObject.toBean(obj, XDInfo.class);
-                if (xDInfo.getPerson_baseinfo_id() != null) {
-                    xDService.save(xDInfo);
+            if (jsonObject.has("吸毒人员")) {
+                String xdry = jsonObject.getString("吸毒人员");
+                if (!"0".equals(xdry)) {
+                    JSONObject obj = jsonObject.getJSONObject("吸毒人员");
+                    XDInfo xDInfo = (XDInfo) JSONObject.toBean(obj, XDInfo.class);
+                    if (xDInfo.getPerson_baseinfo_id() != null) {
+                        xDService.save(xDInfo);
+                    }
                 }
             }
+
             //艾滋病人员
-            String azb = jsonObject.getString("azb");
-            if (!"0".equals(azb)) {
-                JSONObject obj = jsonObject.getJSONObject("azb");
-                AzbInfo azbInfo = (AzbInfo) JSONObject.toBean(obj, AzbInfo.class);
-                if (azbInfo.getPerson_baseinfo_id() != null) {
-                    aZBService.save(azbInfo);
+            if (jsonObject.has("艾滋病危险人员")) {
+                String azb = jsonObject.getString("艾滋病危险人员");
+                if (!"0".equals(azb)) {
+                    JSONObject obj = jsonObject.getJSONObject("艾滋病危险人员");
+                    AzbInfo azbInfo = (AzbInfo) JSONObject.toBean(obj, AzbInfo.class);
+                    if (azbInfo.getPerson_baseinfo_id() != null) {
+                        aZBService.save(azbInfo);
+                    }
                 }
             }
+
             //重点青少年
-            String zdqsn = jsonObject.getString("zdqsn");
-            if (!"0".equals(zdqsn)) {
-                JSONObject obj = jsonObject.getJSONObject("zdqsn");
-                ZDQSNCInfo zDQSNCInfo = (ZDQSNCInfo) JSONObject.toBean(obj, ZDQSNCInfo.class);
-                if (zDQSNCInfo.getPerson_baseinfo_id() != null) {
-                    zDQSNCService.save(zDQSNCInfo);
+            if (jsonObject.has("重点青少年")) {
+                String zdqsn = jsonObject.getString("重点青少年");
+                if (!"0".equals(zdqsn)) {
+                    JSONObject obj = jsonObject.getJSONObject("重点青少年");
+                    ZDQSNCInfo zDQSNCInfo = (ZDQSNCInfo) JSONObject.toBean(obj, ZDQSNCInfo.class);
+                    if (zDQSNCInfo.getPerson_baseinfo_id() != null) {
+                        zDQSNCService.save(zDQSNCInfo);
+                    }
                 }
             }
+
             //志愿者
-            String zyz = jsonObject.getString("zyz");
-            if (!"0".equals(zyz)) {
-                JSONObject obj = jsonObject.getJSONObject("zyz");
-                ZyzInfo zyzInfo = (ZyzInfo) JSONObject.toBean(obj, ZyzInfo.class);
-                if (zyzInfo.getPerson_baseinfo_id() != null) {
-                    zyzService.save(zyzInfo);
+            if (jsonObject.has("志愿者")) {
+                String zyz = jsonObject.getString("志愿者");
+                if (!"0".equals(zyz)) {
+                    JSONObject obj = jsonObject.getJSONObject("志愿者");
+                    ZyzInfo zyzInfo = (ZyzInfo) JSONObject.toBean(obj, ZyzInfo.class);
+                    if (zyzInfo.getPerson_baseinfo_id() != null) {
+                        zyzService.save(zyzInfo);
+                    }
                 }
             }
+
             //60岁以上老人
-            String old = jsonObject.getString("old");
-            if (!"0".equals(old)) {
-                JSONObject obj = jsonObject.getJSONObject("old");
-                OldInfo oldInfo = (OldInfo) JSONObject.toBean(obj, OldInfo.class);
-                if (oldInfo.getPerson_baseinfo_id() != null) {
-                    oldService.save(oldInfo);
+            if (jsonObject.has("六十岁以上老人")) {
+                String old = jsonObject.getString("六十岁以上老人");
+                if (!"0".equals(old)) {
+                    JSONObject obj = jsonObject.getJSONObject("六十岁以上老人");
+                    OldInfo oldInfo = (OldInfo) JSONObject.toBean(obj, OldInfo.class);
+                    if (oldInfo.getPerson_baseinfo_id() != null) {
+                        oldService.save(oldInfo);
+                    }
                 }
             }
+
             //网格员
-            String wgy = jsonObject.getString("wgy");
-            if (!"0".equals(wgy)) {
-                JSONObject obj = jsonObject.getJSONObject("wgy");
-                WgyInfo wgyInfo = (WgyInfo) JSONObject.toBean(obj, WgyInfo.class);
-                if (wgyInfo.getPerson_baseinfo_id() != null) {
-                    wgyService.save(wgyInfo);
+            if (jsonObject.has("网格员")) {
+                String wgy = jsonObject.getString("网格员");
+                if (!"0".equals(wgy)) {
+                    JSONObject obj = jsonObject.getJSONObject("网格员");
+                    WgyInfo wgyInfo = (WgyInfo) JSONObject.toBean(obj, WgyInfo.class);
+                    if (wgyInfo.getPerson_baseinfo_id() != null) {
+                        wgyService.save(wgyInfo);
+                    }
                 }
             }
+
             //楼栋长
-            String ldz = jsonObject.getString("ldz");
-            if (!"0".equals(ldz)) {
-                JSONObject obj = jsonObject.getJSONObject("ldz");
-                LdzInfo ldzInfo = (LdzInfo) JSONObject.toBean(obj, LdzInfo.class);
-                if (ldzInfo.getPerson_baseinfo_id() != null) {
-                    ldzService.save(ldzInfo);
+            if (jsonObject.has("楼栋长")) {
+                String ldz = jsonObject.getString("楼栋长");
+                if (!"0".equals(ldz)) {
+                    JSONObject obj = jsonObject.getJSONObject("楼栋长");
+                    LdzInfo ldzInfo = (LdzInfo) JSONObject.toBean(obj, LdzInfo.class);
+                    if (ldzInfo.getPerson_baseinfo_id() != null) {
+                        ldzService.save(ldzInfo);
+                    }
                 }
             }
+
         } catch (Exception e) {
+
             log.error(e.getMessage());
+            return Result.error("信息保存失败");
         }
         return Result.success("信息保存成功");
     }
+
+    @PostMapping("/saveZdy")
+    @ApiOperation(value = "保存自定义信息", notes = "")
+    public Result saveZdy(HttpServletRequest request) {
+        InputStream in = null;
+        try{
+            in = request.getInputStream();
+            String params = inputStream2String(in, "");
+            JSONObject jsonObject = JSONObject.fromObject(params);
+            if (jsonObject.has("personBaseinfoId")) {
+                Integer personBaseinfoId = Integer.parseInt(jsonObject.getString("personBaseinfoId"));
+                if (jsonObject.has("labels")) {
+                    List<ZdyPersonLabel> list = new ArrayList<>();
+                    JSONArray array = jsonObject.getJSONArray("labels");
+                    ZdyPersonLabel zdyPersonLabel = null;
+                    for (int i =0; i<array.size();i++) {
+                        net.sf.json.JSONObject data = (net.sf.json.JSONObject) array.get(i);
+                        zdyPersonLabel = new ZdyPersonLabel();
+                        zdyPersonLabel.setPersonBaseinfoId(personBaseinfoId);
+                        zdyPersonLabel.setLabel(data.getString("label"));
+                        zdyPersonLabel.setRemarks(data.getString("remarks"));
+                        list.add(zdyPersonLabel);
+                    }
+                    zdyPersonLabelService.saveList(personBaseinfoId, list);
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.error("保存失败");
+        }
+
+        return Result.success("保存成功");
+    }
+
+
+    @PostMapping("/getZdy")
+    @ApiOperation(value = "获取自定义信息", notes = "")
+    public Result saveZdy(HttpServletRequest request, Integer personBaseinfoId) {
+        List<ZdyPersonLabel> list = zdyPersonLabelService.getListByPersonBaseInfoId(personBaseinfoId);
+        return Result.success(list);
+    }
+
+
 
 
     @PostMapping("/delete")
