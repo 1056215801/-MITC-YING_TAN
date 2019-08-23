@@ -48,4 +48,12 @@ public class Building extends BaseEntity {
      */
     @TableField("building_status")
     private Integer buildingStatus;
+    /**
+     * 排序
+     */
+    @TableField("sort")
+    private Integer sort;
+
+    @TableField(exist = false)
+    private String zoneName;
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.RoomMapper">
+
+    <resultMap id="baseMap" type="com.mit.community.entity.RoomVo">
+        <id property="id" column="id" javaType="Integer" jdbcType="INTEGER" />
+        <result property="roomNum" column="room_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zoneName" column="zone_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="buildingName" column="building_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unitName" column="unit_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="roomStatus" column="room_status" javaType="Integer"
+                jdbcType="INTEGER" />
+    </resultMap>
+    <select id="selectMyPage" resultMap="baseMap">
+       SELECT r.id, r.room_num,z.zone_name,b.building_name,u.unit_name,
+       r.room_status FROM room r LEFT JOIN zone z ON r.zone_id=z.zone_id
+       LEFT JOIN building b ON r.building_id=b.building_id LEFT JOIN unit u ON r.unit_id=u.unit_id
+       <where>
+           ${ew.sqlSegment}
+       </where>
+    </select>
+
+</mapper>

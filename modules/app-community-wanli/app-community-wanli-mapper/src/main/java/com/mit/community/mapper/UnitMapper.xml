@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.UnitMapper">
+
+    <resultMap id="baseMap" type="com.mit.community.entity.Unit">
+        <id property="id" column="id" javaType="Integer" jdbcType="INTEGER" />
+        <result property="communityCode" column="community_code" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="zoneId" column="zone_id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="buildingId" column="building_id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="unitId" column="unit_id" javaType="Integer"
+                jdbcType="VARCHAR" />
+        <result property="unitCode" column="unit_code" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unitName" column="unit_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="unitStatus" column="unit_status" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="sort" column="sort" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="zoneName" column="zoneName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="buildingName" column="buildingName" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getUnitList" resultMap="baseMap">
+        SELECT u.`id`,u.`unit_name`,u.`unit_code`,u.`building_id`,b.`building_name` buildingName,
+        u.`zone_id`,z.`zone_name` zoneName,u.`sort`,u.`unit_status`
+        FROM unit u LEFT JOIN building b ON u.`building_id`=b.`building_id` LEFT JOIN zone z ON b.`zone_id`=z.`zone_id`
+        <where>
+            ${ew.sqlSegment}
+        </where>
+        ORDER BY sort ASC
+
+    </select>
+
+</mapper>

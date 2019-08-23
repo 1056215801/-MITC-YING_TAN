@@ -2,6 +2,8 @@ package com.mit.community.service;
 
 import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.ClusterCommunity;
@@ -9,6 +11,7 @@ import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.entity.User;
 import com.mit.community.mapper.ClusterCommunityMapper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +29,7 @@ import java.util.stream.Collectors;
  * @company mitesofor
  */
 @Service
-public class ClusterCommunityService {
+public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,ClusterCommunity> {
 
     @Autowired
     private ClusterCommunityMapper clusterCommunityMapper;
@@ -142,5 +145,46 @@ public class ClusterCommunityService {
         wrapper.setSqlSelect("city_name");
         return clusterCommunityMapper.selectMaps(wrapper);
     }
+     public int save(ClusterCommunity clusterCommunity){
 
+         Integer insert = clusterCommunityMapper.insert(clusterCommunity);
+         return insert;
+     }
+
+    public ClusterCommunity findMax() {
+        EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
+        wrapper.orderBy("community_id",false);
+        wrapper.last("limit 1");
+        ClusterCommunity clusterCommunity = this.baseMapper.selectList(wrapper).get(0);
+        return clusterCommunity;
+    }
+
+    public Page<ClusterCommunity> getCommunityList(String communityName, String communityCode, String username, String provinceName, String cityName, String areaName, String streetName, String communityType, Integer pageNum, Integer pageSize) {
+               Page<ClusterCommunity> page=new Page<>(pageNum,pageSize);
+              EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
+              if (StringUtils.isNotEmpty(communityName)){
+                  wrapper.eq("c.community_name",communityName);
+              }
+              if (StringUtils.isNotEmpty(communityCode)){
+                  wrapper.eq("c.community_code",communityCode);
+              }
+              if (StringUtils.isNotEmpty(provinceName)){
+                  wrapper.eq("c.province_name",provinceName);
+              }
+              if (StringUtils.isNotEmpty(cityName)){
+                  wrapper.eq("c.city_name",cityName);
+              }
+              if (StringUtils.isNotEmpty(areaName)){
+                  wrapper.eq("c.area_name",areaName);
+              }
+              if (StringUtils.isNotEmpty(streetName)){
+                  wrapper.eq("c.street_name",streetName);
+              }
+              if (StringUtils.isNotEmpty(communityType)){
+                  wrapper.like("c.community_type",communityType);
+              }
+              List<ClusterCommunity> clusterCommunityList=clusterCommunityMapper.selectMyPage(page,wrapper,username);
+              page.setRecords(clusterCommunityList);
+              return page;
+    }
 }

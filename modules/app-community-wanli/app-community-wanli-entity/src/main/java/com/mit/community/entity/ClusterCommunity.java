@@ -60,5 +60,25 @@ public class ClusterCommunity extends BaseEntity{
      */
     @TableField("province_name")
     private String provinceName;
+    /**
+     * 小区类型
+     */
+    @TableField("community_type")
+    private String communityType;
+
+    @TableField("area_belong")
+    private String areaBelong;
+
+    @TableField("remark")
+    private String remark;
+
+    @TableField(exist = false)
+    private String username;
+
+    @TableField(exist = false)
+    private String adminName;
+
+    @TableField(exist = false)
+    private String phone;
 
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.BuildingMapper">
+    <resultMap type="com.mit.community.entity.Building" id="baseMap">
+        <id property="id" column="id" javaType="Integer" jdbcType="INTEGER" />
+        <result property="communityCode" column="community_code" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="zoneId" column="zone_id" javaType="Integer"
+                jdbcType="INTEGER"/>
+        <result property="buildingId" column="building_id" javaType="Integer"
+                jdbcType="INTEGER"/>
+        <result property="buildingCode" column="building_code" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="buildingName" column="building_name" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="zoneName" column="zoneName" javaType="String"
+                jdbcType="VARCHAR"/>
+        <result property="buildingStatus" column="building_status" javaType="Integer"
+                jdbcType="INTEGER"/>
+        <result property="sort" column="sort" javaType="Integer"
+                jdbcType="INTEGER"/>
+    </resultMap>
+
+  <select id="selectBuildingPage" resultMap="baseMap">
+      SELECT b.`id`,b.`building_name`,b.`building_code`,b.`zone_id`,z.`zone_name` zoneName,b.`sort`,
+      b.`building_status` FROM building b LEFT JOIN zone z ON b.`zone_id`=z.`zone_id`
+        WHERE 1=1
+          ${ew.sqlSegment}
+  </select>
+</mapper>

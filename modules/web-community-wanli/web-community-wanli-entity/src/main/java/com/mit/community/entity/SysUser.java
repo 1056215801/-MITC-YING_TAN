@@ -113,6 +113,9 @@ public class SysUser implements Serializable {
     @TableField("gmt_create")
     private LocalDateTime createtime;
 
+    @TableField(exist = false)
+    private String communityType;
+
     public SysUser() {
         super();
     }
