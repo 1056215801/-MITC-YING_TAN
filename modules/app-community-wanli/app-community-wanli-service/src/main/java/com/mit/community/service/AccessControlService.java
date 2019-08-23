@@ -7,9 +7,11 @@ import com.mit.community.entity.AccessControl;
 import com.mit.community.entity.Device;
 import com.mit.community.entity.HouseHold;
 import com.mit.community.mapper.AccessControlMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -155,8 +157,41 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return page;
     }
 
-    public Page<AccessControl> getAccessControlPage (String cardNum, String name, Integer zoneId, Integer buildingId, Integer unitId, Integer interactiveType, String deicveNum, LocalDateTime timeStart, LocalDateTime timeEnd, int pageNum, int pageSize) {
+    public Page<AccessControl> getAccessControlPage (String communityCode, String cardNum, String name, String zoneId, String buildingId, String unitId, Integer interactiveType, String deicveNum, String timeStart, String timeEnd, int pageNum, int pageSize) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Page<AccessControl> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<AccessControl> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        if (StringUtils.isNotBlank(cardNum)) {
+            wrapper.eq("card_num", cardNum);
+        }
+        if (StringUtils.isNotBlank(name)) {
+            wrapper.eq("household_name", name);
+        }
+        if (StringUtils.isNotBlank(zoneId)) {
+            wrapper.eq("zone_id", zoneId);
+        }
+        if (StringUtils.isNotBlank(buildingId)) {
+            wrapper.eq("building_id", buildingId);
+        }
+        if (StringUtils.isNotBlank(unitId)) {
+            wrapper.eq("unit_id", unitId);
+        }
+        if (interactiveType != null) {
+            wrapper.eq("interactive_type", interactiveType);
+        }
+        if (StringUtils.isNotBlank(deicveNum)) {
+            wrapper.eq("device_num", deicveNum);
+        }
+        if (StringUtils.isNotBlank(timeStart)) {
+            wrapper.ge("access_time", timeStart);
+        }
+        if (StringUtils.isNotBlank(timeEnd)) {
+            wrapper.le("access_time", timeEnd);
+        }
+        wrapper.orderBy("access_time", false);
+        List<AccessControl> list = accessControlMapper.selectPage(page, wrapper);
+        page.setRecords(list);
         return page;
     }
 

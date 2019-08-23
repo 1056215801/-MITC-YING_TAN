@@ -9,19 +9,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("access_card")
-public class AccessCard extends BaseEntity{
-    @TableField("card_num")
-    private String cardNum;
-
+@TableName("household_photo")
+public class HouseHoldPhoto extends BaseEntity {
     @TableField("household_id")
-    private Integer houseHoldId;
+    private String houseHoldId;
+
+    @TableField("photo_url")
+    private String photoUrl;
+
+    @TableField("fea_url")
+    private String fea_url;
 
     @TableField("device_num")
     private String deviceNum;
-
-    /*@TableField("dnake_device_info_id")
-    private String dnakeDeviceInfoId;*/
 
     @TableField("is_upload")
     private int is_upload;//是否成功上传到机器；1否；2是

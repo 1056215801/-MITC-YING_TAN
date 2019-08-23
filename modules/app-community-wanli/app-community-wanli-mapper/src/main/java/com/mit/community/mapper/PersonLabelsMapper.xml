@@ -41,6 +41,8 @@
             jdbcType="VARCHAR" />
     <result property="groupType" column="group_type" javaType="Short"
             jdbcType="INTEGER" />
+    <result property="timeDiffi" column="timeDiffi" javaType="String"
+                jdbcType="VARCHAR" />
     <result property="gmtCreate" column="gmt_create" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
             jdbcType="OTHER" />
     <result property="gmtModified" column="gmt_modified" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" javaType="java.time.LocalDateTime"
@@ -107,6 +109,33 @@
         <result property="deviceId" column="deviceId" javaType="Integer"
                 jdbcType="INTEGER" />
     </resultMap>
+
+    <resultMap type="com.mit.community.entity.DeviceBugPeople" id="deviceBugPeopleMap">
+        <result property="passWord" column="passWord" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="expireTime" column="expireTime" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cellPhone" column="cellPhone" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="remarks" column="remarks" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="communityName" column="communityName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="areName" column="areName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="streetName" column="streetName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="accountType" column="accountType" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="pageDeviceDugPeople" resultMap="deviceBugPeopleMap">
+        select a.password as passWord,a.name as name,a.doornum as expireTime,a.cellphone as cellPhone,a.cardnum as remarks,a.face_token as accountType,b.community_name as communityName,
+        b.area_name as areName,b.street_name as streetName from user a LEFT JOIN cluster_community b on a.serialnumber=b.community_code
+        where 1= 1 ${ew.sqlSegment}
+    </select>
 
     <select id="getOwnerInfo" resultMap="ownerShipInfo">
         select a.owner_phone as ownerPhone,b.household_name as carOwner,c.zone_name as zoneName,c.building_name as buildingName,c.unit_name as unitName,c.room_num as roomNum
@@ -198,13 +227,19 @@
     </select>
 
     <select id="selectInfoPage" resultMap="deviceGroupMap">
-        select a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
+        select DISTINCT a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
         where 1= 1 ${ew.sqlSegment} <if test="sql != null and sql != ''">${sql}</if>
     </select>
 
     <select id="getTimeCha" resultType="String">
         select TIME_TO_SEC(TIMEDIFF(NOW(), gmt_modified)) FROM dnake_device_info
         where id=#{id}
+    </select>
+
+    <select id="getIsOnline" resultType="String">
+        select TIME_TO_SEC(TIMEDIFF(NOW(), a.gmt_modified)) FROM dnake_device_info a
+        LEFT JOIN device b on a.id=b.dnake_device_info_id
+        where b.device_num=#{deviceNum}
     </select>
 
     <select id="getGroupName" resultType="String">
@@ -227,6 +262,14 @@
     <select id="getUnBindDevice" resultMap="dnakeDeviceDetailsInfoMap">
         select a.mac as deviceMac,a.ip as deviceIp,a.id as deviceId,b.device_num as deviceNum,b.community_code as communityCode,b.building_id as buildingId,b.zone_id as zoneId,b.unit_id as unitId from dnake_device_info a LEFT JOIN device b on a.id=b.dnake_device_info_id
         where 1=1 <if test="ip != null and ip != ''">and a.ip=#{ip}</if>
+    </select>
+
+    <select id="getDevicesByDeviceGroupId" resultMap="menJinMap">
+        select b.device_name as deviceName,b.device_num as deviceNum,b.device_code as deviceCode,b.device_type as deviceType,b.device_sip as deviceSip,b.verison,c.mac as deviceMac,
+        b.building_code as buildingCode,b.unit_code as unitCode,TIME_TO_SEC(TIMEDIFF(NOW(), c.gmt_modified)) as timeDiffi,d.building_name as buildingName,e.unit_name as unitName
+        from device_device_group a LEFT JOIN device b on a.device_num=b.device_num LEFT JOIN dnake_device_info c on b.dnake_device_info_id=c.id
+        LEFT JOIN building d on b.building_id=d.building_id LEFT JOIN unit e on b.unit_id=e.unit_id
+        where a.device_group_id=#{deviceGroupId}
     </select>
 
 </mapper>

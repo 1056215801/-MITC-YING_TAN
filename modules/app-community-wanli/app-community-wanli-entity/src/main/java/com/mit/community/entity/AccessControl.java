@@ -113,4 +113,7 @@ public class AccessControl extends BaseEntity {
     @TableField("room_num")
     private String roomNum;
 
+    @TableField(exist = false)
+    private String selfPhotoUrl;
+
 }

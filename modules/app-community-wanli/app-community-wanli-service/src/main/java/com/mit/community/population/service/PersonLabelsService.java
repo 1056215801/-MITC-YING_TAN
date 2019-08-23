@@ -1,10 +1,12 @@
 package com.mit.community.population.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.*;
 import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mit.community.entity.entity.DeviceGroup;
@@ -125,5 +127,19 @@ public class PersonLabelsService {
 
     public List<DnakeDeviceDetailsInfo> getUnBindDevice(String ip){
         return labelsMapper.getUnBindDevice(ip);
+    }
+
+    public Page<DeviceBugPeople> pageDeviceDugPeople(String communityCode, Integer pageNum, Integer pageSize) {
+        Page<DeviceBugPeople>  page = new Page<>(pageNum, pageSize);
+        EntityWrapper<DeviceBugPeople> wrapper = new EntityWrapper<> ();
+        wrapper.eq("a.serialnumber", communityCode);
+        wrapper.in("a.identity_type","(1,2)");
+        List<DeviceBugPeople> list = labelsMapper.pageDeviceDugPeople(page, wrapper);
+        page.setRecords(list);
+        return page;
+    }
+
+    public String getIsOnline(@Param("deviceNum")String deviceNum){
+        return labelsMapper.getIsOnline(deviceNum);
     }
 }

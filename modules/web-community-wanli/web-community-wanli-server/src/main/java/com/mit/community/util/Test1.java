@@ -78,12 +78,12 @@ public class Test1 {
         params.put("houseHoldId","12345");
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
         System.out.println(result);*/
-        Map<String,String> params = new HashedMap();
+        /*Map<String,String> params = new HashedMap();
         params.put("cmd","cardAdd");
         params.put("id","123");
         params.put("cardNum","4170481");
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
-        System.out.println(result);
+        System.out.println(result);*/
         /*JSONObject json = JSONObject.fromObject(result);
         String base64 = json.getString("base64");
         System.out.println(base64);*/
@@ -94,6 +94,10 @@ public class Test1 {
         /*String a = UUID.randomUUID().toString().replaceAll("-","");
         System.out.println(a);
         System.out.println(a.substring(a.length()-15,a.length()));*/
+
+        long time = System.currentTimeMillis();
+        String timeStr = String.valueOf(time);
+        System.out.println(timeStr.substring(timeStr.length()-11, timeStr.length()));
     }
 
 }

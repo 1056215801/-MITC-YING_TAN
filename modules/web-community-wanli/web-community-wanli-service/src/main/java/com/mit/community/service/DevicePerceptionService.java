@@ -178,4 +178,8 @@ public class DevicePerceptionService {
         page.setRecords(list);
         return page;
     }
+
+    public List<DeviceInfo> getDevicesByDeviceGroupId(Integer deviceGroupId) {
+        return personLabelsMapper.getDevicesByDeviceGroupId(deviceGroupId);
+    }
 }

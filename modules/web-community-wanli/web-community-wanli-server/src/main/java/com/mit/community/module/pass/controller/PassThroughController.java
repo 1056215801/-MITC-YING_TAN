@@ -265,7 +265,7 @@ public class PassThroughController {
                     //String label = personBaseInfoService.getLabelsByCredentialNum(list.get(i).getCredentialNum());
                     String label = personBaseInfoService.getLabelsByMobile(list.get(i).getMobile(), communityCode);
                     if(StringUtils.isNotBlank(label)) {
-                        list.get(i).setLabels(label);
+                        //list.get(i).setLabels(label);
                     }
                 }
             }
@@ -331,6 +331,7 @@ public class PassThroughController {
                                                 String initValidityEndDate,
                                                 Boolean csReturn,
                                                 String cardListArr) {
+        System.out.println("===========================cardListArr="+cardListArr);
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
                 faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null);
         if (!msg.contains("success")) {
@@ -340,7 +341,7 @@ public class PassThroughController {
     }
 
     /**
-     * 增加图片的保存（替代狄耐克接口）
+     * 增加图片的保存,卡保存（替代狄耐克接口）
      * @param editFlag
      * @param householdId
      * @param appAuthFlag
@@ -369,16 +370,16 @@ public class PassThroughController {
                                                 String validityEndDate,
                                                 String initValidityEndDate,
                                                 Boolean csReturn,
-                                                String cardListArr, MultipartFile image) throws Exception{
+                                                String cardListArr, MultipartFile[] images) throws Exception{
         String imageUrl = null;
-        if (image != null) {
+        if (images != null) {
             String fileHz = UUID.randomUUID().toString() + ".jpg";
             String basePath = "f:\\face";
             File file = new File(basePath);
             if (!file.exists()) {
                 file.mkdir();
             }
-            byte[] b = image.getBytes();
+            byte[] b = images.getBytes();
             imageUrl = basePath + "\\" +fileHz;
             File aa = new File(imageUrl);
             FileImageOutputStream fos = new FileImageOutputStream(aa);
@@ -386,7 +387,7 @@ public class PassThroughController {
             fos.close();
         }
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrl);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, images);
         if (msg.contains("success")) {
             //这里略去生成人脸特征值过程
 
@@ -544,8 +545,11 @@ public class PassThroughController {
                 accessCard.setCardNum(cardNum);
                 accessCard.setHouseHoldId(householdId);
                 accessCard.setDeviceNum(list.get(i).getDeviceNum());
-                Device device = deviceService.getByDeviceNum(list.get(i).getDeviceNum());
-                accessCard.setDnakeDeviceInfoId(device.getDnakeDeviceInfoId());
+                /*Device device = deviceService.getByDeviceNum(list.get(i).getDeviceNum());
+                if (device.getDnakeDeviceInfoId() != null) {
+                    accessCard.setDnakeDeviceInfoId(device.getDnakeDeviceInfoId());
+                }*/
+
                 accessCard.setGmtCreate(LocalDateTime.now());
                 accessCard.setGmtModified(LocalDateTime.now());
                 accessCardService.save(accessCard);
@@ -556,12 +560,24 @@ public class PassThroughController {
         }
     }
 
-    @ApiOperation(value = "分页获取通行记录")
+    @ApiOperation(value = "分页获取通行记录", notes = "interactiveType：开门方式（0：其他开门；1：刷卡开门；2：密码开门；3：APP开门；4：分机开门；5：二维码开门； 6：蓝牙开门；7：按钮开门；8：手机开门;9：人脸识别；10:固定密码；11：http开门；）")
     @PostMapping("/accessControlPage")
-    public Result accessControlPage(HttpServletRequest request, String cardNum, String name, Integer zoneId, Integer buildingId, Integer unitId, Integer interactiveType, String deicveNum,
-                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeStart,
-                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeEnd, Integer pageNum, Integer pageSize) {
-        Page<AccessControl> page = accessControlService.getAccessControlPage(cardNum, name, zoneId, buildingId, unitId, interactiveType, deicveNum, timeStart, timeEnd, pageNum, pageSize);
+    public Result accessControlPage(HttpServletRequest request, String communityCode, String cardNum, String name, String zoneId, String buildingId, String unitId, Integer interactiveType, String deicveNum,
+                                   String timeStart,
+                                    String timeEnd, Integer pageNum, Integer pageSize) {
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
+        Page<AccessControl> page = accessControlService.getAccessControlPage(communityCode, cardNum, name, zoneId, buildingId, unitId, interactiveType, deicveNum, timeStart, timeEnd, pageNum, pageSize);
+        List<AccessControl> list = page.getRecords();
+        if (!list.isEmpty()) {
+            for (AccessControl accessControl : list) {
+                accessControl.setSelfPhotoUrl(accessControl.getAccessImgUrl());
+            }
+            page.setRecords(list);
+        }
         return Result.success(page);
     }
 

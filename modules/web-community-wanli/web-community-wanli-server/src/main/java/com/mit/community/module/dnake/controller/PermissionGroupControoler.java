@@ -62,6 +62,8 @@ public class PermissionGroupControoler {
     private ClusterCommunityService clusterCommunityService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DevicePerceptionService devicePerceptionService;
 
 
     /**
@@ -87,30 +89,25 @@ public class PermissionGroupControoler {
         List<DeviceGroup> list = page.getRecords();
         if (!list.isEmpty()) {
             for (int i=0; i<list.size(); i++) {
-                List<DeviceDeviceGroup> group =  deviceDeviceGroupService.getGroupsByDeviceGroupId(list.get(i).getDeviceGroupId());
-                if (!group.isEmpty()) {
-                    Device device = null;
-                    List<Device> devices = new ArrayList<>();
-                    for (int a=0; a<group.size();a++) {
-                        device = deviceService.getByDeviceNumAndCommunityCode(communityCode,group.get(a).getDeviceNum());
-                        if (device != null) {
-                            String timeCha = personLabelsService.getTimeCha(device.getDeviceId());
-                            if (StringUtils.isNotBlank(timeCha)) {
-                                if (Integer.parseInt(timeCha) > 10) {
-                                    device.setDeviceStatus(2);//离线
-                                }
-                                if (Integer.parseInt(timeCha) < 10) {
-                                    device.setDeviceStatus(1);//在线
-                                }
+                List<DeviceInfo> listDeviceInfo = devicePerceptionService.getDevicesByDeviceGroupId(list.get(i).getDeviceGroupId());
+                if (!listDeviceInfo.isEmpty()) {
+                    for (int a=0; a<listDeviceInfo.size(); a++) {
+                        String timeDiffi = listDeviceInfo.get(a).getTimeDiffi();
+                        if (StringUtils.isNotBlank(timeDiffi)) {
+                            if (Integer.parseInt(timeDiffi) > 10) {
+                                listDeviceInfo.get(a).setDeviceStatus(2);//2离线
                             } else {
-                                device.setDeviceStatus(2);//离线
+                                listDeviceInfo.get(a).setDeviceStatus(1);//1在线
                             }
-                            devices.add(device);
+                        } else {
+                            listDeviceInfo.get(a).setDeviceStatus(2);
                         }
                     }
-                    list.get(i).setDevice(devices);
+
                 }
+                list.get(i).setDevice(listDeviceInfo);
             }
+
         }
         page.setRecords(list);
         return Result.success(page);
@@ -126,9 +123,16 @@ public class PermissionGroupControoler {
      */
     @PostMapping("/updateAuthGroup")
     @ApiOperation(value = "更新权限组信息", notes = "")
-    public Result updateAuthGroup(Integer id, String deviceGroupName, int groupType, String deviceNum) {
-        deviceGroupService.updateAuthGroup(id, deviceGroupName, groupType, deviceNum);
+    public Result updateAuthGroup(Integer deviceGroupId, String deviceGroupName, int groupType, String deviceNum) {
+        deviceGroupService.updateAuthGroup(deviceGroupId, deviceGroupName, groupType, deviceNum);
         return Result.success("更新成功");
+    }
+
+    @PostMapping("/deleteAuthGroup")
+    @ApiOperation(value = "删除权限组信息", notes = "")
+    public Result deleteAuthGroup(Integer deviceGroupId) {
+        deviceGroupService.deleteAuthGroup(deviceGroupId);
+        return Result.success("删除成功");
     }
 
     /**
@@ -141,7 +145,7 @@ public class PermissionGroupControoler {
      */
     @PostMapping("/saveAuthGroup")
     @ApiOperation(value = "新增权限组信息", notes = "")
-    public Result updateAuthGroup(HttpServletRequest request, String deviceGroupName, int groupType, String deviceNum) {
+    public Result saveAuthGroup(HttpServletRequest request, String deviceGroupName, int groupType, String deviceNum) {
         String communityCode = null;
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
@@ -201,7 +205,7 @@ public class PermissionGroupControoler {
      * @param buildingId  楼栋id
      * @return
      */
-    @PostMapping("/getDevicePage")
+    /*@PostMapping("/getDevicePage")
     @ApiOperation(value = "获取设备列表", notes = "")
     public Result getDevicePage(HttpServletRequest request,Integer pageNum, Integer pageSize, Integer unitId, Integer buildingId){
         String communityCode = null;
@@ -231,7 +235,7 @@ public class PermissionGroupControoler {
         }
         page.setRecords(list);
         return Result.success(page);
-    }
+    }*/
 
     /**
      * 根据所在社区获取权限组
@@ -336,13 +340,24 @@ public class PermissionGroupControoler {
 
     @PostMapping("/addDeviceDugPeople")
     @ApiOperation(value = "增加设备调试人员", notes = "")
-    public Result addDeviceDugPeople(HttpServletRequest request,String cellPhone, String sex ){
+    public Result addDeviceDugPeople(HttpServletRequest request,String name, String cellPhone, String sex, String expireTime, String remarks){
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String communityCode = user.getCommunityCode();
         String accountType = user.getAccountType();
-        userService.addDeviceDugAccount(cellPhone, sex, communityCode, accountType);
+        userService.addDeviceDugAccount(name, cellPhone, sex, communityCode, accountType,expireTime, remarks);
         return Result.success("添加成功");
+    }
+
+    @PostMapping("/getPageDeviceDugPeople")
+    @ApiOperation(value = "分页查询设备调试人员", notes = "")
+    public Result getPageDeviceDugPeople(HttpServletRequest request,Integer pageNum, Integer pageSize){
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = user.getCommunityCode();
+
+        Page<DeviceBugPeople> page = personLabelsService.pageDeviceDugPeople(communityCode, pageNum, pageSize);
+        return Result.success(page);
     }
 
     @PostMapping("/deviceDugPeopleChange")
@@ -351,8 +366,4 @@ public class PermissionGroupControoler {
         userService.deviceDugPeopleChange(cellPhone, changeType);
         return Result.success("ok");
     }
-
-
-
-
 }
