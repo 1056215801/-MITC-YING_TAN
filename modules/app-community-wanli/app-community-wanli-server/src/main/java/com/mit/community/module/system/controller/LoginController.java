@@ -119,8 +119,8 @@ public class LoginController {
         } else {
             // 密码登陆
             user = userService.getByCellphone(cellphone);
+            //user.setIdentity(1);//管理员
             if (user == null) {
-                //return Result.error("用户名不存在");
                 return Result.error("用户不存在");
             } else if (!password.equals(user.getPassword())) {
                 return Result.error("用户名或密码错误");

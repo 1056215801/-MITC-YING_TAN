@@ -1,5 +1,4 @@
 package com.mit.community.config;
-
 import com.mit.community.config.interceptor.URLInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

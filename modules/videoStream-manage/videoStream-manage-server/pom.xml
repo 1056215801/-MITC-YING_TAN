@@ -32,11 +32,6 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.mit</groupId>
-            <artifactId>camera-manage-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -93,6 +88,29 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.mit</groupId>
+            <artifactId>examples</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mit</groupId>
+            <artifactId>FFmpegCommandHandler</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mit</groupId>
+            <artifactId>jna</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+     <!-- <dependency>
+            <groupId>com.mit</groupId>
+            <artifactId>ffch4j</artifactId>
+            <version>18.12.02-SNAPSHOT</version>
+        </dependency>-->
         <!-- druid -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -151,16 +169,16 @@
             <artifactId>guava</artifactId>
             <version>20.0</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.mit</groupId>
             <artifactId>auth-client</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--<dependency>
             <groupId>com.github.wxiaoqi</groupId>
             <artifactId>ace-cache</artifactId>
             <version>0.0.2</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -211,20 +229,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.mit</groupId>
-            <artifactId>camera-manage-entity</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.mit</groupId>
-            <artifactId>app-community-wanli-interface</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- <dependency>
@@ -244,6 +250,11 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.22.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
         </dependency>
     </dependencies>
     <build>

@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
  * @date 2019-01-04
  * @company mitesofor
  */
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 @TableName("smoke_detector_status")
 public class SmokeDetectorStatus extends BaseEntity {
@@ -57,6 +55,39 @@ public class SmokeDetectorStatus extends BaseEntity {
      */
     @TableField("gmt_upload")
     private LocalDateTime gmtUpload;
+
+    /**
+     * 负责人电话
+     */
+    @TableField("manager_phone")
+    private  String  managerPhone;
+
+    public SmokeDetectorStatus(){
+
+    }
+
+    public SmokeDetectorStatus(String communityCode, String deviceNum, String deviceName, String devicePlace, String deviceType, Short status, Short deviceStatus, LocalDateTime gmtUpload) {
+        this.communityCode = communityCode;
+        this.deviceNum = deviceNum;
+        this.deviceName = deviceName;
+        this.devicePlace = devicePlace;
+        this.deviceType = deviceType;
+        this.status = status;
+        this.deviceStatus = deviceStatus;
+        this.gmtUpload = gmtUpload;
+    }
+
+    public SmokeDetectorStatus(String communityCode, String deviceNum, String deviceName, String devicePlace, String deviceType, Short status, Short deviceStatus, LocalDateTime gmtUpload, String managerPhone) {
+        this.communityCode = communityCode;
+        this.deviceNum = deviceNum;
+        this.deviceName = deviceName;
+        this.devicePlace = devicePlace;
+        this.deviceType = deviceType;
+        this.status = status;
+        this.deviceStatus = deviceStatus;
+        this.gmtUpload = gmtUpload;
+        this.managerPhone = managerPhone;
+    }
 
 
 }

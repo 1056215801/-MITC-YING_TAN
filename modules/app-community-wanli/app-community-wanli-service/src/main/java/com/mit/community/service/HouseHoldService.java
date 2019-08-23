@@ -11,9 +11,11 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
+import com.mit.community.entity.entity.DeviceGroup;
 import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.*;
 import com.mit.community.population.service.PersonBaseInfoService;
+import com.mit.community.population.service.PersonLabelsService;
 import com.mit.community.util.AuthorizeStatusUtil;
 import com.mit.community.util.ConstellationUtil;
 import com.mit.community.util.DateUtils;
@@ -22,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
@@ -67,6 +70,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     private UserMapper userMapper;
     @Autowired
     private PersonBaseInfoService personBaseInfoService;
+    @Autowired
+    private DeviceGroupService deviceGroupService;
+    @Autowired
+    private PersonLabelsService personLabelsService;
+    @Autowired
+    private DeviceDeviceGroupService deviceDeviceGroupService;
 
     /**
      * 查询住户，通过住户列表
@@ -593,9 +602,15 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr) {
+    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, MultipartFile[] images) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        //HouseHold houseHold = new HouseHold();
+        //houseHold.setLabels(photoUrl);
+        //EntityWrapper<HouseHold> houseHoldWrapper = new EntityWrapper<>();
+        //System.out.println("=================householdId="+householdId);
+        //houseHoldWrapper.eq("household_id",householdId);
+        //houseHoldMapper.update(houseHold, houseHoldWrapper);
         try {
             //更新本地住户授权类型字段+本地更新住户有效期权限时间
             Integer authStatus = 0;
@@ -703,6 +718,23 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 }
             }
             msg = "success";
+
+
+            if (StringUtils.isNotBlank(cardListArr) || images != null) {
+                if (StringUtils.isNotBlank(deviceGIds)){
+                    String[] deviceGroupIds = deviceGIds.split(",");
+                    List<Integer> deviceGroupIdList = new ArrayList<>();
+                    List<DeviceDeviceGroup> deviceDeviceGroupsList = deviceDeviceGroupService.listByDeviceGroupIds(deviceGroupIdList);
+                    AccessCard AccessCard = null;
+                    if (!deviceDeviceGroupsList.isEmpty()) {
+                        for (int i=0; i<deviceDeviceGroupsList.size(); i++) {
+                            String timeDiffi = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
+                        }
+                    }
+                } else { //没有选择权限组
+
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage().toString());

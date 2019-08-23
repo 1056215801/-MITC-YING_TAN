@@ -54,5 +54,20 @@ public class DeviceDeviceGroupService extends ServiceImpl<DeviceDeviceGroupMappe
         return deviceDeviceGroupMapper.selectList(wrapper);
     }
 
+    public DeviceDeviceGroup getByDeviceNum(String deviceNum) {
+        EntityWrapper<DeviceDeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_num", deviceNum);
+        List<DeviceDeviceGroup> list = deviceDeviceGroupMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public List<DeviceDeviceGroup> getByDeviceGroupIds(List<String> deviceGroupIds) {
+        EntityWrapper<DeviceDeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.in("device_group_id", deviceGroupIds);
+        return deviceDeviceGroupMapper.selectList(wrapper);
+    }
 
 }

@@ -39,15 +39,13 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
                 || servletPath.contains("/login/register") || servletPath.contains("/login/haveLogin")
                 || servletPath.contains("/login/updateGender") || servletPath.contains("/login/updateRegion")
                 || servletPath.contains("/login/updateBirthdayAndNick") || servletPath.contains("/label/listLabelSystem")
-                || servletPath.contains("/label/associationLabelCustomer")) {
+                || servletPath.contains("/label/associationLabelCustomer") || servletPath.contains("/login/resetPwd")) {
             return true;
         }
         String mac = request.getParameter("mac");
         String cellphone = request.getParameter("cellphone");
         if (StringUtils.isNotBlank(cellphone) && StringUtils.isNotBlank(mac)) {
             String macRedis = (String) redisService.get(RedisConstant.MAC + cellphone);
-            //System.out.println("=====================macRedis="+macRedis);
-            //System.out.println("=====================mac="+mac);
             if (!mac.equals(macRedis)) {
                 PrintWriter writer = null;
                 response.setCharacterEncoding("UTF-8");

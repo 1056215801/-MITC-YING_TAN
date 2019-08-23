@@ -38,16 +38,16 @@ public class AccessRecordService {
             wrapper.eq("car_num", carnum);
         }
         if (StringUtils.isNotBlank(accessType)) {
-            wrapper.eq("accessType", accessType);
+            wrapper.eq("access_type", accessType);
         }
         if (StringUtils.isNotBlank(carphone)) {
             wrapper.eq("owner_phone", carphone);
         }
         if (begintime != null) {
-            wrapper.ge("passtime", begintime);
+            wrapper.ge("gmt_create", begintime);
         }
         if (endtime != null) {
-            wrapper.le("passtime", endtime);
+            wrapper.le("gmt_create", endtime);
         }
         wrapper.orderBy("gmt_create", false);
         List<AccessRecord> list = accessRecordMapper.selectPage(page, wrapper);

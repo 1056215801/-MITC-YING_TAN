@@ -91,5 +91,111 @@ public class ImgCompass {
         return data;
     }
 
+    public static int showUrlLens(String imageUrl, Integer sizeLimit) throws IOException {
+        //默认上限为500k
+        if (sizeLimit == null) {
+            sizeLimit = 500;
+        }
+        sizeLimit = sizeLimit * 1024;
+        String base64Image;
+        DataInputStream dataInputStream = null;
+        ByteArrayOutputStream outputStream = null;
+        ByteArrayInputStream inputStream = null;
+        int imageSize=0;
+        byte[] data;
+        try {
+            //从远程读取图片
+            URL url = new URL(imageUrl);
+            dataInputStream = new DataInputStream(url.openStream());
+            outputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[2048];
+            int length;
+            while ((length = dataInputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            byte[] context = outputStream.toByteArray();
 
+            //将图片数据还原为图片
+            inputStream = new ByteArrayInputStream(context);
+            BufferedImage image = ImageIO.read(inputStream);
+             imageSize = context.length;
+        } catch (Exception e) {
+            //抛出异常
+            throw e;
+        } finally {
+            if (dataInputStream != null) {
+                try {
+                    dataInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return imageSize;
+    }
+
+
+    public static byte[]  showUrlBtyes(String imageUrl) throws IOException {
+
+        String base64Image;
+        DataInputStream dataInputStream = null;
+        ByteArrayOutputStream outputStream = null;
+        ByteArrayInputStream inputStream = null;
+        byte[] data;
+        byte[] context;
+        try {
+            //从远程读取图片
+            URL url = new URL(imageUrl);
+            dataInputStream = new DataInputStream(url.openStream());
+            outputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[2048];
+            int length;
+            while ((length = dataInputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            context = outputStream.toByteArray();
+
+
+        } catch (Exception e) {
+            //抛出异常
+            throw e;
+        } finally {
+            if (dataInputStream != null) {
+                try {
+                    dataInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return context;
+    }
 }

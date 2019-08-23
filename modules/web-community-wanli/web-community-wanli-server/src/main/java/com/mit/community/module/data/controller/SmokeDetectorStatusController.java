@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * 烟感感知
@@ -70,5 +71,23 @@ public class SmokeDetectorStatusController {
         smokeDetectorStatusService.insertDataNY();
         return Result.success("成功");
     }
+
+
+   @RequestMapping(value = "/selectDeviceByOneNet", method = RequestMethod.POST)
+    @ApiOperation(value = "从oneNet获取烟感设备信息", notes = "从oneNet获取烟感设备信息")
+    public Result selectDeviceByThirdOnLine() {
+       String keyWords="烟感";
+       List<SmokeDetectorStatus> list= smokeDetectorStatusService.selectDeviceByThirdOnLine(keyWords);
+
+        /*smokeDetectorStatusService.delete(null);
+        smokeDetectorStatusService.insertDataKXWT();
+        smokeDetectorStatusService.insertDataXJB();
+        smokeDetectorStatusService.insertDataYWHDHY();
+        smokeDetectorStatusService.insertDataNY();*/
+        return Result.success(list,"成功");
+    }
+
+
+
 
 }

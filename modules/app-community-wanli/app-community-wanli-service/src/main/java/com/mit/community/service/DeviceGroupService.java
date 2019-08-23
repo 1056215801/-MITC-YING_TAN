@@ -70,25 +70,39 @@ public class DeviceGroupService extends ServiceImpl<DeviceGroupMapper, DeviceGro
         deviceGroupMapper.delete(null);
     }
 
+
     @Transactional
-    public void updateAuthGroup(Integer id, String deviceGroupName, int groupType, String deviceNum){
+    public void deleteAuthGroup(Integer deviceGroupId) {
+        EntityWrapper<DeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("device_group_Id", deviceGroupId);
+        deviceGroupMapper.delete(wrapper);
+
+
+        EntityWrapper<DeviceDeviceGroup> wrapperDeviceDeviceGroup = new EntityWrapper<>();
+        wrapperDeviceDeviceGroup.eq("device_group_id",deviceGroupId);
+        deviceDeviceGroupService.delete(wrapperDeviceDeviceGroup);
+    }
+
+    @Transactional
+    public void updateAuthGroup(Integer deviceGroupId, String deviceGroupName, int groupType, String deviceNum){
         DeviceGroup deviceGroup = new DeviceGroup();
-        deviceGroup.setId(id);
         deviceGroup.setDeviceGroupName(deviceGroupName);
         deviceGroup.setGroupType((short) groupType);
         deviceGroup.setGmtModified(LocalDateTime.now());
-        deviceGroupMapper.updateById(deviceGroup);
+        EntityWrapper<DeviceGroup> wrapperDeviceGroup = new EntityWrapper<>();
+        wrapperDeviceGroup.eq("device_group_Id", deviceGroupId);
+        deviceGroupMapper.update(deviceGroup, wrapperDeviceGroup);
 
         if(StringUtils.isNotBlank(deviceNum)) {
             EntityWrapper<DeviceDeviceGroup> wrapper = new EntityWrapper<>();
-            wrapper.eq("device_group_id",id);
+            wrapper.eq("device_group_id",deviceGroupId);
             deviceDeviceGroupService.delete(wrapper);
 
             String[] deviceNums = deviceNum.split(",");
             DeviceDeviceGroup deviceDeviceGroup = null;
             for (int i=0 ; i<deviceNums.length; i++){
                 deviceDeviceGroup = new DeviceDeviceGroup();
-                deviceDeviceGroup.setDeviceGroupId(id);
+                deviceDeviceGroup.setDeviceGroupId(deviceGroupId);
                 deviceDeviceGroup.setDeviceNum(deviceNums[i]);
                 deviceDeviceGroup.setGmtCreate(LocalDateTime.now());
                 deviceDeviceGroup.setGmtModified(LocalDateTime.now());
@@ -106,6 +120,7 @@ public class DeviceGroupService extends ServiceImpl<DeviceGroupMapper, DeviceGro
         deviceGroup.setDeviceGroupId(a);
         deviceGroup.setGroupType((short) groupType);
         deviceGroup.setGmtModified(LocalDateTime.now());
+        deviceGroup.setGmtCreate(LocalDateTime.now());
         deviceGroupMapper.insert(deviceGroup);
 
         if(StringUtils.isNotBlank(deviceNum)) {

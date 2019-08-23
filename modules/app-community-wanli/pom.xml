@@ -15,5 +15,6 @@
         <module>app-community-wanli-service</module>
         <module>app-community-wanli-interface</module>
         <module>app-community-wanli-server</module>
+
     </modules>
 </project>

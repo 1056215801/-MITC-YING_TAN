@@ -69,6 +69,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         }
         return zones.get(0);
     }
+<<<<<<< HEAD
     public void save(String zoneName, Integer zoneType, String zoneCode, Integer sort, String communityCode) {
         EntityWrapper<Zone> wrapper=new EntityWrapper<>();
         wrapper.orderBy("zone_id",false);
@@ -169,5 +170,37 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
             zoneMapper.updateStatus(1,idList.get(i));
         }
 
+=======
+    public Zone getByCommunityName(String communityName) {
+        EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+        wrapper.eq("zone_name", communityName);
+        List<Zone> zones = zoneMapper.selectList(wrapper);
+        if (zones.isEmpty()) {
+            return null;
+        }
+        return zones.get(0);
+    }
+
+    public Zone getByCommunityCode(String communityCode) {
+        EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq(false,"zone_name","默认分区");
+        List<Zone> zones = zoneMapper.selectList(wrapper);
+        if (zones.isEmpty()) {
+            return null;
+        }
+        return zones.get(0);
+    }
+
+    public Zone getByZoneId( Integer zoneId) {
+        EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+        wrapper.eq("zone_id", zoneId);
+        wrapper.eq("zone_status", 1);
+        List<Zone> zones = zoneMapper.selectList(wrapper);
+        if (zones.isEmpty()) {
+            return null;
+        }
+        return zones.get(0);
+>>>>>>> XQ
     }
 }
