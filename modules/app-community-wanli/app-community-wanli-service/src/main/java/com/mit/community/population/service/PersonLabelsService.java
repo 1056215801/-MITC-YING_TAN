@@ -128,10 +128,7 @@ public class PersonLabelsService {
     public List<DnakeDeviceDetailsInfo> getUnBindDevice(String ip){
         return labelsMapper.getUnBindDevice(ip);
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
+
 
     public Page<DeviceBugPeople> pageDeviceDugPeople(String communityCode, Integer pageNum, Integer pageSize) {
         Page<DeviceBugPeople>  page = new Page<>(pageNum, pageSize);
@@ -143,15 +140,9 @@ public class PersonLabelsService {
         return page;
     }
 
-<<<<<<< HEAD
-    public String getIsOnline(@Param("deviceNum")String deviceNum){
-        return labelsMapper.getIsOnline(deviceNum);
-    }
-=======
->>>>>>> remotes/origin/newdev
-=======
+
     public DeviceIsOnline getIsOnline(@Param("deviceNum")String deviceNum){
         return labelsMapper.getIsOnline(deviceNum);
     }
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
+
 }
