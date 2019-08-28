@@ -303,6 +303,25 @@ public class PassThroughController {
         return 1;
     }
 
+
+    @ApiOperation(value = "保存人脸照片")
+    @PostMapping("/saveHouseHoldPhoto")
+    public Result savePhoto(MultipartFile image) {
+        String message = null;
+        if (image != null) {
+            message = houseHoldService.saveHouseHoldPhoto(image);
+            if ("提取人脸特征值失败".equals(message)) {
+                return Result.error(message);
+            } else {
+                return Result.success(message);
+            }
+        } else {
+            Result.error("图片不能为空");
+        }
+        return Result.success(message);
+    }
+
+
     /**
      * 保存住户授权信息
      *
@@ -331,10 +350,13 @@ public class PassThroughController {
                                                 String validityEndDate,
                                                 String initValidityEndDate,
                                                 Boolean csReturn,
-                                                String cardListArr) {
-        System.out.println("===========================cardListArr="+cardListArr);
+                                                String cardListArr, String imageUrls) {
+
+        if (imageUrls != null) {
+            System.out.println("===========================imageUrls="+imageUrls);
+        }
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null, null);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null);
         if (!msg.contains("success")) {
             return -1;
         }

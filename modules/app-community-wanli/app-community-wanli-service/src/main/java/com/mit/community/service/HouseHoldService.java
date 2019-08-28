@@ -612,7 +612,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, MultipartFile[] images, String imageUrls) {
+    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String imageUrls) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         //HouseHold houseHold = new HouseHold();
@@ -728,7 +728,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 }
             }
             msg = "success";
-            if (StringUtils.isNotBlank(cardListArr) || images != null || StringUtils.isNotBlank(imageUrls)) {
+            if (StringUtils.isNotBlank(cardListArr) || StringUtils.isNotBlank(imageUrls)) {
                 if (StringUtils.isNotBlank(deviceGIds)){
                     String[] deviceGroupIds = deviceGIds.split(",");
                     for (String deviceGroupId : deviceGroupIds){
@@ -757,32 +757,11 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             }
                         }
 
-                        if (images != null) {
-                            List<HouseHoldPhoto>  houseHoldPhotoList = saveImageAndAnalyse(images);//都是能分析出人脸特征值的照片
-                            for (HouseHoldPhoto houseHoldPhoto : houseHoldPhotoList) {
-                                if (!deviceDeviceGroupsList.isEmpty()) {
-                                    for (int i=0; i<deviceDeviceGroupsList.size(); i++) {
-                                        DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
-                                        if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
-                                            if (sendFeaToDevice(deviceIsOnline.getIp(),houseHoldPhoto.getFeaUrl(), householdId)) {//下发成功
-                                                houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 2, deviceDeviceGroupsList.get(i).getDeviceNum());
-                                            } else{//下发不成功
-                                                houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, deviceDeviceGroupsList.get(i).getDeviceNum());
-                                            }
-                                        }
-                                    }
-                                } else {//权限组没有绑定设备
-                                    houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, null);
-                                }
-                            }
-                        }
-
                         if (StringUtils.isNotBlank(imageUrls)) {
                             String[] imageUrl = imageUrls.split(",");
                             for (String photoUrlNet : imageUrl) {
                                 HouseHoldPhoto houseHoldPhoto = houseHoldPhotoService.getByPhotoUrlNet(photoUrlNet);
                                 if (!deviceDeviceGroupsList.isEmpty()) {
-
                                     for (int i=0; i<deviceDeviceGroupsList.size(); i++) {
                                         HouseHoldPhoto houseHoldPhotoExits = houseHoldPhotoService.getByHouseHoldIdAndDeviceNumAndPhotoUrl(householdId, deviceDeviceGroupsList.get(i).getDeviceNum(), photoUrlNet);
                                         if (houseHoldPhotoExits == null) {
@@ -813,37 +792,10 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                         }
                     }
 
-                    if (images != null) {
-                        HouseHoldPhoto houseHoldPhoto = null;
-                        for (int i=0; i<images.length; i++) {
-                            houseHoldPhoto = new HouseHoldPhoto();
-                            String uuid = UUID.randomUUID().toString();
-                            String fileHz =  uuid + ".jpg";
-                            String basePath = "f:\\face";
-                            File file = new File(basePath);
-                            if (!file.exists()) {
-                                file.mkdir();
-                            }
-                            byte[] b = images[i].getBytes();
-                            String photoUrl = basePath + "\\" +fileHz;//本地保存地址
-                            File aa = new File(photoUrl);
-                            FileImageOutputStream fos = new FileImageOutputStream(aa);
-                            fos.write(b, 0, b.length);
-                            fos.close();
-
-                            String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
-                            boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
-                            if (flag == true) {
-                                houseHoldPhoto.setHouseHoldId(householdId);
-                                houseHoldPhoto.setIsUpload(1);
-                                houseHoldPhoto.setPhotoUrlNet(photoUrlNet);
-                                houseHoldPhoto.setPhotoUrl(photoUrl);//照片本地保存路径
-                                houseHoldPhoto.setFeaUrl(basePath + "\\" + uuid + ".fea");
-                                houseHoldPhoto.setGmtCreate(LocalDateTime.now());
-                                houseHoldPhoto.setGmtModified(LocalDateTime.now());
-                                houseHoldPhotoService.save(houseHoldPhoto);
-                            }
-
+                    if (StringUtils.isNotBlank(imageUrls)) {
+                        String[] images = imageUrls.split(",");
+                        for (int i=0; i< images.length; i++) {
+                            houseHoldPhotoService.updateUploadByPhotoUrlNet(householdId, images[i]);
                         }
                     }
                 }
@@ -853,6 +805,47 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             throw new RuntimeException(e.getMessage().toString());
         }
         return msg;
+    }
+
+    public String saveHouseHoldPhoto(MultipartFile image) {
+        String message = null;
+        HouseHoldPhoto houseHoldPhoto = null;
+        try {
+            houseHoldPhoto = new HouseHoldPhoto();
+            String uuid = UUID.randomUUID().toString();
+            String fileHz =  uuid + ".jpg";
+            String basePath = "f:\\face";
+            File file = new File(basePath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+            byte[] b = image.getBytes();
+            String photoUrl = basePath + "\\" +fileHz;//本地保存地址
+            File aa = new File(photoUrl);
+            FileImageOutputStream fos = new FileImageOutputStream(aa);
+            fos.write(b, 0, b.length);
+            fos.close();
+
+            String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
+            boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
+            if (flag == true) {
+                houseHoldPhoto.setIsUpload(1);
+                houseHoldPhoto.setPhotoUrlNet(photoUrlNet);
+                houseHoldPhoto.setPhotoUrl(photoUrl);//照片本地保存路径
+                houseHoldPhoto.setFeaUrl(basePath + "\\" + uuid + ".fea");
+                houseHoldPhoto.setGmtCreate(LocalDateTime.now());
+                houseHoldPhoto.setGmtModified(LocalDateTime.now());
+                houseHoldPhotoService.save(houseHoldPhoto);
+                message = photoUrlNet;
+                return message;
+            } else {
+                message = "提取人脸特征值失败";
+            }
+        } catch (Exception e) {
+            message = "提取人脸特征值失败";
+        } finally {
+            return message;
+        }
     }
 
     public List<HouseHoldPhoto> saveImageAndAnalyse(MultipartFile[] images) {

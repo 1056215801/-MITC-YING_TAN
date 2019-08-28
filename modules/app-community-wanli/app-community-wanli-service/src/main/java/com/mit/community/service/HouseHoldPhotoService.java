@@ -67,4 +67,13 @@ public class HouseHoldPhotoService {
         houseHoldPhoto.setGmtModified(LocalDateTime.now());
         houseHoldPhotoMapper.updateById(houseHoldPhoto);
     }
+
+    public void updateUploadByPhotoUrlNet(Integer houseHoldId, String photoUrlNet) {
+        EntityWrapper<HouseHoldPhoto> wrapper = new EntityWrapper<>();
+        wrapper.eq("photo_url_net", photoUrlNet);
+        HouseHoldPhoto houseHoldPhoto = new HouseHoldPhoto();
+        houseHoldPhoto.setHouseHoldId(houseHoldId);
+        houseHoldPhoto.setGmtModified(LocalDateTime.now());
+        houseHoldPhotoMapper.update(houseHoldPhoto, wrapper);
+    }
 }
