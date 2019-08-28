@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
  * @company mitesofor
  */
 @Service
-public class HouseHoldService {
+public class HouseHoldService extends ServiceImpl<HouseHoldMapper, HouseHold> {
 
     @Autowired
     private HouseHoldMapper houseHoldMapper;

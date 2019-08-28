@@ -2,6 +2,7 @@ package com.mit.community.service;
 
 import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.mit.community.entity.Building;
 import com.mit.community.mapper.BuildingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.List;
  * <p>Company: mitesofor </p>
  */
 @Service
-public class BuildingService {
+public class BuildingService extends ServiceImpl<BuildingMapper, Building> {
 
     @Autowired
     private BuildingMapper buildingMapper;
