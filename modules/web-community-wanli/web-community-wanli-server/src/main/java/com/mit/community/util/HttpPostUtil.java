@@ -2,16 +2,8 @@ package com.mit.community.util;
 
 import org.apache.commons.collections.map.HashedMap;
 import sun.misc.BASE64Encoder;
-
 import java.io.*;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import java.net.URLEncoder;
-=======
->>>>>>> remotes/origin/newdev
-=======
-import java.net.URLEncoder;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 import java.nio.file.Files;
 import java.util.Map;
 
@@ -47,17 +39,6 @@ public class HttpPostUtil {
                 String temp_params = sb.toString();
                 params = temp_params.substring(0, temp_params.length() - 1);
             }
-<<<<<<< HEAD
-<<<<<<< HEAD
-            //params = URLEncoder.encode(params, "utf-8");
-             System.out.println("发送的额参数="+params);
-=======
-            // System.out.println("发送的额参数="+params);
->>>>>>> remotes/origin/newdev
-=======
-            //params = URLEncoder.encode(params, "utf-8");
-             System.out.println("发送的额参数="+params);
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
             // 创建URL对象
             //System.out.println("=====================发送上传参数请求请求");
             java.net.URL connURL = new java.net.URL(url);

@@ -178,17 +178,9 @@ public class DevicePerceptionService {
         page.setRecords(list);
         return page;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 
     public List<DeviceInfo> getDevicesByDeviceGroupId(Integer deviceGroupId) {
         return personLabelsMapper.getDevicesByDeviceGroupId(deviceGroupId);
     }
-<<<<<<< HEAD
-=======
->>>>>>> remotes/origin/newdev
-=======
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
+
 }

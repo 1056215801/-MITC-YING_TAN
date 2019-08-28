@@ -51,5 +51,8 @@ public interface PersonLabelsMapper {
     List<DeviceInfo> getDevicesByDeviceGroupId(@Param("deviceGroupId")Integer deviceGroupId);
     AccessCard getByCardNumAndMac (@Param("cardNum")String cardNum, @Param("mac")String mac);
     DeviceIsOnline getIsOnline(@Param("deviceNum")String deviceNum);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
 }
