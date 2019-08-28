@@ -602,14 +602,14 @@ public class PassThroughController {
             }
             page.setRecords(list);
         }
-=======
+
     @ApiOperation(value = "分页获取通行记录")
     @PostMapping("/accessControlPage")
     public Result accessControlPage(HttpServletRequest request, String cardNum, String name, Integer zoneId, Integer buildingId, Integer unitId, Integer interactiveType, String deicveNum,
                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeStart,
                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeEnd, Integer pageNum, Integer pageSize) {
         Page<AccessControl> page = accessControlService.getAccessControlPage(cardNum, name, zoneId, buildingId, unitId, interactiveType, deicveNum, timeStart, timeEnd, pageNum, pageSize);
->>>>>>> remotes/origin/newdev
+
         return Result.success(page);
     }
 
