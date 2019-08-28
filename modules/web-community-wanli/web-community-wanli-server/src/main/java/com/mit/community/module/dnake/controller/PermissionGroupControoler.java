@@ -63,10 +63,15 @@ public class PermissionGroupControoler {
     @Autowired
     private UserService userService;
 <<<<<<< HEAD
+<<<<<<< HEAD
     @Autowired
     private DevicePerceptionService devicePerceptionService;
 =======
 >>>>>>> remotes/origin/newdev
+=======
+    @Autowired
+    private DevicePerceptionService devicePerceptionService;
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 
 
     /**
@@ -93,6 +98,9 @@ public class PermissionGroupControoler {
         if (!list.isEmpty()) {
             for (int i=0; i<list.size(); i++) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
                 List<DeviceInfo> listDeviceInfo = devicePerceptionService.getDevicesByDeviceGroupId(list.get(i).getDeviceGroupId());
                 if (!listDeviceInfo.isEmpty()) {
                     for (int a=0; a<listDeviceInfo.size(); a++) {
@@ -100,6 +108,7 @@ public class PermissionGroupControoler {
                         if (StringUtils.isNotBlank(timeDiffi)) {
                             if (Integer.parseInt(timeDiffi) > 10) {
                                 listDeviceInfo.get(a).setDeviceStatus(2);//2离线
+<<<<<<< HEAD
                             } else {
                                 listDeviceInfo.get(a).setDeviceStatus(1);//1在线
 =======
@@ -121,6 +130,10 @@ public class PermissionGroupControoler {
                             } else {
                                 device.setDeviceStatus(2);//离线
 >>>>>>> remotes/origin/newdev
+=======
+                            } else {
+                                listDeviceInfo.get(a).setDeviceStatus(1);//1在线
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
                             }
                         } else {
                             listDeviceInfo.get(a).setDeviceStatus(2);
@@ -364,14 +377,19 @@ public class PermissionGroupControoler {
     @PostMapping("/addDeviceDugPeople")
     @ApiOperation(value = "增加设备调试人员", notes = "")
 <<<<<<< HEAD
+<<<<<<< HEAD
     public Result addDeviceDugPeople(HttpServletRequest request,String name, String cellPhone, String sex, String expireTime, String remarks){
 =======
     public Result addDeviceDugPeople(HttpServletRequest request,String cellPhone, String sex ){
 >>>>>>> remotes/origin/newdev
+=======
+    public Result addDeviceDugPeople(HttpServletRequest request,String name, String cellPhone, String sex, String expireTime, String remarks){
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String communityCode = user.getCommunityCode();
         String accountType = user.getAccountType();
+<<<<<<< HEAD
 <<<<<<< HEAD
         userService.addDeviceDugAccount(name, cellPhone, sex, communityCode, accountType,expireTime, remarks);
         return Result.success("添加成功");
@@ -394,6 +412,23 @@ public class PermissionGroupControoler {
     }
 
 >>>>>>> remotes/origin/newdev
+=======
+        userService.addDeviceDugAccount(name, cellPhone, sex, communityCode, accountType,expireTime, remarks);
+        return Result.success("添加成功");
+    }
+
+    @PostMapping("/getPageDeviceDugPeople")
+    @ApiOperation(value = "分页查询设备调试人员", notes = "")
+    public Result getPageDeviceDugPeople(HttpServletRequest request,Integer pageNum, Integer pageSize){
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = user.getCommunityCode();
+
+        Page<DeviceBugPeople> page = personLabelsService.pageDeviceDugPeople(communityCode, pageNum, pageSize);
+        return Result.success(page);
+    }
+
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     @PostMapping("/deviceDugPeopleChange")
     @ApiOperation(value = "停用/启用 设备调试人员", notes = "changeType 1启用，2停用")
     public Result deviceDugPeopleChange(HttpServletRequest request,String cellPhone, Integer changeType ){
@@ -401,10 +436,13 @@ public class PermissionGroupControoler {
         return Result.success("ok");
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 
 
 
 >>>>>>> remotes/origin/newdev
+=======
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 }

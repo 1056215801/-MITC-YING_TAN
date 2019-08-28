@@ -358,6 +358,7 @@ public class UserService {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public void addDeviceDugAccount(String name, String cellPhone, String sex, String communityCode, String accountType, String expireTime, String remarks) {
         User user = new User();
         user.setCellphone(cellPhone);
@@ -371,6 +372,14 @@ public class UserService {
         user.setPassword("123456");
         user.setNickname("设备调试员");
 >>>>>>> remotes/origin/newdev
+=======
+    public void addDeviceDugAccount(String name, String cellPhone, String sex, String communityCode, String accountType, String expireTime, String remarks) {
+        User user = new User();
+        user.setCellphone(cellPhone);
+        user.setPassword("123456");
+        user.setNickname(name);
+        user.setName(name);
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         user.setGender((short)("男".equals(sex)? 1:2));
         user.setRole("设备调试员");
         user.setIcon_url("http://www.miesofor.tech/1ec47936-e19a-43d2-86c1-481ddfe07a8c.png");
@@ -379,6 +388,7 @@ public class UserService {
         user.setGmtCreate(LocalDateTime.now());
         user.setGmtModified(LocalDateTime.now());
         user.setIdentity(1);
+<<<<<<< HEAD
 <<<<<<< HEAD
         user.setSerialnumber(communityCode);
         user.setFaceToken(accountType);
@@ -398,6 +408,21 @@ public class UserService {
         user.setFaceToken(accountType);
         userMapper.insert(user);
 >>>>>>> remotes/origin/newdev
+=======
+        user.setSerialnumber(communityCode);
+        user.setFaceToken(accountType);
+        user.setDoornum(expireTime);//到期时间
+        user.setCardnum(remarks);
+
+        User userExits = userService.getByCellphone(cellPhone);
+        if (userExits == null) {
+            userMapper.insert(user);
+        } else {
+            EntityWrapper<User> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", userExits.getId());
+            userMapper.update(user, wrapper);
+        }
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     }
 
     public void deviceDugPeopleChange(String cellPhone, Integer changeType) {
@@ -406,10 +431,14 @@ public class UserService {
             user.setIdentity(1);
         } else {
 <<<<<<< HEAD
+<<<<<<< HEAD
             user.setIdentity(2);
 =======
             user.setIdentity(0);
 >>>>>>> remotes/origin/newdev
+=======
+            user.setIdentity(2);
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         }
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellPhone);

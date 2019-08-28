@@ -71,7 +71,8 @@ public class PassThroughController {
     private AccessCardService accessCardService;
     @Autowired
     private AccessControlService accessControlService;
-
+    @Autowired
+    private HouseHoldPhotoService houseHoldPhotoService;
 
     @Autowired
     public PassThroughController(ApplyKeyService applyKeyService,
@@ -333,7 +334,7 @@ public class PassThroughController {
                                                 String cardListArr) {
         System.out.println("===========================cardListArr="+cardListArr);
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null, null);
         if (!msg.contains("success")) {
             return -1;
         }
@@ -342,10 +343,14 @@ public class PassThroughController {
 
     /**
 <<<<<<< HEAD
+<<<<<<< HEAD
      * 增加图片的保存,卡保存（替代狄耐克接口）
 =======
      * 增加图片的保存（替代狄耐克接口）
 >>>>>>> remotes/origin/newdev
+=======
+     * 增加图片的保存,卡保存（替代狄耐克接口）
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
      * @param editFlag
      * @param householdId
      * @param appAuthFlag
@@ -375,6 +380,7 @@ public class PassThroughController {
                                                 String initValidityEndDate,
                                                 Boolean csReturn,
 <<<<<<< HEAD
+<<<<<<< HEAD
                                                 String cardListArr, MultipartFile[] images) throws Exception{
         String imageUrl = null;
         if (images != null) {
@@ -383,6 +389,11 @@ public class PassThroughController {
         String imageUrl = null;
         if (image != null) {
 >>>>>>> remotes/origin/newdev
+=======
+                                                String cardListArr, MultipartFile[] images, String imageUrls) throws Exception{
+        String imageUrl = null;
+        if (images != null) {
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
             String fileHz = UUID.randomUUID().toString() + ".jpg";
             String basePath = "f:\\face";
             File file = new File(basePath);
@@ -390,10 +401,14 @@ public class PassThroughController {
                 file.mkdir();
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
             byte[] b = images.getBytes();
 =======
             byte[] b = image.getBytes();
 >>>>>>> remotes/origin/newdev
+=======
+            byte[] b = images.getBytes();
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
             imageUrl = basePath + "\\" +fileHz;
             File aa = new File(imageUrl);
             FileImageOutputStream fos = new FileImageOutputStream(aa);
@@ -402,10 +417,14 @@ public class PassThroughController {
         }
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
 <<<<<<< HEAD
+<<<<<<< HEAD
                 faceAuthFlag, deviceGIds, validityEndDate, cardListArr, images);
 =======
                 faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrl);
 >>>>>>> remotes/origin/newdev
+=======
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, images, imageUrls);
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         if (msg.contains("success")) {
             //这里略去生成人脸特征值过程
 
@@ -550,7 +569,7 @@ public class PassThroughController {
         return 1;
     }
 
-    @ApiOperation(value = "保存门禁卡信息")
+    /*@ApiOperation(value = "保存门禁卡信息")
     @PostMapping("/saveCard")
     public Result saveCard(String cardNum, String deviceGIds, Integer householdId) {
         if (StringUtils.isNotBlank(deviceGIds) && StringUtils.isNotBlank(cardNum) && householdId != null) {
@@ -563,16 +582,21 @@ public class PassThroughController {
                 accessCard.setCardNum(cardNum);
                 accessCard.setHouseHoldId(householdId);
                 accessCard.setDeviceNum(list.get(i).getDeviceNum());
-<<<<<<< HEAD
+
                 /*Device device = deviceService.getByDeviceNum(list.get(i).getDeviceNum());
                 if (device.getDnakeDeviceInfoId() != null) {
                     accessCard.setDnakeDeviceInfoId(device.getDnakeDeviceInfoId());
                 }*/
 
-=======
                 Device device = deviceService.getByDeviceNum(list.get(i).getDeviceNum());
                 accessCard.setDnakeDeviceInfoId(device.getDnakeDeviceInfoId());
->>>>>>> remotes/origin/newdev
+
+                *//*Device device = deviceService.getByDeviceNum(list.get(i).getDeviceNum());
+                if (device.getDnakeDeviceInfoId() != null) {
+                    accessCard.setDnakeDeviceInfoId(device.getDnakeDeviceInfoId());
+                }*//*
+
+
                 accessCard.setGmtCreate(LocalDateTime.now());
                 accessCard.setGmtModified(LocalDateTime.now());
                 accessCardService.save(accessCard);
@@ -583,7 +607,7 @@ public class PassThroughController {
         }
     }
 
-<<<<<<< HEAD
+
     @ApiOperation(value = "分页获取通行记录", notes = "interactiveType：开门方式（0：其他开门；1：刷卡开门；2：密码开门；3：APP开门；4：分机开门；5：二维码开门； 6：蓝牙开门；7：按钮开门；8：手机开门;9：人脸识别；10:固定密码；11：http开门；）")
     @PostMapping("/accessControlPage")
     public Result accessControlPage(HttpServletRequest request, String communityCode, String cardNum, String name, String zoneId, String buildingId, String unitId, Integer interactiveType, String deicveNum,
@@ -610,7 +634,61 @@ public class PassThroughController {
                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime timeEnd, Integer pageNum, Integer pageSize) {
         Page<AccessControl> page = accessControlService.getAccessControlPage(cardNum, name, zoneId, buildingId, unitId, interactiveType, deicveNum, timeStart, timeEnd, pageNum, pageSize);
 
+
+    @ApiOperation(value = "分页获取通行记录", notes = "interactiveType：开门方式（0：其他开门；1：刷卡开门；2：密码开门；3：APP开门；4：分机开门；5：二维码开门； 6：蓝牙开门；7：按钮开门；8：手机开门;9：人脸识别；10:固定密码；11：http开门；）")
+    @PostMapping("/accessControlPage")
+    public Result accessControlPage(HttpServletRequest request, String communityCode, String cardNum, String name, String zoneId, String buildingId, String unitId, Integer interactiveType, String deicveNum,
+                                   String timeStart,
+                                    String timeEnd, Integer pageNum, Integer pageSize) {
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
+        Page<AccessControl> page = accessControlService.getAccessControlPage(communityCode, cardNum, name, zoneId, buildingId, unitId, interactiveType, deicveNum, timeStart, timeEnd, pageNum, pageSize);
+        List<AccessControl> list = page.getRecords();
+        if (!list.isEmpty()) {
+            for (AccessControl accessControl : list) {
+                accessControl.setSelfPhotoUrl(accessControl.getAccessImgUrl());
+            }
+            page.setRecords(list);
+        }
+
         return Result.success(page);
+    }
+
+    @ApiOperation(value = "门禁卡下发")
+    @PostMapping("/sendCard")
+    public Result sendCard(Integer id) {
+        AccessCard accessCard = accessCardService.getById(id);
+        DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(accessCard.getDeviceNum());
+        if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+            if (houseHoldService.sendCardToDevice(deviceIsOnline.getIp(),accessCard.getCardNum())) {//下发成功
+                accessCardService.updateUploadById(2,id);
+            } else {
+                return Result.error("下发失败");
+            }
+        } else {
+            return Result.error("设备不在线");
+        }
+        return Result.success("下发成功");
+    }
+
+    @ApiOperation(value = "人脸下发")
+    @PostMapping("/sendFea")
+    public Result sendFea(Integer id) {
+        HouseHoldPhoto houseHoldPhoto = houseHoldPhotoService.getById(id);
+        DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(houseHoldPhoto.getDeviceNum());
+        if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+            if (houseHoldService.sendFeaToDevice(deviceIsOnline.getIp(),houseHoldPhoto.getFeaUrl(), houseHoldPhoto.getHouseHoldId())) {//下发成功
+                houseHoldPhotoService.updateUploadById(2, id);
+            } else {
+                return Result.error("下发失败");
+            }
+        } else {
+            return Result.error("设备不在线");
+        }
+        return Result.success("下发成功");
     }
 
 

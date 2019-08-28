@@ -16,17 +16,29 @@ import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.*;
 import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.population.service.PersonLabelsService;
+<<<<<<< HEAD
 import com.mit.community.util.AuthorizeStatusUtil;
 import com.mit.community.util.ConstellationUtil;
 import com.mit.community.util.DateUtils;
 import com.mit.community.util.Result;
+=======
+import com.mit.community.util.*;
+import org.apache.commons.collections.map.HashedMap;
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+<<<<<<< HEAD
+=======
+import sun.misc.BASE64Encoder;
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 
+import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -76,6 +88,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     private PersonLabelsService personLabelsService;
     @Autowired
     private DeviceDeviceGroupService deviceDeviceGroupService;
+<<<<<<< HEAD
+=======
+    @Autowired
+    private HouseHoldPhotoService houseHoldPhotoService;
+    @Autowired
+    private AccessCardService accessCardService;
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 
     /**
      * 查询住户，通过住户列表
@@ -603,6 +622,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      */
     @Transactional(rollbackFor = Exception.class)
 <<<<<<< HEAD
+<<<<<<< HEAD
     public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, MultipartFile[] images) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -622,6 +642,17 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         houseHoldWrapper.eq("household_id",householdId);
         houseHoldMapper.update(houseHold, houseHoldWrapper);
 >>>>>>> remotes/origin/newdev
+=======
+    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, MultipartFile[] images, String imageUrls) {
+        String msg = "";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        //HouseHold houseHold = new HouseHold();
+        //houseHold.setLabels(photoUrl);
+        //EntityWrapper<HouseHold> houseHoldWrapper = new EntityWrapper<>();
+        //System.out.println("=================householdId="+householdId);
+        //houseHoldWrapper.eq("household_id",householdId);
+        //houseHoldMapper.update(houseHold, houseHoldWrapper);
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         try {
             //更新本地住户授权类型字段+本地更新住户有效期权限时间
             Integer authStatus = 0;
@@ -731,6 +762,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             msg = "success";
 
 
+<<<<<<< HEAD
             if (StringUtils.isNotBlank(cardListArr) || images != null) {
                 if (StringUtils.isNotBlank(deviceGIds)){
                     String[] deviceGroupIds = deviceGIds.split(",");
@@ -744,6 +776,126 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                     }
                 } else { //没有选择权限组
 
+=======
+            if (StringUtils.isNotBlank(cardListArr) || images != null || StringUtils.isNotBlank(imageUrls)) {
+                if (StringUtils.isNotBlank(deviceGIds)){
+                    String[] deviceGroupIds = deviceGIds.split(",");
+                    for (String deviceGroupId : deviceGroupIds){
+                        List<DeviceDeviceGroup> deviceDeviceGroupsList = deviceDeviceGroupService.getGroupsByDeviceGroupId(Integer.parseInt(deviceGroupId));
+                        if (StringUtils.isNotBlank(cardListArr)) {
+                            String[] cardsNum = cardListArr.split(",");
+                            for (int a=0; a<cardsNum.length; a++) {
+                                if (!deviceDeviceGroupsList.isEmpty()) {
+                                    AccessCard AccessCard = null;
+                                    for (int i=0; i<deviceDeviceGroupsList.size(); i++) {
+                                        AccessCard accessCard = accessCardService.getByHouseHoldIdAndDeviceNumAndCardNum(householdId, deviceDeviceGroupsList.get(i).getDeviceNum(), cardsNum[a]);
+                                        if (accessCard == null) {
+                                            DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
+                                            if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+                                                if (sendCardToDevice(deviceIsOnline.getIp(),cardsNum[a])) {//下发成功
+                                                    accessCardService.save(cardsNum[a],householdId,deviceDeviceGroupsList.get(i).getDeviceNum(),Integer.parseInt(deviceGroupId),2);
+                                                } else{//下发不成功
+                                                    accessCardService.save(cardsNum[a],householdId,deviceDeviceGroupsList.get(i).getDeviceNum(),Integer.parseInt(deviceGroupId),1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else { //所选设备组没有绑定设备
+                                    accessCardService.save(cardsNum[a],householdId,null,Integer.parseInt(deviceGroupId),1);
+                                }
+                            }
+                        }
+
+                        if (images != null) {
+                            List<HouseHoldPhoto>  houseHoldPhotoList = saveImageAndAnalyse(images);//都是能分析出人脸特征值的照片
+                            for (HouseHoldPhoto houseHoldPhoto : houseHoldPhotoList) {
+                                if (!deviceDeviceGroupsList.isEmpty()) {
+                                    for (int i=0; i<deviceDeviceGroupsList.size(); i++) {
+                                        DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
+                                        if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+                                            if (sendFeaToDevice(deviceIsOnline.getIp(),houseHoldPhoto.getFeaUrl(), householdId)) {//下发成功
+                                                houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 2, deviceDeviceGroupsList.get(i).getDeviceNum());
+                                            } else{//下发不成功
+                                                houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, deviceDeviceGroupsList.get(i).getDeviceNum());
+                                            }
+                                        }
+                                    }
+                                } else {//权限组没有绑定设备
+                                    houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, null);
+                                }
+                            }
+                        }
+
+                        if (StringUtils.isNotBlank(imageUrls)) {
+                            String[] imageUrl = imageUrls.split(",");
+                            for (String photoUrlNet : imageUrl) {
+                                HouseHoldPhoto houseHoldPhoto = houseHoldPhotoService.getByPhotoUrlNet(photoUrlNet);
+                                if (!deviceDeviceGroupsList.isEmpty()) {
+
+                                    for (int i=0; i<deviceDeviceGroupsList.size(); i++) {
+                                        HouseHoldPhoto houseHoldPhotoExits = houseHoldPhotoService.getByHouseHoldIdAndDeviceNumAndPhotoUrl(householdId, deviceDeviceGroupsList.get(i).getDeviceNum(), photoUrlNet);
+                                        if (houseHoldPhotoExits == null) {
+                                            DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
+                                            if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+                                                if (sendFeaToDevice(deviceIsOnline.getIp(),houseHoldPhoto.getFeaUrl(), householdId)) {//下发成功
+                                                    houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 2, deviceDeviceGroupsList.get(i).getDeviceNum());
+                                                } else{//下发不成功
+                                                    houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, deviceDeviceGroupsList.get(i).getDeviceNum());
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {//权限组没有绑定设备
+                                    houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, null);
+                                }
+                            }
+                        }
+                    }
+                } else { //没有选择权限组，直接保存就行
+                    if (StringUtils.isNotBlank(cardListArr)) {//保存门禁卡
+                        String[] cardsNum = cardListArr.split(",");
+                        for (int a=0; a<cardsNum.length; a++) {
+                            AccessCard accessCard = accessCardService.getByHouseHoldIdAndDeviceNumAndCardNum(householdId, null,cardsNum[a]);
+                            if (accessCard == null) {
+                                accessCardService.save(cardsNum[a],householdId,null,null,1);
+                            }
+                        }
+                    }
+
+                    if (images != null) {
+                        HouseHoldPhoto houseHoldPhoto = null;
+                        for (int i=0; i<images.length; i++) {
+                            houseHoldPhoto = new HouseHoldPhoto();
+                            String uuid = UUID.randomUUID().toString();
+                            String fileHz =  uuid + ".jpg";
+                            String basePath = "f:\\face";
+                            File file = new File(basePath);
+                            if (!file.exists()) {
+                                file.mkdir();
+                            }
+                            byte[] b = images[i].getBytes();
+                            String photoUrl = basePath + "\\" +fileHz;//本地保存地址
+                            File aa = new File(photoUrl);
+                            FileImageOutputStream fos = new FileImageOutputStream(aa);
+                            fos.write(b, 0, b.length);
+                            fos.close();
+
+                            String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
+                            boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
+                            if (flag == true) {
+                                houseHoldPhoto.setHouseHoldId(householdId);
+                                houseHoldPhoto.setIsUpload(1);
+                                houseHoldPhoto.setPhotoUrlNet(photoUrlNet);
+                                houseHoldPhoto.setPhotoUrl(photoUrl);//照片本地保存路径
+                                houseHoldPhoto.setFeaUrl(basePath + "\\" + uuid + ".fea");
+                                houseHoldPhoto.setGmtCreate(LocalDateTime.now());
+                                houseHoldPhoto.setGmtModified(LocalDateTime.now());
+                                houseHoldPhotoService.save(houseHoldPhoto);
+                            }
+
+                        }
+                    }
+>>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
                 }
             }
         } catch (Exception e) {
@@ -752,6 +904,111 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         }
         return msg;
     }
+
+    public List<HouseHoldPhoto> saveImageAndAnalyse(MultipartFile[] images) {
+        List<HouseHoldPhoto> list = new ArrayList<>();
+        HouseHoldPhoto houseHoldPhoto = null;
+        try{
+            for (int i=0; i<images.length; i++) {
+                houseHoldPhoto = new HouseHoldPhoto();
+                String uuid = UUID.randomUUID().toString();
+                String fileHz =  uuid + ".jpg";
+                String basePath = "f:\\face";
+                File file = new File(basePath);
+                if (!file.exists()) {
+                    file.mkdir();
+                }
+                byte[] b = images[i].getBytes();
+                String photoUrl = basePath + "\\" +fileHz;//本地保存地址
+                File aa = new File(photoUrl);
+                FileImageOutputStream fos = new FileImageOutputStream(aa);
+                fos.write(b, 0, b.length);
+                fos.close();
+
+                String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
+                boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
+                if (flag == true) {
+                    houseHoldPhoto.setPhotoUrl(photoUrl);
+                    houseHoldPhoto.setPhotoUrlNet(photoUrlNet);
+                    houseHoldPhoto.setFeaUrl(basePath + "\\" + uuid + ".fea");
+                    list.add(houseHoldPhoto);
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static boolean sendFeaToDevice(String ip, String feaPath, Integer houseHoldId){
+        boolean flag = false;
+        BASE64Encoder encoder = new BASE64Encoder();
+        Map<String,String> params = new HashedMap();
+        params.put("cmd","faceRegister");
+        params.put("houseHoldId",String.valueOf(houseHoldId));
+        try{
+            File file = new File(feaPath);
+            String feaBase64 = encoder.encode(Files.readAllBytes(file.toPath()));
+            params.put("fea",feaBase64);
+            String result = sendPost1("http://" + ip + ":28085",params);
+            net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(result);
+            if (json.containsKey("message")) {
+                flag = true;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return flag;
+        }
+    }
+
+    public static boolean sendCardToDevice(String ip, String cardNum){
+        boolean flag = false;
+        Map<String,String> params = new HashedMap();
+        params.put("cmd","cardAdd");
+        params.put("cardNum",cardNum);
+        try{
+            String result = sendPost1("http://" + ip + ":28085",params);
+            net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(result);
+            if (json.containsKey("message")) {
+                flag = true;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return flag;
+        }
+    }
+
+    public static boolean faceAnalyse(String disk, String faceExePath, String inputPhotoName, String outputPhotoName, String feaFileName) {
+        boolean flag = false;
+        String cmdCommand = "cmd /c " + disk + " && cd " + faceExePath + " && face -i " + inputPhotoName + " -o " + outputPhotoName + " -f " + feaFileName +" -v model";
+        StringBuilder stringBuilder = new StringBuilder();
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(cmdCommand);
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), "GBK"));
+            String line = null;
+            while((line=bufferedReader.readLine()) != null)
+            {
+                stringBuilder.append(line+"\n");
+                System.out.println(line);
+            }
+            File file = new File(faceExePath + "\\" + feaFileName);
+            if (file.exists()) {
+                flag = true;
+            }
+            return flag;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return flag;
+        }
+    }
+
+
+
 
     /**
      * 注销住户信息
@@ -886,5 +1143,85 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             msg = "fail:" + ex.getMessage().toString();
         }
         return msg;
+    }
+
+
+    /**
+     * 发送POST请求
+     *
+     * @param url
+     *            目的地址
+     * @param parameters
+     *            请求参数，Map类型。
+     * @return 远程响应结果
+     */
+    public static String sendPost1(String url, Map<String,String> parameters) throws Exception{
+        String result = "";// 返回的结果
+        BufferedReader in = null;// 读取响应输入流
+        PrintWriter out = null;
+        StringBuffer sb = new StringBuffer();// 处理请求参数
+        String params = "";// 编码之后的参数
+        try {
+            // 编码请求参数
+            if (parameters.size() == 1) {
+                for (String name : parameters.keySet()) {
+                    sb.append(name).append("=").append(
+                            parameters.get(name));
+                }
+                params = sb.toString();
+            } else if(parameters.size() > 1){
+                for (String name : parameters.keySet()) {
+                    sb.append(name).append("=").append(
+                            parameters.get(name)).append("&");
+                }
+                String temp_params = sb.toString();
+                params = temp_params.substring(0, temp_params.length() - 1);
+            }
+            //params = URLEncoder.encode(params, "utf-8");
+            System.out.println("发送的额参数="+params);
+            // 创建URL对象
+            //System.out.println("=====================发送上传参数请求请求");
+            java.net.URL connURL = new java.net.URL(url);
+            // 打开URL连接
+            java.net.HttpURLConnection httpConn = (java.net.HttpURLConnection) connURL
+                    .openConnection();
+            // 设置通用属性
+            httpConn.setRequestProperty("Accept", "*/*");
+            httpConn.setRequestProperty("Connection", "Keep-Alive");
+            httpConn.setRequestProperty("User-Agent",
+                    "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)");
+            // 设置POST方式
+            httpConn.setDoInput(true);
+            httpConn.setDoOutput(true);
+            // 获取HttpURLConnection对象对应的输出流
+            out = new PrintWriter(httpConn.getOutputStream());
+            // 发送请求参数
+            out.write(params);
+            // flush输出流的缓冲
+            out.flush();
+            // 定义BufferedReader输入流来读取URL的响应，设置编码方式
+            in = new BufferedReader(new InputStreamReader(httpConn
+                    .getInputStream(), "UTF-8"));
+            String line;
+            // 读取返回的内容
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return result;
     }
 }
