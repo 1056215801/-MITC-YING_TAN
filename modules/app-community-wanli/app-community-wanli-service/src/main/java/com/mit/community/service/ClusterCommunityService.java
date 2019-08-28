@@ -210,7 +210,7 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
     }
 
 
-    public List<ClusterCommunity> getByCellPhone(String cellPhone) {
+    /*public List<ClusterCommunity> getByCellPhone(String cellPhone) {
         EntityWrapper<ClusterCommunity> wrapperStreet = new EntityWrapper<>();;
         List<String> communityCode = new ArrayList<>();
         User user = userService.getByCellphone(cellPhone);
@@ -227,6 +227,6 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
         EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
         wrapper.in("community_code", communityCode);
         return clusterCommunityMapper.selectList(wrapper);
-    }
+    }*/
 
 }
