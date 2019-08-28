@@ -2,9 +2,12 @@ package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
+
 
 /**
  * 设备组信息
@@ -13,6 +16,8 @@ import java.util.List;
  * @date 2018/12/10 10:52
  * @company mitesofor
  */
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @TableName("device_group")
 public class DeviceGroup extends BaseEntity {
@@ -40,7 +45,12 @@ public class DeviceGroup extends BaseEntity {
     @TableField(exist = false)
     private List<DeviceDeviceGroup> deviceDeviceGroups;
 
+    /*@TableField(exist = false)
+    private List<Device> device;*/
+
     @TableField(exist = false)
-    private List<Device> device;
+    private List<DeviceInfo> device;
+
+
 
 }

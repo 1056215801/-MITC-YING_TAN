@@ -4,15 +4,6 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.mit.community.entity.BaseEntity;
 import com.mit.community.entity.DeviceDeviceGroup;
-<<<<<<< HEAD
-
-
-
-
-=======
-import com.mit.community.entity.DeviceInfo;
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

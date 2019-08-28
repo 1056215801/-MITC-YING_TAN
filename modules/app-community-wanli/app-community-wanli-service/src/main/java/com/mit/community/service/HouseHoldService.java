@@ -13,14 +13,13 @@ import com.mit.community.constants.Constants;
 import com.mit.community.entity.*;
 import com.mit.community.entity.entity.DeviceGroup;
 import com.mit.community.entity.entity.PersonBaseInfo;
-<<<<<<< HEAD
+
 
 import com.mit.community.mapper.HouseHoldMapper;
 import com.mit.community.util.*;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Service;
 
-=======
 import com.mit.community.mapper.*;
 import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.population.service.PersonLabelsService;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -59,8 +57,7 @@ import java.util.stream.Collectors;
 @Service
 public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
 
-<<<<<<< HEAD
-=======
+
     @Autowired
     private HouseHoldMapper houseHoldMapper;
     @Autowired
@@ -1185,5 +1182,5 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         }
         return result;
     }
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
+
 }

@@ -28,9 +28,21 @@ import java.util.List;
 @Service
 public class UserService {
 
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private UserLabelService userLabelService;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private DnakeAppApiService dnakeAppApiService;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
+    @Autowired
+    private HouseHoldService houseHoldService;
+    @Autowired
+    private UserService userService;
 
-<<<<<<< HEAD
-=======
     /**
      * 查询用户信息，通过用户id
      *
@@ -385,5 +397,5 @@ public class UserService {
         wrapper.eq("cellphone", cellPhone);
         userMapper.update(user, wrapper);
     }
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
+
 }
