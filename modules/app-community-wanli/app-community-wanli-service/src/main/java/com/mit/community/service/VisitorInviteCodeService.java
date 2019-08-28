@@ -6,14 +6,11 @@ import com.mit.community.mapper.VisitorInviteCodeMapper;
 import com.mit.community.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
-
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-=======
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,32 +20,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 
 @Service
 public class VisitorInviteCodeService {
     @Autowired
     private VisitorInviteCodeMapper visitorInviteCodeMapper;
 
-<<<<<<< HEAD
-    public String getInviteCode(String cellphone, String dateTag, String times, String deviceGroupId, String communityCode){
-        String message = "";
-        String expiryDate = null;
-        EntityWrapper<VisitorInviteCode> wrapper = new EntityWrapper<>();
-        wrapper.eq("cellphone", cellphone);
-        if ("0".equals(dateTag)) {
-            expiryDate = getTime();
-        } else {
-            expiryDate = getFetureDate(1);
-        }
-        wrapper.eq("expiry_date", expiryDate);
-        wrapper.eq("device_group_id", deviceGroupId);
-        List<VisitorInviteCode> list = visitorInviteCodeMapper.selectList(wrapper);
-
-
-        String inviteCode = "";
-        return inviteCode;
-=======
     public void update (VisitorInviteCode visitorInviteCode) {
         visitorInviteCodeMapper.updateById(visitorInviteCode);
     }
@@ -167,7 +144,6 @@ public class VisitorInviteCodeService {
         visitorInviteCode.setGmtCreate(LocalDateTime.now());
         visitorInviteCode.setGmtModified(LocalDateTime.now());
         visitorInviteCodeMapper.insert(visitorInviteCode);
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     }
 
     /**
@@ -192,8 +168,7 @@ public class VisitorInviteCodeService {
         System.out.println("格式化后的日期：" + dateNowStr);
         return dateNowStr;
     }
-<<<<<<< HEAD
-=======
+
 
     public String getNoRepeatCode(List<String> exitsCode) {//获取不重复的邀请码
         String code = String.valueOf(Math.round(Math.random() * 10000));
@@ -204,5 +179,5 @@ public class VisitorInviteCodeService {
         }
         return code;
     }
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
+
 }

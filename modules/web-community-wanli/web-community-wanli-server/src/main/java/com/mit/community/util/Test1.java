@@ -79,25 +79,18 @@ public class Test1 {
         params.put("houseHoldId","12345");
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
         System.out.println(result);*/
-<<<<<<< HEAD
-        /*Map<String,String> params = new HashedMap();
-=======
+
         Map<String,String> params = new HashedMap();
->>>>>>> remotes/origin/newdev
+
         params.put("cmd","cardAdd");
         params.put("id","123");
         params.put("cardNum","4170481");
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
-<<<<<<< HEAD
-        System.out.println(result);*/
-=======
+
         System.out.println(result);
-<<<<<<< HEAD
->>>>>>> remotes/origin/newdev
+
         /*JSONObject json = JSONObject.fromObject(result);
-=======
-        JSONObject json = JSONObject.fromObject(result);
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
+
         String base64 = json.getString("base64");
         System.out.println(base64);
         /*Date d = new Date();
@@ -107,23 +100,7 @@ public class Test1 {
         /*String a = UUID.randomUUID().toString().replaceAll("-","");
         System.out.println(a);
         System.out.println(a.substring(a.length()-15,a.length()));*/
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-        long time = System.currentTimeMillis();
-        String timeStr = String.valueOf(time);
-        System.out.println(timeStr.substring(timeStr.length()-11, timeStr.length()));
-=======
->>>>>>> remotes/origin/newdev
-=======
-
-        System.out.println("Math.random得到小数");
-        System.out.println(Math.round(Math.random() * 10000));
-        System.out.println("Random");
-        System.out.println(new Random().nextInt(9999));
-        System.out.println("字符串前面补0的话就这样String.format");
-        System.out.println(String.format("%04d",new Random().nextInt(9999)));
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     }
 
 }

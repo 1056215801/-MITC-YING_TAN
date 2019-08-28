@@ -3,16 +3,9 @@ package com.mit.community.entity.entity;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.mit.community.entity.BaseEntity;
-import com.mit.community.entity.Device;
 import com.mit.community.entity.DeviceDeviceGroup;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import com.mit.community.entity.DeviceInfo;
-=======
->>>>>>> remotes/origin/newdev
-=======
-import com.mit.community.entity.DeviceInfo;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

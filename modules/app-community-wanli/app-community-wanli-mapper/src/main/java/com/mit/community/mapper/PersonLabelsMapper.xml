@@ -110,10 +110,6 @@
                 jdbcType="INTEGER" />
     </resultMap>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     <resultMap type="com.mit.community.entity.DeviceBugPeople" id="deviceBugPeopleMap">
         <result property="passWord" column="passWord" javaType="String"
                 jdbcType="VARCHAR" />
@@ -135,8 +131,6 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
-<<<<<<< HEAD
-=======
     <resultMap type="com.mit.community.entity.DeviceIsOnline" id="deviceIsOnlineMap">
         <result property="timeDiffi" column="timeDiffi" javaType="String"
                 jdbcType="OTHER" />
@@ -144,18 +138,12 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     <select id="pageDeviceDugPeople" resultMap="deviceBugPeopleMap">
         select a.password as passWord,a.name as name,a.doornum as expireTime,a.cellphone as cellPhone,a.cardnum as remarks,a.face_token as accountType,b.community_name as communityName,
         b.area_name as areName,b.street_name as streetName from user a LEFT JOIN cluster_community b on a.serialnumber=b.community_code
         where 1= 1 ${ew.sqlSegment}
     </select>
 
-<<<<<<< HEAD
-=======
->>>>>>> remotes/origin/newdev
-=======
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     <select id="getOwnerInfo" resultMap="ownerShipInfo">
         select a.owner_phone as ownerPhone,b.household_name as carOwner,c.zone_name as zoneName,c.building_name as buildingName,c.unit_name as unitName,c.room_num as roomNum
         from vehicle_info a LEFT JOIN household b on a.owner_phone=b.mobile LEFT JOIN household_room c on b.household_id=c.household_id
@@ -246,15 +234,7 @@
     </select>
 
     <select id="selectInfoPage" resultMap="deviceGroupMap">
-<<<<<<< HEAD
-<<<<<<< HEAD
         select DISTINCT a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
-=======
-        select a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
->>>>>>> remotes/origin/newdev
-=======
-        select DISTINCT a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         where 1= 1 ${ew.sqlSegment} <if test="sql != null and sql != ''">${sql}</if>
     </select>
 
@@ -263,13 +243,8 @@
         where id=#{id}
     </select>
 
-<<<<<<< HEAD
-    <select id="getIsOnline" resultType="String">
-        select TIME_TO_SEC(TIMEDIFF(NOW(), a.gmt_modified)) FROM dnake_device_info a
-=======
     <select id="getIsOnline" resultMap="deviceIsOnlineMap">
         select TIME_TO_SEC(TIMEDIFF(NOW(), a.gmt_modified)) as timeDiffi,a.ip FROM dnake_device_info a
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         LEFT JOIN device b on a.id=b.dnake_device_info_id
         where b.device_num=#{deviceNum}
     </select>
@@ -296,10 +271,6 @@
         where 1=1 <if test="ip != null and ip != ''">and a.ip=#{ip}</if>
     </select>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
     <select id="getDevicesByDeviceGroupId" resultMap="menJinMap">
         select b.device_name as deviceName,b.device_num as deviceNum,b.device_code as deviceCode,b.device_type as deviceType,b.device_sip as deviceSip,b.verison,c.mac as deviceMac,
         b.building_code as buildingCode,b.unit_code as unitCode,TIME_TO_SEC(TIMEDIFF(NOW(), c.gmt_modified)) as timeDiffi,d.building_name as buildingName,e.unit_name as unitName
@@ -308,9 +279,4 @@
         where a.device_group_id=#{deviceGroupId}
     </select>
 
-<<<<<<< HEAD
-=======
->>>>>>> remotes/origin/newdev
-=======
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 </mapper>

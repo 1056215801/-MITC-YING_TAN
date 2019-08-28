@@ -3,17 +3,9 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.AccessCard;
 import com.mit.community.mapper.AccessCardMapper;
-<<<<<<< HEAD
-<<<<<<< HEAD
-import com.mit.community.mapper.mapper.PersonLabelsMapper;
-import com.mit.community.population.service.PersonLabelsService;
-=======
->>>>>>> remotes/origin/newdev
-=======
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import com.mit.community.population.service.PersonLabelsService;
 import org.apache.commons.lang3.StringUtils;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,23 +16,13 @@ import java.util.List;
 public class AccessCardService {
     @Autowired
     private AccessCardMapper accessCardMapper;
-<<<<<<< HEAD
-<<<<<<< HEAD
     @Autowired
     private PersonLabelsMapper personLabelsMapper;
-=======
->>>>>>> remotes/origin/newdev
-=======
-    @Autowired
-    private PersonLabelsMapper personLabelsMapper;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
+
 
     public void save(AccessCard accessCard) {
         accessCardMapper.insert(accessCard);
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
     public void save(String cardNum, Integer houseHoldId, String deviceNum, Integer deviceGroupId, int isUpload) {
         AccessCard accessCard = new AccessCard();
@@ -57,17 +39,11 @@ public class AccessCardService {
         accessCard.setGmtModified(LocalDateTime.now());
         accessCardMapper.insert(accessCard);
     }
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 
     public AccessCard getByCardNumAndMac (String cardNum, String mac) {
         return personLabelsMapper.getByCardNumAndMac(cardNum, mac);
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> remotes/origin/newdev
-=======
     public AccessCard getByHouseHoidIdAndDeviceNum (Integer houseHoldId, String deviceNum) {
         EntityWrapper<AccessCard> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", houseHoldId);
@@ -107,5 +83,4 @@ public class AccessCardService {
         accessCardMapper.updateById(accessCard);
     }
 
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 }

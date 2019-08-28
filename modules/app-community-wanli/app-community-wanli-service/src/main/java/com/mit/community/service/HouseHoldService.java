@@ -16,25 +16,19 @@ import com.mit.community.entity.entity.PersonBaseInfo;
 import com.mit.community.mapper.*;
 import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.population.service.PersonLabelsService;
-<<<<<<< HEAD
+
 import com.mit.community.util.AuthorizeStatusUtil;
 import com.mit.community.util.ConstellationUtil;
 import com.mit.community.util.DateUtils;
 import com.mit.community.util.Result;
-=======
 import com.mit.community.util.*;
 import org.apache.commons.collections.map.HashedMap;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-<<<<<<< HEAD
-=======
 import sun.misc.BASE64Encoder;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
-
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -88,13 +82,10 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     private PersonLabelsService personLabelsService;
     @Autowired
     private DeviceDeviceGroupService deviceDeviceGroupService;
-<<<<<<< HEAD
-=======
     @Autowired
     private HouseHoldPhotoService houseHoldPhotoService;
     @Autowired
     private AccessCardService accessCardService;
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
 
     /**
      * 查询住户，通过住户列表
@@ -621,28 +612,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, MultipartFile[] images) {
-        String msg = "";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        //HouseHold houseHold = new HouseHold();
-        //houseHold.setLabels(photoUrl);
-        //EntityWrapper<HouseHold> houseHoldWrapper = new EntityWrapper<>();
-        //System.out.println("=================householdId="+householdId);
-        //houseHoldWrapper.eq("household_id",householdId);
-        //houseHoldMapper.update(houseHold, houseHoldWrapper);
-=======
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String photoUrl) {
-        String msg = "";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        HouseHold houseHold = new HouseHold();
-        houseHold.setLabels(photoUrl);
-        EntityWrapper<HouseHold> houseHoldWrapper = new EntityWrapper<>();
-        houseHoldWrapper.eq("household_id",householdId);
-        houseHoldMapper.update(houseHold, houseHoldWrapper);
->>>>>>> remotes/origin/newdev
-=======
     public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, MultipartFile[] images, String imageUrls) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -652,7 +621,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         //System.out.println("=================householdId="+householdId);
         //houseHoldWrapper.eq("household_id",householdId);
         //houseHoldMapper.update(houseHold, houseHoldWrapper);
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
         try {
             //更新本地住户授权类型字段+本地更新住户有效期权限时间
             Integer authStatus = 0;
@@ -760,23 +728,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 }
             }
             msg = "success";
-
-
-<<<<<<< HEAD
-            if (StringUtils.isNotBlank(cardListArr) || images != null) {
-                if (StringUtils.isNotBlank(deviceGIds)){
-                    String[] deviceGroupIds = deviceGIds.split(",");
-                    List<Integer> deviceGroupIdList = new ArrayList<>();
-                    List<DeviceDeviceGroup> deviceDeviceGroupsList = deviceDeviceGroupService.listByDeviceGroupIds(deviceGroupIdList);
-                    AccessCard AccessCard = null;
-                    if (!deviceDeviceGroupsList.isEmpty()) {
-                        for (int i=0; i<deviceDeviceGroupsList.size(); i++) {
-                            String timeDiffi = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
-                        }
-                    }
-                } else { //没有选择权限组
-
-=======
             if (StringUtils.isNotBlank(cardListArr) || images != null || StringUtils.isNotBlank(imageUrls)) {
                 if (StringUtils.isNotBlank(deviceGIds)){
                     String[] deviceGroupIds = deviceGIds.split(",");
@@ -895,7 +846,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
 
                         }
                     }
->>>>>>> 575d0536f7a990502d9678f3d35bb9f1fab83d10
                 }
             }
         } catch (Exception e) {
