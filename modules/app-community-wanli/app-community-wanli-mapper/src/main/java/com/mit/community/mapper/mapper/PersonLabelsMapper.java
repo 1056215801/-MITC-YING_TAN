@@ -49,5 +49,5 @@ public interface PersonLabelsMapper {
     List<DeviceBugPeople> pageDeviceDugPeople(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceBugPeople> wrapper);
     List<DeviceInfo> getDevicesByDeviceGroupId(@Param("deviceGroupId")Integer deviceGroupId);
     AccessCard getByCardNumAndMac (@Param("cardNum")String cardNum, @Param("mac")String mac);
-    String getIsOnline(@Param("deviceNum")String deviceNum);
+    DeviceIsOnline getIsOnline(@Param("deviceNum")String deviceNum);
 }

@@ -23,6 +23,9 @@ public class AccessCard extends BaseEntity{
     /*@TableField("dnake_device_info_id")
     private String dnakeDeviceInfoId;*/
 
+    @TableField("device_group_id")
+    private Integer deviceGroupId;
+
     @TableField("is_upload")
-    private int is_upload;//是否成功上传到机器；1否；2是
+    private int isUpload;//是否成功上传到机器；1否；2是
 }

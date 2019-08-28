@@ -17,7 +17,7 @@ public class VisitorInviteCode extends BaseEntity{
     private String cellphone;
 
     @TableField("data_tag")
-    private String dataTag;
+    private int dataTag;
     private int times;
 
     @TableField("device_group_id")

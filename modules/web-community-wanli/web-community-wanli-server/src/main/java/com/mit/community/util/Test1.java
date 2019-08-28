@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 /*
@@ -78,15 +79,15 @@ public class Test1 {
         params.put("houseHoldId","12345");
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
         System.out.println(result);*/
-        /*Map<String,String> params = new HashedMap();
+        Map<String,String> params = new HashedMap();
         params.put("cmd","cardAdd");
         params.put("id","123");
         params.put("cardNum","4170481");
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
-        System.out.println(result);*/
-        /*JSONObject json = JSONObject.fromObject(result);
+        System.out.println(result);
+        JSONObject json = JSONObject.fromObject(result);
         String base64 = json.getString("base64");
-        System.out.println(base64);*/
+        System.out.println(base64);
         /*Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
         String dateNowStr = sdf.format(d);
@@ -95,9 +96,12 @@ public class Test1 {
         System.out.println(a);
         System.out.println(a.substring(a.length()-15,a.length()));*/
 
-        long time = System.currentTimeMillis();
-        String timeStr = String.valueOf(time);
-        System.out.println(timeStr.substring(timeStr.length()-11, timeStr.length()));
+        System.out.println("Math.random得到小数");
+        System.out.println(Math.round(Math.random() * 10000));
+        System.out.println("Random");
+        System.out.println(new Random().nextInt(9999));
+        System.out.println("字符串前面补0的话就这样String.format");
+        System.out.println(String.format("%04d",new Random().nextInt(9999)));
     }
 
 }

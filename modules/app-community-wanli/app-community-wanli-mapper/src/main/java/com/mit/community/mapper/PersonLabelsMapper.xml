@@ -131,6 +131,13 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.DeviceIsOnline" id="deviceIsOnlineMap">
+        <result property="timeDiffi" column="timeDiffi" javaType="String"
+                jdbcType="OTHER" />
+        <result property="ip" column="ip" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
     <select id="pageDeviceDugPeople" resultMap="deviceBugPeopleMap">
         select a.password as passWord,a.name as name,a.doornum as expireTime,a.cellphone as cellPhone,a.cardnum as remarks,a.face_token as accountType,b.community_name as communityName,
         b.area_name as areName,b.street_name as streetName from user a LEFT JOIN cluster_community b on a.serialnumber=b.community_code
@@ -236,8 +243,8 @@
         where id=#{id}
     </select>
 
-    <select id="getIsOnline" resultType="String">
-        select TIME_TO_SEC(TIMEDIFF(NOW(), a.gmt_modified)) FROM dnake_device_info a
+    <select id="getIsOnline" resultMap="deviceIsOnlineMap">
+        select TIME_TO_SEC(TIMEDIFF(NOW(), a.gmt_modified)) as timeDiffi,a.ip FROM dnake_device_info a
         LEFT JOIN device b on a.id=b.dnake_device_info_id
         where b.device_num=#{deviceNum}
     </select>

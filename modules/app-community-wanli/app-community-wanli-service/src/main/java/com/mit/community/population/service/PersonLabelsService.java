@@ -139,7 +139,7 @@ public class PersonLabelsService {
         return page;
     }
 
-    public String getIsOnline(@Param("deviceNum")String deviceNum){
+    public DeviceIsOnline getIsOnline(@Param("deviceNum")String deviceNum){
         return labelsMapper.getIsOnline(deviceNum);
     }
 }
