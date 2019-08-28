@@ -4,7 +4,10 @@ import org.apache.commons.collections.map.HashedMap;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
+<<<<<<< HEAD
 import java.net.URLEncoder;
+=======
+>>>>>>> remotes/origin/newdev
 import java.nio.file.Files;
 import java.util.Map;
 
@@ -40,8 +43,12 @@ public class HttpPostUtil {
                 String temp_params = sb.toString();
                 params = temp_params.substring(0, temp_params.length() - 1);
             }
+<<<<<<< HEAD
             //params = URLEncoder.encode(params, "utf-8");
              System.out.println("发送的额参数="+params);
+=======
+            // System.out.println("发送的额参数="+params);
+>>>>>>> remotes/origin/newdev
             // 创建URL对象
             //System.out.println("=====================发送上传参数请求请求");
             java.net.URL connURL = new java.net.URL(url);

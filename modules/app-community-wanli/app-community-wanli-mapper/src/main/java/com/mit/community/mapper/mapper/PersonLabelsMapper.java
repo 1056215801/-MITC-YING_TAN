@@ -46,8 +46,11 @@ public interface PersonLabelsMapper {
     List<OwnerShipInfo> getOwnerInfo(@Param("cph")String cph);
     List<DeviceInfo> selectMenJinPage(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceInfo> wrapper, @Param("sql")String sql);
     List<DnakeDeviceDetailsInfo> getUnBindDevice(@Param("ip")String ip);
+<<<<<<< HEAD
     List<DeviceBugPeople> pageDeviceDugPeople(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceBugPeople> wrapper);
     List<DeviceInfo> getDevicesByDeviceGroupId(@Param("deviceGroupId")Integer deviceGroupId);
     AccessCard getByCardNumAndMac (@Param("cardNum")String cardNum, @Param("mac")String mac);
     String getIsOnline(@Param("deviceNum")String deviceNum);
+=======
+>>>>>>> remotes/origin/newdev
 }

@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.mit.community.entity.BaseEntity;
 import com.mit.community.entity.Device;
 import com.mit.community.entity.DeviceDeviceGroup;
+<<<<<<< HEAD
 import com.mit.community.entity.DeviceInfo;
+=======
+>>>>>>> remotes/origin/newdev
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -210,4 +210,23 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
     }
 
 
+    public List<ClusterCommunity> getByCellPhone(String cellPhone) {
+        EntityWrapper<ClusterCommunity> wrapperStreet = new EntityWrapper<>();;
+        List<String> communityCode = new ArrayList<>();
+        User user = userService.getByCellphone(cellPhone);
+        ClusterCommunity clusterCommunity = getByCommunityCode(user.getSerialnumber());
+        if ("小区账号".equals(user.getFaceToken())) {
+            communityCode.add(user.getSerialnumber());
+        } else if ("镇/街道账号".equals(user.getFaceToken())) {
+            wrapperStreet.eq("street_name", clusterCommunity.getStreetName());
+        } else if ("区级账号".equals(user.getFaceToken())) {
+            wrapperStreet.eq("area_name", clusterCommunity.getStreetName());
+        }
+        List<ClusterCommunity> list = clusterCommunityMapper.selectList(wrapperStreet);
+        communityCode = list.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCode);
+        return clusterCommunityMapper.selectList(wrapper);
+    }
+
 }

@@ -11,7 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
 import java.text.SimpleDateFormat;
+=======
+>>>>>>> remotes/origin/newdev
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -157,6 +160,7 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         return page;
     }
 
+<<<<<<< HEAD
     public Page<AccessControl> getAccessControlPage (String communityCode, String cardNum, String name, String zoneId, String buildingId, String unitId, Integer interactiveType, String deicveNum, String timeStart, String timeEnd, int pageNum, int pageSize) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Page<AccessControl> page = new Page<>(pageNum, pageSize);
@@ -192,6 +196,10 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         wrapper.orderBy("access_time", false);
         List<AccessControl> list = accessControlMapper.selectPage(page, wrapper);
         page.setRecords(list);
+=======
+    public Page<AccessControl> getAccessControlPage (String cardNum, String name, Integer zoneId, Integer buildingId, Integer unitId, Integer interactiveType, String deicveNum, LocalDateTime timeStart, LocalDateTime timeEnd, int pageNum, int pageSize) {
+        Page<AccessControl> page = new Page<>(pageNum, pageSize);
+>>>>>>> remotes/origin/newdev
         return page;
     }
 

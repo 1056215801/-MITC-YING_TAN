@@ -71,6 +71,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         }
         return zones.get(0);
     }
+<<<<<<< HEAD
 
     public void save(String zoneName, Integer zoneType, String zoneCode, Integer sort, String communityCode) {
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
@@ -173,6 +174,9 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         }
     }
     public Zone getByCommunityName (String communityName){
+=======
+    public Zone getByCommunityName(String communityName) {
+>>>>>>> remotes/origin/newdev
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("zone_name", communityName);
         List<Zone> zones = zoneMapper.selectList(wrapper);
@@ -182,10 +186,17 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         return zones.get(0);
     }
 
+<<<<<<< HEAD
     public Zone getByCommunityCode (String communityCode){
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
         wrapper.eq(false, "zone_name", "默认分区");
+=======
+    public Zone getByCommunityCode(String communityCode) {
+        EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.eq(false,"zone_name","默认分区");
+>>>>>>> remotes/origin/newdev
         List<Zone> zones = zoneMapper.selectList(wrapper);
         if (zones.isEmpty()) {
             return null;
@@ -193,7 +204,11 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         return zones.get(0);
     }
 
+<<<<<<< HEAD
     public Zone getByZoneId (Integer zoneId){
+=======
+    public Zone getByZoneId( Integer zoneId) {
+>>>>>>> remotes/origin/newdev
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("zone_id", zoneId);
         wrapper.eq("zone_status", 1);
@@ -202,6 +217,9 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
             return null;
         }
         return zones.get(0);
+<<<<<<< HEAD
 
+=======
+>>>>>>> remotes/origin/newdev
     }
 }

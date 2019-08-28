@@ -63,6 +63,7 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
         return units.get(0);
     }
 
+<<<<<<< HEAD
     public Result deleteByIdList(List<Integer> idList) {
         for (int i = 0; i <idList.size() ; i++) {
             EntityWrapper<Unit> entityWrapper=new EntityWrapper<>();
@@ -109,6 +110,8 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
 
     }
 
+=======
+>>>>>>> remotes/origin/newdev
     public Unit getByUnitId(Integer unitId) {
         EntityWrapper<Unit> wrapper = new EntityWrapper<>();
         wrapper.eq("unit_id", unitId);
@@ -119,5 +122,8 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
         }
         return list.get(0);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> remotes/origin/newdev
 }

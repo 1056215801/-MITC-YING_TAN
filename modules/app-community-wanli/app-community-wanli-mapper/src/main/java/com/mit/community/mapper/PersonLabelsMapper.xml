@@ -110,6 +110,7 @@
                 jdbcType="INTEGER" />
     </resultMap>
 
+<<<<<<< HEAD
     <resultMap type="com.mit.community.entity.DeviceBugPeople" id="deviceBugPeopleMap">
         <result property="passWord" column="passWord" javaType="String"
                 jdbcType="VARCHAR" />
@@ -137,6 +138,8 @@
         where 1= 1 ${ew.sqlSegment}
     </select>
 
+=======
+>>>>>>> remotes/origin/newdev
     <select id="getOwnerInfo" resultMap="ownerShipInfo">
         select a.owner_phone as ownerPhone,b.household_name as carOwner,c.zone_name as zoneName,c.building_name as buildingName,c.unit_name as unitName,c.room_num as roomNum
         from vehicle_info a LEFT JOIN household b on a.owner_phone=b.mobile LEFT JOIN household_room c on b.household_id=c.household_id
@@ -227,7 +230,11 @@
     </select>
 
     <select id="selectInfoPage" resultMap="deviceGroupMap">
+<<<<<<< HEAD
         select DISTINCT a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
+=======
+        select a.* from device_group a LEFT JOIN device_device_group b on a.device_group_id=b.device_group_id LEFT JOIN device c on b.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
+>>>>>>> remotes/origin/newdev
         where 1= 1 ${ew.sqlSegment} <if test="sql != null and sql != ''">${sql}</if>
     </select>
 
@@ -264,6 +271,7 @@
         where 1=1 <if test="ip != null and ip != ''">and a.ip=#{ip}</if>
     </select>
 
+<<<<<<< HEAD
     <select id="getDevicesByDeviceGroupId" resultMap="menJinMap">
         select b.device_name as deviceName,b.device_num as deviceNum,b.device_code as deviceCode,b.device_type as deviceType,b.device_sip as deviceSip,b.verison,c.mac as deviceMac,
         b.building_code as buildingCode,b.unit_code as unitCode,TIME_TO_SEC(TIMEDIFF(NOW(), c.gmt_modified)) as timeDiffi,d.building_name as buildingName,e.unit_name as unitName
@@ -272,4 +280,6 @@
         where a.device_group_id=#{deviceGroupId}
     </select>
 
+=======
+>>>>>>> remotes/origin/newdev
 </mapper>
