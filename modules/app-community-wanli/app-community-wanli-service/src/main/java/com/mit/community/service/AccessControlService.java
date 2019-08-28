@@ -10,15 +10,14 @@ import com.mit.community.mapper.AccessControlMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
+
 
 
 import java.text.SimpleDateFormat;
 
-=======
 import java.text.SimpleDateFormat;
 import java.text.SimpleDateFormat;
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
     @Autowired
     private DeviceService deviceService;
 
-<<<<<<< HEAD
-=======
     /**
      * 查询门禁记录，通过住户id
      * @param communityCode 小区code
@@ -203,6 +200,6 @@ public class AccessControlService extends ServiceImpl<AccessControlMapper, Acces
         page.setRecords(list);
         return page;
     }
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
+
 
 }

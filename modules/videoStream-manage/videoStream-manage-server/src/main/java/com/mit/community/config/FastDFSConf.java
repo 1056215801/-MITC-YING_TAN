@@ -8,27 +8,27 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 /**
- * 
-*  fastdfsÅäÖÃÎÄ¼ş
-* @author shuyy
-* @date 2018Äê8ÔÂ14ÈÕ
+ *
+ *  fastdfsé…ç½®æ–‡ä»¶
+ * @author shuyy
+ * @date 2018å¹´8æœˆ14æ—¥
  */
 @Component
 @Slf4j
 public class FastDFSConf {
-	
+
 	public static String nginxUrl;
-	
+
 	static{
-		log.info("¼ÓÔØfastdfsÅäÖÃÎÄ¼ş");
+		log.info("åŠ è½½fastdfsé…ç½®æ–‡ä»¶");
 		Properties prop = new Properties();
 		InputStream in = FastDFSConf.class.getResourceAsStream("/config/FastDFS/FastDFS.properties");
 		try {
 			prop.load(in);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 		nginxUrl = prop.getProperty("FastDFS.nginx");
 	}
-	
+
 }

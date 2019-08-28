@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.entity.entity.DeviceGroup;
+import com.mit.community.entity.DeviceInfo;
 import com.mit.community.population.service.PersonBaseInfoService;
 import com.mit.community.population.service.PersonLabelsService;
 import com.mit.community.service.*;
@@ -38,7 +39,6 @@ import java.util.List;
 @Slf4j
 @Api(tags = "狄耐克替代接口")
 public class PermissionGroupControoler {
-
     @Autowired
     private RedisService redisService;
     @Autowired
@@ -116,7 +116,7 @@ public class PermissionGroupControoler {
 
     /**
      *
-     * @param id  记录id
+
      * @param deviceGroupName 权限组名称
      * @param groupType 组类别
      * @param deviceNum 设备编号
@@ -265,7 +265,6 @@ public class PermissionGroupControoler {
 
     /**
      * app保存应用接口
-     * @param houseHoidId
      * @param deviceGroupId
      * @return
      */

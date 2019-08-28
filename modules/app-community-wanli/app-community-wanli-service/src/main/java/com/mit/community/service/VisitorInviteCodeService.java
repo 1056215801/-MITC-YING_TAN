@@ -6,20 +6,13 @@ import com.mit.community.mapper.VisitorInviteCodeMapper;
 import com.mit.community.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-<<<<<<< HEAD
 
-=======
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,19 +22,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-<<<<<<< HEAD
 
-=======
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
 
 @Service
 public class VisitorInviteCodeService {
     @Autowired
     private VisitorInviteCodeMapper visitorInviteCodeMapper;
 
-<<<<<<< HEAD
-
-=======
     public void update (VisitorInviteCode visitorInviteCode) {
         visitorInviteCodeMapper.updateById(visitorInviteCode);
     }
@@ -196,5 +183,5 @@ public class VisitorInviteCodeService {
         return code;
     }
 
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
+
 }

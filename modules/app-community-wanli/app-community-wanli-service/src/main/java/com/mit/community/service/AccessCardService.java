@@ -3,7 +3,7 @@ package com.mit.community.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.AccessCard;
 import com.mit.community.mapper.AccessCardMapper;
-<<<<<<< HEAD
+
 
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import com.mit.community.population.service.PersonLabelsService;
@@ -12,11 +12,9 @@ import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import com.mit.community.population.service.PersonLabelsService;
 import org.apache.commons.lang3.StringUtils;
 
-=======
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import com.mit.community.population.service.PersonLabelsService;
 import org.apache.commons.lang3.StringUtils;
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +25,7 @@ import java.util.List;
 public class AccessCardService {
     @Autowired
     private AccessCardMapper accessCardMapper;
-<<<<<<< HEAD
-=======
+
     @Autowired
     private PersonLabelsMapper personLabelsMapper;
 
@@ -95,6 +92,6 @@ public class AccessCardService {
         accessCard.setId(id);
         accessCardMapper.updateById(accessCard);
     }
->>>>>>> 549ebfb3f106364c9b926df560d1904503deb966
+
 
 }
