@@ -68,7 +68,7 @@ public class BuildingService extends ServiceImpl<BuildingMapper,Building> {
         return buildings.get(0);
     }
 
-<<<<<<< HEAD
+
     public void save(Integer zoneId, String buildingName, String buildingCode, Integer sort, String communityCode) {
         EntityWrapper<Building> wrapper=new EntityWrapper<>();
         wrapper.orderBy("building_id",false);
@@ -113,15 +113,15 @@ public class BuildingService extends ServiceImpl<BuildingMapper,Building> {
         List<Building> buildingList = buildingMapper.selectBuildingPage(page,wrapper);
         page.setRecords(buildingList);
         return page;
-=======
+
+    }
     public Building getByBuidingId(Integer buildingId) {
         EntityWrapper<Building> wrapper = new EntityWrapper<>();
         wrapper.eq("building_id", buildingId);
         List<Building> list = buildingMapper.selectList(wrapper);
-        if (list.isEmpty()){
+        if (list.isEmpty()) {
             return null;
         }
         return list.get(0);
->>>>>>> XQ
     }
 }

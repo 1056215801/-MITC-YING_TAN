@@ -40,6 +40,8 @@ public class RoomController {
    private ClusterCommunityService clusterCommunityService;
    @Autowired
    private RedisService redisService;
+   @Autowired
+   private HouseMessageService houseMessageService;
     @ApiOperation(value = "新增房间",notes = "传参：Integer zoneId 分区id,Integer buildingId 楼栋id,Integer unitId 单元id,String roomNum 房间号")
     @PostMapping("/save")
     public Result save(Integer zoneId, Integer buildingId, Integer unitId, String roomNum, HttpServletRequest request){
@@ -176,6 +178,7 @@ public class RoomController {
                     entityWrapper.last("limit 1");
                     Room roomMax = roomService.selectOne(entityWrapper);
                     room.setRoomId(roomMax.getRoomId()+1);
+                    roomService.insert(room);
                     result=Result.success("创建房屋成功");
                 }
 
@@ -194,10 +197,16 @@ public class RoomController {
         Page<Room> page=roomService.getRoomList(zoneId,buildingId,unitId,roomStatus,pageNum,pageSize,communityCode);
         return Result.success(page);
    }
-
+    @ApiOperation(value = "保存房屋信息")
     @PostMapping("/roomInfo")
-    public Result roomInfo(Integer roomId,String fwdz,String houseCode,Integer houseType){
-        return Result.success("");
+    public Result roomInfo(HouseMessage houseMessage){
+        if (houseMessage==null){
+            return Result.error("参数异常");
+        }
+        houseMessage.setGmtCreate(LocalDateTime.now());
+        houseMessage.setGmtModified(LocalDateTime.now());
+        houseMessageService.insert(houseMessage);
+        return Result.success("保存成功");
    }
     @ApiOperation(value = "获取房屋地址")
     @GetMapping("/roomArea")
@@ -213,6 +222,27 @@ public class RoomController {
         String cityName = clusterCommunity.getCityName();
         String areaName = clusterCommunity.getAreaName();
         String streetName = clusterCommunity.getStreetName();
-        return Result.success("");
+        address=provinceName+cityName+areaName+streetName+address;
+        return Result.success(address);
+    }
+
+    @PostMapping("/update")
+    public Result update(Integer id,Integer zoneId,Integer buildingId,Integer unitId,String roomNum){
+         Room room=new Room();
+        room.setId(id);
+        if (zoneId != null) {
+            room.setZoneId(zoneId);
+        }
+        if (buildingId != null) {
+            room.setBuildingId(buildingId);
+        }
+        if (unitId != null) {
+            room.setUnitId(unitId);
+        }
+        if (roomNum != null) {
+            room.setRoomNum(roomNum);
+        }
+        roomService.updateById(room);
+        return Result.success("修改成功");
     }
 }

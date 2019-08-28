@@ -63,7 +63,6 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
         return units.get(0);
     }
 
-<<<<<<< HEAD
     public Result deleteByIdList(List<Integer> idList) {
         for (int i = 0; i <idList.size() ; i++) {
             EntityWrapper<Unit> entityWrapper=new EntityWrapper<>();
@@ -84,32 +83,32 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
 
     public Page<Unit> getUnitList(Unit unit, Integer pageNum, Integer pageSize, String communityCode) {
 
-        Page<Unit> page=new Page<>(pageNum,pageSize);
-        EntityWrapper<Unit> wrapper=new EntityWrapper<>();
-        if (StringUtils.isNotEmpty(unit.getUnitName())){
-            wrapper.like("unit_name",unit.getUnitName());
+        Page<Unit> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<Unit> wrapper = new EntityWrapper<>();
+        if (StringUtils.isNotEmpty(unit.getUnitName())) {
+            wrapper.like("unit_name", unit.getUnitName());
         }
-        if (StringUtils.isNotEmpty(unit.getUnitCode()))
-        {
-            wrapper.like("unit_code",unit.getUnitCode());
+        if (StringUtils.isNotEmpty(unit.getUnitCode())) {
+            wrapper.like("unit_code", unit.getUnitCode());
         }
-        if (unit.getZoneId()!=null){
-            wrapper.eq("zone_id",unit.getZoneId());
+        if (unit.getZoneId() != null) {
+            wrapper.eq("zone_id", unit.getZoneId());
         }
-        if (unit.getBuildingId()!=null){
-            wrapper.eq("building_id",unit.getBuildingId());
+        if (unit.getBuildingId() != null) {
+            wrapper.eq("building_id", unit.getBuildingId());
         }
-        if (unit.getUnitStatus()!=null){
-            wrapper.eq("unit_status",unit.getUnitStatus());
+        if (unit.getUnitStatus() != null) {
+            wrapper.eq("unit_status", unit.getUnitStatus());
         }
-        if (StringUtils.isNotEmpty(communityCode))
-        {
-            wrapper.eq("u.community_code",communityCode);
+        if (StringUtils.isNotEmpty(communityCode)) {
+            wrapper.eq("u.community_code", communityCode);
         }
-        List<Unit> unitList=unitMapper.getUnitList(page,wrapper);
+        List<Unit> unitList = unitMapper.getUnitList(page, wrapper);
         page.setRecords(unitList);
         return page;
-=======
+
+    }
+
     public Unit getByUnitId(Integer unitId) {
         EntityWrapper<Unit> wrapper = new EntityWrapper<>();
         wrapper.eq("unit_id", unitId);
@@ -119,6 +118,6 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
             return null;
         }
         return list.get(0);
->>>>>>> XQ
     }
+
 }

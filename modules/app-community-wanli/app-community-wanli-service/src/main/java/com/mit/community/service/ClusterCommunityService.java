@@ -144,7 +144,7 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
     }
      public int save(ClusterCommunity clusterCommunity){
 
-<<<<<<< HEAD
+
          Integer insert = clusterCommunityMapper.insert(clusterCommunity);
          return insert;
      }
@@ -157,14 +157,14 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
         return clusterCommunity;
     }
 
-    public Page<ClusterCommunity> getCommunityList(String communityName, String communityCode, String username, String provinceName, String cityName, String areaName, String streetName, String communityType, Integer pageNum, Integer pageSize) {
+    public Page<ClusterCommunity> getCommunityList(String communityName, String communityCode, String username, String provinceName, String cityName, String areaName, String streetName, String communityType, Integer pageNum, Integer pageSize,String committee) {
                Page<ClusterCommunity> page=new Page<>(pageNum,pageSize);
               EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
               if (StringUtils.isNotEmpty(communityName)){
-                  wrapper.eq("c.community_name",communityName);
+                  wrapper.like("c.community_name",communityName);
               }
               if (StringUtils.isNotEmpty(communityCode)){
-                  wrapper.eq("c.community_code",communityCode);
+                  wrapper.like("c.community_code",communityCode);
               }
               if (StringUtils.isNotEmpty(provinceName)){
                   wrapper.eq("c.province_name",provinceName);
@@ -178,6 +178,10 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
               if (StringUtils.isNotEmpty(streetName)){
                   wrapper.eq("c.street_name",streetName);
               }
+              if (StringUtils.isNotEmpty(committee))
+              {
+                  wrapper.eq("c.committee",committee);
+              }
               if (StringUtils.isNotEmpty(communityType)){
                   wrapper.like("c.community_type",communityType);
               }
@@ -185,7 +189,7 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
               page.setRecords(clusterCommunityList);
               return page;
     }
-=======
+
     public List<ClusterCommunity> getByCellPhone(String cellPhone) {
         EntityWrapper<ClusterCommunity> wrapperStreet = new EntityWrapper<>();;
         List<String> communityCode = new ArrayList<>();
@@ -205,5 +209,5 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
         return clusterCommunityMapper.selectList(wrapper);
     }
 
->>>>>>> XQ
+
 }

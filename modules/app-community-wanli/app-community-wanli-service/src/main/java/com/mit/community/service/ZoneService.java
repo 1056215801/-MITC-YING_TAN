@@ -38,6 +38,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
 
     /**
      * 查询分区信息，通过小区code
+     *
      * @param communityCode 小区code
      * @return 分区列表
      * @author Mr.Deng
@@ -52,6 +53,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
 
     /**
      * 查询分区信息，通过分区
+     *
      * @param zoneId 分区Id
      * @return 分区信息
      * @author Mr.Deng
@@ -69,14 +71,14 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         }
         return zones.get(0);
     }
-<<<<<<< HEAD
+
     public void save(String zoneName, Integer zoneType, String zoneCode, Integer sort, String communityCode) {
-        EntityWrapper<Zone> wrapper=new EntityWrapper<>();
-        wrapper.orderBy("zone_id",false);
+        EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+        wrapper.orderBy("zone_id", false);
         wrapper.last("limit 1");
         Zone zoneIdMax = baseMapper.selectList(wrapper).get(0);
-        Zone zone=new Zone();
-        zone.setZoneId(zoneIdMax.getZoneId()+1);
+        Zone zone = new Zone();
+        zone.setZoneId(zoneIdMax.getZoneId() + 1);
         zone.setCommunityCode(communityCode);
         zone.setZoneName(zoneName);
         zone.setZoneType(zoneType);
@@ -90,7 +92,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
 
     public void update(String zoneName, Integer zoneType, Integer sort, Integer id) {
         Zone zone = zoneMapper.selectById(id);
-        if (zone!=null){
+        if (zone != null) {
             zone.setZoneName(zoneName);
             zone.setZoneType(zoneType);
             zone.setSort(sort);
@@ -98,45 +100,45 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
 
 
         }
-        zoneMapper.update(zone,null);
+        zoneMapper.update(zone, null);
     }
 
     public Page<Zone> getZoneList(String zoneName, Integer zoneType, Integer zoneStatus, Integer pageNum, Integer pageSize, String communityCode) {
-        Page<Zone> page=new Page<>(pageNum,pageSize);
-         EntityWrapper<Zone> wrapper=new EntityWrapper<>();
-         if (!StringUtils.isEmpty(zoneName)){
-             wrapper.like("zone_name",zoneName);
-         }
-         if (zoneType!=null){
-             wrapper.eq("zone_type",zoneType);
-         }
-         if (zoneStatus!=null){
-             wrapper.eq("zone_status",zoneStatus);
-         }
-         if (StringUtils.isNotEmpty(communityCode)){
-             wrapper.eq("community_code",communityCode);
-         }
-         wrapper.orderBy("sort",true);
+        Page<Zone> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+        if (!StringUtils.isEmpty(zoneName)) {
+            wrapper.like("zone_name", zoneName);
+        }
+        if (zoneType != null) {
+            wrapper.eq("zone_type", zoneType);
+        }
+        if (zoneStatus != null) {
+            wrapper.eq("zone_status", zoneStatus);
+        }
+        if (StringUtils.isNotEmpty(communityCode)) {
+            wrapper.eq("community_code", communityCode);
+        }
+        wrapper.orderBy("sort", true);
         List<Zone> zones = zoneMapper.selectPage(page, wrapper);
         page.setRecords(zones);
         return page;
     }
 
     public Result delete(List<Integer> ids) {
-        for (int i = 0; i <ids.size() ; i++) {
-            EntityWrapper<Zone> entityWrapper=new EntityWrapper<>();
-            entityWrapper.eq("id",ids.get(i));
+        for (int i = 0; i < ids.size(); i++) {
+            EntityWrapper<Zone> entityWrapper = new EntityWrapper<>();
+            entityWrapper.eq("id", ids.get(i));
             Zone zone = zoneMapper.selectList(entityWrapper).get(0);
-            EntityWrapper<Building> wrapper=new EntityWrapper<>();
-            wrapper.eq("zone_id",zone.getZoneId());
+            EntityWrapper<Building> wrapper = new EntityWrapper<>();
+            wrapper.eq("zone_id", zone.getZoneId());
             List<Building> buildingList = buildingMapper.selectList(wrapper);
-            if (buildingList.size()>0){
+            if (buildingList.size() > 0) {
                 return Result.error("分区已经被楼栋关联不能删除");
             }
         }
-        for (int i = 0; i <ids.size() ; i++) {
+        for (int i = 0; i < ids.size(); i++) {
 
-            EntityWrapper<Zone> wrapper1=new EntityWrapper<>();
+            EntityWrapper<Zone> wrapper1 = new EntityWrapper<>();
             zoneMapper.deleteById(ids.get(i));
         }
         return Result.success("删除成功");
@@ -144,34 +146,33 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
 
     public Result stop(List<Integer> idList) {
 
-        for (int i = 0; i <idList.size() ; i++) {
-            EntityWrapper<Zone> entityWrapper=new EntityWrapper<>();
-            entityWrapper.eq("id",idList.get(i));
+        for (int i = 0; i < idList.size(); i++) {
+            EntityWrapper<Zone> entityWrapper = new EntityWrapper<>();
+            entityWrapper.eq("id", idList.get(i));
             Zone zone = zoneMapper.selectList(entityWrapper).get(0);
-            EntityWrapper<Building> wrapper=new EntityWrapper<>();
-            wrapper.eq("zone_id",zone.getZoneId());
+            EntityWrapper<Building> wrapper = new EntityWrapper<>();
+            wrapper.eq("zone_id", zone.getZoneId());
             List<Building> buildingList = buildingMapper.selectList(wrapper);
-            if (buildingList.size()>0){
+            if (buildingList.size() > 0) {
                 return Result.error("分区楼栋已经被关联不能禁用");
             }
         }
-        for (int i = 0; i <idList.size() ; i++) {
-            Zone zone=new Zone();
+        for (int i = 0; i < idList.size(); i++) {
+            Zone zone = new Zone();
             zone.setZoneStatus(0);
-            EntityWrapper<Zone> wrapper=new EntityWrapper<>();
-            wrapper.eq("id",idList.get(i));
-            baseMapper.update(zone,wrapper);
+            EntityWrapper<Zone> wrapper = new EntityWrapper<>();
+            wrapper.eq("id", idList.get(i));
+            baseMapper.update(zone, wrapper);
         }
         return Result.success("禁用成功");
     }
 
     public void enable(List<Integer> idList) {
-        for (int i = 0; i <idList.size() ; i++) {
-            zoneMapper.updateStatus(1,idList.get(i));
+        for (int i = 0; i < idList.size(); i++) {
+            zoneMapper.updateStatus(1, idList.get(i));
         }
-
-=======
-    public Zone getByCommunityName(String communityName) {
+    }
+    public Zone getByCommunityName (String communityName){
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("zone_name", communityName);
         List<Zone> zones = zoneMapper.selectList(wrapper);
@@ -181,10 +182,10 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         return zones.get(0);
     }
 
-    public Zone getByCommunityCode(String communityCode) {
+    public Zone getByCommunityCode (String communityCode){
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("community_code", communityCode);
-        wrapper.eq(false,"zone_name","默认分区");
+        wrapper.eq(false, "zone_name", "默认分区");
         List<Zone> zones = zoneMapper.selectList(wrapper);
         if (zones.isEmpty()) {
             return null;
@@ -192,7 +193,7 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
         return zones.get(0);
     }
 
-    public Zone getByZoneId( Integer zoneId) {
+    public Zone getByZoneId (Integer zoneId){
         EntityWrapper<Zone> wrapper = new EntityWrapper<>();
         wrapper.eq("zone_id", zoneId);
         wrapper.eq("zone_status", 1);
@@ -201,6 +202,6 @@ public class ZoneService extends ServiceImpl<ZoneMapper,Zone> {
             return null;
         }
         return zones.get(0);
->>>>>>> XQ
+
     }
 }

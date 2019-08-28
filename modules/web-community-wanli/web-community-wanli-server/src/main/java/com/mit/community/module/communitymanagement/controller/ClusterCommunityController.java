@@ -14,6 +14,8 @@ import com.mit.community.service.SysUserService;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -59,7 +61,7 @@ public class ClusterCommunityController {
           clusterCommunityService.updateById(clusterCommunity);
        return Result.success("更新成功");
     }
-    @ApiOperation(value = "保存小区基本信息",notes = "传参：ClusterCommunity clusterCommunity 小区对象")
+    @ApiOperation(value = "保存小区基本信息",notes = "传参：SysUser sysUser 系统用户对象")
     @PostMapping("/save")
     public Result save(SysUser sysUser){
         if (sysUser==null){
@@ -80,6 +82,8 @@ public class ClusterCommunityController {
         clusterCommunityService.insert(clusterCommunity);
         sysUser.setCommunityCode(communityCode);
         sysUser.setRole("小区管理员");
+        sysUser.setCreatetime(LocalDateTime.now());
+        sysUser.setAlterTime(LocalDateTime.now());
         sysUserService.insert(sysUser);
         return Result.success("新增成功");
 
@@ -96,6 +100,7 @@ public class ClusterCommunityController {
         ClusterCommunity clusterCommunity = clusterCommunityService.selectOne(wrapper);
         String communityName = clusterCommunity.getCommunityName();
         user.setCommunityName(communityName);
+        user.setCommunityType(clusterCommunity.getCommunityType());
         user.setPassword(null);
         return Result.success(user);
     }
@@ -115,15 +120,15 @@ public class ClusterCommunityController {
         clusterCommunityService.deleteBatchIds(idList);
         return Result.success("删除成功");
     }
-    @ApiOperation(value = "修改小区",notes = "传参：Integer id,String communityName,String provinceName,\n" +
-            "                         String cityName,String areaName,\n" +
-            "                         String streetName,String address,String communityType,\n" +
-            "                         String username,String password,String adminName,String phone,String managementUnit,\n" +
-            "                         String remark")
+    @ApiOperation(value = "修改小区",notes = "传参：Integer id,String communityName 小区名称,String provinceName 省,\n" +
+            "                         String cityName 市,String areaName 区,\n" +
+            "                         String streetName 街道,String committeem 居委,String address地址,String communityType 小区类型,\n" +
+            "                         String username 账户,String password 密码,String adminName 管理员,String phone 联系电话,String managementUnit 管理单位,\n" +
+            "                         String remark 备注")
     @PostMapping("/updateCommunity")
     public Result update(Integer id,String communityName,String provinceName,
                          String cityName,String areaName,
-                         String streetName,String address,String communityType,
+                         String streetName,String committee,String address,String communityType,
                          String username,String password,String adminName,String phone,String managementUnit,
                          String remark){
         EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
@@ -153,6 +158,10 @@ public class ClusterCommunityController {
         if (StringUtils.isNotEmpty(streetName)){
             clusterCommunity.setStreetName(streetName);
             sysUser.setStreetName(streetName);
+        }
+        if (StringUtils.isNotEmpty(committee)){
+            clusterCommunity.setCommittee(committee);
+             sysUser.setCommittee(committee);
         }
         if (StringUtils.isNotEmpty(address)){
             clusterCommunity.setAddress(address);
@@ -187,9 +196,9 @@ public class ClusterCommunityController {
             return Result.success("修改成功");
     }
     @PostMapping("/communityList")
-    public Result getCommunityList(String communityName,String communityCode,String username,String provinceName,
-                                   String cityName,String areaName,String streetName,String communityType,Integer pageNum,Integer pageSize) {
-        Page<ClusterCommunity> page = clusterCommunityService.getCommunityList(communityName, communityCode, username, provinceName, cityName, areaName, streetName, communityType, pageNum, pageSize);
+    public Result getCommunityList(String communityName,String communityCode,String username,String provinceName, String cityName,String areaName,String streetName,
+                                   String committee,String communityType,Integer pageNum,Integer pageSize) {
+        Page<ClusterCommunity> page = clusterCommunityService.getCommunityList(communityName, communityCode, username, provinceName, cityName, areaName, streetName,communityType, pageNum, pageSize,committee);
 
         return Result.success(page);
     }

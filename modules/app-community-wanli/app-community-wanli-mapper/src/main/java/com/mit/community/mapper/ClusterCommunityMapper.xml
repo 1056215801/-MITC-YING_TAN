@@ -21,6 +21,8 @@
                 jdbcType="VARCHAR" />
         <result property="streetName" column="street_name" javaType="String"
                 jdbcType="VARCHAR" />
+        <result property="committee" column="committee" javaType="String"
+                jdbcType="VARCHAR" />
         <result property="username" column="username" javaType="String"
                 jdbcType="VARCHAR" />
         <result property="adminName" column="admin_name" javaType="String"
@@ -31,11 +33,11 @@
     <select id="selectMyPage" resultMap="baseMap">
          SELECT c.community_name,c.community_code,
          c.community_type,c.province_name,c.city_name,c.area_name,
-         c.street_name,c.address,s.username,s.admin_name,
+         c.street_name,c.committee,c.address,s.username,s.admin_name,
          s.phone FROM cluster_community c LEFT JOIN sys_user s ON c.community_code=s.community_code
          <where>
              <if test="username!=null and username!=''">
-                 AND s.username=#{username}
+                 AND s.username LIKE CONCAT('%',#{username},'%')
              </if>
              ${ew.sqlSegment}
          </where>
