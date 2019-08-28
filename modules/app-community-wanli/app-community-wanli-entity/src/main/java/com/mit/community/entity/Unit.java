@@ -53,4 +53,13 @@ public class Unit extends BaseEntity {
      */
     @TableField("unit_status")
     private Integer unitStatus;
+
+    @TableField("sort")
+    private Integer sort;
+
+    @TableField(exist = false)
+    private String zoneName;
+
+    @TableField(exist = false)
+    private String buildingName;
 }

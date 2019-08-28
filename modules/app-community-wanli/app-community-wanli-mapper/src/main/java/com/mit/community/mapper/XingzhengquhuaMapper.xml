@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mit.community.mapper.XingzhengquhuaMapper">
+
+    <resultMap id="baseMap" type="com.mit.community.entity.Xingzhengquhua">
+        <id property="committeeId" column="committee_id" javaType="String" jdbcType="VARCHAR" />
+        <result property="provinceName" column="province_name" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="provinceId" column="province_id" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="cityName" column="city_name" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="cityId" column="city_id" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="districtName" column="district_name" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="districtId" column="district_id" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="townName" column="town_name" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="townId" column="town_id" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="committeeName" column="committee_name" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="typeName" column="type_name" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="typeId" column="type_id" javaType="String"
+                jdbcType="VARCHAR" />
+
+        <result property="lng" column="lng" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="lat" column="lat" javaType="String"
+                jdbcType="VARCHAR" />
+
+    </resultMap>
+   <select id="selectProvinceList" resultMap="baseMap">
+       SELECT  distinct province_name,province_id  FROM xingzhengquhua
+   </select>
+
+   <select id="selectCityList" resultMap="baseMap">
+       SELECT  distinct city_name,city_id  FROM Xingzhengquhua   WHERE  province_id = #{provinceId}
+   </select>
+
+    <select id="getDistrictList" resultMap="baseMap">
+        SELECT DISTINCT district_name,district_id FROM Xingzhengquhua WHERE city_id = #{cityId}
+    </select>
+
+    <select id="getTownList" resultMap="baseMap">
+      SELECT DISTINCT town_name,town_id FROM Xingzhengquhua WHERE district_id = #{districtId};
+    </select>
+    <select id="getCommitteeList" resultMap="baseMap">
+     SELECT DISTINCT committee_name,committee_id FROM Xingzhengquhua WHERE town_id = #{townId}
+    </select>
+</mapper>

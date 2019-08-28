@@ -2,10 +2,13 @@ package com.mit.community.service;
 
 import com.ace.cache.annotation.Cache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.mit.community.constants.RedisConstant;
 import com.mit.community.entity.*;
 import com.mit.community.mapper.ClusterCommunityMapper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
  * @company mitesofor
  */
 @Service
-public class ClusterCommunityService {
+public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,ClusterCommunity> {
 
     @Autowired
     private ClusterCommunityMapper clusterCommunityMapper;
@@ -139,6 +142,73 @@ public class ClusterCommunityService {
         wrapper.setSqlSelect("city_name");
         return clusterCommunityMapper.selectMaps(wrapper);
     }
+     public int save(ClusterCommunity clusterCommunity){
+
+
+         Integer insert = clusterCommunityMapper.insert(clusterCommunity);
+         return insert;
+     }
+
+    public ClusterCommunity findMax() {
+        EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
+        wrapper.orderBy("community_id",false);
+        wrapper.last("limit 1");
+        ClusterCommunity clusterCommunity = this.baseMapper.selectList(wrapper).get(0);
+        return clusterCommunity;
+    }
+
+    public Page<ClusterCommunity> getCommunityList(String communityName, String communityCode, String username, String provinceName, String cityName, String areaName, String streetName, String communityType, Integer pageNum, Integer pageSize,String committee) {
+               Page<ClusterCommunity> page=new Page<>(pageNum,pageSize);
+              EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
+              if (StringUtils.isNotEmpty(communityName)){
+                  wrapper.like("c.community_name",communityName);
+              }
+              if (StringUtils.isNotEmpty(communityCode)){
+                  wrapper.like("c.community_code",communityCode);
+              }
+              if (StringUtils.isNotEmpty(provinceName)){
+                  wrapper.eq("c.province_name",provinceName);
+              }
+              if (StringUtils.isNotEmpty(cityName)){
+                  wrapper.eq("c.city_name",cityName);
+              }
+              if (StringUtils.isNotEmpty(areaName)){
+                  wrapper.eq("c.area_name",areaName);
+              }
+              if (StringUtils.isNotEmpty(streetName)){
+                  wrapper.eq("c.street_name",streetName);
+              }
+              if (StringUtils.isNotEmpty(committee))
+              {
+                  wrapper.eq("c.committee",committee);
+              }
+              if (StringUtils.isNotEmpty(communityType)){
+                  wrapper.like("c.community_type",communityType);
+              }
+              List<ClusterCommunity> clusterCommunityList=clusterCommunityMapper.selectMyPage(page,wrapper,username);
+              page.setRecords(clusterCommunityList);
+              return page;
+    }
+
+    public List<ClusterCommunity> getByCellPhone(String cellPhone) {
+        EntityWrapper<ClusterCommunity> wrapperStreet = new EntityWrapper<>();;
+        List<String> communityCode = new ArrayList<>();
+        User user = userService.getByCellphone(cellPhone);
+        ClusterCommunity clusterCommunity = getByCommunityCode(user.getSerialnumber());
+        if ("小区账号".equals(user.getFaceToken())) {
+            communityCode.add(user.getSerialnumber());
+        } else if ("镇/街道账号".equals(user.getFaceToken())) {
+            wrapperStreet.eq("street_name", clusterCommunity.getStreetName());
+        } else if ("区级账号".equals(user.getFaceToken())) {
+            wrapperStreet.eq("area_name", clusterCommunity.getStreetName());
+        }
+        List<ClusterCommunity> list = clusterCommunityMapper.selectList(wrapperStreet);
+        communityCode = list.parallelStream().map(ClusterCommunity::getCommunityCode).collect(Collectors.toList());
+        EntityWrapper<ClusterCommunity> wrapper = new EntityWrapper<>();
+        wrapper.in("community_code", communityCode);
+        return clusterCommunityMapper.selectList(wrapper);
+    }
+
 
     public List<ClusterCommunity> getByCellPhone(String cellPhone) {
         EntityWrapper<ClusterCommunity> wrapperStreet = new EntityWrapper<>();;

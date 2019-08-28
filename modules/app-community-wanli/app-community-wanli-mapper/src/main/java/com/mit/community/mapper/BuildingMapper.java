@@ -1,7 +1,13 @@
 package com.mit.community.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.Building;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
 
 /**
  * @author Mr.Deng
@@ -10,4 +16,5 @@ import com.mit.community.entity.Building;
  * <p>Company: mitesofor </p>
  */
 public interface BuildingMapper extends BaseMapper<Building> {
+    List<Building> selectBuildingPage(RowBounds rowBounds, @Param("ew") EntityWrapper<Building> wrapper);
 }

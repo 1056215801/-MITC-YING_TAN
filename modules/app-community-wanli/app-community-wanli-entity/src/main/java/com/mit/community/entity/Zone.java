@@ -2,9 +2,13 @@ package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 分区表
@@ -48,4 +52,9 @@ public class Zone extends BaseEntity {
      */
     @TableField("zone_id")
     private Integer zoneId;
+
+
+
+    @TableField("sort")
+    private Integer sort;
 }
