@@ -3,13 +3,18 @@ package com.mit.community.service;
 import com.ace.cache.annotation.Cache;
 import com.ace.cache.annotation.CacheClear;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.mit.community.entity.HouseHold;
 import com.mit.community.entity.HouseholdRoom;
+import com.mit.community.mapper.HouseHoldMapper;
 import com.mit.community.mapper.HouseholdRoomMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +28,7 @@ import java.util.List;
 public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, HouseholdRoom> {
 
     private final HouseholdRoomMapper householdRoomMapper;
+    private HouseHoldMapper houseHoldMapper;
 
     @Autowired
     public HouseholdRoomService(HouseholdRoomMapper householdRoomMapper) {
@@ -86,7 +92,7 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
      * 查询房间信息，通过住户id和房间id
      *
      * @param householdId 住户id
-     * @param roomNum     房号
+     * @param     房号
      * @return 房间信息
      * @author Mr.Deng
      * @date 14:05 2018/12/12
@@ -152,5 +158,29 @@ public class HouseholdRoomService extends ServiceImpl<HouseholdRoomMapper, House
             return null;
         }
         return list.get(0);
+    }
+
+    public Page<HouseHold> getInfoList(String householdName, String mobile, Integer zoneId, Integer buildingId, Integer unitId, String roomNum, Short householdType, Integer householdStatus, Date validityTime, Integer authorizeStatus, Integer pageNum, Integer pageSize) {
+        Page<HouseHold> page=new Page<>(pageNum,pageSize);
+        EntityWrapper<HouseHold> wrapper=new EntityWrapper<>();
+        if (StringUtils.isNotEmpty(householdName)){
+            wrapper.eq("household_name",householdName);
+        }
+        if (StringUtils.isNotEmpty(mobile))
+        {
+            wrapper.eq("mobile",mobile);
+        }
+        if (validityTime!=null){
+            wrapper.eq("validity_time",validityTime);
+        }
+        if (authorizeStatus != null) {
+            wrapper.eq("authorize_status",authorizeStatus);
+        }
+        if (householdStatus != null) {
+            wrapper.eq("household_status",householdStatus);
+        }
+        List<HouseHold> houseHoldList=houseHoldMapper.getInfoList(page,wrapper,zoneId,buildingId,unitId,roomNum,householdType);
+        page.setRecords(houseHoldList);
+        return page;
     }
 }

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.mit.community.entity.BaseEntity;
 import com.mit.community.entity.DeviceDeviceGroup;
 import com.mit.community.entity.DeviceInfo;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

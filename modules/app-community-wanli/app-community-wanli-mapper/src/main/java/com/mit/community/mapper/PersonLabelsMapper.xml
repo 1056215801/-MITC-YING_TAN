@@ -138,6 +138,21 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.HighModel" id="highModelMap">
+        <result property="visitorInviteCodeId" column="visitorInviteCodeId" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="timeStart" column="timeStart" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="timeEnd" column="timeEnd" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getExtisHighModel" resultMap="highModelMap">
+        select b.time_day as timeDay,b.time_start as timeStart,b.time_end as timeEnd from visitor_invite_code a LEFT JOIN High_Model b
+        on a.id=b.visitor_invite_code_id
+        where 1= 1 ${ew.sqlSegment}
+    </select>
+
     <select id="pageDeviceDugPeople" resultMap="deviceBugPeopleMap">
         select a.password as passWord,a.name as name,a.doornum as expireTime,a.cellphone as cellPhone,a.cardnum as remarks,a.face_token as accountType,b.community_name as communityName,
         b.area_name as areName,b.street_name as streetName from user a LEFT JOIN cluster_community b on a.serialnumber=b.community_code
@@ -279,4 +294,7 @@
         where a.device_group_id=#{deviceGroupId}
     </select>
 
+    <select id="getMaxHouseHoldId" resultType="String">
+        select max(household_id) from household
+    </select>
 </mapper>

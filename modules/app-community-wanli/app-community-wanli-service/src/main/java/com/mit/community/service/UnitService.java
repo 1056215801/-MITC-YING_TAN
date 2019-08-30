@@ -63,6 +63,7 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
         return units.get(0);
     }
 
+
     public Result deleteByIdList(List<Integer> idList) {
         for (int i = 0; i <idList.size() ; i++) {
             EntityWrapper<Unit> entityWrapper=new EntityWrapper<>();
@@ -120,4 +121,5 @@ public class UnitService extends ServiceImpl<UnitMapper,Unit> {
         }
         return list.get(0);
     }
+
 }

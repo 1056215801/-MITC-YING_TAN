@@ -144,20 +144,7 @@ public class HKDeviceController {
         }
 
 
-<<<<<<< HEAD
-     /*   CommandManager manager =  new CommandManagerImpl();
-        manager.start("video2", "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@" +
-                "192.168.1.163:554/MPEG-4/ch34/main/av_stream -tune zerolatency -vcodec libx264 -" +
-                "preset ultrafast -b:v 400k -s 720x576 -r 25 -acodec aac -ss -3  -fflags nobuffer" +
-                "  -ar 44100  -b:a 64k -f flv rtmp://192.168.1.129:1935/live/video2",false);
-*/
-=======
-     /*CommandManager manager =  new CommandManagerImpl();
-        manager.start("video2", "ffmpeg -re  -rtsp_transport tcp -i rtsp://admin:admin123@" +
-                "192.168.1.163:554/MPEG-4/ch34/main/av_stream -tune zerolatency -vcodec libx264 -" +
-                "preset ultrafast -b:v 400k -s 720x576 -r 25 -acodec aac -ss -3  -fflags nobuffer" +
-                "  -ar 44100  -b:a 64k -f flv rtmp://192.168.1.129:1935/live/video2",false);*/
->>>>>>> remotes/origin/newdev
+
 
         //注销用户
         sdk.NET_DVR_Logout(cameraInfo.getId());//释放SDK资源
@@ -216,7 +203,7 @@ public class HKDeviceController {
     public Result test2(String  ip ) {
         //  CommandManager manager =  new CommandManagerImpl();
 
-        String [] arrs=ip.split("\\/");
+        String [] arrs=ip.split("/");
         String ipStr= ip.replaceAll("\\.","");
 
         manager.stop(ipStr);

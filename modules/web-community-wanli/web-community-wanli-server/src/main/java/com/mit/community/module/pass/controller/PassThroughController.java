@@ -296,12 +296,28 @@ public class PassThroughController {
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = sysUser.getCommunityCode();
         }
-        String msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, jsonObject);
-        if (!msg.contains("success")) {
-            return -1;
-        }
-        return 1;
+        Integer msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, jsonObject);
+        return msg;
     }
+
+
+    @ApiOperation(value = "保存人脸照片")
+    @PostMapping("/saveHouseHoldPhoto")
+    public Result savePhoto(MultipartFile image) {
+        String message = null;
+        if (image != null) {
+            message = houseHoldService.saveHouseHoldPhoto(image);
+            if ("提取人脸特征值失败".equals(message)) {
+                return Result.error("提取人脸特征值失败");
+            } else {
+                return Result.success(message);
+            }
+        } else {
+            Result.error("图片不能为空");
+        }
+        return Result.success(message);
+    }
+
 
     /**
      * 保存住户授权信息
@@ -331,10 +347,13 @@ public class PassThroughController {
                                                 String validityEndDate,
                                                 String initValidityEndDate,
                                                 Boolean csReturn,
-                                                String cardListArr) {
-        System.out.println("===========================cardListArr="+cardListArr);
+                                                String cardListArr, String imageUrls) {
+
+        if (imageUrls != null) {
+            System.out.println("===========================imageUrls="+imageUrls);
+        }
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null, null);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null);
         if (!msg.contains("success")) {
             return -1;
         }

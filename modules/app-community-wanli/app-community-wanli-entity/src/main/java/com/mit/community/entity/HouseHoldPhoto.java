@@ -1,3 +1,4 @@
+
 package com.mit.community.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
@@ -32,3 +33,4 @@ public class HouseHoldPhoto extends BaseEntity {
     @TableField("device_num")
     private String deviceNum;
 }
+
