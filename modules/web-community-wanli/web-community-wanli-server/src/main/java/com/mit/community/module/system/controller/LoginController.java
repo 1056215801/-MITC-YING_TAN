@@ -133,24 +133,25 @@ public class LoginController {
         if (false) {
 
         } else {
-            HttpLogin httpLogin = new HttpLogin(username, password);
+            //HttpLogin httpLogin = new HttpLogin(username, password);
             //判断是否是集群管理账户访问不同的登录接口
             //是集群账户
             boolean loginWhether = false;
-            if ("ytyuehu".equals(username)) {
+            /*if ("ytyuehu".equals(username)) {
                 httpLogin.loginAdmin();
                 String cookie = httpLogin.getCookie();
                 String result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
             } else {
                 //是小区管理账户
                 httpLogin.loginUser();
-            }
+            }*/
             //判断是否登录成功
-            for (Header h : httpLogin.getHeaders()) {
+            /*for (Header h : httpLogin.getHeaders()) {
                 if ("Location".equals(h.getName())) {
                     loginWhether = true;
                 }
-            }
+            }*/
+            loginWhether = true;
             boolean updateOrInsert = false;
             if (loginWhether) {
                 //登录成功后,判断本地数据库是否有这个用户名
@@ -185,7 +186,7 @@ public class LoginController {
                     map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
                     map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
                     map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
-                    map.put("session", httpLogin.getCookie());
+                    //map.put("session", httpLogin.getCookie());
                     if (menuUser.equals(role)) {
                         menu = "0";
                         request.getSession().setAttribute("role", 0);
@@ -194,7 +195,7 @@ public class LoginController {
                         request.getSession().setAttribute("role", 1);
                         menu = "1";
                     }
-                    request.getSession().setAttribute("session", httpLogin.getCookie());
+                    //request.getSession().setAttribute("session", httpLogin.getCookie());
                     map.put("isAdmin", menu);
                     if ("湾里区".equals(sysUser.getAreaName())) {
                         map.put("isWanli", 1);
@@ -206,6 +207,7 @@ public class LoginController {
                     // redis中保存session用户
                     redisService.set(RedisConstant.SESSION_ID + sessionId,
                             sysUser, RedisConstant.LOGIN_EXPIRE_TIME);
+                    System.out.println("==============登录成功");
                     return Result.success(map, "登录成功");
                 } else {
                     return Result.error("用户名或密码错误");

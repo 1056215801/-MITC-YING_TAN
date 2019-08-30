@@ -129,7 +129,6 @@ public class PersonLabelsService {
         return labelsMapper.getUnBindDevice(ip);
     }
 
-
     public Page<DeviceBugPeople> pageDeviceDugPeople(String communityCode, Integer pageNum, Integer pageSize) {
         Page<DeviceBugPeople>  page = new Page<>(pageNum, pageSize);
         EntityWrapper<DeviceBugPeople> wrapper = new EntityWrapper<> ();
@@ -140,9 +139,16 @@ public class PersonLabelsService {
         return page;
     }
 
-
     public DeviceIsOnline getIsOnline(@Param("deviceNum")String deviceNum){
         return labelsMapper.getIsOnline(deviceNum);
     }
 
+    public Integer getMaxHouseHoldId(){
+        String houseHoldId = labelsMapper.getMaxHouseHoldId();
+        if (StringUtils.isNotBlank(houseHoldId)) {
+            return (Integer.parseInt(houseHoldId) + 1);
+        } else {
+            return 1;
+        }
+    }
 }

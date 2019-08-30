@@ -36,5 +36,9 @@ public class VisitorInviteCode extends BaseEntity{
     @TableField("expiry_date")
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date expiryDate;//有效期
+
+    @TableField("model_type")
+    private int modelType;//1简单模式，2高级模式
+
 }
 
