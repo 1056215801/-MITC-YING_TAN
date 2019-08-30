@@ -21,4 +21,6 @@ import java.util.List;
 public interface ClusterCommunityMapper extends BaseMapper<ClusterCommunity> {
 
     List<ClusterCommunity> selectMyPage(RowBounds rowBounds, @Param("ew") EntityWrapper<ClusterCommunity> wrapper, @Param("username") String username);
+
+    ClusterCommunity getModifyInfo(Integer id);
 }

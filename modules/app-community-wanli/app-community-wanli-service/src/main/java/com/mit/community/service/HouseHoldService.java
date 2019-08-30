@@ -172,7 +172,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      * 查询住户信息，通过手机号和小区code
      *
      * @param cellphone     手机号
-     * @param communityCode 小区code
+     *
      * @return 住户信息
      * @author Mr.Deng
      * @date 14:15 2018/12/12
@@ -500,7 +500,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
                 } else {
                     houseHold = new HouseHold(communityCode, StringUtils.EMPTY, householdId, householdName,
                             1, 0,
@@ -509,7 +509,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
                 }
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
@@ -554,7 +554,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
                 } else {
                     edidHousehold = new HouseHold(communityCode, StringUtils.EMPTY, householdId, householdName,
                             1, 0,
@@ -563,7 +563,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
                 }
                 edidHousehold.setGmtModified(LocalDateTime.now());
                 houseHoldMapper.updateHouseholdByHouseholdId(edidHousehold);
@@ -1174,4 +1174,34 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         }
         return result;
     }
+
+    public Page<HouseHold> getInfoList(String householdName,
+                                       String mobile, Integer zoneId, Integer buildingId,
+                                       Integer unitId, String roomNum, Short householdType,
+                                       Integer householdStatus, Date validityTime,
+                                       Integer authorizeStatus, Integer pageNum, Integer pageSize) {
+        Page<HouseHold> page=new Page<>(pageNum,pageSize);
+        EntityWrapper<HouseHold> wrapper=new EntityWrapper<>();
+        if (StringUtils.isNotEmpty(householdName)){
+            wrapper.eq("household_name",householdName);
+        }
+        if (StringUtils.isNotEmpty(mobile))
+        {
+            wrapper.eq("mobile",mobile);
+        }
+        if (validityTime!=null){
+            wrapper.eq("validity_time",validityTime);
+        }
+        if (authorizeStatus != null) {
+            wrapper.eq("authorize_status",authorizeStatus);
+        }
+        if (householdStatus != null) {
+            wrapper.eq("household_status",householdStatus);
+        }
+       List<HouseHold> houseHoldList=houseHoldMapper.getInfoList(page,wrapper,zoneId,buildingId,unitId,roomNum,householdType);
+        page.setRecords(houseHoldList);
+        return page;
+    }
+
+
 }

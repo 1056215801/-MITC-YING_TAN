@@ -96,7 +96,8 @@ public class HouseHold extends BaseEntity {
     private String householdName;
     /**
      * 与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员）
-     *//*
+     */
+    /*
     @TableField("household_type")
     private Integer householdType;*/
     /**
@@ -165,6 +166,8 @@ public class HouseHold extends BaseEntity {
      */
     @TableField("identity_type")
     private Short identityType;
+
+
 
     /**
      * 授权设备组
@@ -259,4 +262,7 @@ public class HouseHold extends BaseEntity {
 
     @TableField("card_num")
     private String cardNum;
+
+     @TableField("labels")
+    private String labels;
 }

@@ -3,6 +3,25 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mit.community.mapper.HouseHoldMapper">
+    <resultMap id="baseMap" type="com.mit.community.entity.HouseHold">
+        <id property="id" column="id" javaType="Integer" jdbcType="INTEGER" />
+        <result property="householdName" column="household_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="housetype" column="housetype" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="housing" column="housing" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="mobile" column="mobile" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="authorizeStatus" column="authorize_status" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="householdStatus" column="household_status" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="labels" column="labels" javaType="Integer"
+                jdbcType="INTEGER" />
+    </resultMap>
 
     <!--更新居住期限时间-->
     <update id="updateObjectById" parameterType="com.mit.community.entity.HouseHold">
@@ -33,7 +52,27 @@
         </trim>
         WHERE household_id = #{householdId}
     </update>
-
+    <select id="getInfoList" resultMap="baseMap">
+        SELECT * FROM household h LEFT JOIN household_room r ON h.household_id=r.household_id
+        <where>
+            <if test="zoneId!=null and zone!=''">
+                AND r.zone_id=#{zoneId}
+            </if>
+            <if test="buildingId!=null and buildingId!=''">
+                AND r.building_id=#{buildingId}
+            </if>
+            <if test="unitId!=null and unitId!=''">
+                AND r.unit_id=#{unitId}
+            </if>
+            <if test="roomNum!=null and roomNum!=''">
+                AND r.room_num=#{roomNum}
+            </if>
+            <if test="householdType!=null and householdType!=''">
+                r.household_type=#{householdType}
+            </if>
+            ${ew.sqlSegment}
+        </where>
+    </select>
 </mapper>
 
 

@@ -1,11 +1,15 @@
 package com.mit.community.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.HouseHold;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 住户
@@ -26,4 +30,5 @@ public interface HouseHoldMapper extends BaseMapper<HouseHold> {
     //自定义接口:住户信息修改
     public void updateHouseholdByHouseholdId(HouseHold houseHold);
 
+    List<HouseHold> getInfoList(RowBounds rowBounds, @Param("ew") EntityWrapper<HouseHold> wrapper, @Param("zoneId") Integer zoneId, @Param("buildingId") Integer buildingId, @Param("unitId") Integer unitId, @Param("roomNum") String roomNum, @Param("householdType") Short householdType);
 }

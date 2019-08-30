@@ -61,14 +61,25 @@ public class ClusterCommunityController {
           clusterCommunityService.updateById(clusterCommunity);
        return Result.success("更新成功");
     }
-    @ApiOperation(value = "保存小区基本信息",notes = "传参：SysUser sysUser 系统用户对象")
+    @ApiOperation(value = "新增小区基本信息",notes = "传参：String communityName 小区名字,String provinceName 省份名称,String provinceId 省份编码,\n" +
+            "                       String cityName 城市名称,String cityId 城市编码,String areaName 区域名称,String areaId 区域编码,\n" +
+            "                       String streetName 街道名称,String streetId 街道编码,String committee 居委名称,String committeeId 居委编码,String address 地址,String communityType 小区类型,\n" +
+            "                       String username 用户名,String password 密码,String adminName 管理员,String phone 电话号码,String managementUnit 管理单位,\n" +
+            "                       String remark 备注")
     @PostMapping("/save")
-    public Result save(SysUser sysUser){
-        if (sysUser==null){
-            return Result.error("参数异常");
+    public Result save(String communityName,String provinceName,String provinceId,
+                       String cityName,String cityId,String areaName,String areaId,
+                       String streetName,String streetId,String committee,String committeeId,String address,String communityType,
+                       String username,String password,String adminName,String phone,String managementUnit,
+                       String remark){
+        EntityWrapper<SysUser> entityWrapper=new EntityWrapper<>();
+        entityWrapper.eq("username",username);
+        List<SysUser> sysUserList = sysUserService.selectList(entityWrapper);
+        if (sysUserList.size()>0){
+            return Result.error("当前用户已存在");
         }
+        SysUser sysUser=new SysUser();
         ClusterCommunity clusterCommunity=new ClusterCommunity();
-        BeanUtils.copyProperties(sysUser,clusterCommunity);
         String communityCode = UUID.randomUUID().toString().replace("-", "");
         clusterCommunity.setCommunityCode(communityCode);
         clusterCommunity.setGmtModified(LocalDateTime.now());
@@ -78,7 +89,78 @@ public class ClusterCommunityController {
         wrapper.last("limit 1");
         ClusterCommunity clusterCommunityMax = clusterCommunityService.selectOne(wrapper);
         clusterCommunity.setCommunityId(clusterCommunityMax.getCommunityId()+1);
-        clusterCommunity.setAreaBelong(sysUser.getAreaName());
+        clusterCommunity.setAreaBelong(areaName);
+        if (StringUtils.isNotEmpty(communityName)){
+            clusterCommunity.setCommunityName(communityName);
+            sysUser.setCommunityName(communityName);
+        }
+        if (StringUtils.isNotEmpty(provinceName)){
+            clusterCommunity.setProvinceName(provinceName);
+            sysUser.setProvinceName(provinceName);
+        }
+        if (StringUtils.isNotEmpty(cityName))
+        {
+            clusterCommunity.setCityName(cityName);
+            sysUser.setCityName(cityName);
+        }
+        if (StringUtils.isNotEmpty(areaName)){
+            clusterCommunity.setAreaName(areaName);
+            sysUser.setAreaName(areaName);
+        }
+        if (StringUtils.isNotEmpty(streetName)){
+            clusterCommunity.setStreetName(streetName);
+            sysUser.setStreetName(streetName);
+        }
+        if (StringUtils.isNotEmpty(committee)){
+            clusterCommunity.setCommittee(committee);
+            sysUser.setCommittee(committee);
+        }
+        if (StringUtils.isNotEmpty(address)){
+            clusterCommunity.setAddress(address);
+            sysUser.setAddress(address);
+        }
+        if (StringUtils.isNotEmpty(communityType)){
+            clusterCommunity.setCommunityType(communityType);
+        }
+        if (StringUtils.isNotEmpty(remark)){
+            clusterCommunity.setRemark(remark);
+            sysUser.setRemark(remark);
+        }
+        if (StringUtils.isNotEmpty(provinceId)){
+            clusterCommunity.setProvinceId(provinceId);
+        }
+        if (StringUtils.isNotEmpty(cityId))
+        {
+            clusterCommunity.setCityId(cityId);
+        }
+        if (StringUtils.isNotEmpty(areaId))
+        {
+            clusterCommunity.setAreaId(areaId);
+        }
+        if (StringUtils.isNotEmpty(streetId))
+        {
+            clusterCommunity.setStreetId(streetId);
+        }
+        if (StringUtils.isNotEmpty(committeeId))
+        {
+            clusterCommunity.setCommitteeId(committeeId);
+        }
+        if (StringUtils.isNotEmpty(username)){
+            sysUser.setUsername(username);
+        }
+        if (StringUtils.isNotEmpty(password)){
+            sysUser.setPassword(password);
+        }
+        if (StringUtils.isNotEmpty(adminName)){
+            sysUser.setAdminName(adminName);
+        }
+        if (StringUtils.isNotEmpty(phone)){
+            sysUser.setPhone(phone);
+        }
+        if (StringUtils.isNotEmpty(managementUnit))
+        {
+            sysUser.setManagementUnit(managementUnit);
+        }
         clusterCommunityService.insert(clusterCommunity);
         sysUser.setCommunityCode(communityCode);
         sysUser.setRole("小区管理员");
@@ -106,7 +188,7 @@ public class ClusterCommunityController {
     }
     @ApiOperation(value = "删除小区",notes = "传参：List<Integer> idList id集合")
     @PostMapping("/delete")
-    public Result delete(List<Integer> idList){
+    public Result delete(@RequestParam(value = "idList")List<Integer> idList){
         for (int i = 0; i < idList.size(); i++) {
             ClusterCommunity clusterCommunity = clusterCommunityService.selectById(idList.get(i));
             String communityCode = clusterCommunity.getCommunityCode();
@@ -126,9 +208,9 @@ public class ClusterCommunityController {
             "                         String username 账户,String password 密码,String adminName 管理员,String phone 联系电话,String managementUnit 管理单位,\n" +
             "                         String remark 备注")
     @PostMapping("/updateCommunity")
-    public Result update(Integer id,String communityName,String provinceName,
-                         String cityName,String areaName,
-                         String streetName,String committee,String address,String communityType,
+    public Result update(Integer id,String communityName,String provinceName,String provinceId,
+                         String cityName,String cityId,String areaName,String areaId,
+                         String streetName,String streetId,String committee,String committeeId,String address,String communityType,
                          String username,String password,String adminName,String phone,String managementUnit,
                          String remark){
         EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
@@ -174,6 +256,25 @@ public class ClusterCommunityController {
             clusterCommunity.setRemark(remark);
             sysUser.setRemark(remark);
         }
+        if (StringUtils.isNotEmpty(provinceId)){
+            clusterCommunity.setProvinceId(provinceId);
+        }
+        if (StringUtils.isNotEmpty(cityId))
+        {
+            clusterCommunity.setCityId(cityId);
+        }
+        if (StringUtils.isNotEmpty(areaId))
+        {
+            clusterCommunity.setAreaId(areaId);
+        }
+        if (StringUtils.isNotEmpty(streetId))
+        {
+            clusterCommunity.setStreetId(streetId);
+        }
+        if (StringUtils.isNotEmpty(committeeId))
+        {
+            clusterCommunity.setCommitteeId(committeeId);
+        }
         if (StringUtils.isNotEmpty(username)){
             sysUser.setUsername(username);
         }
@@ -191,10 +292,12 @@ public class ClusterCommunityController {
             sysUser.setManagementUnit(managementUnit);
         }
         clusterCommunity.setGmtModified(LocalDateTime.now());
+        sysUser.setAlterTime(LocalDateTime.now());
         sysUserService.updateById(sysUser);
         clusterCommunityService.updateById(clusterCommunity);
             return Result.success("修改成功");
     }
+    @ApiOperation(value = "获取小区列表")
     @PostMapping("/communityList")
     public Result getCommunityList(String communityName,String communityCode,String username,String provinceName, String cityName,String areaName,String streetName,
                                    String committee,String communityType,Integer pageNum,Integer pageSize) {
@@ -202,4 +305,22 @@ public class ClusterCommunityController {
 
         return Result.success(page);
     }
+
+    @ApiOperation(value = "获取小区基本信息")
+    @PostMapping("/getBaseInfo")
+    public Result getBaseInfo(HttpServletRequest request){
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser user =(SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = user.getCommunityCode();
+        EntityWrapper<ClusterCommunity> wrapper=new EntityWrapper<>();
+        wrapper.eq("community_code",communityCode);
+        ClusterCommunity clusterCommunity = clusterCommunityService.selectOne(wrapper);
+        return Result.success(clusterCommunity);
+    }
+   /* @ApiOperation(value = "获取修改信息")
+    @PostMapping("/getModifyInfo")
+    public Result getModifyInfo(Integer id){
+        ClusterCommunity clusterCommunity=clusterCommunityService.getModifyInfo(id);
+        return Result.success(clusterCommunity);
+    }*/
 }

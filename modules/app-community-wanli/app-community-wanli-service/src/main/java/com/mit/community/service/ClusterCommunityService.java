@@ -209,6 +209,11 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
         return clusterCommunityMapper.selectList(wrapper);
     }
 
+    public ClusterCommunity getModifyInfo(Integer id) {
+        ClusterCommunity clusterCommunity=clusterCommunityMapper.getModifyInfo(id);
+        return clusterCommunity;
+    }
+
 
     /*public List<ClusterCommunity> getByCellPhone(String cellPhone) {
         EntityWrapper<ClusterCommunity> wrapperStreet = new EntityWrapper<>();;

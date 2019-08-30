@@ -13,15 +13,25 @@
                 jdbcType="VARCHAR" />
         <result property="provinceName" column="province_name" javaType="String"
                 jdbcType="VARCHAR" />
+        <result property="provinceId" column="province_id" javaType="String"
+                jdbcType="VARCHAR" />
         <result property="cityName" column="city_name" javaType="String"
                 jdbcType="VARCHAR" />
+        <result property="cityId" column="city_id" javaType="String"
+                jdbcType="VARCHAR" />
         <result property="areaName" column="area_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="areaId" column="area_id" javaType="String"
                 jdbcType="VARCHAR" />
         <result property="address" column="address" javaType="String"
                 jdbcType="VARCHAR" />
         <result property="streetName" column="street_name" javaType="String"
                 jdbcType="VARCHAR" />
+        <result property="streetId" column="street_id" javaType="String"
+                jdbcType="VARCHAR" />
         <result property="committee" column="committee" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="committeeId" column="committee_id" javaType="String"
                 jdbcType="VARCHAR" />
         <result property="username" column="username" javaType="String"
                 jdbcType="VARCHAR" />
@@ -31,15 +41,42 @@
                 jdbcType="VARCHAR" />
     </resultMap>
     <select id="selectMyPage" resultMap="baseMap">
-         SELECT c.community_name,c.community_code,
-         c.community_type,c.province_name,c.city_name,c.area_name,
-         c.street_name,c.committee,c.address,s.username,s.admin_name,
-         s.phone FROM cluster_community c LEFT JOIN sys_user s ON c.community_code=s.community_code
+        SELECT
+        c.id,
+        c.community_name,
+        c.community_code,
+        c.community_type,
+        c.province_name,
+        c.province_id,
+        c.city_name,
+        c.city_id,
+        c.area_name,
+        c.area_id,
+        c.street_name,
+        c.street_id,
+        c.committee,
+        c.committee_id,
+        c.address,
+        s.username,
+        s.`password`,
+        s.admin_name,
+        s.management_unit,
+        s.phone
+        FROM
+        cluster_community c
+        LEFT JOIN sys_user s ON c.community_code = s.community_code
          <where>
              <if test="username!=null and username!=''">
                  AND s.username LIKE CONCAT('%',#{username},'%')
              </if>
              ${ew.sqlSegment}
          </where>
+    </select>
+    <select id="getModifyInfo" resultMap="baseMap">
+       SELECT c.id,c.community_name,c.area_belong,c.province_id,c.province_name,
+        c.city_id,c.city_name,c.area_id,c.area_name,c.street_id,c.street_name,c.committee_id,c.community_name,c.address,
+        c.community_type,s.username,s.`password`,s.admin_name,s.phone,
+        s.management_unit,s.remark FROM cluster_community c LEFT JOIN sys_user s ON
+        c.community_code=s.community_code WHERE c.id=#{id}
     </select>
 </mapper>

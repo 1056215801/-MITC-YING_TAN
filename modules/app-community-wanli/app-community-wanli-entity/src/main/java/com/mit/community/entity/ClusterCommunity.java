@@ -45,6 +45,9 @@ public class ClusterCommunity extends BaseEntity{
     @ApiModelProperty(value = "地区名称")
     @TableField("area_name")
     private String areaName;
+
+    @TableField("area_id")
+    private String areaId;
     /**
      * 地址
      */
@@ -57,18 +60,28 @@ public class ClusterCommunity extends BaseEntity{
     @ApiModelProperty(value = "城市名称")
     @TableField("city_name")
     private String cityName;
+
+    @TableField("city_id")
+    private String cityId;
     /**
      * 街道名称
      */
     @ApiModelProperty(value = "街道名称")
     @TableField("street_name")
     private String streetName;
+
+    @TableField("street_id")
+    private String streetId;
     /**
      * 省份名称
      */
     @ApiModelProperty(value = "省份名称")
     @TableField("province_name")
     private String provinceName;
+
+    @ApiModelProperty(value = "省份编码")
+    @TableField("province_id")
+    private String provinceId;
     /**
      * 小区类型
      */
@@ -88,6 +101,9 @@ public class ClusterCommunity extends BaseEntity{
     @TableField("committee")
     private String committee;
 
+    @TableField("committee_id")
+    private String committeeId;
+
     @TableField(exist = false)
     private String username;
 
@@ -96,5 +112,8 @@ public class ClusterCommunity extends BaseEntity{
 
     @TableField(exist = false)
     private String phone;
+
+    @TableField(exist = false)
+    private String password;
 
 }

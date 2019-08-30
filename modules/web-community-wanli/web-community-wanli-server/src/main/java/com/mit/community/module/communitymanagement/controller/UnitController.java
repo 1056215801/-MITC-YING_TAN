@@ -77,13 +77,10 @@ public class UnitController {
         if (sort==null){
             return Result.error("参数异常");
         }
-        Unit unit = unitService.selectById(id);
-        if (unit!=null){
-
-            unit.setUnitName(unitName);
-            unit.setSort(sort);
-            unit.setGmtModified(LocalDateTime.now());
-        }
+        Unit unit=new Unit();
+        unit.setId(id);
+        unit.setUnitName(unitName);
+        unit.setSort(sort);
         boolean b = unitService.updateById(unit);
         if (b){
             return Result.success("修改成功");
