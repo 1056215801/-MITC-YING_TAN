@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@TableName("access_card")
+@TableName("access_card") //门禁卡
 public class AccessCard extends BaseEntity{
     @TableField("card_num")
     private String cardNum;
@@ -30,6 +30,12 @@ public class AccessCard extends BaseEntity{
 
     @TableField("is_upload")
     private int isUpload;//是否成功上传到机器；1否；2是
+
+    @TableField("card_type")
+    private int cardType;//卡类型
+
+    @TableField("card_media")
+    private int cardMedia;//卡介质(1ic卡)
 
 
 }
