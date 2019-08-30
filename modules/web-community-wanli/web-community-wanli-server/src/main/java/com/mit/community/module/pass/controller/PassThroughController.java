@@ -296,11 +296,8 @@ public class PassThroughController {
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = sysUser.getCommunityCode();
         }
-        String msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, jsonObject);
-        if (!msg.contains("success")) {
-            return -1;
-        }
-        return 1;
+        Integer msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, jsonObject);
+        return msg;
     }
 
 
@@ -311,7 +308,7 @@ public class PassThroughController {
         if (image != null) {
             message = houseHoldService.saveHouseHoldPhoto(image);
             if ("提取人脸特征值失败".equals(message)) {
-                return Result.error(message);
+                return Result.error("提取人脸特征值失败");
             } else {
                 return Result.success(message);
             }

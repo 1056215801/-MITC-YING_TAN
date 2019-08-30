@@ -204,16 +204,24 @@ public class FaceController {
 
 
     @PostMapping("/getInviteCode")
-    @ApiOperation(value = "获取访客邀请码", notes = "传参：cellphone 手机号；dateTag 日期标志：今天:0；明天：1;" +
+    @ApiOperation(value = "获取访客邀请码（简单模式）", notes = "传参：cellphone 手机号；dateTag 日期标志：今天:0；明天：1;" +
                       "times 开锁次数：无限次：0；一次：1；deviceGroupId 设备分组id，默认只传公共权限组；communityCode 社区编号") //没有表
     public Result getInviteCode(HttpServletRequest request, String cellphone, String dateTag, String times, String deviceGroupId, String communityCode) throws Exception{
         String message = visitorInviteCodeService.getInviteCode(cellphone, dateTag, times, deviceGroupId, communityCode);
         return Result.success(message);
     }
 
+    @PostMapping("/getHighModelInviteCode")
+    @ApiOperation(value = "获取访客邀请码（高级模式）", notes = "传参：cellphone 手机号；" +
+            "；deviceGroupId 设备分组id，默认只传公共权限组；communityCode 社区编号；days 日期；timeQuantum 时间段") //没有表
+    public Result getHighModelInviteCode(HttpServletRequest request, String cellphone, String deviceGroupId, String communityCode, String days, String timeQuantum) throws Exception{
+        String message = visitorInviteCodeService.getHighModelInviteCode(cellphone, deviceGroupId, communityCode, days, timeQuantum);
+        return Result.success(message);
+    }
+
     @RequestMapping("/vistitorPassWordVerify")
     @ApiOperation(value = "访客密码验证", notes = "传参：") //没有表
-    public Result vistitorPassWordVerify(HttpServletRequest request, String mac, String passWord) throws IOException {
+    public Result vistitorPassWordVerify(HttpServletRequest request, String mac, String passWord) throws Exception {
         System.out.println("=======================mac="+mac);
         System.out.println("=======================passWord="+passWord);
         DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getDeviceInfoByMac(mac);
@@ -222,11 +230,11 @@ public class FaceController {
             if (device != null) {
                 DeviceDeviceGroup deviceDeviceGroup = deviceDeviceGroupService.getByDeviceNum(device.getDeviceNum());
                 if (deviceDeviceGroup != null) {
-                    Integer VisitorInviteCodeId = visitorInviteCodeService.getByDeviceGroupIdAndPassWord(deviceDeviceGroup.getDeviceGroupId(), passWord);
-                    if (VisitorInviteCodeId == 0) {
+                    Integer visitorvInviteCodeId = visitorInviteCodeService.getByDeviceGroupIdAndPassWord(deviceDeviceGroup.getDeviceGroupId(), passWord);
+                    if (visitorvInviteCodeId == 0) {
                         return Result.error("密码错误");
                     } else {
-                        return Result.success(VisitorInviteCodeId);
+                        return Result.success(visitorvInviteCodeId);
                     }
                 } else {
                     return Result.error("密码错误");

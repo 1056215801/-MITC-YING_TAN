@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
  */
 @Slf4j
 @Data
-@Component
+//@Component
 public class HttpLogin implements CommandLineRunner {
 
     private String userName;
