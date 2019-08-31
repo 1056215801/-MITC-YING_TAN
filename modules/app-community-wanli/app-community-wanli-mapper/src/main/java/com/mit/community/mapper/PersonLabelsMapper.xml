@@ -147,6 +147,29 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.AccessCardPageInfo" id="accessCardPageInfoMap">
+        <result property="id" column="id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="cardType" column="cardType" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="cardMedia" column="cardMedia" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="houseHoldName" column="houseHoldName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="houseType" column="houseType" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="mobile" column="mobile" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="validityTime" column="validityTime" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectMenJinCardPage" resultMap="accessCardPageInfoMap">
+        select a.id,a.card_type as cardType,a.card_media as cardMedia,b.household_name as houseHoldName,b.housetype as houseType,b.mobile,b.validity_time as validityTime
+        FROM access_card a LEFT JOIN household b on a.household_id=b.household_id LEFT JOIN household_room c on b.household_id=c.household_id
+        where 1= 1 ${ew.sqlSegment}
+    </select>
+
     <select id="getExtisHighModel" resultMap="highModelMap">
         select b.time_day as timeDay,b.time_start as timeStart,b.time_end as timeEnd from visitor_invite_code a LEFT JOIN High_Model b
         on a.id=b.visitor_invite_code_id

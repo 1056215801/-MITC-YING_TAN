@@ -450,24 +450,14 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public Integer SaveHouseholdInfoByStepOne(String communityCode, JSONObject jsonObject) {
+    public Integer SaveHouseholdInfoByStepOne(String communityCode, PostHouseHoldInfoOne postHouseHoldInfoOne) {
         Integer msg = null;
         //参数获取
 
-        String data = jsonObject.toJSONString();
-        JSONObject json = JSON.parseObject(data);
-        String certificateStr = json.getString("certificateStr");//用户身份信息
-        String contactType = json.getString("contactType");//联系人类型
-        String houseProperties = json.getString("houseProperties");//房屋列表
-        String householdName = json.getString("householdName");//住户姓名
-        String householdStr = json.getString("householdStr");//住户信息
-        String mobile = json.getString("mobile");//手机号码
-        String realCertificateStr = json.getString("realCertificateStr");//未成年人身份
-        String realNameFlag = json.getString("realNameFlag");//实名身份标识
-        String roomIdArr = json.getString("roomIdArr");//房屋ID
-        String urgentMobile = json.getString("urgentMobile");//代理人手机号
-        String idCard = json.getString("idCard");//证件号码
-        //Integer householdId = Integer.valueOf(json.getString("householdId"));
+        String householdName = postHouseHoldInfoOne.getHouseHoldName();//住户姓名
+        String mobile = postHouseHoldInfoOne.getMobile();//手机号码
+        String idCard = postHouseHoldInfoOne.getIdCard();//证件号码
+        String householdType = String.valueOf(postHouseHoldInfoOne.getHouseholdType());
         PersonBaseInfo personBaseInfo = personBaseInfoService.getPersonByMobile(mobile, communityCode);
         if (personBaseInfo == null) {
             personBaseInfo = new PersonBaseInfo();
@@ -482,22 +472,9 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             personBaseInfoService.save(personBaseInfo);
         }
         try {
-            List<HouseRoomsVo> list = new ArrayList<>();
-            if (StringUtils.isNoneEmpty(houseProperties)) {
-                JSONArray roomsArray = JSONArray.parseArray(houseProperties);
-                for (int i = 0; i < roomsArray.size(); i++) {
-                    HouseRoomsVo roomsVo = new HouseRoomsVo();
-                    roomsVo.setZoneId(JSONObject.parseObject(roomsArray.get(i).toString()).getString("zoneId"));
-                    roomsVo.setZoneName(JSONObject.parseObject(roomsArray.get(i).toString()).getString("zoneName"));
-                    roomsVo.setBuildingId(JSONObject.parseObject(roomsArray.get(i).toString()).getString("buildingId"));
-                    roomsVo.setBuildingName(JSONObject.parseObject(roomsArray.get(i).toString()).getString("buildingName"));
-                    roomsVo.setUnitId(JSONObject.parseObject(roomsArray.get(i).toString()).getString("unitId"));
-                    roomsVo.setUnitName(JSONObject.parseObject(roomsArray.get(i).toString()).getString("unitName"));
-                    roomsVo.setRoomId(JSONObject.parseObject(roomsArray.get(i).toString()).getString("roomId"));
-                    roomsVo.setRoomNum(JSONObject.parseObject(roomsArray.get(i).toString()).getString("roomNum"));
-                    roomsVo.setHouseholdType(JSONObject.parseObject(roomsArray.get(i).toString()).getString("householdType"));
-                    list.add(roomsVo);
-                }
+            List<HouseRoomsVo> list = postHouseHoldInfoOne.getHouseRoomsVoList();
+            for (HouseRoomsVo houseRoomsVo : list) {
+                houseRoomsVo.setHouseholdType(householdType);
             }
             /**
              * 判断是新增还是修改
@@ -507,9 +484,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 Integer householdId = personLabelsService.getMaxHouseHoldId();
                 HouseHold houseHold = null;
                 // 本地数据库保存住户信息
-                JSONObject householdStrJson = JSON.parseObject(householdStr);
-                Integer gender = Integer.valueOf(householdStrJson.getString("gender"));
-                String residenceTimeStr = householdStrJson.getString("stayEndTime");
+                Integer gender = postHouseHoldInfoOne.getGender();
+                String residenceTimeStr = postHouseHoldInfoOne.getResidenceTime();
                 if (StringUtils.isNotBlank(idCard)) {
                     IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
                     String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
@@ -561,9 +537,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             } else {//修改
                 //根据住户id修改住户信息
                 HouseHold edidHousehold = null;
-                JSONObject householdStrJson = JSON.parseObject(householdStr);
-                Integer gender = Integer.valueOf(householdStrJson.getString("gender"));
-                String residenceTimeStr = householdStrJson.getString("stayEndTime");
+                Integer gender = postHouseHoldInfoOne.getGender();
+                String residenceTimeStr = postHouseHoldInfoOne.getResidenceTime();
                 if (StringUtils.isNotBlank(idCard)) {
                     IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
                     String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
@@ -847,8 +822,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             fos.write(b, 0, b.length);
             fos.close();
 
-            //String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
-            String photoUrlNet = "aaaaaaaaaaa";
+            String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
+            //String photoUrlNet = "aaaaaaaaaaa";
             boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
             if (flag == true) {
                 houseHoldPhoto.setIsUpload(1);

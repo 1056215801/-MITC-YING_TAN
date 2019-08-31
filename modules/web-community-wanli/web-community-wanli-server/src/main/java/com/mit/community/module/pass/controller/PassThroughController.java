@@ -12,6 +12,8 @@ import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import com.mit.community.util.ThreadPoolUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -266,7 +268,7 @@ public class PassThroughController {
                     //String label = personBaseInfoService.getLabelsByCredentialNum(list.get(i).getCredentialNum());
                     String label = personBaseInfoService.getLabelsByMobile(list.get(i).getMobile(), communityCode);
                     if(StringUtils.isNotBlank(label)) {
-                        //list.get(i).setLabels(label);
+                        list.get(i).setLabels(label);
                     }
                 }
             }
@@ -283,21 +285,43 @@ public class PassThroughController {
      * @param jsonObject
      * @return
      */
-    @RequestMapping(value = "/saveHouseholdInfoByStepOne", method = RequestMethod.POST)
-    @ApiOperation(value = "保存住户房屋信息", notes = "输入参数：为空则不作为过滤条件。<br/>" +
-            "houseProperties 房屋数组，roomIdArr 房屋ID数组, householdStr 住户信息, certificateStr 身份信息, householdId 住户id," +
-            "realNameFlag 实名标记；realCertificateStr 未成年人身份；mobile 住户手机；contactType 联系人类型")
-    public Integer SaveHouseholdInfoByStepOne(HttpServletRequest request,
+    @PostMapping(value = "/saveHouseholdInfoByStepOne")
+    @ApiOperation(value = "保存住户房屋信息", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "houseHoldId", value = "住户id", paramType = "query", required = false, dataType = "Integer"),
+            @ApiImplicitParam(name = "houseHoldName", value = "住户姓名", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "gender", value = "性别（0男，1女）", paramType = "query", required = true, dataType = "INTEGER"),
+            @ApiImplicitParam(name = "residenceTime", value = "居住期限(yyyy-MM-dd)", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "mobile", value = "电话号码", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "idCard", value = "身份证号码", paramType = "query", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "householdType", value = "与户主关系", paramType = "query", required = true, dataType = "String")
+            //@ApiImplicitParam(name = "houseRoomsVoList", value = "房屋信息列表", paramType = "query", required = true, dataType = "List"),
+            /*@ApiImplicitParam(name = "houseRoomsVoList.id", value = "主键id", paramType = "query", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.zoneId", value = "分区id", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.zoneName", value = "分区名", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.buildingId", value = "楼栋id", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.buildingName", value = "楼栋名", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.unitId", value = "单元id", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.unitName", value = "单元名", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.roomId", value = "房间id", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.id", value = "roomNum", paramType = "房间号", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "houseRoomsVoList.householdType", value = "与户主关系", paramType = "query", required = false, dataType = "String")*/
+    })
+    public Result SaveHouseholdInfoByStepOne(HttpServletRequest request,
                                               HttpServletResponse response,
-                                              String communityCode,
-                                              @RequestBody JSONObject jsonObject) {
+                                             PostHouseHoldInfoOne postHouseHoldInfoOne) {
+        String communityCode = null;
         if (StringUtils.isBlank(communityCode)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
             communityCode = sysUser.getCommunityCode();
         }
-        Integer msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, jsonObject);
-        return msg;
+        Integer msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, postHouseHoldInfoOne);
+        if (msg == -1){
+            return Result.error("保存失败");
+        } else {
+            return Result.success(msg);
+        }
     }
 
 
@@ -580,6 +604,22 @@ public class PassThroughController {
             }
             page.setRecords(list);
         }
+        return Result.success(page);
+    }
+
+    @ApiOperation(value = "分页获取门禁卡", notes = "")
+    @PostMapping("/menJinCardPage")
+    public Result menJinCardPage(HttpServletRequest request, String communityCode, String cardNum, String mobile, Integer zoneId, Integer buildingId, Integer unitId, Integer roomeId, Integer cardType,
+                                    Integer cardMedia,
+                                    Integer authType, Integer pageNum, Integer pageSize) {
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
+        Page<AccessCardPageInfo> page = accessCardService.getMenJinCardPage(communityCode, cardNum, mobile, zoneId, buildingId, unitId, roomeId, cardType,
+                 cardMedia, authType, pageNum, pageSize);
+
         return Result.success(page);
     }
 

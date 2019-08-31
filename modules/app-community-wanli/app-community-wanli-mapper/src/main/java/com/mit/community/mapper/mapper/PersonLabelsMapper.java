@@ -53,4 +53,5 @@ public interface PersonLabelsMapper {
     DeviceIsOnline getIsOnline(@Param("deviceNum")String deviceNum);
     List<HighModel> getExtisHighModel(@Param("ew")EntityWrapper<HighModel> wrapper);
     String getMaxHouseHoldId();
+    List<AccessCardPageInfo> selectMenJinCardPage(RowBounds rowBounds, @Param("ew")EntityWrapper<AccessCardPageInfo> wrapper);
 }
