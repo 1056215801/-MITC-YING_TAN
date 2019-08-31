@@ -814,8 +814,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             fos.write(b, 0, b.length);
             fos.close();
 
-            //String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
-            String photoUrlNet = "aaaaaaaaaaa";
+            String photoUrlNet = UploadUtil.uploadWithByte(b);//图片网络保存地址
+            //String photoUrlNet = "aaaaaaaaaaa";
             boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
             if (flag == true) {
                 houseHoldPhoto.setIsUpload(1);
