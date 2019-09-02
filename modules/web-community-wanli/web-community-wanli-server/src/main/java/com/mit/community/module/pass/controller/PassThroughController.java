@@ -225,7 +225,7 @@ public class PassThroughController {
     @GetMapping("/listHouseholdByCommunityCode")
     @ApiOperation(value = "分页查询住户信息数据", notes = "输入参数：为空则不作为过滤条件。<br/>" +
             "zoneId 分区id，buildingId 楼栋id, unitId 单元id, roomId 房间id, contactPerson 联系人," +
-            " contactCellphone 联系人手机号；status 0-注销，1-正常；search_validEndFlag 有效期字段；select_autyType 授权类型；" +
+            " contactCellphone 联系人手机号；householdType 与户主关系（1：本人；2：配偶；3：父母；4：子女；5：亲属；6：非亲属；7：租赁；8：其他；9：保姆；10：护理人员); status 0-注销，1-正常；search_validEndFlag 有效期字段(1-即将到期，2-已过期)；select_autyType 授权类型(未授权：0;卡：1;app：10;人脸：100)；" +
             "pageNum 当前页； pageSize 分页大小")
     public Result listHouseholdByCommunityCode(HttpServletRequest request,
                                                Integer zoneId,
@@ -327,10 +327,10 @@ public class PassThroughController {
 
     @ApiOperation(value = "保存人脸照片")
     @PostMapping("/saveHouseHoldPhoto")
-    public Result savePhoto(MultipartFile image) {
+    public Result savePhoto(MultipartFile image, Integer houseHoldId) {
         String message = null;
         if (image != null) {
-            message = houseHoldService.saveHouseHoldPhoto(image);
+            message = houseHoldService.saveHouseHoldPhoto(image, houseHoldId);
             if ("提取人脸特征值失败".equals(message)) {
                 return Result.error("提取人脸特征值失败");
             } else {
@@ -359,7 +359,8 @@ public class PassThroughController {
      * @return
      */
     @RequestMapping(value = "/saveHouseholdInfoByStepThree", method = RequestMethod.POST)
-    @ApiOperation(value = "保存住户授权信息")
+    @ApiOperation(value = "保存住户授权信息",notes = "editFlag 是否修改（0新增，1修改）；householdId 住户id；appAuthFlag app授权（0停用，1启用）；faceAuthFlag 人脸（0停用，1启用）；deviceGIds 权限组id（多个用英文逗号拼接）；" +
+            "validityEndDate 权限有效期(yyyy-MM-dd)； cardListArr 卡号（多个用英文逗号拼接）；imageUrls 图片链接（多个用英文逗号拼接）")
     public Integer SaveHouseholdInfoByStepThree(Integer editFlag,
                                                 Integer householdId,
                                                 Integer appAuthFlag,
@@ -377,11 +378,18 @@ public class PassThroughController {
             System.out.println("===========================imageUrls="+imageUrls);
         }
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, null);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrls);
         if (!msg.contains("success")) {
             return -1;
         }
         return 1;
+    }
+
+    @ApiOperation(value = "stepThree获取填充信息")
+    @PostMapping("/getInfoThree")
+    public Result getInfoThree(Integer houseHoldId) {
+        StepThreeInfo stepThreeInfo = houseHoldService.getInfoThree(houseHoldId);
+        return Result.success(stepThreeInfo);
     }
 
     /**

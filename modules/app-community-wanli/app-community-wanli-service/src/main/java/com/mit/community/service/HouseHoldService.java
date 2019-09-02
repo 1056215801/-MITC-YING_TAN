@@ -16,6 +16,7 @@ import com.mit.community.entity.entity.PersonBaseInfo;
 
 
 import com.mit.community.mapper.HouseHoldMapper;
+import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import com.mit.community.util.*;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Service;
@@ -94,7 +95,24 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     private HouseHoldPhotoService houseHoldPhotoService;
     @Autowired
     private AccessCardService accessCardService;
+    @Autowired
+    private PersonLabelsMapper personLabelsMapper;
 
+    public StepThreeInfo getInfoThree (Integer houseHoldId) {
+        StepThreeInfo stepThreeInfo = new StepThreeInfo();
+        EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
+        wrapper.eq("household_id", houseHoldId);
+        List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
+        stepThreeInfo.setHouseHold(houseHolds.get(0));
+
+        List<AccessCard> cardList = personLabelsMapper.selectAccessCardByHouseHoldId(houseHoldId);
+        stepThreeInfo.setCardList(cardList);
+
+        List<HouseHoldPhoto> photoList = personLabelsMapper.selectHouseHoldPhotoByHouseHoldId(houseHoldId);
+        stepThreeInfo.setPhotoList(photoList);
+
+        return stepThreeInfo;
+    }
     /**
      * 查询住户，通过住户列表
      *
@@ -303,40 +321,40 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                                                Integer pageNum, Integer pageSize) {
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         if (zoneId != null) {
-            wrapper.eq("zone_id", zoneId);
+            wrapper.eq("b.zone_id", zoneId);
         }
         if (buildingId != null) {
-            wrapper.eq("building_id", buildingId);
+            wrapper.eq("b.building_id", buildingId);
         }
         if (unitId != null) {
-            wrapper.eq("unit_id", unitId);
+            wrapper.eq("b.unit_id", unitId);
         }
         if (roomId != null) {
-            wrapper.eq("room_id", roomId);
+            wrapper.eq("b.room_id", roomId);
         }
         if (StringUtils.isNotBlank(communityCode)) {
-            wrapper.eq("community_code", communityCode);
+            wrapper.eq("a.community_code", communityCode);
         }
         if (StringUtils.isNotBlank(contactPerson)) {
-            wrapper.like("household_name", contactPerson);
+            wrapper.like("a.household_name", contactPerson);
         }
         if (StringUtils.isNotBlank(contactCellphone)) {
-            wrapper.like("mobile", contactCellphone);
+            wrapper.like("a.mobile", contactCellphone);
         }
         //户主关系
         if (houseType != null) {
-            wrapper.eq("housetype", houseType);
+            wrapper.eq("a.housetype", houseType);
         }
         //住户状态
         if (status != null) {
             if (status == 2) {//停用
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                wrapper.lt("validity_time", LocalDate.parse(sdf.format(new Date()), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                wrapper.lt("a.validity_time", LocalDate.parse(sdf.format(new Date()), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
             } else {
-                wrapper.eq("household_status", status);
+                wrapper.eq("a.household_status", status);
             }
         } else {//默认不查询注销数据
-            wrapper.in("household_status", new Integer[]{1, 2});
+            wrapper.in("a.household_status", new Integer[]{1, 2});
         }
         //有效期限查询字段处理
         if (search_validEndFlag != null) {
@@ -349,11 +367,11 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                     Date startDate = cal.getTime();
                     cal.add(Calendar.DATE, 30);
                     Date endDate = cal.getTime();
-                    wrapper.ge("validity_time", LocalDate.parse(sdf.format(startDate), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                    wrapper.le("validity_time", LocalDate.parse(sdf.format(endDate), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    wrapper.ge("a.validity_time", LocalDate.parse(sdf.format(startDate), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    wrapper.le("a.validity_time", LocalDate.parse(sdf.format(endDate), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                 }
                 if (search_validEndFlag == 2) {//已过期
-                    wrapper.lt("validity_time", LocalDate.parse(sdf.format(new Date()), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    wrapper.lt("a.validity_time", LocalDate.parse(sdf.format(new Date()), DateTimeFormatter.ofPattern("yyyy-MM-dd")));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -361,13 +379,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         }
         //授权类型字段处理
         if (select_autyType != null) {
-            wrapper.eq("authorize_status", select_autyType);
+            wrapper.eq("a.authorize_status", Biannary2Decimal(select_autyType));
         }
-        wrapper.orderBy("gmt_create", false);
+        wrapper.orderBy("a.gmt_create", false);
         List<HouseHold> houseHolds = new ArrayList<>();
         if (pageNum != null && pageSize != null) {
             Page<HouseHold> page = new Page<>(pageNum, pageSize);
-            houseHolds = houseHoldMapper.selectPage(page, wrapper);
+            houseHolds = personLabelsMapper.selectHouseHoldPage(page, wrapper);
             for (HouseHold houseHold : houseHolds) {
                 //读取用户表的基本信息
                 User user = userService.getByCellphoneNoCache(houseHold.getMobile());
@@ -444,6 +462,23 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     }
 
     /**
+     * 将二进制转换为10进制
+     * @param bi ：待转换的二进制
+     * @return
+     */
+    public  static  Integer Biannary2Decimal(int bi){
+        String binStr = bi+"";
+        Integer sum = 0;
+        int len = binStr.length();
+        for (int i=1;i<=len;i++){
+            //第i位 的数字为：
+            int dt = Integer.parseInt(binStr.substring(i-1,i));
+            sum+=(int)Math.pow(2,len-i)*dt;
+        }
+        return  sum;
+    }
+
+    /**
      * 保存住户房屋信息
      *
      * @param jsonObject
@@ -496,7 +531,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
                 } else {
                     houseHold = new HouseHold(communityCode, StringUtils.EMPTY, householdId, householdName,
                             1, 0,
@@ -505,7 +540,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
                 }
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
@@ -549,7 +584,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
                 } else {
                     edidHousehold = new HouseHold(communityCode, StringUtils.EMPTY, existHouseHold.getHouseholdId(), householdName,
                             1, 0,
@@ -558,7 +593,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
                 }
                 edidHousehold.setGmtModified(LocalDateTime.now());
                 houseHoldMapper.updateHouseholdByHouseholdId(edidHousehold);
@@ -620,8 +655,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         try {
             //更新本地住户授权类型字段+本地更新住户有效期权限时间
             Integer authStatus = 0;
-            String string = cardListArr.replace("[", "").replace("]", "");
-            if (string.length() != 0) {
+            if (StringUtils.isNotBlank(cardListArr)) {
                 authStatus = AuthorizeStatusUtil.GetAuthStatus(appAuthFlag, faceAuthFlag, 1);
             } else {
                 authStatus = AuthorizeStatusUtil.GetAuthStatus(appAuthFlag, faceAuthFlag, null);
@@ -738,7 +772,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                                         AccessCard accessCard = accessCardService.getByHouseHoldIdAndDeviceNumAndCardNum(householdId, deviceDeviceGroupsList.get(i).getDeviceNum(), cardsNum[a]);
                                         if (accessCard == null) {
                                             DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
-                                            if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+                                            if (Integer.parseInt(deviceIsOnline.getTimeDiffi()) <= 10) {//设备在线
                                                 if (sendCardToDevice(deviceIsOnline.getIp(),cardsNum[a])) {//下发成功
                                                     accessCardService.save(cardsNum[a],householdId,deviceDeviceGroupsList.get(i).getDeviceNum(),Integer.parseInt(deviceGroupId),2);
                                                 } else{//下发不成功
@@ -762,7 +796,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                                         HouseHoldPhoto houseHoldPhotoExits = houseHoldPhotoService.getByHouseHoldIdAndDeviceNumAndPhotoUrl(householdId, deviceDeviceGroupsList.get(i).getDeviceNum(), photoUrlNet);
                                         if (houseHoldPhotoExits == null) {
                                             DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(deviceDeviceGroupsList.get(i).getDeviceNum());
-                                            if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+                                            if (Integer.parseInt(deviceIsOnline.getTimeDiffi()) <= 10) {//设备在线
                                                 if (sendFeaToDevice(deviceIsOnline.getIp(),houseHoldPhoto.getFeaUrl(), householdId)) {//下发成功
                                                     houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 2, deviceDeviceGroupsList.get(i).getDeviceNum());
                                                 } else{//下发不成功
@@ -788,12 +822,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                         }
                     }
 
-                    if (StringUtils.isNotBlank(imageUrls)) {
+                    /*if (StringUtils.isNotBlank(imageUrls)) {
                         String[] images = imageUrls.split(",");
                         for (int i=0; i< images.length; i++) {
                             houseHoldPhotoService.updateUploadByPhotoUrlNet(householdId, images[i]);
                         }
-                    }
+                    }*/
                 }
             }
         } catch (Exception e) {
@@ -803,7 +837,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         return msg;
     }
 
-    public String saveHouseHoldPhoto(MultipartFile image) {
+    public String saveHouseHoldPhoto(MultipartFile image, Integer houseHoldId) {
         String message = null;
         HouseHoldPhoto houseHoldPhoto = null;
         try {
@@ -827,6 +861,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
             if (flag == true) {
                 houseHoldPhoto.setIsUpload(1);
+                houseHoldPhoto.setHouseHoldId(houseHoldId);
                 houseHoldPhoto.setPhotoUrlNet(photoUrlNet);
                 houseHoldPhoto.setPhotoUrl(photoUrl);//照片本地保存路径
                 houseHoldPhoto.setFeaUrl(basePath + "\\" + uuid + ".fea");
@@ -1165,7 +1200,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         return result;
     }
 
-<<<<<<< HEAD
     public Page<HouseHold> getInfoList(String householdName,
                                        String mobile, Integer zoneId, Integer buildingId,
                                        Integer unitId, String roomNum, Short householdType,
@@ -1194,7 +1228,4 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         return page;
     }
 
-
-=======
->>>>>>> remotes/origin/newdev
 }

@@ -32,7 +32,7 @@ public class RedisConstant {
     /**
      * 登陆过期时间
      */
-    public final static long LOGIN_EXPIRE_TIME = 1800L;
+    public final static long LOGIN_EXPIRE_TIME = 3600L;
 
     /**
      * dnake 登陆响应

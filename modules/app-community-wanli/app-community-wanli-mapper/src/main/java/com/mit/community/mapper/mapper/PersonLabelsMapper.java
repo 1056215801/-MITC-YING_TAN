@@ -54,4 +54,7 @@ public interface PersonLabelsMapper {
     List<HighModel> getExtisHighModel(@Param("ew")EntityWrapper<HighModel> wrapper);
     String getMaxHouseHoldId();
     List<AccessCardPageInfo> selectMenJinCardPage(RowBounds rowBounds, @Param("ew")EntityWrapper<AccessCardPageInfo> wrapper);
+    List<HouseHold> selectHouseHoldPage(RowBounds rowBounds, @Param("ew")EntityWrapper<HouseHold> wrapper);
+    List<AccessCard> selectAccessCardByHouseHoldId(@Param("houseHoldId")Integer houseHoldId);
+    List<HouseHoldPhoto> selectHouseHoldPhotoByHouseHoldId(@Param("houseHoldId")Integer houseHoldId);
 }

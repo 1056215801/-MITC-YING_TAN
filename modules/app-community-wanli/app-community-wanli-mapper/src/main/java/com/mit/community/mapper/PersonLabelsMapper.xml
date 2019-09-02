@@ -164,6 +164,79 @@
                 jdbcType="VARCHAR" />
     </resultMap>
 
+    <resultMap type="com.mit.community.entity.HouseHold" id="houseHoldMap">
+        <result property="id" column="id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="constellation" column="constellation" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="householdId" column="household_id" javaType="Integer"
+                jdbcType="VARCHAR" />
+        <result property="householdName" column="household_name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="householdStatus" column="household_status" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="authorizeStatus" column="authorize_status" javaType="Integer"
+                jdbcType="VARCHAR" />
+        <result property="gender" column="gender" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="residenceTime" column="residence_time" typeHandler="org.apache.ibatis.type.LocalDateTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER" />
+        <result property="mobile" column="mobile" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sipAccount" column="sip_account" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="sipPassword" column="sip_password" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="credentialNum" column="credential_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="province" column="province" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="city" column="city" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="region" column="region" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="birthday" column="birthday" typeHandler="org.apache.ibatis.type.LocalDateTypeHandler" javaType="java.time.LocalDateTime"
+                jdbcType="OTHER" />
+        <result property="identityType" column="identity_type" javaType="Short"
+                jdbcType="OTHER" />
+        <result property="validityTime" column="validity_time" typeHandler="org.apache.ibatis.type.DateTypeHandler" javaType="java.sql.Date"
+                jdbcType="OTHER" />
+        <result property="housetype" column="housetype" javaType="Integer"
+                jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.AccessCard" id="accessCardMap">
+        <result property="cardNum" column="card_num" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="cardType" column="card_type" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="cardMedia" column="card_media" javaType="Integer"
+                jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap type="com.mit.community.entity.HouseHoldPhoto" id="houseHoldPhotoMap">
+        <result property="photoUrlNet" column="photo_url_net" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectHouseHoldPhotoByHouseHoldId" resultMap="houseHoldPhotoMap">
+        select distinct photo_url_net
+        FROM household_photo
+        where household_id =#{houseHoldId}
+    </select>
+
+    <select id="selectAccessCardByHouseHoldId" resultMap="accessCardMap">
+        select distinct card_num,card_type,card_media
+        FROM access_card
+        where household_id =#{houseHoldId}
+    </select>
+
+    <select id="selectHouseHoldPage" resultMap="houseHoldMap">
+        select a.*
+        FROM household a  LEFT JOIN household_room b on a.household_id=b.household_id
+        where 1= 1 ${ew.sqlSegment}
+    </select>
+
     <select id="selectMenJinCardPage" resultMap="accessCardPageInfoMap">
         select a.id,a.card_type as cardType,a.card_media as cardMedia,b.household_name as houseHoldName,b.housetype as houseType,b.mobile,b.validity_time as validityTime
         FROM access_card a LEFT JOIN household b on a.household_id=b.household_id LEFT JOIN household_room c on b.household_id=c.household_id
@@ -282,7 +355,7 @@
     </select>
 
     <select id="getIsOnline" resultMap="deviceIsOnlineMap">
-        select TIME_TO_SEC(TIMEDIFF(NOW(), a.gmt_modified)) as timeDiffi,a.ip FROM dnake_device_info a
+        select TIME_TO_SEC(TIMEDIFF(NOW(), a.gmt_modified)) as timeDiffi,a.ip as ip FROM dnake_device_info a
         LEFT JOIN device b on a.id=b.dnake_device_info_id
         where b.device_num=#{deviceNum}
     </select>

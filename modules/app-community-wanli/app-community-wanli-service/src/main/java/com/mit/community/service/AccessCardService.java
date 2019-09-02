@@ -65,6 +65,18 @@ public class AccessCardService {
         }
     }
 
+    public AccessCard getByCardNumAndDeviceNum (String cardNum, String deviceNum) {
+        EntityWrapper<AccessCard> wrapper = new EntityWrapper<>();
+        wrapper.eq("card_num", cardNum);
+        wrapper.eq("device_num", deviceNum);
+        List<AccessCard> list = accessCardMapper.selectList(wrapper);
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return list.get(0);
+        }
+    }
+
     public AccessCard getByHouseHoldIdAndDeviceNumAndCardNum(Integer householdId, String deviceNum, String cardNum) {
         EntityWrapper<AccessCard> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", householdId);
@@ -143,5 +155,12 @@ public class AccessCardService {
         List<AccessCardPageInfo> list = personLabelsMapper.selectMenJinCardPage(page, wrapper);
         page.setRecords(list);
         return page;
+    }
+
+    public List<AccessCard> selectByHouseHoldId(Integer houseHoldId){
+        EntityWrapper<AccessCard> wrapperCard = new EntityWrapper<>();
+        wrapperCard.eq("household_id", houseHoldId);
+        wrapperCard.setSqlSelect("distinct card_num,card_type,card_media");
+        return accessCardMapper.selectList(wrapperCard);
     }
 }

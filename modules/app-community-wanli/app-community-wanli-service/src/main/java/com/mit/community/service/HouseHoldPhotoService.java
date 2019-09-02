@@ -76,4 +76,11 @@ public class HouseHoldPhotoService {
         houseHoldPhoto.setGmtModified(LocalDateTime.now());
         houseHoldPhotoMapper.update(houseHoldPhoto, wrapper);
     }
+
+    public List<HouseHoldPhoto> selectByHouseHoldId (Integer houseHoldId) {
+        EntityWrapper<HouseHoldPhoto> wrapperPhoto = new EntityWrapper<>();
+        wrapperPhoto.eq("household_id", houseHoldId);
+        wrapperPhoto.setSqlSelect("distinct photo_url_net");
+        return houseHoldPhotoMapper.selectList(wrapperPhoto);
+    }
 }

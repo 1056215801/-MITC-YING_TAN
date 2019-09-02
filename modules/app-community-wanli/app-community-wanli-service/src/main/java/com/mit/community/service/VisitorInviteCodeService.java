@@ -55,7 +55,7 @@ public class VisitorInviteCodeService {
     public Integer getByDeviceGroupIdAndPassWord(Integer deviceGroupId, String passWord ) throws Exception{
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<VisitorInviteCode> wrapper = new EntityWrapper<>();
-        wrapper.eq("inviteCode", passWord);
+        wrapper.eq("invite_code", passWord);
         wrapper.ge("gmt_create", getPastDate(30));
         wrapper.eq("device_group_id", deviceGroupId);
         List<VisitorInviteCode> list = visitorInviteCodeMapper.selectList(wrapper);
@@ -244,7 +244,7 @@ public class VisitorInviteCodeService {
         }
         EntityWrapper<VisitorInviteCode> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellphone);
-        wrapper.le("expiry_date", getTime());
+        wrapper.ge("expiry_date", getTime());
         wrapper.le("expiry_date", getFetureDate(1));
         wrapper.eq("device_group_id", deviceGroupId);
         List<VisitorInviteCode> list = visitorInviteCodeMapper.selectList(wrapper);//该电话号码今天和明天在该设备组下申请的所有记录

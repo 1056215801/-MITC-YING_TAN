@@ -76,18 +76,18 @@ public class Test1 {
         params.put("cmd","faceRegister");
         params.put("feaName","out.fea");
         params.put("fea",feaBase64);
-        params.put("houseHoldId","12345");
+        params.put("houseHoldId","78124");
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
         System.out.println(result);*/
 
-        Map<String,String> params = new HashedMap();
+       /* Map<String,String> params = new HashedMap();
 
         params.put("cmd","cardAdd");
         params.put("id","123");
         params.put("cardNum","4170481");
-        String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
+        String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);*/
 
-        System.out.println(result);
+        //System.out.println(result);
 
         /*JSONObject json = JSONObject.fromObject(result);
 

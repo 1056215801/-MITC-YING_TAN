@@ -20,9 +20,6 @@ public class AccessCard extends BaseEntity{
     @TableField("device_num")
     private String deviceNum;
 
-    @TableField("dnake_device_info_id")
-    private String dnakeDeviceInfoId;
-
     /*@TableField("dnake_device_info_id")
     private String dnakeDeviceInfoId;*/
 
