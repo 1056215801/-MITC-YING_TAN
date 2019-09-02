@@ -25,8 +25,7 @@
     <select id="getInfoList" resultMap="baseMap">
         SELECT h.`id`,h.`household_name`,h.`gender`,h.`housetype`,h.`mobile`,h.`authorize_status`,
         h.`housetype`,h.`household_status`,
-        CONCAT(r.`zone_name`,'-',r.`building_name`,'-',r.`unit_name`,r.`room_num`) housing,
-        h.`labels` FROM household  h LEFT JOIN household_room r ON h.`household_id`=r.`household_id`
+        CONCAT(r.`zone_name`,'-',r.`building_name`,'-',r.`unit_name`,r.`room_num`) housing FROM household  h LEFT JOIN household_room r ON h.`household_id`=r.`household_id`
         <where>
             <if test="zoneId!=null and zone!=''">
                 AND r.zone_id=#{zoneId}

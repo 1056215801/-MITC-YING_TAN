@@ -1199,7 +1199,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         }
         return result;
     }
-
     public Page<HouseHold> getInfoList(String householdName,
                                        String mobile, Integer zoneId, Integer buildingId,
                                        Integer unitId, String roomNum, Short householdType,

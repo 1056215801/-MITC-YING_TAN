@@ -150,6 +150,8 @@ public class ClusterCommunityController {
         }
         if (StringUtils.isNotEmpty(password)){
             sysUser.setPassword(password);
+        }else{
+            sysUser.setPassword("654321");
         }
         if (StringUtils.isNotEmpty(adminName)){
             sysUser.setAdminName(adminName);
