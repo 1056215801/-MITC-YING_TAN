@@ -55,7 +55,7 @@ public class AuthorizationController {
 
     }
 
-    @PostMapping("/getInfoList")
+   /* @PostMapping("/getInfoList")
     public Result getInfoList(String householdName, String mobile, Integer zoneId,
                               Integer buildingId, Integer unitId, String roomNum,
                               Short householdType, Integer householdStatus,
@@ -64,13 +64,13 @@ public class AuthorizationController {
         if (houseHoldService == null) {
             System.out.println("出现空指针");
         }
-        /*Page<HouseHold> page=householdRoomService.getInfoList(householdName,mobile,zoneId,
-                buildingId,unitId,roomNum,householdType,householdStatus,validityTime,authorizeStatus,pageNum,pageSize);*/
+        *//*Page<HouseHold> page=householdRoomService.getInfoList(householdName,mobile,zoneId,
+                buildingId,unitId,roomNum,householdType,householdStatus,validityTime,authorizeStatus,pageNum,pageSize);*//*
         //HouseHold houseHold = houseHoldService.selectById(1372220);
         Page<HouseHold> page=houseHoldService.getInfoList(householdName,mobile,zoneId,
                 buildingId,unitId,roomNum,householdType,householdStatus,validityTime,authorizeStatus,pageNum,pageSize);
         return Result.success(page);
-    }
+    }*/
     @ApiImplicitParam(name = "householdId",value = "住户id",required = true,dataType = "Integer",paramType = "query")
     @PostMapping("/logout")
     public Result logout(Integer householdId){
