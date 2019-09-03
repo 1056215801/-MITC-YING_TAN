@@ -120,6 +120,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 com.mit.community.entity.entity.DeviceGroup deviceGroup = deviceGroupService.getById(authorizeHouseholdDeviceGroup.getDeviceGroupId());
                 authorizeGroup.setDeviceGroupId(deviceGroup.getDeviceGroupId());
                 authorizeGroup.setDeviceGroupName(deviceGroup.getDeviceGroupName());
+                authorizeGroup.setGroupType(deviceGroup.getGroupType());
                 authorizeGroup.setIsSelect(1);
                 authorizeGroupList.add(authorizeGroup);
             }
@@ -135,6 +136,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 authorizeGroup = new AuthorizeGroup();
                 authorizeGroup.setDeviceGroupId(deviceGroup.getDeviceGroupId());
                 authorizeGroup.setDeviceGroupName(deviceGroup.getDeviceGroupName());
+                authorizeGroup.setGroupType(deviceGroup.getGroupType());
                 authorizeGroup.setIsSelect(2);
                 authorizeGroupList.add(authorizeGroup);
             }
@@ -682,7 +684,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 authStatus = AuthorizeStatusUtil.GetAuthStatus(appAuthFlag, faceAuthFlag, null);
             }
             houseHoldMapper.updateValidityTime(simpleDateFormat.parse(validityEndDate), authStatus, householdId);
-            if (editFlag != null && editFlag == 0) {//新增
+            HouseHold existHouseHold = this.getByHouseholdId(householdId);
+            if (existHouseHold.getAuthorizeStatus() == 0) {//新增
                 // 本地数据库保存关联设备组
                 String[] deviceGroupIds = deviceGIds.split(",");
                 List<String> deviceGroupIdList = Arrays.asList(deviceGroupIds);
@@ -754,7 +757,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             if (appAuthFlag == 1) {
                 //注册默认账号
                 //第一步：判断是否注册
-                HouseHold existHouseHold = this.getByHouseholdId(householdId);
+
                 User user = userService.getByCellphoneNoCache(existHouseHold.getMobile());
                 //第二步：没有进行默认注册
                 if (user == null) {

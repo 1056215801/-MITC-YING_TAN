@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class AuthorizeGroup {
     private Integer deviceGroupId;
     private String deviceGroupName;
+    private int groupType;
     private int isSelect;//是否勾选（1选，2不选）
 }
