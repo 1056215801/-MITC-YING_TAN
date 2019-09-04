@@ -13,4 +13,5 @@ public class StepThreeInfo {
     private HouseHold houseHold;
     private List<AccessCard> cardList;
     private List<HouseHoldPhoto> photoList;
+    private List<AuthorizeGroup> authList;
 }

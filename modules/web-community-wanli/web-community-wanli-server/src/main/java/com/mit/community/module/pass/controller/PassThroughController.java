@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,11 +28,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import static com.mit.community.util.Utils.inputStream2String;
 
 /**
  * 住户-通行
@@ -294,8 +299,8 @@ public class PassThroughController {
             @ApiImplicitParam(name = "residenceTime", value = "居住期限(yyyy-MM-dd)", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "mobile", value = "电话号码", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "idCard", value = "身份证号码", paramType = "query", required = false, dataType = "String"),
-            @ApiImplicitParam(name = "householdType", value = "与户主关系", paramType = "query", required = true, dataType = "String")
-            //@ApiImplicitParam(name = "houseRoomsVoList", value = "房屋信息列表", paramType = "query", required = true, dataType = "List"),
+            @ApiImplicitParam(name = "householdType", value = "与户主关系", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "mobileBelong", value = "电话号码归属(1本人，2紧急联系人)", paramType = "query", required = true, dataType = "INTEGER"),
             /*@ApiImplicitParam(name = "houseRoomsVoList.id", value = "主键id", paramType = "query", required = false, dataType = "String"),
             @ApiImplicitParam(name = "houseRoomsVoList.zoneId", value = "分区id", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "houseRoomsVoList.zoneName", value = "分区名", paramType = "query", required = true, dataType = "String"),
@@ -308,19 +313,48 @@ public class PassThroughController {
             @ApiImplicitParam(name = "houseRoomsVoList.householdType", value = "与户主关系", paramType = "query", required = false, dataType = "String")*/
     })
     public Result SaveHouseholdInfoByStepOne(HttpServletRequest request,
-                                              HttpServletResponse response,
-                                             PostHouseHoldInfoOne postHouseHoldInfoOne) {
-        String communityCode = null;
-        if (StringUtils.isBlank(communityCode)) {
-            String sessionId = CookieUtils.getSessionId(request);
-            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
-            communityCode = sysUser.getCommunityCode();
-        }
-        Integer msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, postHouseHoldInfoOne);
-        if (msg == -1){
+                                              HttpServletResponse response) {
+        InputStream in = null;
+        try {
+            // 获取请求的流信息
+            in = request.getInputStream();
+            String params = inputStream2String(in, "");
+            System.out.println("================"+params);
+            net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(params);
+            PostHouseHoldInfoOne postHouseHoldInfoOne = (PostHouseHoldInfoOne)net.sf.json.JSONObject.toBean(jsonObject, PostHouseHoldInfoOne.class);
+            JSONArray array = jsonObject.getJSONArray("houseRoomsVoList");
+            List<HouseRoomsVo> list = new ArrayList<>();
+            HouseRoomsVo houseRoomsVo = null;
+            for (int i=0; i<array.size(); i++) {
+                net.sf.json.JSONObject data = (net.sf.json.JSONObject) array.get(i);
+                houseRoomsVo = new HouseRoomsVo();
+                houseRoomsVo.setHouseholdType(data.getString("householdType"));
+                houseRoomsVo.setZoneId(data.getString("zoneId"));
+                houseRoomsVo.setZoneName(data.getString("zoneName"));
+                houseRoomsVo.setBuildingId(data.getString("buildingId"));
+                houseRoomsVo.setBuildingName(data.getString("buildingName"));
+                houseRoomsVo.setUnitId(data.getString("unitId"));
+                houseRoomsVo.setUnitName(data.getString("unitName"));
+                houseRoomsVo.setRoomId(data.getString("roomId"));
+                houseRoomsVo.setRoomNum(data.getString("roomNum"));
+                list.add(houseRoomsVo);
+            }
+
+            String communityCode = null;
+            if (StringUtils.isBlank(communityCode)) {
+                String sessionId = CookieUtils.getSessionId(request);
+                SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+                communityCode = sysUser.getCommunityCode();
+            }
+            Integer msg = houseHoldService.SaveHouseholdInfoByStepOne(communityCode, postHouseHoldInfoOne, list);
+            if (msg == -1){
+                return Result.error("保存失败");
+            } else {
+                return Result.success(msg);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
             return Result.error("保存失败");
-        } else {
-            return Result.success(msg);
         }
     }
 
@@ -361,34 +395,35 @@ public class PassThroughController {
     @RequestMapping(value = "/saveHouseholdInfoByStepThree", method = RequestMethod.POST)
     @ApiOperation(value = "保存住户授权信息",notes = "editFlag 是否修改（0新增，1修改）；householdId 住户id；appAuthFlag app授权（0停用，1启用）；faceAuthFlag 人脸（0停用，1启用）；deviceGIds 权限组id（多个用英文逗号拼接）；" +
             "validityEndDate 权限有效期(yyyy-MM-dd)； cardListArr 卡号（多个用英文逗号拼接）；imageUrls 图片链接（多个用英文逗号拼接）")
-    public Integer SaveHouseholdInfoByStepThree(Integer editFlag,
+    public Result SaveHouseholdInfoByStepThree(Integer editFlag,
                                                 Integer householdId,
                                                 Integer appAuthFlag,
-                                                Integer directCall,
-                                                String tellNum,
-                                                String fileNames,
                                                 Integer faceAuthFlag,
                                                 String deviceGIds,
                                                 String validityEndDate,
-                                                String initValidityEndDate,
-                                                Boolean csReturn,
                                                 String cardListArr, String imageUrls) {
 
         if (imageUrls != null) {
             System.out.println("===========================imageUrls="+imageUrls);
         }
-        String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
+        String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag,
                 faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrls);
         if (!msg.contains("success")) {
-            return -1;
+            return Result.error("错误");
         }
-        return 1;
+        return Result.success(msg);
     }
 
     @ApiOperation(value = "stepThree获取填充信息")
     @PostMapping("/getInfoThree")
-    public Result getInfoThree(Integer houseHoldId) {
-        StepThreeInfo stepThreeInfo = houseHoldService.getInfoThree(houseHoldId);
+    public Result getInfoThree(HttpServletRequest request, Integer houseHoldId) {
+        String communityCode = null;
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
+        StepThreeInfo stepThreeInfo = houseHoldService.getInfoThree(houseHoldId, communityCode);
         return Result.success(stepThreeInfo);
     }
 
@@ -470,7 +505,7 @@ public class PassThroughController {
      */
     @RequestMapping(value = "/logOut", method = RequestMethod.POST)
     @ApiOperation(value = "注销住户", notes = "参数：住户id数组")
-    public Integer LogOutHousehold(HttpServletRequest request, String communityCode, String ids) {
+    public Result LogOutHousehold(HttpServletRequest request, String communityCode, String ids) {
         if (StringUtils.isBlank(communityCode)) {
             String sessionId = CookieUtils.getSessionId(request);
             SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
@@ -478,9 +513,9 @@ public class PassThroughController {
         }
         String msg = houseHoldService.logOut(communityCode, ids);
         if (!msg.contains("success")) {
-            return -1;
+            return Result.error("删除失败");
         }
-        return 1;
+        return Result.success("删除成功");
     }
 
     /**

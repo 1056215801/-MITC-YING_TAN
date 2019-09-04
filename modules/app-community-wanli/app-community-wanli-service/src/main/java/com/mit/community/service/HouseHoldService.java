@@ -98,7 +98,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     @Autowired
     private PersonLabelsMapper personLabelsMapper;
 
-    public StepThreeInfo getInfoThree (Integer houseHoldId) {
+    public StepThreeInfo getInfoThree (Integer houseHoldId, String communityCode) {
         StepThreeInfo stepThreeInfo = new StepThreeInfo();
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", houseHoldId);
@@ -110,6 +110,39 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
 
         List<HouseHoldPhoto> photoList = personLabelsMapper.selectHouseHoldPhotoByHouseHoldId(houseHoldId);
         stepThreeInfo.setPhotoList(photoList);
+
+        List<AuthorizeGroup> authorizeGroupList = new ArrayList<>();
+        List<AuthorizeHouseholdDeviceGroup> authList = authorizeHouseholdDeviceGroupService.listByHouseholdId(houseHoldId);
+        AuthorizeGroup authorizeGroup = null;
+        if (!authList.isEmpty()) {
+            for (AuthorizeHouseholdDeviceGroup authorizeHouseholdDeviceGroup : authList) {
+                authorizeGroup = new AuthorizeGroup();
+                com.mit.community.entity.entity.DeviceGroup deviceGroup = deviceGroupService.getById(authorizeHouseholdDeviceGroup.getDeviceGroupId());
+                authorizeGroup.setDeviceGroupId(deviceGroup.getDeviceGroupId());
+                authorizeGroup.setDeviceGroupName(deviceGroup.getDeviceGroupName());
+                authorizeGroup.setGroupType(deviceGroup.getGroupType());
+                authorizeGroup.setIsSelect(1);
+                authorizeGroupList.add(authorizeGroup);
+            }
+        }
+
+        List<Integer> deviceGroupsId = new ArrayList<>();
+        if (!authList.isEmpty()) {
+            deviceGroupsId = authList.parallelStream().map(AuthorizeHouseholdDeviceGroup::getDeviceGroupId).collect(Collectors.toList());
+        }
+        List<DeviceGroup> deviceGroups = deviceGroupService.getByCommunityCodeAndIds(communityCode, deviceGroupsId);
+        if (!deviceGroups.isEmpty()) {
+            for (DeviceGroup deviceGroup : deviceGroups){
+                authorizeGroup = new AuthorizeGroup();
+                authorizeGroup.setDeviceGroupId(deviceGroup.getDeviceGroupId());
+                authorizeGroup.setDeviceGroupName(deviceGroup.getDeviceGroupName());
+                authorizeGroup.setGroupType(deviceGroup.getGroupType());
+                authorizeGroup.setIsSelect(2);
+                authorizeGroupList.add(authorizeGroup);
+            }
+        }
+        stepThreeInfo.setAuthList(authorizeGroupList);
+
 
         return stepThreeInfo;
     }
@@ -485,14 +518,13 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public Integer SaveHouseholdInfoByStepOne(String communityCode, PostHouseHoldInfoOne postHouseHoldInfoOne) {
+    public Integer SaveHouseholdInfoByStepOne(String communityCode, PostHouseHoldInfoOne postHouseHoldInfoOne, List<HouseRoomsVo> list) {
         Integer msg = null;
         //参数获取
 
         String householdName = postHouseHoldInfoOne.getHouseHoldName();//住户姓名
         String mobile = postHouseHoldInfoOne.getMobile();//手机号码
         String idCard = postHouseHoldInfoOne.getIdCard();//证件号码
-        String householdType = String.valueOf(postHouseHoldInfoOne.getHouseholdType());
         PersonBaseInfo personBaseInfo = personBaseInfoService.getPersonByMobile(mobile, communityCode);
         if (personBaseInfo == null) {
             personBaseInfo = new PersonBaseInfo();
@@ -507,10 +539,6 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             personBaseInfoService.save(personBaseInfo);
         }
         try {
-            List<HouseRoomsVo> list = postHouseHoldInfoOne.getHouseRoomsVoList();
-            for (HouseRoomsVo houseRoomsVo : list) {
-                houseRoomsVo.setHouseholdType(householdType);
-            }
             /**
              * 判断是新增还是修改
              */
@@ -520,7 +548,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 HouseHold houseHold = null;
                 // 本地数据库保存住户信息
                 Integer gender = postHouseHoldInfoOne.getGender();
-                String residenceTimeStr = postHouseHoldInfoOne.getResidenceTime();
+                String residenceTimeStr = postHouseHoldInfoOne.getResidenceTime().replace("/","-");
                 if (StringUtils.isNotBlank(idCard)) {
                     IdCardInfo idCardInfo = idCardInfoExtractorUtil.idCardInfo(idCard);
                     String constellation = ConstellationUtil.calc(idCardInfo.getBirthday());
@@ -623,6 +651,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             }
         } catch (Exception e) {
             msg = -1;
+            e.printStackTrace();
             throw new RuntimeException("-1");
         }
         return msg;
@@ -643,15 +672,9 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer directCall, String tellNum, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String imageUrls) {
+    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String imageUrls) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        //HouseHold houseHold = new HouseHold();
-        //houseHold.setLabels(photoUrl);
-        //EntityWrapper<HouseHold> houseHoldWrapper = new EntityWrapper<>();
-        //System.out.println("=================householdId="+householdId);
-        //houseHoldWrapper.eq("household_id",householdId);
-        //houseHoldMapper.update(houseHold, houseHoldWrapper);
         try {
             //更新本地住户授权类型字段+本地更新住户有效期权限时间
             Integer authStatus = 0;
@@ -661,7 +684,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 authStatus = AuthorizeStatusUtil.GetAuthStatus(appAuthFlag, faceAuthFlag, null);
             }
             houseHoldMapper.updateValidityTime(simpleDateFormat.parse(validityEndDate), authStatus, householdId);
-            if (editFlag != null && editFlag == 0) {//新增
+            HouseHold existHouseHold = this.getByHouseholdId(householdId);
+            if (existHouseHold.getAuthorizeStatus() == 0) {//新增
                 // 本地数据库保存关联设备组
                 String[] deviceGroupIds = deviceGIds.split(",");
                 List<String> deviceGroupIdList = Arrays.asList(deviceGroupIds);
@@ -733,7 +757,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             if (appAuthFlag == 1) {
                 //注册默认账号
                 //第一步：判断是否注册
-                HouseHold existHouseHold = this.getByHouseholdId(householdId);
+
                 User user = userService.getByCellphoneNoCache(existHouseHold.getMobile());
                 //第二步：没有进行默认注册
                 if (user == null) {
@@ -996,18 +1020,18 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     @CacheClear(key = "user:cellphone{1}")
     @Transactional(rollbackFor = Exception.class)
     public String logOut(String communityCode, String ids) {
-        String msg = "";
+        String msg = "success";
         if (!StringUtils.isEmpty(ids)) {
             String[] id = ids.split(",");
             for (String s : id) {
                 /**
                  * 调用狄耐克接口注销
                  */
-                JSONObject message = dnakeAppApiService.logOut(Integer.valueOf(s), communityCode);
+                /*JSONObject message = dnakeAppApiService.logOut(Integer.valueOf(s), communityCode);
                 if (message.get("errorCode") != null && !message.get("errorCode").equals(0)) {
                     msg = message.get("msg").toString();
                     throw new RuntimeException(message.get("msg").toString());
-                }
+                }*/
                 /**
                  * 本地注销
                  */
