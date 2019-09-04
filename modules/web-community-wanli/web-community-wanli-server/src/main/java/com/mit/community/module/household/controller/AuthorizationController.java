@@ -71,6 +71,7 @@ public class AuthorizationController {
                 buildingId,unitId,roomNum,householdType,householdStatus,validityTime,authorizeStatus,pageNum,pageSize);
         return Result.success(page);
     }*/
+    @ApiOperation("注销")
     @ApiImplicitParam(name = "householdId",value = "住户id",required = true,dataType = "Integer",paramType = "query")
     @PostMapping("/logout")
     public Result logout(Integer householdId){

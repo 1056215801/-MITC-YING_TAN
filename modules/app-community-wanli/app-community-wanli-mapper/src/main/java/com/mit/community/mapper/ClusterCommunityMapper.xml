@@ -39,6 +39,8 @@
                 jdbcType="VARCHAR" />
         <result property="phone" column="phone" javaType="String"
                 jdbcType="VARCHAR" />
+        <result property="areaBelong" column="area_belong" javaType="String"
+                jdbcType="VARCHAR" />
     </resultMap>
     <select id="selectMyPage" resultMap="baseMap">
         SELECT
@@ -57,6 +59,7 @@
         c.committee,
         c.committee_id,
         c.address,
+        c.area_belong,
         s.username,
         s.`password`,
         s.admin_name,
