@@ -137,4 +137,11 @@ public class DeviceGroupService extends ServiceImpl<DeviceGroupMapper, DeviceGro
         }
     }
 
+    public List<DeviceGroup> getByCommunityCodeAndIds(String communityCode, List<Integer> deviceGroupId) {
+        EntityWrapper<DeviceGroup> wrapper = new EntityWrapper<>();
+        wrapper.eq("community_code", communityCode);
+        wrapper.notIn("device_group_Id", deviceGroupId);
+        return deviceGroupMapper.selectList(wrapper);
+    }
+
 }
