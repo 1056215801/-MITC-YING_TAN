@@ -98,6 +98,33 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     @Autowired
     private PersonLabelsMapper personLabelsMapper;
 
+    public Page<HouseHoldPhotoInfo> getHouseHoldPhotoInfo(String communityCode, String mobile, String name, Integer isUpload, Integer pageNum, Integer pageSize) {
+        Page<HouseHoldPhotoInfo> page = new Page<>(pageNum, pageSize);
+        EntityWrapper<HouseHoldPhotoInfo> wrapper = new EntityWrapper<>();
+        wrapper.eq("b.community_code", communityCode);
+        if (StringUtils.isNotBlank(mobile)) {
+            wrapper.eq("b.mobile", mobile);
+        }
+        if (StringUtils.isNotBlank(name)) {
+            wrapper.eq("b.household_name", name);
+        }
+        if (isUpload != null) {
+            wrapper.eq("a.is_upload", isUpload);
+        }
+        List<HouseHoldPhotoInfo> list = personLabelsMapper.getHouseHoldPhotoInfo(page, wrapper);//方法还没实现
+        if (!list.isEmpty()) {
+            for (HouseHoldPhotoInfo houseHoldPhotoInfo : list) {
+                if (Integer.parseInt(houseHoldPhotoInfo.getDiffiTime()) <= 10) {
+                    houseHoldPhotoInfo.setIsOnline(1);
+                } else {
+                    houseHoldPhotoInfo.setIsOnline(2);
+                }
+            }
+        }
+        page.setRecords(list);
+        return page;
+    }
+
     public StepThreeInfo getInfoThree (Integer houseHoldId, String communityCode) {
         StepThreeInfo stepThreeInfo = new StepThreeInfo();
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
@@ -439,43 +466,48 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 List<HouseholdRoom> rooms = householdRoomService.listByHouseholdId(houseHold.getHouseholdId());
                 if (rooms.size() != 0) {
                     //与户主关系字段赋值
-                    HouseholdRoom room = rooms.get(0);//默认取最早注册的房屋信息
-                    Integer householdType = Integer.valueOf(room.getHouseholdType());
-                    switch (householdType) {
-                        case 1:
-                            houseHold.setHouseholdType("本人");
-                            break;
-                        case 2:
-                            houseHold.setHouseholdType("配偶");
-                            break;
-                        case 3:
-                            houseHold.setHouseholdType("父母");
-                            break;
-                        case 4:
-                            houseHold.setHouseholdType("子女");
-                            break;
-                        case 5:
-                            houseHold.setHouseholdType("亲属");
-                            break;
-                        case 6:
-                            houseHold.setHouseholdType("非亲属");
-                            break;
-                        case 7:
-                            houseHold.setHouseholdType("租赁");
-                            break;
-                        case 8:
-                            houseHold.setHouseholdType("其他");
-                            break;
-                        case 9:
-                            houseHold.setHouseholdType("保姆");
-                            break;
-                        case 10:
-                            houseHold.setHouseholdType("护理人员");
-                            break;
-                        default:
-                            houseHold.setHouseholdType(null);
-                            break;
+                    StringBuffer houseTypeInfo = new StringBuffer();
+                    for (int a=0; a<rooms.size(); a++) {
+                        HouseholdRoom room = rooms.get(a);//默认取最早注册的房屋信息
+                        Integer householdType = Integer.valueOf(room.getHouseholdType());
+                        switch (householdType) {
+                            case 1:
+                                houseHold.setHouseholdType("本人");
+                                houseTypeInfo.append("本人 ");
+                                break;
+                            case 2:
+                                houseTypeInfo.append("配偶 ");
+                                break;
+                            case 3:
+                                houseTypeInfo.append("父母 ");
+                                break;
+                            case 4:
+                                houseTypeInfo.append("子女 ");
+                                break;
+                            case 5:
+                                houseTypeInfo.append("亲属 ");
+                                break;
+                            case 6:
+                                houseTypeInfo.append("非亲属 ");
+                                break;
+                            case 7:
+                                houseTypeInfo.append("租赁 ");
+                                break;
+                            case 8:
+                                houseTypeInfo.append("其他 ");
+                                break;
+                            case 9:
+                                houseTypeInfo.append("保姆 ");
+                                break;
+                            case 10:
+                                houseTypeInfo.append("护理人员 ");
+                                break;
+                            default:
+                                houseTypeInfo.append("");
+                                break;
+                        }
                     }
+                    houseHold.setHouseholdType(houseTypeInfo.toString());
                     //房屋信息处理
                     StringBuffer roomInfo = new StringBuffer();
                     for (int i = 0; i < rooms.size(); i++) {
@@ -559,7 +591,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), null);
                 } else {
                     houseHold = new HouseHold(communityCode, StringUtils.EMPTY, householdId, householdName,
                             1, 0,
@@ -568,7 +600,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(),null);
                 }
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
@@ -612,7 +644,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), existHouseHold.getCallMobile());
                 } else {
                     edidHousehold = new HouseHold(communityCode, StringUtils.EMPTY, existHouseHold.getHouseholdId(), householdName,
                             1, 0,
@@ -621,7 +653,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), existHouseHold.getCallMobile());
                 }
                 edidHousehold.setGmtModified(LocalDateTime.now());
                 houseHoldMapper.updateHouseholdByHouseholdId(edidHousehold);
@@ -660,19 +692,20 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     /**
      * 保存住户授权信息
      *
+     * @param directCall
+     * @param tellNum
      * @param editFlag        //是否编辑标识
      * @param householdId
      * @param appAuthFlag
-     * @param directCall
-     * @param tellNum
      * @param faceAuthFlag
      * @param deviceGIds
      * @param validityEndDate
      * @param cardListArr
+     * @param phone
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String imageUrls) {
+    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String imageUrls, String phone) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -684,6 +717,12 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                 authStatus = AuthorizeStatusUtil.GetAuthStatus(appAuthFlag, faceAuthFlag, null);
             }
             houseHoldMapper.updateValidityTime(simpleDateFormat.parse(validityEndDate), authStatus, householdId);
+            if (StringUtils.isNotBlank(phone)) {
+                HouseHold houseHold = new HouseHold();
+                houseHold.setHouseholdId(householdId);
+                houseHold.setCallMobile(phone);
+                houseHoldMapper.updateHouseholdByHouseholdId(houseHold);
+            }
             HouseHold existHouseHold = this.getByHouseholdId(householdId);
             if (existHouseHold.getAuthorizeStatus() == 0) {//新增
                 // 本地数据库保存关联设备组
@@ -885,7 +924,10 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
             boolean flag = faceAnalyse("f:", basePath, fileHz, basePath + "\\out" +fileHz, uuid + ".fea");
             if (flag == true) {
                 houseHoldPhoto.setIsUpload(1);
-                houseHoldPhoto.setHouseHoldId(houseHoldId);
+                if (houseHoldId != null) {
+                    houseHoldPhoto.setHouseHoldId(houseHoldId);
+                }
+
                 houseHoldPhoto.setPhotoUrlNet(photoUrlNet);
                 houseHoldPhoto.setPhotoUrl(photoUrl);//照片本地保存路径
                 houseHoldPhoto.setFeaUrl(basePath + "\\" + uuid + ".fea");

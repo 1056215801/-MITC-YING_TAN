@@ -13,6 +13,7 @@ import com.mit.community.service.*;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +66,8 @@ public class PermissionGroupControoler {
     private UserService userService;
     @Autowired
     private DevicePerceptionService devicePerceptionService;
-
+    @Autowired
+    private RoomService roomService;
 
     /**
      *
@@ -195,6 +197,17 @@ public class PermissionGroupControoler {
         }
         List<Unit> list = unitService.listByBuildingId(buildingId);
         return Result.success(list);
+    }
+
+    @ApiOperation(value = "获取房间列表")
+    @PostMapping("/getRoomlist")
+    @ApiImplicitParam(name="unitId",value="单元id",required=true,paramType = "query")
+    public Result getRoomlist(Integer unitId){
+        EntityWrapper<Room> wrapper=new EntityWrapper<>();
+        wrapper.eq("unit_id",unitId);
+        wrapper.eq("room_status",1);
+        List<Room> roomList = roomService.selectList(wrapper);
+        return Result.success(roomList);
     }
 
     /**

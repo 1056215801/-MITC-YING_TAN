@@ -319,7 +319,7 @@ public class PassThroughController {
             // 获取请求的流信息
             in = request.getInputStream();
             String params = inputStream2String(in, "");
-            System.out.println("================"+params);
+            System.out.println("================stepOne="+params);
             net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(params);
             PostHouseHoldInfoOne postHouseHoldInfoOne = (PostHouseHoldInfoOne)net.sf.json.JSONObject.toBean(jsonObject, PostHouseHoldInfoOne.class);
             JSONArray array = jsonObject.getJSONArray("houseRoomsVoList");
@@ -394,20 +394,20 @@ public class PassThroughController {
      */
     @RequestMapping(value = "/saveHouseholdInfoByStepThree", method = RequestMethod.POST)
     @ApiOperation(value = "保存住户授权信息",notes = "editFlag 是否修改（0新增，1修改）；householdId 住户id；appAuthFlag app授权（0停用，1启用）；faceAuthFlag 人脸（0停用，1启用）；deviceGIds 权限组id（多个用英文逗号拼接）；" +
-            "validityEndDate 权限有效期(yyyy-MM-dd)； cardListArr 卡号（多个用英文逗号拼接）；imageUrls 图片链接（多个用英文逗号拼接）")
+            "validityEndDate 权限有效期(yyyy-MM-dd)； cardListArr 卡号（多个用英文逗号拼接）；imageUrls 图片链接（多个用英文逗号拼接）；String phone 呼叫转移号码")
     public Result SaveHouseholdInfoByStepThree(Integer editFlag,
                                                 Integer householdId,
                                                 Integer appAuthFlag,
                                                 Integer faceAuthFlag,
                                                 String deviceGIds,
                                                 String validityEndDate,
-                                                String cardListArr, String imageUrls) {
+                                                String cardListArr, String imageUrls,String phone) {
 
         if (imageUrls != null) {
             System.out.println("===========================imageUrls="+imageUrls);
         }
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrls);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrls,phone);
         if (!msg.contains("success")) {
             return Result.error("错误");
         }
@@ -427,73 +427,6 @@ public class PassThroughController {
         return Result.success(stepThreeInfo);
     }
 
-    /**
-     * 增加图片的保存,卡保存（替代狄耐克接口）
-     * 增加图片的保存（替代狄耐克接口）
-     * 增加图片的保存,卡保存（替代狄耐克接口）
-     * @param editFlag
-     * @param householdId
-     * @param appAuthFlag
-     * @param directCall
-     * @param tellNum
-     * @param fileNames
-     * @param faceAuthFlag
-     * @param deviceGIds
-     * @param validityEndDate
-     * @param initValidityEndDate
-     * @param csReturn
-     * @param cardListArr
-     * @param image
-     * @return
-     */
-    /*@RequestMapping(value = "/saveHouseholdInfoByStepThree", method = RequestMethod.POST)
-    @ApiOperation(value = "保存住户授权信息")
-    public Integer SaveHouseholdInfoByStepThree(Integer editFlag,
-                                                Integer householdId,
-                                                Integer appAuthFlag,
-                                                Integer directCall,
-                                                String tellNum,
-                                                String fileNames,
-                                                Integer faceAuthFlag,
-                                                String deviceGIds,
-                                                String validityEndDate,
-                                                String initValidityEndDate,
-                                                Boolean csReturn,
-                                                String cardListArr, MultipartFile[] images) throws Exception{
-        String imageUrl = null;
-        if (images != null) {
-                                                String cardListArr, MultipartFile image) throws Exception{
-        String imageUrl = null;
-        if (image != null) {
-                                                String cardListArr, MultipartFile[] images, String imageUrls) throws Exception{
-        String imageUrl = null;
-        if (images != null) {
-            String fileHz = UUID.randomUUID().toString() + ".jpg";
-            String basePath = "f:\\face";
-            File file = new File(basePath);
-            if (!file.exists()) {
-                file.mkdir();
-            }
-            byte[] b = images.getBytes();
-            byte[] b = image.getBytes();
-            byte[] b = images.getBytes();
-            imageUrl = basePath + "\\" +fileHz;
-            File aa = new File(imageUrl);
-            FileImageOutputStream fos = new FileImageOutputStream(aa);
-            fos.write(b, 0, b.length);
-            fos.close();
-        }
-        String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag, directCall, tellNum,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, images);
-        if (msg.contains("success")) {
-            //这里略去生成人脸特征值过程
-
-        }
-        if (!msg.contains("success")) {
-            return -1;
-        }
-        return 1;
-    }*/
 
     /**
      * 注销住户
@@ -503,7 +436,7 @@ public class PassThroughController {
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/logOut", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/logOut", method = RequestMethod.POST)
     @ApiOperation(value = "注销住户", notes = "参数：住户id数组")
     public Result LogOutHousehold(HttpServletRequest request, String communityCode, String ids) {
         if (StringUtils.isBlank(communityCode)) {
@@ -516,7 +449,7 @@ public class PassThroughController {
             return Result.error("删除失败");
         }
         return Result.success("删除成功");
-    }
+    }*/
 
     /**
      * 停用住户
@@ -671,7 +604,7 @@ public class PassThroughController {
     public Result sendCard(Integer id) {
         AccessCard accessCard = accessCardService.getById(id);
         DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(accessCard.getDeviceNum());
-        if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+        if (Integer.parseInt(deviceIsOnline.getTimeDiffi()) <= 10) {//设备在线
             if (houseHoldService.sendCardToDevice(deviceIsOnline.getIp(),accessCard.getCardNum())) {//下发成功
                 accessCardService.updateUploadById(2,id);
             } else {
@@ -683,12 +616,25 @@ public class PassThroughController {
         return Result.success("下发成功");
     }
 
+    @ApiOperation(value = "获取住户人脸信息下发情况信息",notes = "isUpload: 1、下发失败；2、下发成功")
+    @PostMapping("/getHouseHoldPhotoInfo")
+    public Result getHouseHoldPhotoInfo(HttpServletRequest request, String mobile, String name, Integer isUpload, Integer pageNum, Integer pageSize) {
+        String communityCode = null;
+        if (StringUtils.isBlank(communityCode)) {
+            String sessionId = CookieUtils.getSessionId(request);
+            SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+            communityCode = sysUser.getCommunityCode();
+        }
+        Page<HouseHoldPhotoInfo> page = houseHoldService.getHouseHoldPhotoInfo(communityCode, mobile, name, isUpload, pageNum, pageSize);
+        return Result.success(page);
+    }
+
     @ApiOperation(value = "人脸下发")
     @PostMapping("/sendFea")
     public Result sendFea(Integer id) {
         HouseHoldPhoto houseHoldPhoto = houseHoldPhotoService.getById(id);
         DeviceIsOnline deviceIsOnline = personLabelsService.getIsOnline(houseHoldPhoto.getDeviceNum());
-        if (Integer.parseInt(deviceIsOnline.getIp()) <= 10) {//设备在线
+        if (Integer.parseInt(deviceIsOnline.getTimeDiffi()) <= 10) {//设备在线
             if (houseHoldService.sendFeaToDevice(deviceIsOnline.getIp(),houseHoldPhoto.getFeaUrl(), houseHoldPhoto.getHouseHoldId())) {//下发成功
                 houseHoldPhotoService.updateUploadById(2, id);
             } else {

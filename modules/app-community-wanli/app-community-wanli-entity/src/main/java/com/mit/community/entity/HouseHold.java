@@ -260,5 +260,11 @@ public class HouseHold extends BaseEntity {
     @TableField(exist = false)
     private String labels;
 
+    @TableField("mobile_belong")
+    private Integer mobileBelong;
+
+    @TableField("call_mobile")
+    private String callMobile;
+
 
 }

@@ -203,6 +203,9 @@
                 jdbcType="OTHER" />
         <result property="housetype" column="housetype" javaType="Integer"
                 jdbcType="INTEGER" />
+        <result property="mobileBelong" column="mobile_belong" javaType="Integer"
+                jdbcType="INTEGER" />
+
     </resultMap>
 
     <resultMap type="com.mit.community.entity.AccessCard" id="accessCardMap">
@@ -218,6 +221,29 @@
         <result property="photoUrlNet" column="photo_url_net" javaType="String"
                 jdbcType="VARCHAR" />
     </resultMap>
+
+    <resultMap type="com.mit.community.entity.HouseHoldPhotoInfo" id="houseHoldPhotoInfoMap">
+        <result property="id" column="id" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="name" column="name" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="mobile" column="mobile" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="photoNetUrl" column="photoNetUrl" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="deviceName" column="deviceName" javaType="String"
+                jdbcType="VARCHAR" />
+        <result property="isUpload" column="isUpload" javaType="Integer"
+                jdbcType="INTEGER" />
+        <result property="diffiTime" column="diffiTime" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getHouseHoldPhotoInfo" resultMap="houseHoldPhotoInfoMap">
+        select b.household_name as name,b.mobile,a.photo_url_net as photoNetUrl,a.id,a.is_upload as isUpload,c.device_num as deviceName,TIME_TO_SEC(TIMEDIFF(NOW(), d.gmt_modified)) as diffiTime
+        FROM household_photo a  LEFT JOIN household b on a.household_id=b.household_id LEFT JOIN device c on a.device_num=c.device_num LEFT JOIN dnake_device_info d on c.dnake_device_info_id=d.id
+        where 1= 1 and a.device_num is not null ${ew.sqlSegment}
+    </select>
 
     <select id="selectHouseHoldPhotoByHouseHoldId" resultMap="houseHoldPhotoMap">
         select distinct photo_url_net

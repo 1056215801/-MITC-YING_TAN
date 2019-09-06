@@ -57,4 +57,5 @@ public interface PersonLabelsMapper {
     List<HouseHold> selectHouseHoldPage(RowBounds rowBounds, @Param("ew")EntityWrapper<HouseHold> wrapper);
     List<AccessCard> selectAccessCardByHouseHoldId(@Param("houseHoldId")Integer houseHoldId);
     List<HouseHoldPhoto> selectHouseHoldPhotoByHouseHoldId(@Param("houseHoldId")Integer houseHoldId);
+    List<HouseHoldPhotoInfo> getHouseHoldPhotoInfo(RowBounds rowBounds, @Param("ew")EntityWrapper<HouseHoldPhotoInfo> wrapper);
 }
