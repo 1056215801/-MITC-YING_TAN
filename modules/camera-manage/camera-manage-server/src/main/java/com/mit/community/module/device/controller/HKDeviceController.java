@@ -1,4 +1,4 @@
-package com.mit.community.module.hik.device.controller;
+package com.mit.community.module.device.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mit.community.entity.UploadFaceComparisonData;
