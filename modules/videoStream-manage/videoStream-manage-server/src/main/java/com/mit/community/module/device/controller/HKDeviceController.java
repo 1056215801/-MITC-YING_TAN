@@ -1,4 +1,4 @@
-package com.mit.community.module.hik.device.controller;
+package com.mit.community.module.device.controller;
 import com.mit.community.module.commandManager.CommandManager;
 import com.mit.community.module.commandManager.CommandManagerImpl;
 import com.mit.community.module.commandManager.data.CommandTasker;

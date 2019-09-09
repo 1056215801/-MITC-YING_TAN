@@ -1,4 +1,4 @@
-package com.mit.community.module.hik.device.controller;
+package com.mit.community.module.device.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.SmokeDetectorStatus;

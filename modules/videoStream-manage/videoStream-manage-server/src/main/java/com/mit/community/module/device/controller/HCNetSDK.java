@@ -14,7 +14,7 @@
  * @author Xubinfeng
  */
 
-package com.mit.community.module.hik.device.controller;
+package com.mit.community.module.device.controller;
 
 import com.sun.jna.*;
 import com.sun.jna.examples.win32.GDI32.RECT;
@@ -25,9 +25,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
 import com.sun.jna.ptr.ShortByReference;
 import com.sun.jna.win32.StdCallLibrary;
-import org.springframework.util.ResourceUtils;
-
-import java.io.FileNotFoundException;
 
 //SDK接口说明,HCNetSDK.dll
 public interface HCNetSDK extends StdCallLibrary {
