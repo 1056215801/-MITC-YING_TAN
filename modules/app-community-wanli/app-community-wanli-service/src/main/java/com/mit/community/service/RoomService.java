@@ -58,6 +58,7 @@ public class RoomService extends ServiceImpl<RoomMapper,Room> {
         {
             wrapper.eq("r.community_code",communityCode);
         }
+        wrapper.orderBy("r.gmt_create",true);
          List<Room> roomList= roomMapper.selectMyPage(page,wrapper);
         page.setRecords(roomList);
         return page;

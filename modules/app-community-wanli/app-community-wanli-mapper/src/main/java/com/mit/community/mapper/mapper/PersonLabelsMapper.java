@@ -1,5 +1,6 @@
 package com.mit.community.mapper.mapper;
 
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.mit.community.entity.*;
 import com.mit.community.entity.entity.DeviceGroup;
@@ -9,7 +10,7 @@ import org.apache.ibatis.session.RowBounds;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface PersonLabelsMapper {
+public interface PersonLabelsMapper  {
     public void saveLabels(@Param("labels") String labels, @Param("userId") Integer userId);
 
     public String getLabelsByHousehold(@Param("household") Integer household);

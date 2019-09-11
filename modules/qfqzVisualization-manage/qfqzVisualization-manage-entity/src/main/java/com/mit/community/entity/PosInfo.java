@@ -15,6 +15,7 @@ public class PosInfo {
     private String  lat;  //纬度
     private String  type;    //定位类型：0-没有定位，1-GPS定位，2-wifi定位
     private String  gpsTime; //最后定位时间（时间戳，精确到毫秒）
+    private String power;
 
 
 }

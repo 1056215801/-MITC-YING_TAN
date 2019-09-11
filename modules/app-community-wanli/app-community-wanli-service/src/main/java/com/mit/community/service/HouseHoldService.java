@@ -473,6 +473,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         List<HouseHold> houseHolds = new ArrayList<>();
         if (pageNum != null && pageSize != null) {
             Page<HouseHold> page = new Page<>(pageNum, pageSize);
+//            houseHolds = houseHoldMapper.selectPage(page, wrapper);
             houseHolds = personLabelsMapper.selectHouseHoldPage(page, wrapper);
             for (HouseHold houseHold : houseHolds) {
                 //读取用户表的基本信息

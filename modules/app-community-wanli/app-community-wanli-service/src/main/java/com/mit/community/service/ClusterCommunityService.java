@@ -185,6 +185,7 @@ public class ClusterCommunityService extends ServiceImpl<ClusterCommunityMapper,
               if (StringUtils.isNotEmpty(communityType)){
                   wrapper.like("c.community_type",communityType);
               }
+              wrapper.orderBy("c.gmt_create",false);
               List<ClusterCommunity> clusterCommunityList=clusterCommunityMapper.selectMyPage(page,wrapper,username);
               page.setRecords(clusterCommunityList);
               return page;

@@ -74,6 +74,9 @@
             ${ew.sqlSegment}
         </where>
     </select>
+    <select id="getAuthorizationSetting">
+
+    </select>
 </mapper>
 
 
