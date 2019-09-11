@@ -205,7 +205,7 @@ public class DeviceController {
 
     public LocalDateTime parseStringToLocal(String strTime){
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime ldt = LocalDateTime.parse("2018-01-12 17:07:05",df);
+        LocalDateTime ldt = LocalDateTime.parse(strTime,df);
         return ldt;
     }
 

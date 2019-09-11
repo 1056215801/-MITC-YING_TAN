@@ -436,7 +436,8 @@ public class PassThroughController {
     @ApiOperation(value = "http开门", notes = "输入参数：cellphone 手机号；communityCode 小区code。cellphone 电话号码。deviceNum 设备编号")
     public Result httpOpenDoor(String cellphone, String communityCode, String deviceNum) {
         if (StringUtils.isNotBlank(communityCode) && StringUtils.isNotBlank(deviceNum) && StringUtils.isNotBlank(cellphone)) {
-            dnakeAppApiService.httpOpenDoor(cellphone, communityCode, deviceNum);
+            //dnakeAppApiService.httpOpenDoor(cellphone, communityCode, deviceNum);
+            dnakeAppApiService.httpOpenDoor1(cellphone, communityCode, deviceNum);
             //添加足迹
             Device device = deviceService.getByDeviceNumAndCommunityCode(communityCode, deviceNum);
             if (device != null) {
@@ -477,7 +478,7 @@ public class PassThroughController {
                             if (building != null) {
                                 zone = zoneService.getByZoneId(communityCodes[i], building.getZoneId());
                             }
-                            myKey.setOnlineStatus(device.getDeviceStatus());
+                            myKey.setOnlineStatus(1);
                             myKey.setDeviceName(device.getDeviceName());
                             myKey.setBuildingCode(device.getBuildingCode());
                             myKey.setUnitCode(device.getUnitCode());

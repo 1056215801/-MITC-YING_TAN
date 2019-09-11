@@ -370,7 +370,7 @@ public class UserService {
                 1));
         user.setGmtCreate(LocalDateTime.now());
         user.setGmtModified(LocalDateTime.now());
-        user.setIdentity(1);
+        user.setIdentity(1);//1停用；2启用
         user.setSerialnumber(communityCode);
         user.setFaceToken(accountType);
         user.setDoornum(expireTime);//到期时间
@@ -396,6 +396,12 @@ public class UserService {
         EntityWrapper<User> wrapper = new EntityWrapper<>();
         wrapper.eq("cellphone", cellPhone);
         userMapper.update(user, wrapper);
+    }
+
+    public void deleteDeviceDugPeople(String cellPhone) {
+        EntityWrapper<User> wrapper = new EntityWrapper<>();
+        wrapper.eq("cellphone", cellPhone);
+        userMapper.delete(wrapper);
     }
 
 }

@@ -47,7 +47,7 @@ public interface PersonLabelsMapper {
     List<DeviceInfo> selectMenJinPage(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceInfo> wrapper, @Param("sql")String sql);
     List<DnakeDeviceDetailsInfo> getUnBindDevice(@Param("ip")String ip);
 
-    List<DeviceBugPeople> pageDeviceDugPeople(RowBounds rowBounds, @Param("ew")EntityWrapper<DeviceBugPeople> wrapper);
+    List<DugPeopleInfo> pageDeviceDugPeople(RowBounds rowBounds, @Param("ew")EntityWrapper<DugPeopleInfo> wrapper);
     List<DeviceInfo> getDevicesByDeviceGroupId(@Param("deviceGroupId")Integer deviceGroupId);
     AccessCard getByCardNumAndMac (@Param("cardNum")String cardNum, @Param("mac")String mac);
     DeviceIsOnline getIsOnline(@Param("deviceNum")String deviceNum);

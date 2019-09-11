@@ -80,14 +80,13 @@ public class Test1 {
         String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
         System.out.println(result);*/
 
-       /* Map<String,String> params = new HashedMap();
+       Map<String,String> params = new HashedMap();
 
         params.put("cmd","cardAdd");
         params.put("id","123");
         params.put("cardNum","4170481");
-        String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);*/
-
-        //System.out.println(result);
+        String result = HttpPostUtil.sendPost1("http://192.168.1.140:28085",params);
+        System.out.println(result);
 
         /*JSONObject json = JSONObject.fromObject(result);
 

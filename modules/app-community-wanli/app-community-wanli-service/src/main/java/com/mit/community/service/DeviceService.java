@@ -190,6 +190,10 @@ public class DeviceService extends ServiceImpl<DeviceMapper, Device> {
         return devices.get(0);
     }
 
+    public Device getById(Integer id) {
+        return deviceMapper.selectById(id);
+    }
+
     public Device getByDnakeDeviceInfoId(Integer dnakeDeviceInfoId) {
         EntityWrapper<Device> wrapper = new EntityWrapper<>();
         wrapper.eq("dnake_device_info_id", dnakeDeviceInfoId);

@@ -266,5 +266,6 @@ public class HouseHold extends BaseEntity {
     @TableField("call_mobile")
     private String callMobile;
 
-
+    @TableField("is_property")
+    private Integer isProperty;
 }

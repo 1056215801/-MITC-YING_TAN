@@ -42,7 +42,7 @@ public class MenJinDisconnectScan {
                     DeviceReportProblem deviceReportProblem = new DeviceReportProblem();
                     Device deviceInfo = deviceService.getByDeviceId(deviceList.get(i).getId());//查询该设备详细信息
                     deviceReportProblem.setContent("门禁机设备掉线，请及时排查处置");
-                    deviceReportProblem.setProblemType("设备掉线");
+                    deviceReportProblem.setProblemType("设备离线");
                     deviceReportProblem.setAddress(deviceInfo.getCoordinate());
                     deviceReportProblem.setDeviceType(1);
                     deviceReportProblem.setStatus(0);

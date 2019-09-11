@@ -12,6 +12,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,6 +54,15 @@ public class FaceController {
     private VisitorInviteCodeService visitorInviteCodeService;
     @Autowired
     private DeviceDeviceGroupService deviceDeviceGroupService;
+    @Autowired
+    private ClusterCommunityService clusterCommunityService;
+    @Autowired
+    private ZoneService zoneService;
+    @Autowired
+    private BuildingService buildingService;
+    @Autowired
+    private UnitService unitService;
+
 
     @RequestMapping("/uploadImg")
     @ApiOperation(value = "上传人脸比对开门记录", notes = "传参：")
@@ -69,20 +79,24 @@ public class FaceController {
 
         AccessControl accessControl = new AccessControl();
         HouseHold houseHold = houseHoldService.getByHouseholdId(houseHoldId);
-        String communityCode = houseHold.getCommunityCode();
         DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getDeviceInfoByMac(mac);
         Device device = deviceService.getByDnakeDeviceInfoId(dnakeDeviceInfo.getId());
+        String communityCode = device.getCommunityCode();
         AccessCard accessCard = accessCardService.getByHouseHoidIdAndDeviceNum(houseHold.getHouseholdId(), device.getDeviceNum());
         HouseholdRoom householdRoom = householdRoomService.getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(houseHold.getHouseholdId(),communityCode,device.getBuildingId(),device.getUnitId());
+        ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(communityCode);
+        Zone zone = zoneService.getByZoneId(Integer.parseInt(device.getZoneId()));
+        Building building = buildingService.getByBuidingId(Integer.parseInt(device.getBuildingId()));
+        Unit unit = unitService.getByUnitId(Integer.parseInt(device.getUnitId()));
         String imageUrl = UploadUtil.uploadWithByte(b);//开门时抓拍的图片
         accessControl.setCommunityCode(communityCode);
-        accessControl.setCommunityName(householdRoom.getCommunityName());
+        accessControl.setCommunityName(clusterCommunity.getCommunityName());
         accessControl.setAccessTime(LocalDateTime.now());
         accessControl.setInteractiveType(9);
         accessControl.setDeviceName(device.getDeviceName());
         accessControl.setDeviceNum(device.getDeviceNum());
-        accessControl.setZoneId(String.valueOf(householdRoom.getZoneId()));
-        accessControl.setZoneName(householdRoom.getZoneName());
+        accessControl.setZoneId(String.valueOf(device.getZoneId()));
+        accessControl.setZoneName(zone.getZoneName());
         accessControl.setHouseholdId(houseHold.getHouseholdId());
         accessControl.setHouseholdName(houseHold.getHouseholdName());
         accessControl.setHouseholdMobile(houseHold.getMobile());
@@ -93,9 +107,9 @@ public class FaceController {
         }
         accessControl.setAccessImgUrl(imageUrl);
         accessControl.setBuildingCode(device.getBuildingCode());
-        accessControl.setBuildingName(householdRoom.getBuildingName());
+        accessControl.setBuildingName(building.getBuildingName());
         accessControl.setUnitCode(device.getUnitCode());
-        accessControl.setUnitName(householdRoom.getUnitName());
+        accessControl.setUnitName(unit.getUnitName());
 
         /*long time = System.currentTimeMillis();
         String timeStr = String.valueOf(time);
@@ -103,7 +117,9 @@ public class FaceController {
 
         accessControl.setGmtCreate(LocalDateTime.now());
         accessControl.setGmtModified(LocalDateTime.now());
-        accessControl.setRoomNum(householdRoom.getRoomNum());
+        if (householdRoom != null) {
+            accessControl.setRoomNum(householdRoom.getRoomNum());
+        }
         accessControlService.insert(accessControl);
         //System.out.println(photo);
     }
@@ -130,45 +146,17 @@ public class FaceController {
         if (houseHold.getHouseholdStatus() == 1) {
             if (houseHold.getAuthorizeStatus()== 2 || houseHold.getAuthorizeStatus()== 3 || houseHold.getAuthorizeStatus()== 6 || houseHold.getAuthorizeStatus()==7 ) {
                 if (System.currentTimeMillis() <= houseHold.getValidityTime().getTime()) {
-                    Device device = deviceService.getByDeviceNumAndCommunityCode(deviceNum, communityCode);
-                    HouseholdRoom householdRoom = householdRoomService.getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(houseHold.getHouseholdId(),communityCode,device.getBuildingId(),device.getUnitId());
-                    DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getById(device.getDeviceId());
+                    System.out.println("==============deviceNum="+deviceNum +",communityCode="+communityCode);
+                    Device device = deviceService.getByDeviceNumAndCommunityCode(communityCode, deviceNum);
+                    //HouseholdRoom householdRoom = householdRoomService.getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(houseHold.getHouseholdId(),communityCode,device.getBuildingId(),device.getUnitId());
+                    DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getById(device.getDnakeDeviceInfoId());
                     AccessCard accessCard = accessCardService.getByHouseHoidIdAndDeviceNum(houseHold.getHouseholdId(), device.getDeviceNum());
-                    String resultJson = HttpPostUtil.httpOpen(dnakeDeviceInfo.getIp());
-                    JSONObject json = JSONObject.fromObject(resultJson);
-                    String base64 = json.getString("base64");
-                    BASE64Decoder decoder = new BASE64Decoder();
-                    byte[] b = decoder.decodeBuffer(base64);
-                    String imageUrl = UploadUtil.uploadWithByte(b);//开门时抓拍的图片
-                    accessControl.setCommunityCode(communityCode);
-                    accessControl.setCommunityName(householdRoom.getCommunityName());
-                    accessControl.setAccessTime(LocalDateTime.now());
-                    accessControl.setInteractiveType(11);
-                    accessControl.setDeviceName(device.getDeviceName());
-                    accessControl.setDeviceNum(deviceNum);
-                    accessControl.setZoneId(String.valueOf(householdRoom.getZoneId()));
-                    accessControl.setZoneName(householdRoom.getZoneName());
-                    accessControl.setHouseholdId(houseHold.getHouseholdId());
-                    accessControl.setHouseholdName(houseHold.getHouseholdName());
-                    accessControl.setHouseholdMobile(houseHold.getMobile());
-                    if (accessCard != null) {
-                        accessControl.setCardNum(accessCard.getCardNum());
-                    } else {
-                        accessControl.setCardNum("");
-                    }
-                    accessControl.setAccessImgUrl(imageUrl);
-                    accessControl.setBuildingCode(device.getBuildingCode());
-                    accessControl.setBuildingName(householdRoom.getBuildingName());
-                    accessControl.setUnitCode(device.getUnitCode());
-                    accessControl.setUnitName(householdRoom.getUnitName());
-
-                    /*long time = System.currentTimeMillis();
-                    String timeStr = String.valueOf(time);
-                    accessControl.setAccessControlId(Integer.parseInt(timeStr.substring(timeStr.length()-11, timeStr.length())));*/
-
-                    accessControl.setGmtCreate(LocalDateTime.now());
-                    accessControl.setGmtModified(LocalDateTime.now());
-                    accessControl.setRoomNum(householdRoom.getRoomNum());
+                    ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(communityCode);
+                    Zone zone = zoneService.getByZoneId(communityCode, Integer.parseInt(device.getZoneId()));
+                    Building building = buildingService.getByBuidingId(Integer.parseInt(device.getBuildingId()));
+                    Unit unit = unitService.getByUnitId(Integer.parseInt(device.getUnitId()));
+                    String resultJson = HttpPostUtil.httpOpen(dnakeDeviceInfo.getIp(), cellphone, communityCode, deviceNum);
+                    System.out.println("==============resultJson="+resultJson);
                     return Result.success("门已开");
                 } else {
                     return Result.error("权限已过期");
@@ -181,32 +169,31 @@ public class FaceController {
         }
     }
 
-    @PostMapping("/uploadCardOpenRecord")
-    @ApiOperation(value = "接收上传的门禁卡开门记录", notes = "传参：") //需要捕捉连接异常，判断门禁机是否在线
+    @PostMapping("/uploadHttpOpenRecord")
+    @ApiOperation(value = "接收上传的http开门记录", notes = "传参：") //需要捕捉连接异常，判断门禁机是否在线
     @Transactional
-    public Result uploadCardOpenRecord(HttpServletRequest request, String mac, String cardNum, String base64) throws Exception{
+    public Result uploadHttpOpenRecord (String cellphone, String communityCode, String deviceNum, String base64) throws Exception{
         AccessControl accessControl = new AccessControl();
-
-        DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getDeviceInfoByMac(mac);
-        Device device = deviceService.getByDnakeDeviceInfoId(dnakeDeviceInfo.getId());
-        AccessCard accessCard = accessCardService.getByCardNumAndDeviceNum(cardNum, device.getDeviceNum());
-        //AccessCard accessCard = accessCardService.getByCardNumAndMac(cardNum, mac);
-        Integer houseHoldId = accessCard.getHouseHoldId();
-        String deviceNum = accessCard.getDeviceNum();
-        HouseHold houseHold = houseHoldService.getByHouseholdId(houseHoldId);
-        //Device device = deviceService.getByDeviceNumAndCommunityCode(deviceNum, null);
-        HouseholdRoom householdRoom = householdRoomService.getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(houseHold.getHouseholdId(),device.getCommunityCode(),device.getBuildingId(),device.getUnitId());
+        HouseHold houseHold = houseHoldService.getByCellphoneAndCommunityCode(cellphone,communityCode);
+        Device device = deviceService.getByDeviceNumAndCommunityCode(communityCode, deviceNum);
+        HouseholdRoom householdRoom = householdRoomService.getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(houseHold.getHouseholdId(),communityCode,device.getBuildingId(),device.getUnitId());
+        //DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getById(device.getDnakeDeviceInfoId());
+        AccessCard accessCard = accessCardService.getByHouseHoidIdAndDeviceNum(houseHold.getHouseholdId(), device.getDeviceNum());
+        ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(communityCode);
+        Zone zone = zoneService.getByZoneId(communityCode, Integer.parseInt(device.getZoneId()));
+        Building building = buildingService.getByBuidingId(Integer.parseInt(device.getBuildingId()));
+        Unit unit = unitService.getByUnitId(Integer.parseInt(device.getUnitId()));
         BASE64Decoder decoder = new BASE64Decoder();
         byte[] b = decoder.decodeBuffer(base64);
         String imageUrl = UploadUtil.uploadWithByte(b);//开门时抓拍的图片
-        accessControl.setCommunityCode(device.getCommunityCode());
-        accessControl.setCommunityName(householdRoom.getCommunityName());
+        accessControl.setCommunityCode(communityCode);
+        accessControl.setCommunityName(clusterCommunity.getCommunityName());
         accessControl.setAccessTime(LocalDateTime.now());
-        accessControl.setInteractiveType(1);
+        accessControl.setInteractiveType(11);
         accessControl.setDeviceName(device.getDeviceName());
         accessControl.setDeviceNum(deviceNum);
-        accessControl.setZoneId(String.valueOf(householdRoom.getZoneId()));
-        accessControl.setZoneName(householdRoom.getZoneName());
+        accessControl.setZoneId(String.valueOf(device.getZoneId()));
+        accessControl.setZoneName(zone.getZoneName());
         accessControl.setHouseholdId(houseHold.getHouseholdId());
         accessControl.setHouseholdName(houseHold.getHouseholdName());
         accessControl.setHouseholdMobile(houseHold.getMobile());
@@ -217,15 +204,74 @@ public class FaceController {
         }
         accessControl.setAccessImgUrl(imageUrl);
         accessControl.setBuildingCode(device.getBuildingCode());
-        accessControl.setBuildingName(householdRoom.getBuildingName());
+        accessControl.setBuildingName(building.getBuildingName());
         accessControl.setUnitCode(device.getUnitCode());
-        accessControl.setUnitName(householdRoom.getUnitName());
+        accessControl.setUnitName(unit.getUnitName());
+        if (householdRoom != null) {
+            accessControl.setRoomNum(householdRoom.getRoomNum());
+        }
+
+
+        /*long time = System.currentTimeMillis();
+          String timeStr = String.valueOf(time);
+          accessControl.setAccessControlId(Integer.parseInt(timeStr.substring(timeStr.length()-11, timeStr.length())));*/
+
+        accessControl.setGmtCreate(LocalDateTime.now());
+        accessControl.setGmtModified(LocalDateTime.now());
+        accessControlService.insert(accessControl);
+        return Result.success("上传成功");
+    }
+
+    @PostMapping("/uploadCardOpenRecord")
+    @ApiOperation(value = "接收上传的门禁卡开门记录", notes = "传参：") //需要捕捉连接异常，判断门禁机是否在线
+    @Transactional
+    public Result uploadCardOpenRecord(HttpServletRequest request, String mac, String cardNum, String base64) throws Exception{
+        AccessControl accessControl = new AccessControl();
+
+        DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getDeviceInfoByMac(mac);
+        Device device = deviceService.getByDnakeDeviceInfoId(dnakeDeviceInfo.getId());
+        AccessCard accessCard = accessCardService.getByCardNumAndDeviceNum(cardNum, device.getDeviceNum());
+        Integer houseHoldId = accessCard.getHouseHoldId();
+        String deviceNum = accessCard.getDeviceNum();
+        HouseHold houseHold = houseHoldService.getByHouseholdId(houseHoldId);
+        HouseholdRoom householdRoom = householdRoomService.getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(houseHold.getHouseholdId(),device.getCommunityCode(),device.getBuildingId(),device.getUnitId());
+        ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(device.getCommunityCode());
+        Zone zone = zoneService.getByZoneId(device.getCommunityCode(), Integer.parseInt(device.getZoneId()));
+        Building building = buildingService.getByBuidingId(Integer.parseInt(device.getBuildingId()));
+        Unit unit = unitService.getByUnitId(Integer.parseInt(device.getUnitId()));
+        BASE64Decoder decoder = new BASE64Decoder();
+        byte[] b = decoder.decodeBuffer(base64);
+        String imageUrl = UploadUtil.uploadWithByte(b);//开门时抓拍的图片
+        accessControl.setCommunityCode(device.getCommunityCode());
+        accessControl.setCommunityName(clusterCommunity.getCommunityName());
+        accessControl.setAccessTime(LocalDateTime.now());
+        accessControl.setInteractiveType(1);
+        accessControl.setDeviceName(device.getDeviceName());
+        accessControl.setDeviceNum(deviceNum);
+        accessControl.setZoneId(String.valueOf(device.getZoneId()));
+        accessControl.setZoneName(zone.getZoneName());
+        accessControl.setHouseholdId(houseHold.getHouseholdId());
+        accessControl.setHouseholdName(houseHold.getHouseholdName());
+        accessControl.setHouseholdMobile(houseHold.getMobile());
+        if (accessCard != null) {
+            accessControl.setCardNum(accessCard.getCardNum());
+        } else {
+            accessControl.setCardNum("");
+        }
+        accessControl.setAccessImgUrl(imageUrl);
+        accessControl.setBuildingCode(device.getBuildingCode());
+        accessControl.setBuildingName(building.getBuildingName());
+        accessControl.setUnitCode(device.getUnitCode());
+        accessControl.setUnitName(unit.getUnitName());
         /*long time = System.currentTimeMillis();
         String timeStr = String.valueOf(time);
         accessControl.setAccessControlId(Integer.parseInt(timeStr.substring(timeStr.length()-11, timeStr.length())));*/
         accessControl.setGmtCreate(LocalDateTime.now());
         accessControl.setGmtModified(LocalDateTime.now());
-        accessControl.setRoomNum(householdRoom.getRoomNum());
+        if (householdRoom != null){
+            accessControl.setRoomNum(householdRoom.getRoomNum());
+        }
+
         accessControlService.insert(accessControl);
         return Result.success("上传成功");
     }
@@ -294,16 +340,19 @@ public class FaceController {
         DnakeDeviceInfo dnakeDeviceInfo = dnakeDeviceInfoService.getDeviceInfoByMac(mac);
         Device device = deviceService.getByDnakeDeviceInfoId(dnakeDeviceInfo.getId());
         AccessCard accessCard = accessCardService.getByHouseHoidIdAndDeviceNum(houseHold.getHouseholdId(), device.getDeviceNum());
+        ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(device.getCommunityCode());
+        Zone zone = zoneService.getByZoneId(device.getCommunityCode(), Integer.parseInt(device.getZoneId()));
+        Building building = buildingService.getByBuidingId(Integer.parseInt(device.getBuildingId()));
+        Unit unit = unitService.getByUnitId(Integer.parseInt(device.getUnitId()));
         HouseholdRoom householdRoom = householdRoomService.getByHouseHoldIdAndCommunityCodeAndBuilingIdAndUnitId(houseHold.getHouseholdId(),communityCode,device.getBuildingId(),device.getUnitId());
-        //String imageUrl = UploadUtil.uploadWithByte(b);//开门时抓拍的图片
         accessControl.setCommunityCode(communityCode);
-        accessControl.setCommunityName(householdRoom.getCommunityName());
+        accessControl.setCommunityName(clusterCommunity.getCommunityName());
         accessControl.setAccessTime(LocalDateTime.now());
         accessControl.setInteractiveType(2);
         accessControl.setDeviceName(device.getDeviceName());
         accessControl.setDeviceNum(device.getDeviceNum());
-        accessControl.setZoneId(String.valueOf(householdRoom.getZoneId()));
-        accessControl.setZoneName(householdRoom.getZoneName());
+        accessControl.setZoneId(String.valueOf(device.getZoneId()));
+        accessControl.setZoneName(zone.getZoneName());
         accessControl.setHouseholdId(houseHold.getHouseholdId());
         accessControl.setHouseholdName(houseHold.getHouseholdName());
         accessControl.setHouseholdMobile(houseHold.getMobile());
@@ -314,16 +363,19 @@ public class FaceController {
         }
         accessControl.setAccessImgUrl(imageUrl);
         accessControl.setBuildingCode(device.getBuildingCode());
-        accessControl.setBuildingName(householdRoom.getBuildingName());
+        accessControl.setBuildingName(building.getBuildingName());
         accessControl.setUnitCode(device.getUnitCode());
-        accessControl.setUnitName(householdRoom.getUnitName());
+        accessControl.setUnitName(unit.getUnitName());
 
         /*long time = System.currentTimeMillis();
         String timeStr = String.valueOf(time);
         accessControl.setAccessControlId(Integer.parseInt(timeStr.substring(timeStr.length()-11, timeStr.length())));//暂时不知*/
         accessControl.setGmtCreate(LocalDateTime.now());
         accessControl.setGmtModified(LocalDateTime.now());
-        accessControl.setRoomNum(householdRoom.getRoomNum());
+        if (householdRoom != null) {
+            accessControl.setRoomNum(householdRoom.getRoomNum());
+        }
+
         accessControlService.insert(accessControl);
 
         return Result.success("ok");

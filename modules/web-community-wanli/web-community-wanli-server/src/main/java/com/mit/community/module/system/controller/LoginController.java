@@ -125,95 +125,47 @@ public class LoginController {
 
         Map<String, Object> map = Maps.newHashMapWithExpectedSize(2);
         String sessionId = CookieUtils.getSessionId(request);
-        /*
-        String code = (String) redisService.get(RedisConstant.KAPTCHA + sessionId);
-        if (StringUtils.isBlank(kaptcha) || !kaptcha.equalsIgnoreCase(code)) {
-            return Result.error("验证码错误");
-        }*/
-        if (false) {
-
-        } else {
-            //HttpLogin httpLogin = new HttpLogin(username, password);
-            //判断是否是集群管理账户访问不同的登录接口
-            //是集群账户
-            boolean loginWhether = false;
-            /*if ("ytyuehu".equals(username)) {
-                httpLogin.loginAdmin();
-                String cookie = httpLogin.getCookie();
-                String result = HttpClientUtil.getMethodRequestResponse("http://cmp.ishanghome.com/mp/index", cookie);
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            SysUser sysUser = sysUserService.getByUsernameAndPassWord(username, password);
+            if (sysUser != null) {
+                String menuUser = "小区管理员";
+                String menuAdmin = "集群管理员";
+                String adminName = sysUser.getAdminName();
+                String communityCode = sysUser.getCommunityCode();
+                String role = sysUser.getRole();
+                String menu = StringUtils.EMPTY;
+                map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
+                map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
+                map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
+                //map.put("session", httpLogin.getCookie());
+                if (menuUser.equals(role)) {
+                    menu = "0";
+                    request.getSession().setAttribute("role", 0);
+                }
+                if (menuAdmin.equals(role)) {
+                    request.getSession().setAttribute("role", 1);
+                    menu = "1";
+                }
+                //request.getSession().setAttribute("session", httpLogin.getCookie());
+                map.put("isAdmin", menu);
+                if ("湾里区".equals(sysUser.getAreaName())) {
+                    map.put("isWanli", 1);
+                    request.getSession().setAttribute("isWanli", true);
+                } else {
+                    map.put("isWanli", 0);
+                    request.getSession().setAttribute("isWanli", false);
+                }
+                // redis中保存session用户
+                redisService.set(RedisConstant.SESSION_ID + sessionId,
+                        sysUser, RedisConstant.LOGIN_EXPIRE_TIME);
+                System.out.println("==============登录成功");
+                return Result.success(map, "登录成功");
             } else {
-                //是小区管理账户
-                httpLogin.loginUser();
-            }*/
-            //判断是否登录成功
-            /*for (Header h : httpLogin.getHeaders()) {
-                if ("Location".equals(h.getName())) {
-                    loginWhether = true;
-                }
-            }*/
-            loginWhether = true;
-            boolean updateOrInsert = false;
-            if (loginWhether) {
-                //登录成功后,判断本地数据库是否有这个用户名
-                SysUser sysUser = sysUserService.getByUsername(username);
-                if (sysUser != null) {
-                    //如果有该用户名，进行用户名密码验证
-                    if (!sysUser.getPassword().equals(password)) {
-                        sysUser.setPassword(password);
-                        updateOrInsert = sysUserService.updateById(sysUser);
-                    } else {
-                        updateOrInsert = true;
-                    }
-                } else {
-                    //如果该用户名在本地数据库中不存在，则将数据添加到本地数据库
-                    SysUser saveSysUser = new SysUser();
-                    saveSysUser.setPassword(password);
-                    saveSysUser.setUsername(username);
-                    saveSysUser.setRole("小区管理员");
-                    saveSysUser.setCityName("鹰潭市");
-                    saveSysUser.setProvinceName("江西省");
-                    saveSysUser.setAreaName("月湖区");
-                    updateOrInsert = sysUserService.insert(saveSysUser);
-                }
-                //本地数据更新成功后执行显示数据
-                if (updateOrInsert) {
-                    String menuUser = "小区管理员";
-                    String menuAdmin = "集群管理员";
-                    String adminName = sysUser.getAdminName();
-                    String communityCode = sysUser.getCommunityCode();
-                    String role = sysUser.getRole();
-                    String menu = StringUtils.EMPTY;
-                    map.put("adminName", StringUtils.isBlank(adminName) ? StringUtils.EMPTY : adminName);
-                    map.put("role", StringUtils.isBlank(role) ? StringUtils.EMPTY : role);
-                    map.put("communityCode", StringUtils.isBlank(communityCode) ? StringUtils.EMPTY : communityCode);
-                    //map.put("session", httpLogin.getCookie());
-                    if (menuUser.equals(role)) {
-                        menu = "0";
-                        request.getSession().setAttribute("role", 0);
-                    }
-                    if (menuAdmin.equals(role)) {
-                        request.getSession().setAttribute("role", 1);
-                        menu = "1";
-                    }
-                    //request.getSession().setAttribute("session", httpLogin.getCookie());
-                    map.put("isAdmin", menu);
-                    if ("湾里区".equals(sysUser.getAreaName())) {
-                        map.put("isWanli", 1);
-                        request.getSession().setAttribute("isWanli", true);
-                    } else {
-                        map.put("isWanli", 0);
-                        request.getSession().setAttribute("isWanli", false);
-                    }
-                    // redis中保存session用户
-                    redisService.set(RedisConstant.SESSION_ID + sessionId,
-                            sysUser, RedisConstant.LOGIN_EXPIRE_TIME);
-                    System.out.println("==============登录成功");
-                    return Result.success(map, "登录成功");
-                } else {
-                    return Result.error("用户名或密码错误");
-                }
+                return Result.error("用户名或密码错误");
             }
+        } else {
+            return Result.error("登录失败,账号或密码为空");
         }
-        return Result.error("登录失败");
+
     }
 }

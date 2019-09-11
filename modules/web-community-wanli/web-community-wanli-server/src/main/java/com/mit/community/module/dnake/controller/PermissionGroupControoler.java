@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -68,6 +69,8 @@ public class PermissionGroupControoler {
     private DevicePerceptionService devicePerceptionService;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private DeviceNoticeService deviceNoticeService;
 
     /**
      *
@@ -364,12 +367,12 @@ public class PermissionGroupControoler {
 
     @PostMapping("/getPageDeviceDugPeople")
     @ApiOperation(value = "分页查询设备调试人员", notes = "")
-    public Result getPageDeviceDugPeople(HttpServletRequest request,Integer pageNum, Integer pageSize){
+    public Result getPageDeviceDugPeople(HttpServletRequest request,String cellPhone, Integer pageNum, Integer pageSize){
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
         String communityCode = user.getCommunityCode();
 
-        Page<DeviceBugPeople> page = personLabelsService.pageDeviceDugPeople(communityCode, pageNum, pageSize);
+        Page<DugPeopleInfo> page = personLabelsService.pageDeviceDugPeople(communityCode, cellPhone, pageNum, pageSize);
         return Result.success(page);
     }
 
@@ -377,6 +380,73 @@ public class PermissionGroupControoler {
     @ApiOperation(value = "停用/启用 设备调试人员", notes = "changeType 1启用，2停用")
     public Result deviceDugPeopleChange(HttpServletRequest request,String cellPhone, Integer changeType ){
         userService.deviceDugPeopleChange(cellPhone, changeType);
+        return Result.success("ok");
+    }
+
+    @PostMapping("/deleteDeviceDugPeople")
+    @ApiOperation(value = "删除设备调试人员", notes = "")
+    public Result deleteDeviceDugPeople(HttpServletRequest request,String cellPhone){
+        userService.deleteDeviceDugPeople(cellPhone);
+        return Result.success("ok");
+    }
+
+    @PostMapping("/saveDeviceNotice")
+    @ApiOperation(value = "保存设备公告", notes = "type 公告类型（//1紧急；2通知；3活动；4提示；5新闻）；canal 发布渠道（1滚动文字；2图片轮播）；startTime 开始时间（yyyy-MM-dd）;endTime 开始时间（yyyy-MM-dd）;" +
+            "playTime 播放时间段（07:00-09:30;13:00-14:50）")
+    public Result saveDeviceNotice(HttpServletRequest request,String title, Integer type, Integer canal, String startTime, String endTime, String playTime, String content, MultipartFile[] photos){
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = user.getCommunityCode();
+        ClusterCommunity clusterCommunity = clusterCommunityService.getByCommunityCode(communityCode);
+        if (canal == 2 && photos == null) {
+            return Result.error("图片不能为空");
+        }
+        deviceNoticeService.save(communityCode, clusterCommunity.getCommunityName(), title, type, canal, startTime, endTime, playTime, content, photos);
+        return Result.success("ok");
+    }
+
+    @PostMapping("/deviceNoticeListPage")
+    @ApiOperation(value = "分页获取设备公告", notes = "")
+    public Result deviceNoticeListPage(HttpServletRequest request,String title, Integer type, String startTime, String endTime, Integer status, Integer pageNum, Integer pageSize){
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = user.getCommunityCode();
+        Page<DeviceNotice> page = deviceNoticeService.deviceNoticeListPage(communityCode, title, type, startTime, endTime, status, pageNum, pageSize);
+        return Result.success(page);
+    }
+
+    @PostMapping("/deleteDeviceNotice")
+    @ApiOperation(value = "删除设备公告", notes = "")
+    public Result deleteDeviceNotice(HttpServletRequest request,Integer id){
+        deviceNoticeService.deleteDeviceNotice(id);
+        return Result.success("ok");
+    }
+
+    @PostMapping("/deviceNoticeChange")
+    @ApiOperation(value = "停用/启用 设备公告", notes = "changeType 1启用，2停用")
+    public Result deviceNoticeChange(HttpServletRequest request,Integer id, Integer status){
+        deviceNoticeService.deviceNoticeChange(id, status);
+        return Result.success("ok");
+    }
+
+    @PostMapping("/deleteDeviceNoticePhoto")
+    @ApiOperation(value = "删除设备公告图片", notes = "id：图片记录id")
+    public Result deleteDeviceNoticePhoto(HttpServletRequest request,Integer id){
+        deviceNoticeService.deleteDeviceNoticePhoto(id);
+        return Result.success("ok");
+    }
+
+    @PostMapping("/addDeviceNoticePhoto")
+    @ApiOperation(value = "增加设备公告图片", notes = "id：公告记录id")
+    public Result addDeviceNoticePhoto(HttpServletRequest request,Integer id, MultipartFile photo){
+        deviceNoticeService.addDeviceNoticePhoto(id, photo);
+        return Result.success("ok");
+    }
+
+    @PostMapping("/updateDeviceNotice")
+    @ApiOperation(value = "修改设备公告", notes = "id：公告记录id")
+    public Result updateDeviceNotice(HttpServletRequest request,Integer id, String title, Integer type, Integer canal, String startTime, String endTime, String playTime, String content){
+        deviceNoticeService.updateDeviceNotice(id, title, type, canal, startTime, endTime, playTime, content);
         return Result.success("ok");
     }
 

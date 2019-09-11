@@ -301,16 +301,6 @@ public class PassThroughController {
             @ApiImplicitParam(name = "idCard", value = "身份证号码", paramType = "query", required = false, dataType = "String"),
             @ApiImplicitParam(name = "householdType", value = "与户主关系", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "mobileBelong", value = "电话号码归属(1本人，2紧急联系人)", paramType = "query", required = true, dataType = "INTEGER"),
-            /*@ApiImplicitParam(name = "houseRoomsVoList.id", value = "主键id", paramType = "query", required = false, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.zoneId", value = "分区id", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.zoneName", value = "分区名", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.buildingId", value = "楼栋id", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.buildingName", value = "楼栋名", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.unitId", value = "单元id", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.unitName", value = "单元名", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.roomId", value = "房间id", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.id", value = "roomNum", paramType = "房间号", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "houseRoomsVoList.householdType", value = "与户主关系", paramType = "query", required = false, dataType = "String")*/
     })
     public Result SaveHouseholdInfoByStepOne(HttpServletRequest request,
                                               HttpServletResponse response) {
@@ -597,6 +587,18 @@ public class PassThroughController {
                  cardMedia, authType, pageNum, pageSize);
 
         return Result.success(page);
+    }
+
+    @ApiOperation(value = "门禁挂失")
+    @PostMapping("/reportLossCard")
+    public Result reportLossCard (Integer houseHoldId, String cardNum) {
+        return Result.success("");
+    }
+
+    @ApiOperation(value = "门禁解绑")
+    @PostMapping("/unbundlingCard ")
+    public Result unbundlingCard (Integer houseHoldId, String cardNum) {
+        return Result.success("");
     }
 
     @ApiOperation(value = "门禁卡下发")

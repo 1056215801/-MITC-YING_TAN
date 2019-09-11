@@ -125,12 +125,40 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         return page;
     }
 
+    public static String getAuthString(int n) {
+        StringBuffer auth = new StringBuffer("");
+        String result = Integer.toBinaryString(n);
+        int a = Integer.parseInt(result);
+        int b = a/100;//百位
+        int c = (a%100)/10;//十位
+        int d = d=a%10;//个位
+        if (b == 1) {
+            auth.append("人脸，");
+        }
+        if (c == 1) {
+            auth.append("app，");
+        }
+        if (d == 1) {
+            auth.append("卡，");
+        }
+        return auth.toString();
+
+    }
+
     public StepThreeInfo getInfoThree (Integer houseHoldId, String communityCode) {
         StepThreeInfo stepThreeInfo = new StepThreeInfo();
         EntityWrapper<HouseHold> wrapper = new EntityWrapper<>();
         wrapper.eq("household_id", houseHoldId);
         List<HouseHold> houseHolds = houseHoldMapper.selectList(wrapper);
-        stepThreeInfo.setHouseHold(houseHolds.get(0));
+        HouseHold houseHold = houseHolds.get(0);
+        if (houseHold.getAuthorizeStatus() == 0) {
+            houseHold.setLabels("0");
+        } else {
+            String authString = getAuthString(houseHold.getAuthorizeStatus());
+            houseHold.setLabels(authString);
+        }
+
+        stepThreeInfo.setHouseHold(houseHold);
 
         List<AccessCard> cardList = personLabelsMapper.selectAccessCardByHouseHoldId(houseHoldId);
         stepThreeInfo.setCardList(cardList);
@@ -139,10 +167,10 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         stepThreeInfo.setPhotoList(photoList);
 
         List<AuthorizeGroup> authorizeGroupList = new ArrayList<>();
-        List<AuthorizeHouseholdDeviceGroup> authList = authorizeHouseholdDeviceGroupService.listByHouseholdId(houseHoldId);
+        List<AuthorizeAppHouseholdDeviceGroup> authList = authorizeAppHouseholdDeviceGroupService.listByHouseholdId(houseHoldId);
         AuthorizeGroup authorizeGroup = null;
         if (!authList.isEmpty()) {
-            for (AuthorizeHouseholdDeviceGroup authorizeHouseholdDeviceGroup : authList) {
+            for (AuthorizeAppHouseholdDeviceGroup authorizeHouseholdDeviceGroup : authList) {
                 authorizeGroup = new AuthorizeGroup();
                 com.mit.community.entity.entity.DeviceGroup deviceGroup = deviceGroupService.getById(authorizeHouseholdDeviceGroup.getDeviceGroupId());
                 authorizeGroup.setDeviceGroupId(deviceGroup.getDeviceGroupId());
@@ -155,7 +183,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
 
         List<Integer> deviceGroupsId = new ArrayList<>();
         if (!authList.isEmpty()) {
-            deviceGroupsId = authList.parallelStream().map(AuthorizeHouseholdDeviceGroup::getDeviceGroupId).collect(Collectors.toList());
+            deviceGroupsId = authList.parallelStream().map(AuthorizeAppHouseholdDeviceGroup::getDeviceGroupId).collect(Collectors.toList());
         }
         List<DeviceGroup> deviceGroups = deviceGroupService.getByCommunityCodeAndIds(communityCode, deviceGroupsId);
         if (!deviceGroups.isEmpty()) {
@@ -591,7 +619,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), null,0);
                 } else {
                     houseHold = new HouseHold(communityCode, StringUtils.EMPTY, householdId, householdName,
                             1, 0,
@@ -600,7 +628,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(),null);
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(),null,0);
                 }
                 houseHold.setGmtModified(LocalDateTime.now());
                 houseHold.setGmtCreate(LocalDateTime.now());
@@ -644,7 +672,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, idCard, idCardInfo.getProvince(),
                             idCardInfo.getCity(), idCardInfo.getRegion(), idCardInfo.getBirthday(),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), existHouseHold.getCallMobile());
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), existHouseHold.getCallMobile(),0);
                 } else {
                     edidHousehold = new HouseHold(communityCode, StringUtils.EMPTY, existHouseHold.getHouseholdId(), householdName,
                             1, 0,
@@ -653,7 +681,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                             StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
                             StringUtils.EMPTY, StringUtils.EMPTY, com.mit.common.util.DateUtils.parseStringToLocalDate("1900-01-01", "yyyy-MM-dd"),
                             (short) 99, null, null, null, null, null, null, null,
-                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), existHouseHold.getCallMobile());
+                            Integer.valueOf(list.get(0).getHouseholdType()),null,null,postHouseHoldInfoOne.getMobileBelong(), existHouseHold.getCallMobile(),0);
                 }
                 edidHousehold.setGmtModified(LocalDateTime.now());
                 houseHoldMapper.updateHouseholdByHouseholdId(edidHousehold);
@@ -841,6 +869,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                                                 } else{//下发不成功
                                                     accessCardService.save(cardsNum[a],householdId,deviceDeviceGroupsList.get(i).getDeviceNum(),Integer.parseInt(deviceGroupId),1);
                                                 }
+                                            } else {
+                                                accessCardService.save(cardsNum[a],householdId,deviceDeviceGroupsList.get(i).getDeviceNum(),Integer.parseInt(deviceGroupId),1);
                                             }
                                         }
                                     }
@@ -865,6 +895,8 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
                                                 } else{//下发不成功
                                                     houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, deviceDeviceGroupsList.get(i).getDeviceNum());
                                                 }
+                                            } else {//设备不在线
+                                                houseHoldPhotoService.save(householdId, houseHoldPhoto.getPhotoUrlNet(), houseHoldPhoto.getPhotoUrl(), houseHoldPhoto.getFeaUrl(),Integer.parseInt(deviceGroupId), 1, deviceDeviceGroupsList.get(i).getDeviceNum());
                                             }
                                         }
                                     }

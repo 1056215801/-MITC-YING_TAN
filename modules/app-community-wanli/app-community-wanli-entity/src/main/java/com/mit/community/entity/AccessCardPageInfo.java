@@ -1,5 +1,6 @@
 package com.mit.community.entity;
 
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,6 @@ public class AccessCardPageInfo {
     private Integer houseType;//与户主关系
     private String mobile;
     private String validityTime;
+    private Integer houseHoldId;
     private List<HouseholdRoom> houses;
 }

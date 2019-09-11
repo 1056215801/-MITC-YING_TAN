@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.mit.community.entity.entity.DeviceGroup;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -129,12 +130,19 @@ public class PersonLabelsService {
         return labelsMapper.getUnBindDevice(ip);
     }
 
-    public Page<DeviceBugPeople> pageDeviceDugPeople(String communityCode, Integer pageNum, Integer pageSize) {
-        Page<DeviceBugPeople>  page = new Page<>(pageNum, pageSize);
-        EntityWrapper<DeviceBugPeople> wrapper = new EntityWrapper<> ();
+    public Page<DugPeopleInfo> pageDeviceDugPeople(String communityCode, String cellPhone, Integer pageNum, Integer pageSize) {
+        List<Integer> listIdentity = new ArrayList<>();
+        listIdentity.add(1);
+        listIdentity.add(2);
+        Page<DugPeopleInfo>  page = new Page<>(pageNum, pageSize);
+        EntityWrapper<DugPeopleInfo> wrapper = new EntityWrapper<> ();
         wrapper.eq("a.serialnumber", communityCode);
-        wrapper.in("a.identity_type","(1,2)");
-        List<DeviceBugPeople> list = labelsMapper.pageDeviceDugPeople(page, wrapper);
+        wrapper.in("a.identity_type",listIdentity);
+        if (StringUtils.isNotBlank(cellPhone)) {
+            wrapper.eq("a.cellphone", cellPhone);
+        }
+        wrapper.orderBy("a.gmt_create",false);
+        List<DugPeopleInfo> list = labelsMapper.pageDeviceDugPeople(page, wrapper);
         page.setRecords(list);
         return page;
     }

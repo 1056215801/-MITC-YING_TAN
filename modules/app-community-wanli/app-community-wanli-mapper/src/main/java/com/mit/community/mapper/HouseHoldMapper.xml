@@ -49,6 +49,7 @@
             <if test="identityType!=null">identity_type=#{identityType},</if>
             <if test="validityTime!=null">validity_time=#{validityTime},</if>
             <if test="gmtModified!=null">gmt_modified=#{gmtModified},</if>
+            <if test="callMobile!=null">call_mobile=#{callMobile},</if>
         </trim>
         WHERE household_id = #{householdId}
     </update>

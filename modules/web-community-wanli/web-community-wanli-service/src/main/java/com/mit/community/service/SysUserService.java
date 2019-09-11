@@ -173,6 +173,17 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         return sysUsers.get(0);
     }
 
+    public SysUser getByUsernameAndPassWord(String username, String password) {
+        EntityWrapper<SysUser> wrapper = new EntityWrapper<>();
+        wrapper.eq("username", username);
+        wrapper.eq("password", password);
+        List<SysUser> sysUsers = sysUserMapper.selectList(wrapper);
+        if (sysUsers.isEmpty()) {
+            return null;
+        }
+        return sysUsers.get(0);
+    }
+
     /**
      * @Author HuShanLin
      * @Date 14:58 2019/7/1
@@ -184,6 +195,8 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         List<SysUser> list = sysUserMapper.selectList(wrapper);
         return list;
     }
+
+
 
     /**
      * @Author HuShanLin

@@ -96,7 +96,7 @@ public class DeviceController {
     }
 */
     @PostMapping("/menJinListPage")
-    @ApiOperation(value = "门禁设备分页查询", notes = "传参：") //没有表
+    @ApiOperation(value = "门禁设备分页查询", notes = "传参：deviceName 设备名称；deicveNum 设备编号；deviceType设备类型（M：单元门口机；W：围墙机）；deviceStatus 设备状态（1在线；2离线）") //没有表
     public Result menJinListPage(HttpServletRequest request, Integer zoneId, Integer buildingId, Integer unitId, String deviceName, String deicveNum, String deviceType, Integer deviceStatus,Integer pageNum, Integer pageSize){
         String sessionId = CookieUtils.getSessionId(request);
         SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
@@ -123,7 +123,7 @@ public class DeviceController {
 
     @PostMapping("/changeMenJinName")
     @ApiOperation(value = "命名门禁设备", notes = "传参：")
-    public Result changeMenJinName(String deviceNum, String deviceName, String mac){
+    public Result changeMenJinName(String deviceNum, String deviceName){
         deviceService.updateDeviceNameByDeviceNum(deviceNum, deviceName);
         return Result.success("修改成功");
     }

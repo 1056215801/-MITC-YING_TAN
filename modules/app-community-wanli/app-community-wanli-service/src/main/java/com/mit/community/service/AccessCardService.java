@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.community.entity.AccessCard;
 import com.mit.community.entity.AccessCardPageInfo;
+import com.mit.community.entity.HouseholdRoom;
 import com.mit.community.mapper.AccessCardMapper;
 import com.mit.community.mapper.mapper.PersonLabelsMapper;
 import com.mit.community.population.service.PersonLabelsService;
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +27,8 @@ public class AccessCardService {
     private AccessCardMapper accessCardMapper;
     @Autowired
     private PersonLabelsMapper personLabelsMapper;
+    @Autowired
+    private HouseholdRoomService householdRoomService;
 
 
     public void save(AccessCard accessCard) {
@@ -108,7 +112,7 @@ public class AccessCardService {
                                                       Integer cardMedia, Integer authType, Integer pageNum, Integer pageSize) {
         Page<AccessCardPageInfo> page = new Page<>(pageNum, pageSize);
         EntityWrapper<AccessCardPageInfo> wrapper = new EntityWrapper<>();
-        wrapper.eq("community_code", communityCode);
+        wrapper.eq("b.community_code", communityCode);
         if (StringUtils.isNotBlank(cardNum)) {
             wrapper.eq("a.card_num", cardNum);
         }
@@ -153,6 +157,14 @@ public class AccessCardService {
             }
         }
         List<AccessCardPageInfo> list = personLabelsMapper.selectMenJinCardPage(page, wrapper);
+        if (!list.isEmpty()) {
+            List<HouseholdRoom> rooms = null;
+            for (int i=0; i < list.size(); i++) {
+                rooms = new ArrayList<>();
+                rooms = householdRoomService.listByHouseholdId(list.get(i).getHouseHoldId());
+                list.get(i).setHouses(rooms);
+            }
+        }
         page.setRecords(list);
         return page;
     }

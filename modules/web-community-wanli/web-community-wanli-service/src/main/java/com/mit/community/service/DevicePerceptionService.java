@@ -169,9 +169,9 @@ public class DevicePerceptionService {
         }
         if (deviceStatus != null) {
             if (deviceStatus == 2){//离线
-                sql = "and (select TIME_TO_SEC(TIMEDIFF(NOW(), b.gmt_modified)) FROM dnake_device_info b) > 10 ORDER BY a.gmt_create DESC ";
+                sql = "and TIME_TO_SEC(TIMEDIFF(NOW(), b.gmt_modified)) > 20 ORDER BY a.gmt_create DESC ";
             } else {
-                sql = "and (select TIME_TO_SEC(TIMEDIFF(NOW(), b.gmt_modified)) FROM dnake_device_info b) < 10 ORDER BY a.gmt_create DESC ";
+                sql = "and TIME_TO_SEC(TIMEDIFF(NOW(), b.gmt_modified)) < 20 ORDER BY a.gmt_create DESC ";
             }
         }
         List<DeviceInfo> list = personLabelsMapper.selectMenJinPage(page, wrapper, sql);

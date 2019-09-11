@@ -19,4 +19,6 @@ public class DeviceReportProblem extends BaseEntity{
     private int deviceType;//1狄耐克门禁机；
     private int status;
     //private int mqlzd;//目前流转到什么地方
+    @TableField(exist = false)
+    private Device device;
 }

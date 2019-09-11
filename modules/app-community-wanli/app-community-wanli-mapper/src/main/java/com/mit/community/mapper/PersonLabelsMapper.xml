@@ -110,23 +110,21 @@
                 jdbcType="INTEGER" />
     </resultMap>
 
-    <resultMap type="com.mit.community.entity.DeviceBugPeople" id="deviceBugPeopleMap">
-        <result property="passWord" column="passWord" javaType="String"
+    <resultMap type="com.mit.community.entity.DugPeopleInfo" id="deviceBugPeopleMap">
+        <result property="appUserName" column="appUserName" javaType="String"
                 jdbcType="VARCHAR" />
-        <result property="name" column="name" javaType="String"
+        <result property="communityName" column="communityName" javaType="String"
                 jdbcType="VARCHAR" />
         <result property="expireTime" column="expireTime" javaType="String"
                 jdbcType="VARCHAR" />
         <result property="cellPhone" column="cellPhone" javaType="String"
                 jdbcType="VARCHAR" />
-        <result property="remarks" column="remarks" javaType="String"
+        <result property="name" column="name" javaType="String"
                 jdbcType="VARCHAR" />
-        <result property="communityName" column="communityName" javaType="String"
+        <result property="role" column="role" javaType="String"
                 jdbcType="VARCHAR" />
-        <result property="areName" column="areName" javaType="String"
-                jdbcType="VARCHAR" />
-        <result property="streetName" column="streetName" javaType="String"
-                jdbcType="VARCHAR" />
+        <result property="status" column="status" javaType="Integer"
+                jdbcType="INTEGER" />
         <result property="accountType" column="accountType" javaType="String"
                 jdbcType="VARCHAR" />
     </resultMap>
@@ -162,6 +160,8 @@
                 jdbcType="VARCHAR" />
         <result property="validityTime" column="validityTime" javaType="String"
                 jdbcType="VARCHAR" />
+        <result property="houseHoldId" column="houseHoldId" javaType="Integer"
+                jdbcType="INTEGER" />
     </resultMap>
 
     <resultMap type="com.mit.community.entity.HouseHold" id="houseHoldMap">
@@ -264,7 +264,7 @@
     </select>
 
     <select id="selectMenJinCardPage" resultMap="accessCardPageInfoMap">
-        select a.id,a.card_type as cardType,a.card_media as cardMedia,b.household_name as houseHoldName,b.housetype as houseType,b.mobile,b.validity_time as validityTime
+        select a.id,a.card_type as cardType,a.card_media as cardMedia,b.household_name as houseHoldName,b.housetype as houseType,b.mobile,b.validity_time as validityTime,b.household_id as houseHoldId
         FROM access_card a LEFT JOIN household b on a.household_id=b.household_id LEFT JOIN household_room c on b.household_id=c.household_id
         where 1= 1 ${ew.sqlSegment}
     </select>
@@ -276,8 +276,8 @@
     </select>
 
     <select id="pageDeviceDugPeople" resultMap="deviceBugPeopleMap">
-        select a.password as passWord,a.name as name,a.doornum as expireTime,a.cellphone as cellPhone,a.cardnum as remarks,a.face_token as accountType,b.community_name as communityName,
-        b.area_name as areName,b.street_name as streetName from user a LEFT JOIN cluster_community b on a.serialnumber=b.community_code
+        select a.name as name,a.doornum as expireTime,a.cellphone as cellPhone,a.face_token as accountType,b.community_name as communityName,a.cellphone as appUserName,a.identity_type as status,a.role as role
+        from user a LEFT JOIN cluster_community b on a.serialnumber=b.community_code
         where 1= 1 ${ew.sqlSegment}
     </select>
 

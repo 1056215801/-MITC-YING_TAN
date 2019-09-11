@@ -106,9 +106,12 @@ public class HttpPostUtil {
         return result;
     }
 
-    public static String httpOpen (String deviceIP) throws Exception{
+    public static String httpOpen (String deviceIP, String cellphone, String communityCode, String deviceNum) throws Exception{
         Map<String,String> params = new HashedMap();
         params.put("cmd","httpOpen");
+        params.put("cellphone",cellphone);
+        params.put("communityCode",communityCode);
+        params.put("deviceNum",deviceNum);
         String result = sendPost1("http://" + deviceIP + ":28085",params);
         return result;
     }
