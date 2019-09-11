@@ -21,7 +21,7 @@
        SELECT r.id, r.room_num,z.zone_name,b.building_name,u.unit_name,
        r.room_status FROM room r LEFT JOIN zone z ON r.zone_id=z.zone_id
        LEFT JOIN building b ON r.building_id=b.building_id LEFT JOIN unit u ON r.unit_id=u.unit_id
-       <where>
+       <where> 1=1
            ${ew.sqlSegment}
        </where>
     </select>

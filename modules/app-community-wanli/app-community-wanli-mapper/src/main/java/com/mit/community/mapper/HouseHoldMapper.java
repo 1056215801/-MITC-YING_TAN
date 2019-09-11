@@ -31,4 +31,5 @@ public interface HouseHoldMapper extends BaseMapper<HouseHold> {
     public void updateHouseholdByHouseholdId(HouseHold houseHold);
 
     List<HouseHold> getInfoList(RowBounds rowBounds, @Param("ew") EntityWrapper<HouseHold> wrapper, @Param("zoneId") Integer zoneId, @Param("buildingId") Integer buildingId, @Param("unitId") Integer unitId, @Param("roomNum") String roomNum, @Param("householdType") Short householdType);
+
 }

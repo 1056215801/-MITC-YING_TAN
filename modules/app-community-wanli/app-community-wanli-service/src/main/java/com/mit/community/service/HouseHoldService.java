@@ -418,6 +418,7 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
         List<HouseHold> houseHolds = new ArrayList<>();
         if (pageNum != null && pageSize != null) {
             Page<HouseHold> page = new Page<>(pageNum, pageSize);
+//            houseHolds = houseHoldMapper.selectPage(page, wrapper);
             houseHolds = personLabelsMapper.selectHouseHoldPage(page, wrapper);
             for (HouseHold houseHold : houseHolds) {
                 //读取用户表的基本信息
@@ -660,19 +661,20 @@ public class HouseHoldService extends ServiceImpl<HouseHoldMapper,HouseHold> {
     /**
      * 保存住户授权信息
      *
+     * @param directCall
+     * @param tellNum
      * @param editFlag        //是否编辑标识
      * @param householdId
      * @param appAuthFlag
-     * @param directCall
-     * @param tellNum
      * @param faceAuthFlag
      * @param deviceGIds
      * @param validityEndDate
      * @param cardListArr
+     * @param phone
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String imageUrls) {
+    public String SaveHouseholdInfoByStepThree(Integer editFlag, Integer householdId, Integer appAuthFlag, Integer faceAuthFlag, String deviceGIds, String validityEndDate, String cardListArr, String imageUrls, String phone) {
         String msg = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {

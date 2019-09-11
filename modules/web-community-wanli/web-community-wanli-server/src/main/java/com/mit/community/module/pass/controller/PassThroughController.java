@@ -401,13 +401,13 @@ public class PassThroughController {
                                                 Integer faceAuthFlag,
                                                 String deviceGIds,
                                                 String validityEndDate,
-                                                String cardListArr, String imageUrls) {
+                                                String cardListArr, String imageUrls,String phone) {
 
         if (imageUrls != null) {
             System.out.println("===========================imageUrls="+imageUrls);
         }
         String msg = houseHoldService.SaveHouseholdInfoByStepThree(editFlag, householdId, appAuthFlag,
-                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrls);
+                faceAuthFlag, deviceGIds, validityEndDate, cardListArr, imageUrls,phone);
         if (!msg.contains("success")) {
             return Result.error("错误");
         }

@@ -232,7 +232,7 @@
     </select>
 
     <select id="selectHouseHoldPage" resultMap="houseHoldMap">
-        select a.*
+        select DISTINCT a.household_id,a.*
         FROM household a  LEFT JOIN household_room b on a.household_id=b.household_id
         where 1= 1 ${ew.sqlSegment}
     </select>

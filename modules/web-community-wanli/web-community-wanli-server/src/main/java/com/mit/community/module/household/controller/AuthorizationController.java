@@ -47,10 +47,10 @@ public class AuthorizationController {
         HouseHold houseHold = houseHoldService.selectOne(wrapper);
         EntityWrapper<HouseholdRoom> entityWrapper=new EntityWrapper<>();
         entityWrapper.eq("household_id",householdId);
-        HouseholdRoom householdRoom = householdRoomService.selectOne(entityWrapper);
+        List<HouseholdRoom> householdRoomList = householdRoomService.selectList(entityWrapper);
         HashMap<String,Object> map=new HashMap<>();
         map.put("houseHold",houseHold);
-        map.put("householdRoom",householdRoom);
+        map.put("householdRoomList",householdRoomList);
         return Result.success(map);
 
     }
@@ -83,4 +83,5 @@ public class AuthorizationController {
         householdRoomService.delete(entityWrapper);
         return Result.success("success");
     }
+
 }
