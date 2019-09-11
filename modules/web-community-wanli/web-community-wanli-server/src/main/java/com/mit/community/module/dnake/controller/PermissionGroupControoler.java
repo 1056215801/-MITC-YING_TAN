@@ -68,16 +68,11 @@ public class PermissionGroupControoler {
     private UserService userService;
     @Autowired
     private DevicePerceptionService devicePerceptionService;
-<<<<<<< HEAD
+
     @Autowired
     private RoomService roomService;
     @Autowired
     private DeviceNoticeService deviceNoticeService;
-=======
-
-    @Autowired
-    private RoomService roomService;
->>>>>>> remotes/origin/qishengjun
 
     /**
      *
@@ -208,10 +203,7 @@ public class PermissionGroupControoler {
         List<Unit> list = unitService.listByBuildingId(buildingId);
         return Result.success(list);
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> remotes/origin/qishengjun
     @ApiOperation(value = "获取房间列表")
     @PostMapping("/getRoomlist")
     @ApiImplicitParam(name="unitId",value="单元id",required=true,paramType = "query")
@@ -222,10 +214,7 @@ public class PermissionGroupControoler {
         List<Room> roomList = roomService.selectList(wrapper);
         return Result.success(roomList);
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> remotes/origin/qishengjun
     /**
      * 根据单元楼栋获取设备列表
      * @param request
