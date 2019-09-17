@@ -100,7 +100,6 @@ public class ClusterCommunityController {
         ClusterCommunity clusterCommunityMax = clusterCommunityService.selectOne(wrapper);
         clusterCommunity.setCommunityId(clusterCommunityMax.getCommunityId() + 1);
         clusterCommunity.setAreaBelong(areaName);
-
         if (StringUtils.isNotEmpty(communityName)) {
         EntityWrapper<ClusterCommunity> communityEntityWrapper=new EntityWrapper<>();
         communityEntityWrapper.eq("province_name",provinceName);
@@ -147,18 +146,23 @@ public class ClusterCommunityController {
         }
         if (StringUtils.isNotEmpty(provinceId)) {
             clusterCommunity.setProvinceId(provinceId);
+            sysUser.setProvinceId(provinceId);
         }
         if (StringUtils.isNotEmpty(cityId)) {
             clusterCommunity.setCityId(cityId);
+            sysUser.setCityId(cityId);
         }
         if (StringUtils.isNotEmpty(areaId)) {
             clusterCommunity.setAreaId(areaId);
+            sysUser.setAreaId(areaId);
         }
         if (StringUtils.isNotEmpty(streetId)) {
             clusterCommunity.setStreetId(streetId);
+            sysUser.setStreetId(streetId);
         }
         if (StringUtils.isNotEmpty(committeeId)) {
             clusterCommunity.setCommitteeId(committeeId);
+            sysUser.setCommittee(committee);
         }
         if (StringUtils.isNotEmpty(username)) {
             sysUser.setUsername(username);
@@ -180,6 +184,7 @@ public class ClusterCommunityController {
         clusterCommunityService.insert(clusterCommunity);
         sysUser.setCommunityCode(communityCode);
         sysUser.setRole("小区管理员");
+        sysUser.setAccountType("小区账号");
         sysUser.setCreatetime(LocalDateTime.now());
         sysUser.setAlterTime(LocalDateTime.now());
         sysUserService.insert(sysUser);
@@ -332,4 +337,11 @@ public class ClusterCommunityController {
         ClusterCommunity clusterCommunity=clusterCommunityService.getModifyInfo(id);
         return Result.success(clusterCommunity);
     }*/
+   @ApiOperation("获取登录账号信息")
+   @PostMapping("/getSysUserInfo")
+   public Result getSysUserInfo(HttpServletRequest request){
+       String sessionId = CookieUtils.getSessionId(request);
+       SysUser user = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+       return Result.success(user);
+   }
 }

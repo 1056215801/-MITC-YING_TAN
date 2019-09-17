@@ -1,6 +1,7 @@
 package com.mit.community.service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.mit.community.entity.SysRole;
@@ -207,5 +208,27 @@ public class SysUserService extends ServiceImpl<SysUserMapper, SysUser> {
         EntityWrapper<SysUser> wrapper = new EntityWrapper();
         wrapper.eq("id", id);
         sysUserMapper.delete(wrapper);
+    }
+
+    public Page<SysUser> getSysUserList(String username, String adminName, String phone, String role, Integer pageSize, Integer pageNum) {
+
+        Page<SysUser> page=new Page<>(pageSize,pageNum);
+        EntityWrapper<SysUser> wrapper=new EntityWrapper<>();
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(username)){
+            wrapper.like("username",username);
+        }
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(adminName)){
+            wrapper.like("admin_name",adminName);
+        }
+
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(phone)){
+            wrapper.like("phone",phone);
+        }
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(role)){
+            wrapper.eq("role",role);
+        }
+        wrapper.orderBy("createtime",false);
+        Page<SysUser> userPage = this.selectPage(page, wrapper);
+        return userPage;
     }
 }

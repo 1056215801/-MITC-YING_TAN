@@ -1,5 +1,7 @@
 package com.mit.community.module.system.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.mit.auth.client.annotation.IgnoreClientToken;
 import com.mit.auth.client.annotation.IgnoreUserToken;
 import com.mit.community.constants.RedisConstant;
@@ -7,6 +9,7 @@ import com.mit.community.entity.SysPermission;
 import com.mit.community.entity.SysRole;
 import com.mit.community.entity.SysUser;
 import com.mit.community.entity.SysUserRole;
+import com.mit.community.entity.entity.SysUserVo;
 import com.mit.community.service.RedisService;
 import com.mit.community.service.SysRolePermissionService;
 import com.mit.community.service.SysUserRoleService;
@@ -14,9 +17,12 @@ import com.mit.community.service.SysUserService;
 import com.mit.community.util.CookieUtils;
 import com.mit.community.util.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -186,5 +193,73 @@ public class SysUserController {
     public Result delete(Integer id) {
         sysUserService.remove(id);
         return Result.success("删除成功");
+    }
+    @ApiOperation(value = "添加账户信息")
+    @PostMapping("/addSysUser")
+    public Result addSysUser(SysUserVo sysUserVo,HttpServletRequest request){
+        String username = sysUserVo.getUsername();
+        String sessionId = CookieUtils.getSessionId(request);
+        SysUser sysUser = (SysUser) redisService.get(RedisConstant.SESSION_ID + sessionId);
+        String communityCode = sysUser.getCommunityCode();
+        EntityWrapper<SysUser> wrapper=new EntityWrapper();
+        wrapper.like("username",username);
+        List<SysUser> sysUserList = sysUserService.selectList(wrapper);
+        if (sysUserList.size()>0)
+        {
+            return Result.error("当前用户已存在");
+        }
+        if (StringUtils.isBlank(sysUserVo.getPassword()))
+        {
+            sysUserVo.setPassword("654321");
+        }
+        SysUser sysUser1=new SysUser();
+        BeanUtils.copyProperties(sysUserVo,sysUser1);
+        sysUser1.setCommunityCode(communityCode);
+        sysUser1.setCreatetime(LocalDateTime.now());
+        sysUser1.setAlterTime(LocalDateTime.now());
+        sysUserService.insert(sysUser1);
+        return Result.success("新增成功");
+    }
+
+    @ApiOperation(value = "修改账户信息")
+    @PostMapping("/updateSysUser")
+    public Result updateSysUser(SysUserVo sysUserVo){
+        SysUser sysUser=new SysUser();
+        BeanUtils.copyProperties(sysUserVo,sysUser);
+        sysUser.setAlterTime(LocalDateTime.now());
+        sysUserService.updateById(sysUser);
+        return Result.success("修改成功");
+    }
+
+    @ApiOperation(value = "删除账户信息")
+    @ApiImplicitParam(name = "id",value = "账户id",dataType = "Integer",paramType = "query",required = true)
+    @PostMapping("/deleteSysUser")
+    public Result deleteSysUser(Integer id){
+        sysUserService.deleteById(id);
+        return Result.success("删除成功");
+    }
+
+    @ApiOperation(value = "重置密码")
+    @ApiImplicitParam(name = "id",value = "账户id",dataType = "Integer",paramType = "query",required = true)
+    @PostMapping("/resetPassword")
+    public Result resetPassword(Integer id){
+        SysUser sysUser = sysUserService.selectById(id);
+        sysUser.setPassword("654321");
+        sysUserService.updateById(sysUser);
+        return Result.success("重置成功");
+    }
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username",value = "管理员账户",dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name = "adminName",value = "管理员姓名",dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name = "phone",value = "联系电话",dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name = "role",value = "账户角色",dataType = "String",paramType = "query"),
+            @ApiImplicitParam(name = "pageSize",value = "当前页",dataType = "Integer",paramType = "query"),
+            @ApiImplicitParam(name = "pageNum",value = "每页记录数",dataType = "Integer",paramType = "query")
+    })
+    @PostMapping("/getSysUserList")
+    public Result getSysUserList(String username,String adminName,String phone,String role,Integer pageSize,Integer pageNum){
+
+        Page<SysUser> page=sysUserService.getSysUserList(username,adminName,phone,role,pageSize,pageNum);
+        return Result.success(page);
     }
 }

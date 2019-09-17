@@ -124,6 +124,7 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.33</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

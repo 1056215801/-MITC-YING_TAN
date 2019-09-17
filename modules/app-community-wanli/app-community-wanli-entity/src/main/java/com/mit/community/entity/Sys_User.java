@@ -31,21 +31,44 @@ public class Sys_User implements Serializable {
      */
     @TableField("province_name")
     private String provinceName;
+
+
+    @TableField("province_id")
+    private String provinceId;
     /**
      * 城市名称
      */
     @TableField("city_name")
     private String cityName;
+
+    @TableField("city_id")
+    private String cityId;
     /**
      * 区/县名称
      */
     @TableField("area_name")
     private String areaName;
+
+    @TableField("area_id")
+    private String areaId;
     /**
      * 镇/街道
      */
     @TableField("street_name")
     private String streetName;
+
+   @TableField("street_id")
+    private String streetId;
+
+    /**
+     * 居委
+     */
+    @TableField("committee")
+    private String committee;
+
+    @TableField("committee_id")
+    private String committeeId;
+
     /**
      * 地址
      */
